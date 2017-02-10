@@ -31,8 +31,8 @@
 		<repository>
 			<id>local_repository</id>
 			<name>local_repository</name>
-			<!-- -->
-			<url>file:H:/.m2/repository/</url>
+<!-- 			<url>file:H:/.m2/repository/</url> -->
+			<url>file:~/.m2/repository/</url>
 		</repository>
 	</distributionManagement>
 
@@ -59,13 +59,12 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
-				<configuration>
-					<!-- -->
-					<verbose>true</verbose>
-					<fork>true</fork>
-					<executable>C:\Program Files\Java\jdk1.8.0_71\bin\javac.exe</executable>
-					<compilerVersion>1.7</compilerVersion>
-				</configuration>
+<!-- 				<configuration> -->
+<!-- 					<verbose>true</verbose> -->
+<!-- 					<fork>true</fork> -->
+<!-- 					<executable>C:\Program Files\Java\jdk1.8.0_71\bin\javac.exe</executable> -->
+<!-- 					<compilerVersion>1.7</compilerVersion> -->
+<!-- 				</configuration> -->
 			</plugin>
 
 		</plugins>
