@@ -119,10 +119,10 @@ public class ShapeFile {
 	public String[] getAttributeNames(){
 		return getAttributeNames(getSchema());
 	}
-	public CoordinateReferenceSystem getCRS(String shpFilePath){
+	public CoordinateReferenceSystem getCRS(){
 		return getSchema().getCoordinateReferenceSystem();
 	}
-	public Envelope getBounds(String shpFilePath) {
+	public Envelope getBounds() {
 		return getSimpleFeatures().getBounds();
 	}
 
