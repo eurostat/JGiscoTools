@@ -12,25 +12,12 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.filter.text.cql2.CQL;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.FeatureLayer;
-import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
-import org.geotools.map.MapViewport;
-import org.geotools.referencing.CRS;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
-import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.Fill;
-import org.geotools.styling.PolygonSymbolizer;
-import org.geotools.styling.Rule;
-import org.geotools.styling.Stroke;
-import org.geotools.styling.Style;
-import org.geotools.styling.StyleFactory;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
+import org.opengis.feature.simple.SimpleFeature;
 
 import eu.ec.estat.geostat.io.ShapeFile;
 
@@ -41,8 +28,10 @@ import eu.ec.estat.geostat.io.ShapeFile;
 public class TourismUseCase {
 	public static String BASE_PATH = "H:/geodata/";
 	public static String NUTS_SHP = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013.shp";
+	public static String POI_SHP = BASE_PATH + "eur2016_12/mnpoi.shp";
 
 	public static void main(String[] args) throws Exception {
+		System.out.println("Start.");
 
 		//download/update data for tourism
 		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c");
@@ -56,8 +45,8 @@ public class TourismUseCase {
 		 */
 
 		//load NUTS regions
-		ShapeFile shpFileNUTS = new ShapeFile(NUTS_SHP);
-		Filter f2 = CQL.toFilter("STAT_LEVL_ = 2");
+		//ShapeFile shpFileNUTS = new ShapeFile(NUTS_SHP);
+		//Filter f2 = CQL.toFilter("STAT_LEVL_ = 2");
 		/*FeatureIterator<SimpleFeature> it = shpFileNUTS.getFeatures(f2);
 		while (it.hasNext()) {
 			SimpleFeature f = it.next();
@@ -65,15 +54,32 @@ public class TourismUseCase {
 		}
 		it.close();*/
 
+		//load POIs
+		ShapeFile shpFilePOI = new ShapeFile(POI_SHP);
+		FeatureIterator<SimpleFeature> it = shpFilePOI.getFeatures();
+		while (it.hasNext()) {
+			SimpleFeature f = it.next();
+			System.out.println(f);
+			//System.out.println(f.getAttribute("the_geom"));
+		}
+		it.close();
 
 
-		//produce map
+
+
+		//make dasymetric disaggregation
+
+
+
+		//compute validation figures
+
+		//show results on maps
+
+		/*/produce map
 		//https://github.com/geotools/geotools/blob/master/docs/src/main/java/org/geotools/tutorial/style/StyleLab.java
 		//http://docs.geotools.org/latest/userguide/library/render/gtrenderer.html
 		//http://docs.geotools.org/latest/userguide/library/render/index.html
 		//http://gis.stackexchange.com/questions/123903/how-to-create-a-map-and-save-it-to-an-image-with-geotools
-
-		//CRS.decode("EPSG:3035")
 
 		// Create a map content and add our shapefile to it
 		MapContent map = new MapContent();
@@ -113,20 +119,13 @@ public class TourismUseCase {
 		//
 		//JMapFrame.showMap(map);
 		saveImage(map, "H:/desktop/ex.png", 800);
-
-
-		//load POIs from postgis
-
-
-
-		//make dasymetric disaggregation
+		 */
 
 
 
-		//compute validation figures
 
-		//show results on maps
 
+		System.out.println("End.");
 	}
 
 
@@ -135,7 +134,7 @@ public class TourismUseCase {
 
 	public static void saveImage(final MapContent map, final String file, final int imageWidth) {
 		try {
-			ReferencedEnvelope mapBounds = map.getMaxBounds();
+			ReferencedEnvelope mapBounds = map.getViewport().getBounds();
 			Rectangle imageBounds = new Rectangle(0, 0, imageWidth, (int) Math.round(imageWidth * mapBounds.getSpan(1) / mapBounds.getSpan(0)));
 			BufferedImage image = new BufferedImage(imageBounds.width, imageBounds.height, BufferedImage.TYPE_INT_RGB);
 
