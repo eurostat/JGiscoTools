@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat.dasymetric;
+package eu.ec.estat.geostat;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,7 +13,6 @@ import java.util.HashMap;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -29,7 +28,7 @@ import eu.ec.estat.java4eurostat.io.DicUtil;
  * @author julien Gaffuri
  *
  */
-public class StatisticalUnitIntersectionWithGeoLayer {
+public class DasymetricMapping {
 
 	/**
 	 * Compute statistics on geo objects at statistical units level.
@@ -40,7 +39,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 	 * @param geoSHPFile
 	 * @param statUnitOutFile
 	 */
-	public static void aggregateGeoStatsFromGeoToStatisticalUnits(String statUnitsSHPFile, Filter statUnitsFilter, String statUnitIdField, String geoSHPFile, String statUnitOutFile) {
+	public static void aggregateGeoStatsFromGeoToStatisticalUnits(String statUnitsSHPFile, String statUnitIdField, String geoSHPFile, String statUnitOutFile) {
 		try {
 			//create out file
 			File outFile_ = new File(statUnitOutFile);
@@ -58,7 +57,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//go through statistical units
-			FeatureIterator<SimpleFeature> itStat = statUnitsFilter == null? statShp.getFeatures() : statShp.getFeatures(statUnitsFilter);
+			FeatureIterator<SimpleFeature> itStat = statShp.getFeatures();
 			int statCounter = 1;
 			while (itStat.hasNext()) {
 				SimpleFeature statUnit = itStat.next();

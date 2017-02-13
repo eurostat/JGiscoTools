@@ -17,7 +17,6 @@ import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 
-import eu.ec.estat.geostat.dasymetric.StatisticalUnitIntersectionWithGeoLayer;
 import eu.ec.estat.java4eurostat.base.Selection;
 import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
@@ -79,9 +78,10 @@ public class TourismUseCase {
 		//dasymetric analysis
 
 		//geo to statistical unit
-		StatisticalUnitIntersectionWithGeoLayer.aggregateGeoStatsFromGeoToStatisticalUnits(NUTS_SHP_LVL2, null, "NUTS_ID", POI_SHP, "H:/methnet/geostat/out/1_geo_to_stats.csv");
+		//StatisticalUnitIntersectionWithGeoLayer.aggregateGeoStatsFromGeoToStatisticalUnits(NUTS_SHP_LVL2, null, "NUTS_ID", POI_SHP, "H:/methnet/geostat/out/1_geo_to_stats.csv");
+		//statistical unit to geo
+		//DasymetricMapping.allocateGeoStatsFromStatisticalUnitsToGeo(POI_SHP, "ID", NUTS_SHP_LVL2, "NUTS_ID", statUnitValuesPath, "H:/methnet/geostat/out/1_geo_to_stats.csv", "H:/methnet/geostat/out/2_stats_lvl2_to_geo.csv");
 
-		//
 
 
 
