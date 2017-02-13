@@ -12,15 +12,12 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import org.geotools.filter.text.cql2.CQL;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
-import org.opengis.filter.Filter;
 
 import eu.ec.estat.geostat.dasymetric.StatisticalUnitIntersectionWithGeoLayer;
-import eu.ec.estat.geostat.io.ShapeFile;
 import eu.ec.estat.java4eurostat.base.Selection;
 import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
@@ -45,9 +42,9 @@ public class TourismUseCase {
 		//load tourism data
 		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
 				new Selection.And(
-						new Selection.DimValueEqualTo("unit","NR"),
-						new Selection.DimValueEqualTo("nace_r2","I551-I553"),
-						new Selection.DimValueEqualTo("indic_to","B006"),
+						new Selection.DimValueEqualTo("unit","NR"), //Number
+						new Selection.DimValueEqualTo("nace_r2","I551-I553"), //Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks
+						new Selection.DimValueEqualTo("indic_to","B006"), //Nights spent, total
 						//keep only nuts 2 regions
 						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } },
 						//keep only years after 2010
@@ -82,7 +79,7 @@ public class TourismUseCase {
 		//dasymetric analysis
 
 		//geo to statistical unit
-		StatisticalUnitIntersectionWithGeoLayer.aggregateGeoStatsFromGeoToStatisticalUnits(NUTS_SHP_LVL2, null, "NUTS_ID", POI_SHP, "H:/methnet/geostat/out/1/geo_to_stats.csv");
+		StatisticalUnitIntersectionWithGeoLayer.aggregateGeoStatsFromGeoToStatisticalUnits(NUTS_SHP_LVL2, null, "NUTS_ID", POI_SHP, "H:/methnet/geostat/out/1_geo_to_stats.csv");
 
 		//
 
