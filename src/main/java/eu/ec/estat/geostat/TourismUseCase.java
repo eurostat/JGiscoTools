@@ -12,14 +12,20 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import org.geotools.feature.FeatureIterator;
+import org.geotools.filter.text.cql2.CQL;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
-import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.Filter;
 
+import eu.ec.estat.geostat.dasymetric.StatisticalUnitIntersectionWithGeoLayer;
 import eu.ec.estat.geostat.io.ShapeFile;
+import eu.ec.estat.java4eurostat.base.Selection;
+import eu.ec.estat.java4eurostat.base.Stat;
+import eu.ec.estat.java4eurostat.base.StatsHypercube;
+import eu.ec.estat.java4eurostat.base.StatsIndex;
+import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
  * @author julien Gaffuri
@@ -27,7 +33,7 @@ import eu.ec.estat.geostat.io.ShapeFile;
  */
 public class TourismUseCase {
 	public static String BASE_PATH = "H:/geodata/";
-	public static String NUTS_SHP = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013.shp";
+	public static String NUTS_SHP_LVL2 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl2.shp";
 	public static String POI_SHP = BASE_PATH + "eur2016_12/mnpoi.shp";
 
 	public static void main(String[] args) throws Exception {
@@ -37,16 +43,23 @@ public class TourismUseCase {
 		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c");
 
 		//load tourism data
-		/*
-		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv", new Selection.And(new Selection.DimValueEqualTo("unit","NR"),new Selection.DimValueEqualTo("nace_r2","I551-I553"),new Selection.DimValueEqualTo("indic_to","B006")));
+		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
+				new Selection.And(
+						new Selection.DimValueEqualTo("unit","NR"),
+						new Selection.DimValueEqualTo("nace_r2","I551-I553"),
+						new Selection.DimValueEqualTo("indic_to","B006"),
+						//keep only nuts 2 regions
+						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } },
+						//keep only years after 2010
+						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace(" ", "")) >= 2010; } }
+						));
 		hc.delete("unit"); hc.delete("indic_to"); hc.delete("nace_r2");
-		//TODO select only nuts 2
-		hc.printInfo();
-		 */
+		StatsIndex hcI = new StatsIndex(hc, "time", "geo");
+		//hc.printInfo(); //hcI.print();
+		hc = null;
 
 		//load NUTS regions
-		//ShapeFile shpFileNUTS = new ShapeFile(NUTS_SHP);
-		//Filter f2 = CQL.toFilter("STAT_LEVL_ = 2");
+		//ShapeFile shpFileNUTS_lvl2 = new ShapeFile(NUTS_SHP_LVL2);
 		/*FeatureIterator<SimpleFeature> it = shpFileNUTS.getFeatures(f2);
 		while (it.hasNext()) {
 			SimpleFeature f = it.next();
@@ -55,19 +68,23 @@ public class TourismUseCase {
 		it.close();*/
 
 		//load POIs
-		ShapeFile shpFilePOI = new ShapeFile(POI_SHP);
-		FeatureIterator<SimpleFeature> it = shpFilePOI.getFeatures();
+		//ShapeFile shpFilePOI = new ShapeFile(POI_SHP);
+		/*FeatureIterator<SimpleFeature> it = shpFilePOI.getFeatures();
 		while (it.hasNext()) {
 			SimpleFeature f = it.next();
 			System.out.println(f);
 			//System.out.println(f.getAttribute("the_geom"));
 		}
-		it.close();
+		it.close();*/
 
 
 
+		//dasymetric analysis
 
-		//make dasymetric disaggregation
+		//geo to statistical unit
+		StatisticalUnitIntersectionWithGeoLayer.aggregateGeoStatsFromGeoToStatisticalUnits(NUTS_SHP_LVL2, null, "NUTS_ID", POI_SHP, "H:/methnet/geostat/out/1/geo_to_stats.csv");
+
+		//
 
 
 
