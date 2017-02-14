@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat;
+package eu.ec.estat.geostat.dasymetric;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,7 +31,7 @@ import eu.ec.estat.java4eurostat.io.DicUtil;
  * @author julien Gaffuri
  *
  */
-public class DasymetricMapping {
+public class DasymetricMappingOld {
 
 	/**
 	 * Compute statistics on geo objects at statistical units level.

@@ -20,6 +20,7 @@ import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 
+import eu.ec.estat.geostat.dasymetric.DasymetricMappingOld;
 import eu.ec.estat.geostat.io.ShapeFile;
 import eu.ec.estat.java4eurostat.base.Selection;
 import eu.ec.estat.java4eurostat.base.Stat;
@@ -71,7 +72,7 @@ public class TourismUseCase {
 		//DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getFeatureStore(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
 		//DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getSimpleFeatures(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
 		//statistical unit to geo
-		DasymetricMapping.allocateGeoStatsFromStatisticalUnitsToGeo(POI_SHP, "ID", NUTS_SHP_LVL2, "NUTS_ID", "stats_lvl2_2015 .csv", "H:/methnet/geostat/out/1_geo_to_stats.csv", "H:/methnet/geostat/out/2_stats_lvl2_to_geo.csv");
+		DasymetricMappingOld.allocateGeoStatsFromStatisticalUnitsToGeo(POI_SHP, "ID", NUTS_SHP_LVL2, "NUTS_ID", "stats_lvl2_2015 .csv", "H:/methnet/geostat/out/1_geo_to_stats.csv", "H:/methnet/geostat/out/2_stats_lvl2_to_geo.csv");
 
 
 
