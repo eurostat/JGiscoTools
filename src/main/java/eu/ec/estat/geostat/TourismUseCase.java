@@ -8,7 +8,10 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -18,6 +21,11 @@ import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 
 import eu.ec.estat.geostat.io.ShapeFile;
+import eu.ec.estat.java4eurostat.base.Selection;
+import eu.ec.estat.java4eurostat.base.Stat;
+import eu.ec.estat.java4eurostat.base.StatsHypercube;
+import eu.ec.estat.java4eurostat.base.StatsIndex;
+import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
  * @author julien Gaffuri
@@ -47,17 +55,23 @@ public class TourismUseCase {
 						));
 		hc.delete("unit"); hc.delete("indic_to"); hc.delete("nace_r2");
 		StatsIndex hcI = new StatsIndex(hc, "time", "geo");
-		//hc.printInfo(); //hcI.print();
-		hc = null;*/
+		//hc.printInfo();
+		//hcI.print();
+		hc = null;
+
+		//save as csv
+		String time = "2015 ", outFile = "H:/methnet/geostat/out/stats_lvl2_"+time+".csv";
+		statIndexToCSV(hcI.getSubIndex(time), "NUTS_ID", outFile);
+		*/
 
 
 		//dasymetric analysis
 
 		//geo to statistical unit
 		//DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getFeatureStore(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
-		DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getSimpleFeatures(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
+		//DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getSimpleFeatures(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
 		//statistical unit to geo
-		//DasymetricMapping.allocateGeoStatsFromStatisticalUnitsToGeo(POI_SHP, "ID", NUTS_SHP_LVL2, "NUTS_ID", statUnitValuesPath, "H:/methnet/geostat/out/1_geo_to_stats.csv", "H:/methnet/geostat/out/2_stats_lvl2_to_geo.csv");
+		DasymetricMapping.allocateGeoStatsFromStatisticalUnitsToGeo(POI_SHP, "ID", NUTS_SHP_LVL2, "NUTS_ID", "stats_lvl2_2015 .csv", "H:/methnet/geostat/out/1_geo_to_stats.csv", "H:/methnet/geostat/out/2_stats_lvl2_to_geo.csv");
 
 
 
@@ -111,10 +125,6 @@ public class TourismUseCase {
 		saveImage(map, "H:/desktop/ex.png", 800);
 		 */
 
-
-
-
-
 		System.out.println("End.");
 	}
 
@@ -139,6 +149,24 @@ public class TourismUseCase {
 
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
+	}
+
+
+	//TODO: move to java4eurostat
+	public static void statIndexToCSV(StatsIndex hcI, String idName, String outFile) {
+		try {
+			File outFile_ = new File(outFile);
+			if(outFile_.exists()) outFile_.delete();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile_, true));
+			//write header
+			bw.write(idName+",value"); bw.newLine();
+			//write file
+			for(String geo : hcI.getKeys()){
+				bw.write(geo+","+hcI.getSingleValue(geo));
+				bw.newLine();
+			}
+			bw.close();
+		} catch (IOException e) { e.printStackTrace(); }
 	}
 
 }

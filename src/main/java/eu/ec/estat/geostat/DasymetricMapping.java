@@ -138,8 +138,9 @@ public class DasymetricMapping {
 				String statUnitId = statUnit.getAttribute(statUnitIdField).toString();
 				System.out.println(statUnitId + " " + (statCounter++) + "/" + statUnitsFC.size() + " " + (Math.round(10000*statCounter/statUnitsFC.size()))*0.01 + "%");
 
-				//get all geo features intersecting the stat unit (with spatial index)
+				//
 				Geometry StatUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
+
 				FeatureIterator<SimpleFeature> itGeo = geoFC.features();
 
 				//compute stat on geo features
@@ -147,10 +148,11 @@ public class DasymetricMapping {
 				while (itGeo.hasNext()) {
 					try {
 						SimpleFeature geo = itGeo.next();
-						nbGeo++;
 
 						Geometry geoGeom = (Geometry) geo.getDefaultGeometryProperty().getValue();
 						if(!geoGeom.intersects(StatUnitGeom)) continue;
+
+						nbGeo++;
 
 						Geometry inter = geoGeom.intersection(StatUnitGeom);
 						totalArea += inter.getArea();
@@ -200,7 +202,6 @@ public class DasymetricMapping {
 	public static void allocateGeoStatsFromStatisticalUnitsToGeo(String geoSHPFile, String geoIdField, String statUnitsSHPFile, String statUnitsIdField, String statUnitValuesPath, String statUnitGeoStatValuesPath, String geoOutFile) {
 		try {
 			//create out file
-
 			File outFile_ = new File(geoOutFile);
 			if(outFile_.exists()) outFile_.delete();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile_, true));
