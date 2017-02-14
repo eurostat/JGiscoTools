@@ -81,7 +81,7 @@ public class TourismUseCase {
 		dm.computeGeoStat();
 
 		dm.geoStatsHC.printInfo();
-		CSV.save(dm.geoStatsHC/*.selectDimValueEqualTo("indic","number")*/, "nb", "H:/methnet/geostat/out/", "1_geo_to_stats.csv");
+		CSV.save(dm.geoStatsHC/*.selectDimValueEqualTo("indic","number")*/, "value", "H:/methnet/geostat/out/", "1_geo_to_stats.csv");
 
 		/*
 		public DasymetricMapping(

@@ -28,16 +28,16 @@ import eu.ec.estat.java4eurostat.base.StatsIndex;
 public class DasymetricMapping {
 
 	//the initial statistical values to disaggregate
-	private StatsIndex statValuesInitial;
+	public StatsIndex statValuesInitial;
 
 	//the initial statistical units
 	private SimpleFeatureStore statUnitsInitialFeatureStore;
-	private String statUnitsInitialId;
+	private String statUnitsInitialIdFieldName;
 
 	//the geographical features
 	private SimpleFeatureStore geoFeatureStore;
-	private String geoId;
-	//TODO handle several 
+	private String geoIdFieldName;
+	//TODO handle several geometry types
 
 	//the target statistical units (as new geographical level)
 	private SimpleFeatureStore statUnitsFinalFeatureStore;
@@ -51,10 +51,10 @@ public class DasymetricMapping {
 			String geoId,
 			SimpleFeatureStore statUnitsFinalFeatureStore){
 		this.statUnitsInitialFeatureStore = statUnitsInitialFeatureStore;
-		this.statUnitsInitialId = statUnitsInitialId;
+		this.statUnitsInitialIdFieldName = statUnitsInitialId;
 		this.statValuesInitial = statValuesInitial;
 		this.geoFeatureStore = geoFeatureStore;
-		this.geoId = geoId;
+		this.geoIdFieldName = geoId;
 		this.statUnitsFinalFeatureStore = statUnitsFinalFeatureStore;
 	}
 
@@ -92,7 +92,7 @@ public class DasymetricMapping {
 			FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures()).features();
 			while (itStat.hasNext()) {
 				SimpleFeature statUnit = itStat.next();
-				String statUnitId = statUnit.getAttribute(statUnitsInitialId).toString();
+				String statUnitId = statUnit.getAttribute(statUnitsInitialIdFieldName).toString();
 
 				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
 
@@ -137,9 +137,77 @@ public class DasymetricMapping {
 
 
 	//Step 2
+
+	//the output value of the second step: statistical values at geo features level
+	public StatsHypercube statsGeoAllocationHC;
+
 	public void allocateStatGeo() {
-		//TODO
+		try {
+
+			StatsIndex geoStatsHCI = new StatsIndex(geoStatsHC, "indic", "geo");
+
+			//initialise output structure
+			statsGeoAllocationHC = new StatsHypercube();
+			statsGeoAllocationHC.dimLabels.add("geo");
+			//statsGeoAllocationHC.dimLabels.add("indic");
+
+			//prepare
+			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+
+			//go through geo - purpose is to compute geo pop/density
+			double geoCounter = 1, nbGeo = geoFeatureStore.getFeatures().size();
+			FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures()).features();
+			while (itGeo.hasNext()) {
+				SimpleFeature geoUnit = itGeo.next();
+				String geoId = geoUnit.getAttribute(geoIdFieldName).toString();
+
+				System.out.println(geoId + " " + (geoCounter++) + "/" + nbGeo + " " + (Math.round(10000.0*geoCounter/nbGeo)*0.01) + "%");
+
+				//get all stat units intersecting the geo (with spatial index)
+				Geometry geoGeom = (Geometry) geoUnit.getDefaultGeometryProperty().getValue();
+				Filter f = ff.bbox(ff.property("the_geom"), geoUnit.getBounds());
+				FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures(f)).features();
+
+				int nbStat = 0;
+				double geoStatValue = 0;
+				//geoStatValue = Sum on SUs intersecting of:  surf(geo inter su)/statUnitGeoTotalArea * statUnitValue
+				while (itStat.hasNext()) {
+					try {
+						SimpleFeature stat = itStat.next();
+						String statId = stat.getAttribute(statUnitsInitialIdFieldName).toString();
+
+						//get stat unit geometry
+						Geometry statUnitGeom = (Geometry) stat.getDefaultGeometryProperty().getValue();
+						if(!geoGeom.intersects(statUnitGeom)) continue;
+
+						nbStat++;
+
+						//get stat unit value
+						double statValue = statValuesInitial.getSingleValue(statId);
+						if(Double.isNaN(statValue) || statValue == 0) continue;
+
+						//get stat unit geostat values
+						double statUnitGeoStatValue = geoStatsHCI.getSingleValue("area", statId);
+						if(Double.isNaN(statUnitGeoStatValue) || statUnitGeoStatValue == 0) continue;
+
+						geoStatValue += geoGeom.intersection(statUnitGeom).getArea() / statUnitGeoStatValue * statValue;
+					} catch (TopologyException e) {
+						System.err.println("Topology error.");
+					}
+				}
+				itStat.close();
+
+				if(nbStat == 0) continue;
+
+				//store
+				//bw.write(geoIdField+",value,density,_nbStatUnitIntersecting");
+				String line = geoId+","+geoStatValue+","+geoStatValue/geoGeom.getArea()+","+nbStat;
+				System.out.println(line);
+			}
+			itGeo.close();
+		} catch (Exception e) { e.printStackTrace(); }
 	}
+
 
 	//Step 3
 	public void aggregateGeoStat() {
