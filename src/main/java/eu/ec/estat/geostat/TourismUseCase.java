@@ -21,7 +21,6 @@ import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
-import eu.ec.estat.geostat.dasymetric.DasymetricMappingOld;
 import eu.ec.estat.geostat.io.ShapeFile;
 import eu.ec.estat.java4eurostat.base.Selection;
 import eu.ec.estat.java4eurostat.base.Stat;
@@ -67,38 +66,32 @@ public class TourismUseCase {
 		//String time = "2015 ", outFile = "H:/methnet/geostat/out/stats_lvl2_"+time+".csv";
 		//statIndexToCSV(hcI.getSubIndex(time), "NUTS_ID", outFile);
 
-
 		//dasymetric analysis
 		DasymetricMapping dm = new DasymetricMapping(
 				new ShapeFile(NUTS_SHP_LVL2).getFeatureStore(),
 				"NUTS_ID",
-				hcI.getSubIndex("2015 "),
+				null,
 				new ShapeFile(POI_SHP).getFeatureStore(),
 				"ID",
-				new ShapeFile(NUTS_SHP_LVL3).getFeatureStore()
+				new ShapeFile(NUTS_SHP_LVL3).getFeatureStore(),
+				"NUTS_ID"
 				);
 
-		dm.computeGeoStat();
+		dm.computeGeoStatInitial();
+		dm.geoStatsInitialHC.printInfo();
+		CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats.csv");
 
-		dm.geoStatsHC.printInfo();
-		CSV.save(dm.geoStatsHC/*.selectDimValueEqualTo("indic","number")*/, "value", "H:/methnet/geostat/out/", "1_geo_to_stats.csv");
+		dm.computeGeoStatFinal();
+		dm.geoStatsFinalHC.printInfo();
+		CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats.csv");
 
-		/*
-		public DasymetricMapping(
-				SimpleFeatureStore statUnitsInitialFeatureStore,
-				String statUnitsInitialId,
-				StatsIndex statValuesInitial,
-				SimpleFeatureStore geoFeatureStore,
-				String geoId,
-				SimpleFeatureStore statUnitsFinalFeatureStore){*/
+		for(int time = 2015; time>=1990; time--){
+			dm.statValuesInitial = hcI.getSubIndex(time+" ");
 
-
-		//geo to statistical unit
-		//DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getFeatureStore(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
-		//DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getSimpleFeatures(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
-		//statistical unit to geo
-		//DasymetricMappingOld.allocateGeoStatsFromStatisticalUnitsToGeo(POI_SHP, "ID", NUTS_SHP_LVL2, "NUTS_ID", "stats_lvl2_2015 .csv", "H:/methnet/geostat/out/1_geo_to_stats.csv", "H:/methnet/geostat/out/2_stats_lvl2_to_geo.csv");
-
+			dm.computeFinalStat();
+			dm.finalStatsSimplifiedHC.printInfo();
+			CSV.save(dm.finalStatsSimplifiedHC, "value", "H:/methnet/geostat/out/", "3_final_"+time+".csv");
+		}
 
 
 		//compute validation figures
