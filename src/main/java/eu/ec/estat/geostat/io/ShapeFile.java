@@ -46,6 +46,8 @@ public class ShapeFile {
 	private ShapefileDataStore dataStore;
 	private SimpleFeatureStore featureStore; //ShapefileFeatureStore
 
+	public SimpleFeatureStore getFeatureStore(){ return featureStore; }
+
 	/**
 	 * Open a shapefile
 	 * 

@@ -10,9 +10,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -40,6 +43,15 @@ public class DasymetricMapping {
 	 * @param statUnitOutFile
 	 */
 	public static void aggregateGeoStatsFromGeoToStatisticalUnits(String statUnitsSHPFile, String statUnitIdField, String geoSHPFile, String statUnitOutFile) {
+		ShapeFile statShp = new ShapeFile(statUnitsSHPFile).dispose();
+		ShapeFile geoShp = new ShapeFile(geoSHPFile);
+
+		FeatureIterator<SimpleFeature> itStat = statShp.getFeatures();
+		aggregateGeoStatsFromGeoToStatisticalUnits(itStat, statUnitIdField, geoShp.getFeatureStore(), statUnitOutFile);
+		itStat.close();
+	}
+
+	public static void aggregateGeoStatsFromGeoToStatisticalUnits(FeatureIterator<SimpleFeature> itStat, String statUnitIdField, SimpleFeatureStore geoFeatureStore, String statUnitOutFile) {
 		try {
 			//create out file
 			File outFile_ = new File(statUnitOutFile);
@@ -50,23 +62,20 @@ public class DasymetricMapping {
 			bw.write(statUnitIdField+",number,area,length,area_density,length_density");
 			bw.newLine();
 
-			//open statistical units and geo shapefiles
-			ShapeFile statShp = new ShapeFile(statUnitsSHPFile).dispose();
-			int nbStats = statShp.count();
-			ShapeFile geoShp = new ShapeFile(geoSHPFile);
+			//prepare
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//go through statistical units
-			FeatureIterator<SimpleFeature> itStat = statShp.getFeatures();
-			int statCounter = 1;
+			//int statCounter = 1;
 			while (itStat.hasNext()) {
 				SimpleFeature statUnit = itStat.next();
 				String statUnitId = statUnit.getAttribute(statUnitIdField).toString();
-				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
+				//System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
 
 				//get all geo features intersecting the stat unit (with spatial index)
 				Geometry StatUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
-				FeatureIterator<SimpleFeature> itGeo = geoShp.getFeatures(statUnit.getBounds(), "the_geom", ff);
+				Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
+				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
 
 				//compute stat on geo features: total area/volume, number, building size distribution
 				int nbGeo=0; double totalArea=0, totalLength=0;
@@ -96,12 +105,15 @@ public class DasymetricMapping {
 				bw.write(line);
 				bw.newLine();
 			}
-			itStat.close();
 			bw.close();
 
 		} catch (MalformedURLException e) { e.printStackTrace();
 		} catch (IOException e) { e.printStackTrace(); }
 	}
+
+
+
+
 
 
 	/**
