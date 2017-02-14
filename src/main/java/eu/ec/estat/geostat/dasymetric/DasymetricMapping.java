@@ -27,18 +27,19 @@ import eu.ec.estat.java4eurostat.base.StatsIndex;
  */
 public class DasymetricMapping {
 
+	//the initial statistical values to disaggregate
+	private StatsIndex statValuesInitial;
+
 	//the initial statistical units
 	private SimpleFeatureStore statUnitsInitialFeatureStore;
 	private String statUnitsInitialId;
 
-	//the initial statistical values
-	private StatsIndex statValuesInitial;
-
 	//the geographical features
 	private SimpleFeatureStore geoFeatureStore;
 	private String geoId;
+	//TODO handle several 
 
-	//the target statistical units
+	//the target statistical units (as new geographical level)
 	private SimpleFeatureStore statUnitsFinalFeatureStore;
 
 
@@ -73,10 +74,12 @@ public class DasymetricMapping {
 
 	//Step 1
 
+	//the output value of the first step: statistical values on the geo features, at the initial stat units level 
 	public StatsHypercube geoStatsHC;
 
 	public void computeGeoStat() {
 		try {
+			//initialise output structure
 			geoStatsHC = new StatsHypercube();
 			geoStatsHC.dimLabels.add("geo");
 			geoStatsHC.dimLabels.add("indic");
@@ -85,12 +88,13 @@ public class DasymetricMapping {
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//go through statistical units
-			//int statCounter = 1;
+			int statCounter = 1, nbStats = statUnitsInitialFeatureStore.getFeatures().size();
 			FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures()).features();
 			while (itStat.hasNext()) {
 				SimpleFeature statUnit = itStat.next();
 				String statUnitId = statUnit.getAttribute(statUnitsInitialId).toString();
-				//System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
+
+				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
 
 				//get all geo features intersecting the stat unit (with spatial index)
 				Geometry StatUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
@@ -98,32 +102,31 @@ public class DasymetricMapping {
 				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
 
 				//compute stat on geo features
-				int nbGeo=0; double totalArea=0, totalLength=0;
+				int numberGeo=0; double areaGeo=0, lengthGeo=0;
 				while (itGeo.hasNext()) {
 					try {
 						SimpleFeature geo = itGeo.next();
-						nbGeo++;
-
 						Geometry geoGeom = (Geometry) geo.getDefaultGeometryProperty().getValue();
 						if(!geoGeom.intersects(StatUnitGeom)) continue;
 
+						numberGeo++;
 						Geometry inter = geoGeom.intersection(StatUnitGeom);
-						totalArea += inter.getArea();
-						totalLength += inter.getLength();
+						areaGeo += inter.getArea();
+						lengthGeo += inter.getLength();
 					} catch (TopologyException e) {
 						System.err.println("Topology error for intersection computation");
 					}
 				}
 				itGeo.close();
 
-				if(nbGeo == 0) continue;
+				if(numberGeo == 0) continue;
 
 				//store
-				geoStatsHC.stats.add(new Stat(nbGeo, "indic", "number", "geo", statUnitId));
-				geoStatsHC.stats.add(new Stat(totalArea, "indic", "area", "geo", statUnitId));
-				geoStatsHC.stats.add(new Stat(totalLength, "indic", "length", "geo", statUnitId));
-				geoStatsHC.stats.add(new Stat(totalArea/StatUnitGeom.getArea(), "indic", "area_density", "geo", statUnitId));
-				geoStatsHC.stats.add(new Stat(totalLength/StatUnitGeom.getArea(), "indic", "length_density", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(numberGeo, "indic", "number", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(areaGeo, "indic", "area", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(lengthGeo, "indic", "length", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(areaGeo/StatUnitGeom.getArea(), "indic", "area_density", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(lengthGeo/StatUnitGeom.getArea(), "indic", "length_density", "geo", statUnitId));
 			}
 			itStat.close();
 
