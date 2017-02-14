@@ -17,6 +17,7 @@ import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 
+import eu.ec.estat.geostat.io.ShapeFile;
 import eu.ec.estat.java4eurostat.base.Selection;
 import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
@@ -38,7 +39,7 @@ public class TourismUseCase {
 		//download/update data for tourism
 		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c");
 
-		//load tourism data
+		/*/load tourism data
 		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
 				new Selection.And(
 						new Selection.DimValueEqualTo("unit","NR"), //Number
@@ -52,36 +53,15 @@ public class TourismUseCase {
 		hc.delete("unit"); hc.delete("indic_to"); hc.delete("nace_r2");
 		StatsIndex hcI = new StatsIndex(hc, "time", "geo");
 		//hc.printInfo(); //hcI.print();
-		hc = null;
-
-		//load NUTS regions
-		//ShapeFile shpFileNUTS_lvl2 = new ShapeFile(NUTS_SHP_LVL2);
-		/*FeatureIterator<SimpleFeature> it = shpFileNUTS.getFeatures(f2);
-		while (it.hasNext()) {
-			SimpleFeature f = it.next();
-			System.out.println(f.getAttribute("the_geom"));
-		}
-		it.close();*/
-
-		//load POIs
-		//ShapeFile shpFilePOI = new ShapeFile(POI_SHP);
-		/*FeatureIterator<SimpleFeature> it = shpFilePOI.getFeatures();
-		while (it.hasNext()) {
-			SimpleFeature f = it.next();
-			System.out.println(f);
-			//System.out.println(f.getAttribute("the_geom"));
-		}
-		it.close();*/
-
+		hc = null;*/
 
 
 		//dasymetric analysis
 
 		//geo to statistical unit
-		//StatisticalUnitIntersectionWithGeoLayer.aggregateGeoStatsFromGeoToStatisticalUnits(NUTS_SHP_LVL2, null, "NUTS_ID", POI_SHP, "H:/methnet/geostat/out/1_geo_to_stats.csv");
+		DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getFeatureStore(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
 		//statistical unit to geo
 		//DasymetricMapping.allocateGeoStatsFromStatisticalUnitsToGeo(POI_SHP, "ID", NUTS_SHP_LVL2, "NUTS_ID", statUnitValuesPath, "H:/methnet/geostat/out/1_geo_to_stats.csv", "H:/methnet/geostat/out/2_stats_lvl2_to_geo.csv");
-
 
 
 

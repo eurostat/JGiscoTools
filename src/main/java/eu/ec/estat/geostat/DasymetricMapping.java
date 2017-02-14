@@ -51,6 +51,12 @@ public class DasymetricMapping {
 		itStat.close();
 	}
 
+	public static void aggregateGeoStatsFromGeoToStatisticalUnits(SimpleFeatureCollection statUnitsFC, String statUnitIdField, SimpleFeatureStore geoFeatureStore, String statUnitOutFile) {
+		FeatureIterator<SimpleFeature> itStat = statUnitsFC.features();
+		aggregateGeoStatsFromGeoToStatisticalUnits(itStat, statUnitIdField, geoFeatureStore, statUnitOutFile);
+		itStat.close();
+	}
+
 	public static void aggregateGeoStatsFromGeoToStatisticalUnits(FeatureIterator<SimpleFeature> itStat, String statUnitIdField, SimpleFeatureStore geoFeatureStore, String statUnitOutFile) {
 		try {
 			//create out file
@@ -77,7 +83,7 @@ public class DasymetricMapping {
 				Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
 				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
 
-				//compute stat on geo features: total area/volume, number, building size distribution
+				//compute stat on geo features
 				int nbGeo=0; double totalArea=0, totalLength=0;
 				while (itGeo.hasNext()) {
 					try {
