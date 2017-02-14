@@ -105,7 +105,7 @@ public class DasymetricMapping {
 				if(nbGeo == 0) continue;
 
 				//store
-				//"id,number,area,length,area_density,length_density");
+				//id,number,area,length,area_density,length_density
 				String line = statUnitId+","+nbGeo+","+totalArea+","+totalLength+","+totalArea/StatUnitGeom.getArea()+","+totalLength/StatUnitGeom.getArea();
 				System.out.println(line);
 				bw.write(line);
@@ -116,6 +116,69 @@ public class DasymetricMapping {
 		} catch (MalformedURLException e) { e.printStackTrace();
 		} catch (IOException e) { e.printStackTrace(); }
 	}
+
+
+	//with data preloaded
+	public static void aggregateGeoStatsFromGeoToStatisticalUnits(SimpleFeatureCollection statUnitsFC, String statUnitIdField, SimpleFeatureCollection geoFC, String statUnitOutFile) {
+		try {
+			//create out file
+			File outFile_ = new File(statUnitOutFile);
+			if(outFile_.exists()) outFile_.delete();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile_, true));
+
+			//write header
+			bw.write(statUnitIdField+",number,area,length,area_density,length_density");
+			bw.newLine();
+
+			//go through statistical units
+			int statCounter = 1;
+			FeatureIterator<SimpleFeature> itStat = statUnitsFC.features();
+			while (itStat.hasNext()) {
+				SimpleFeature statUnit = itStat.next();
+				String statUnitId = statUnit.getAttribute(statUnitIdField).toString();
+				System.out.println(statUnitId + " " + (statCounter++) + "/" + statUnitsFC.size() + " " + (Math.round(10000*statCounter/statUnitsFC.size()))*0.01 + "%");
+
+				//get all geo features intersecting the stat unit (with spatial index)
+				Geometry StatUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
+				FeatureIterator<SimpleFeature> itGeo = geoFC.features();
+
+				//compute stat on geo features
+				int nbGeo=0; double totalArea=0, totalLength=0;
+				while (itGeo.hasNext()) {
+					try {
+						SimpleFeature geo = itGeo.next();
+						nbGeo++;
+
+						Geometry geoGeom = (Geometry) geo.getDefaultGeometryProperty().getValue();
+						if(!geoGeom.intersects(StatUnitGeom)) continue;
+
+						Geometry inter = geoGeom.intersection(StatUnitGeom);
+						totalArea += inter.getArea();
+						totalLength += inter.getLength();
+					} catch (TopologyException e) {
+						System.err.println("Topology error for intersection computation");
+					}
+				}
+				itGeo.close();
+
+				if(nbGeo == 0) continue;
+
+				//store
+				//id,number,area,length,area_density,length_density
+				String line = statUnitId+","+nbGeo+","+totalArea+","+totalLength+","+totalArea/StatUnitGeom.getArea()+","+totalLength/StatUnitGeom.getArea();
+				System.out.println(line);
+				bw.write(line);
+				bw.newLine();
+			}
+			bw.close();
+			itStat.close();
+
+		} catch (MalformedURLException e) { e.printStackTrace();
+		} catch (IOException e) { e.printStackTrace(); }
+	}
+
+
+
 
 
 

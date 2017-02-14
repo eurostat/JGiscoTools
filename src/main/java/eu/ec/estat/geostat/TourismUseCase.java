@@ -18,11 +18,6 @@ import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 
 import eu.ec.estat.geostat.io.ShapeFile;
-import eu.ec.estat.java4eurostat.base.Selection;
-import eu.ec.estat.java4eurostat.base.Stat;
-import eu.ec.estat.java4eurostat.base.StatsHypercube;
-import eu.ec.estat.java4eurostat.base.StatsIndex;
-import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
  * @author julien Gaffuri
@@ -59,7 +54,8 @@ public class TourismUseCase {
 		//dasymetric analysis
 
 		//geo to statistical unit
-		DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getFeatureStore(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
+		//DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getFeatureStore(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
+		DasymetricMapping.aggregateGeoStatsFromGeoToStatisticalUnits(new ShapeFile(NUTS_SHP_LVL2).getSimpleFeatures(), "NUTS_ID", new ShapeFile(POI_SHP).getSimpleFeatures(), "H:/methnet/geostat/out/1_geo_to_stats.csv");
 		//statistical unit to geo
 		//DasymetricMapping.allocateGeoStatsFromStatisticalUnitsToGeo(POI_SHP, "ID", NUTS_SHP_LVL2, "NUTS_ID", statUnitValuesPath, "H:/methnet/geostat/out/1_geo_to_stats.csv", "H:/methnet/geostat/out/2_stats_lvl2_to_geo.csv");
 
