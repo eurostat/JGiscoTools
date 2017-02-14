@@ -3,9 +3,6 @@
  */
 package eu.ec.estat.geostat.dasymetric;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
@@ -20,6 +17,7 @@ import org.opengis.filter.FilterFactory2;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.TopologyException;
 
+import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 
@@ -43,8 +41,14 @@ public class DasymetricMapping {
 	//the target statistical units
 	private SimpleFeatureStore statUnitsFinalFeatureStore;
 
+
 	//default constructor
-	DasymetricMapping(SimpleFeatureStore statUnitsInitialFeatureStore, String statUnitsInitialId, StatsIndex statValuesInitial, SimpleFeatureStore geoFeatureStore, String geoId, SimpleFeatureStore statUnitsFinalFeatureStore){
+	public DasymetricMapping(SimpleFeatureStore statUnitsInitialFeatureStore,
+			String statUnitsInitialId,
+			StatsIndex statValuesInitial,
+			SimpleFeatureStore geoFeatureStore,
+			String geoId,
+			SimpleFeatureStore statUnitsFinalFeatureStore){
 		this.statUnitsInitialFeatureStore = statUnitsInitialFeatureStore;
 		this.statUnitsInitialId = statUnitsInitialId;
 		this.statValuesInitial = statValuesInitial;
@@ -52,7 +56,6 @@ public class DasymetricMapping {
 		this.geoId = geoId;
 		this.statUnitsFinalFeatureStore = statUnitsFinalFeatureStore;
 	}
-
 
 
 	public void run(){
@@ -66,21 +69,24 @@ public class DasymetricMapping {
 		aggregateGeoStat();
 	}
 
-	
+
 
 	//Step 1
 
-	private StatsHypercube geoStats;
+	public StatsHypercube geoStatsHC;
 
-	private void computeGeoStat() {
+	public void computeGeoStat() {
 		try {
-			geoStats = new StatsHypercube();
+			geoStatsHC = new StatsHypercube();
+			geoStatsHC.dimLabels.add("geo");
+			geoStatsHC.dimLabels.add("indic");
 
 			//prepare
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//go through statistical units
 			//int statCounter = 1;
+			FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures()).features();
 			while (itStat.hasNext()) {
 				SimpleFeature statUnit = itStat.next();
 				String statUnitId = statUnit.getAttribute(statUnitsInitialId).toString();
@@ -113,25 +119,28 @@ public class DasymetricMapping {
 				if(nbGeo == 0) continue;
 
 				//store
-				//id,number,area,length,area_density,length_density
-				String line = statUnitId+","+nbGeo+","+totalArea+","+totalLength+","+totalArea/StatUnitGeom.getArea()+","+totalLength/StatUnitGeom.getArea();
-				System.out.println(line);
+				geoStatsHC.stats.add(new Stat(nbGeo, "indic", "number", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(totalArea, "indic", "area", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(totalLength, "indic", "length", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(totalArea/StatUnitGeom.getArea(), "indic", "area_density", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(totalLength/StatUnitGeom.getArea(), "indic", "length_density", "geo", statUnitId));
 			}
+			itStat.close();
 
 		} catch (MalformedURLException e) { e.printStackTrace();
 		} catch (IOException e) { e.printStackTrace(); }
-
-
 	}
 
 
-	
+
 	//Step 2
-	private void allocateStatGeo() {
+	public void allocateStatGeo() {
+		//TODO
 	}
 
 	//Step 3
-	private void aggregateGeoStat() {
+	public void aggregateGeoStat() {
+		//TODO
 	}
 
 }
