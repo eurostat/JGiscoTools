@@ -77,13 +77,15 @@ public class TourismUseCase {
 				"NUTS_ID"
 				);
 
-		dm.computeGeoStatInitial();
-		dm.geoStatsInitialHC.printInfo();
-		CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats.csv");
+		//dm.computeGeoStatInitial();
+		//CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats.csv");
+		dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/1_geo_to_ini_stats.csv", "value");
+		//dm.geoStatsInitialHC.printInfo();
 
-		dm.computeGeoStatFinal();
-		dm.geoStatsFinalHC.printInfo();
-		CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats.csv");
+		//dm.computeGeoStatFinal();
+		//CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats.csv");
+		dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/1_geo_to_fin_stats.csv", "value");
+		//dm.geoStatsFinalHC.printInfo();
 
 		for(int time = 2015; time>=1990; time--){
 			dm.statValuesInitial = hcI.getSubIndex(time+" ");

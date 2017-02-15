@@ -27,7 +27,7 @@ import eu.ec.estat.java4eurostat.base.StatsIndex;
  */
 public class DasymetricMapping {
 
-	//the initial statistical values to disaggregate
+	//the initial statistical values to disaggregate. Index by geo -> value
 	public StatsIndex statValuesInitial;
 
 	//the initial statistical units
@@ -194,9 +194,9 @@ public class DasymetricMapping {
 				Filter f = ff.bbox(ff.property("the_geom"), statUnitIni.getBounds());
 				FeatureIterator<SimpleFeature> itStatFin = ((SimpleFeatureCollection) statUnitsFinalFeatureStore.getFeatures(f)).features();
 
-				String indic = "number";
+				String indic = "number"; //TODO generalise
 				//get statistical value
-				double iniStatValue = statValuesInitial.getSingleValue(indic, statUnitIniId);
+				double iniStatValue = statValuesInitial.getSingleValue(statUnitIniId);
 				if(Double.isNaN(iniStatValue)) continue;
 				//get geostat value for ini
 				double iniGeoStatValue = geoStatsInitialHCI.getSingleValue(indic, statUnitIniId);
@@ -209,9 +209,11 @@ public class DasymetricMapping {
 						Geometry statUnitFinGeom = (Geometry) statUnitFin.getDefaultGeometryProperty().getValue();
 						if(!statUnitIniGeom.intersects(statUnitFinGeom)) continue;
 						Geometry inter = statUnitIniGeom.intersection(statUnitFinGeom);
-						if(inter.getArea() < 0.001) continue;
+						if(inter.getArea()/statUnitFinGeom.getArea() < 0.75) continue;
 
-						String statUnitFinId = statUnitIni.getAttribute(statUnitsFinalIdFieldName).toString();
+						String statUnitFinId = statUnitFin.getAttribute(statUnitsFinalIdFieldName).toString();
+
+						//System.out.println("   "+statUnitFinId + " " + (inter.getArea()/statUnitFinGeom.getArea()));
 
 						//compute value
 
