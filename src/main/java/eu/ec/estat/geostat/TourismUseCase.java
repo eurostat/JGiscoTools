@@ -87,6 +87,7 @@ public class TourismUseCase {
 		dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/1_geo_to_fin_stats.csv", "value");
 		//dm.geoStatsFinalHC.printInfo();
 
+		
 		StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
 		for(int time = 2017; time>=1990; time--){
 			//get stat values
@@ -109,6 +110,9 @@ public class TourismUseCase {
 		}
 		CSV.save(out, "value", "H:/methnet/geostat/out/", "3_final.csv");
 
+		//TODO decompose by nace_r2
+		//TODO aggregate at grid level
+		
 
 		//compute validation figures
 
