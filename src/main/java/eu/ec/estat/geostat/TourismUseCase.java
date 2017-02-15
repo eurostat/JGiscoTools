@@ -87,7 +87,7 @@ public class TourismUseCase {
 		dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/1_geo_to_fin_stats.csv", "value");
 		//dm.geoStatsFinalHC.printInfo();
 
-		for(int time = 2015; time>=1990; time--){
+		for(int time = 2009; time>=1990; time--){
 			dm.statValuesInitial = hcI.getSubIndex(time+" ");
 
 			dm.computeFinalStat();
