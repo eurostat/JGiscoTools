@@ -27,6 +27,7 @@ import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 import eu.ec.estat.java4eurostat.io.CSV;
+import eu.ec.estat.java4eurostat.io.EurobaseIO;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
@@ -37,19 +38,35 @@ public class TourismUseCase {
 	public static String BASE_PATH = "H:/geodata/";
 	public static String NUTS_SHP_LVL2 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl2.shp";
 	public static String NUTS_SHP_LVL3 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl3.shp";
-	public static String POI_SHP = BASE_PATH + "eur2016_12/mnpoi.shp";
+	public static String POI_SHP = BASE_PATH + "eur2016_12/mnpoi_";
+
+	//TODO decompose by nace_r2
+	//TODO show maps
+	//TODO aggregate at 5/10km grid level
+	//TODO run use case on urban audit data? Use for validation?
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
 
 		//download/update data for tourism
-		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c");
+		EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
+		EurostatTSV.load("H:/eurobase/urb_ctour.tsv").printInfo();
+
+		//runDasymetric()
+
+		System.out.println("End.");
+	}
+
+
+	public static void runDasymetric(){
+
+
 
 		//load tourism data
 		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
 				new Selection.And(
 						new Selection.DimValueEqualTo("unit","NR"), //Number
-						new Selection.DimValueEqualTo("nace_r2","I551-I553"), //Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks
+						//new Selection.DimValueEqualTo("nace_r2","I551-I553"), //Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks
 						new Selection.DimValueEqualTo("indic_to","B006"), //Nights spent, total
 						//keep only nuts 2 regions
 						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } },
@@ -57,7 +74,7 @@ public class TourismUseCase {
 						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace(" ", "")) >= 2010; } }
 						));
 		hc.delete("unit"); hc.delete("indic_to"); hc.delete("nace_r2");
-		StatsIndex hcI = new StatsIndex(hc, "time", "geo");
+		StatsIndex hcI = new StatsIndex(hc, "nace_r2", "time", "geo");
 		//hc.printInfo();
 		//hcI.print();
 		hc = null;
@@ -66,53 +83,54 @@ public class TourismUseCase {
 		//String time = "2015 ", outFile = "H:/methnet/geostat/out/stats_lvl2_"+time+".csv";
 		//statIndexToCSV(hcI.getSubIndex(time), "NUTS_ID", outFile);
 
-		//dasymetric analysis
-		DasymetricMapping dm = new DasymetricMapping(
-				new ShapeFile(NUTS_SHP_LVL2).getFeatureStore(),
-				"NUTS_ID",
-				null,
-				new ShapeFile(POI_SHP).getFeatureStore(),
-				"ID",
-				new ShapeFile(NUTS_SHP_LVL3).getFeatureStore(),
-				"NUTS_ID"
-				);
-
-		//dm.computeGeoStatInitial();
-		//CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats.csv");
-		dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/1_geo_to_ini_stats.csv", "value");
-		//dm.geoStatsInitialHC.printInfo();
-
-		//dm.computeGeoStatFinal();
-		//CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats.csv");
-		dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/1_geo_to_fin_stats.csv", "value");
-		//dm.geoStatsFinalHC.printInfo();
-
-		
+		//output structure
 		StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
-		for(int time = 2017; time>=1990; time--){
-			//get stat values
-			dm.statValuesInitial = hcI.getSubIndex(time+" ");
-			if(dm.statValuesInitial == null) continue;
 
-			//compute values
-			dm.computeFinalStat();
-			//dm.finalStatsSimplifiedHC.printInfo();
-			//CSV.save(dm.finalStatsSimplifiedHC, "value", "H:/methnet/geostat/out/", "3_final_"+time+".csv");
+		//go through nace codes
+		for(String nace : new String[]{"I551-I553","I551","I552","I553"}){
 
-			//
-			for(Stat s : dm.finalStatsSimplifiedHC.stats) {
-				s.dims.put("time", time+" ");
-				s.dims.put("unit", "NR");
-				s.dims.put("nace_r2", "I551-I553");
-				s.dims.put("indic_to", "B006");
+			//create dasymetric analysis object
+			DasymetricMapping dm = new DasymetricMapping(
+					new ShapeFile(NUTS_SHP_LVL2).getFeatureStore(),
+					"NUTS_ID",
+					null,
+					new ShapeFile(POI_SHP+nace+".shp").getFeatureStore(),
+					"ID",
+					new ShapeFile(NUTS_SHP_LVL3).getFeatureStore(),
+					"NUTS_ID"
+					);
+
+			dm.computeGeoStatInitial();
+			CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats_"+nace+".csv");
+			//dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/1_geo_to_ini_stats_"+nace+".csv", "value");
+			//dm.geoStatsInitialHC.printInfo();
+
+			dm.computeGeoStatFinal();
+			CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats_"+nace+".csv");
+			//dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/1_geo_to_fin_stats_"+nace+".csv", "value");
+			//dm.geoStatsFinalHC.printInfo();
+
+			//compute values for all years
+			for(String time : hcI.getKeys(nace)){
+				//get stat values
+				dm.statValuesInitial = hcI.getSubIndex(nace, time);
+				if(dm.statValuesInitial == null) continue;
+
+				//compute values
+				dm.computeFinalStat();
+
+				//
+				for(Stat s : dm.finalStatsSimplifiedHC.stats) {
+					s.dims.put("time", time);
+					s.dims.put("unit", "NR");
+					s.dims.put("nace_r2", nace);
+					s.dims.put("indic_to", "B006");
+				}
+				out.stats.addAll(dm.finalStatsSimplifiedHC.stats);
 			}
-			out.stats.addAll(dm.finalStatsSimplifiedHC.stats);
 		}
 		CSV.save(out, "value", "H:/methnet/geostat/out/", "3_final.csv");
 
-		//TODO decompose by nace_r2
-		//TODO aggregate at grid level
-		
 
 		//compute validation figures
 
@@ -164,8 +182,8 @@ public class TourismUseCase {
 		saveImage(map, "H:/desktop/ex.png", 800);
 		 */
 
-		System.out.println("End.");
 	}
+
 
 
 
