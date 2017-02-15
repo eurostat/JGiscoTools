@@ -87,13 +87,18 @@ public class TourismUseCase {
 		dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/1_geo_to_fin_stats.csv", "value");
 		//dm.geoStatsFinalHC.printInfo();
 
-		for(int time = 2009; time>=1990; time--){
+		StatsHypercube out = new StatsHypercube("geo", "time", "unit");
+		for(int time = 2015; time>=1990; time--){
 			dm.statValuesInitial = hcI.getSubIndex(time+" ");
 
+			//if no stat value, leave it
+			if(dm.statValuesInitial == null) continue;
+
 			dm.computeFinalStat();
-			dm.finalStatsSimplifiedHC.printInfo();
-			CSV.save(dm.finalStatsSimplifiedHC, "value", "H:/methnet/geostat/out/", "3_final_"+time+".csv");
+			//dm.finalStatsSimplifiedHC.printInfo();
+			//CSV.save(dm.finalStatsSimplifiedHC, "value", "H:/methnet/geostat/out/", "3_final_"+time+".csv");
 		}
+		CSV.save(out, "value", "H:/methnet/geostat/out/", "3_final.csv");
 
 
 		//compute validation figures
