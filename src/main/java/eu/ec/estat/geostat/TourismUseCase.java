@@ -50,7 +50,9 @@ public class TourismUseCase {
 		//download/update data for tourism
 		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
-		runDasymetric();
+		//runDasymetric();
+		//
+		produceMaps();
 
 		System.out.println("End.");
 	}
@@ -121,11 +123,17 @@ public class TourismUseCase {
 				out.stats.addAll(dm.finalStatsSimplifiedHC.stats);
 			}
 		}
-		CSV.save(out, "value", "H:/methnet/geostat/out/", "3_final.csv");
+		CSV.save(out, "value", "H:/methnet/geostat/out/", "tour_occ_nin2_nuts3.csv");
 
 
 		//compute validation figures
 
+
+	}
+
+
+	
+	private static void produceMaps() {
 		//show results on maps
 
 		/*/produce map
@@ -173,9 +181,7 @@ public class TourismUseCase {
 		//JMapFrame.showMap(map);
 		saveImage(map, "H:/desktop/ex.png", 800);
 		 */
-
 	}
-
 
 
 
