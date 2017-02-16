@@ -11,6 +11,7 @@ import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 
@@ -43,6 +44,7 @@ public class DasymetricMapping {
 	private SimpleFeatureStore statUnitsFinalFeatureStore;
 	private String statUnitsFinalIdFieldName;
 
+	private GeometryType geomType;
 
 	//default constructor
 	public DasymetricMapping(
@@ -125,19 +127,23 @@ public class DasymetricMapping {
 				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
 
 				//get all geo features intersecting the stat unit (with spatial index)
+				//System.out.println("get geom statUnitGeom");
 				Geometry statUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
-				Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
-				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
+				//Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
+				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitGeom));
+				int numberGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).size();
 
 				//compute stat on geo features
-				int numberGeo=0; double areaGeo=0, lengthGeo=0;
+				double areaGeo=0, lengthGeo=0;
+				/*
+				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
+				System.out.println("compute stats");
 				while (itGeo.hasNext()) {
 					try {
 						SimpleFeature geo = itGeo.next();
 						Geometry geoGeom = (Geometry) geo.getDefaultGeometryProperty().getValue();
-						if(!geoGeom.intersects(statUnitGeom)) continue;
+						if(!statUnitGeom.intersects(geoGeom)) continue;
 
-						numberGeo++;
 						Geometry inter = geoGeom.intersection(statUnitGeom);
 						areaGeo += inter.getArea();
 						lengthGeo += inter.getLength();
@@ -145,7 +151,7 @@ public class DasymetricMapping {
 						System.err.println("Topology error for intersection computation");
 					}
 				}
-				itGeo.close();
+				itGeo.close();*/
 
 				if(numberGeo == 0) continue;
 

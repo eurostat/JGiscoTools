@@ -27,7 +27,6 @@ import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 import eu.ec.estat.java4eurostat.io.CSV;
-import eu.ec.estat.java4eurostat.io.EurobaseIO;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
@@ -38,7 +37,7 @@ public class TourismUseCase {
 	public static String BASE_PATH = "H:/geodata/";
 	public static String NUTS_SHP_LVL2 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl2.shp";
 	public static String NUTS_SHP_LVL3 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl3.shp";
-	public static String POI_SHP = BASE_PATH + "eur2016_12/mnpoi_";
+	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
 	//TODO decompose by nace_r2
 	//TODO show maps
@@ -81,34 +80,30 @@ public class TourismUseCase {
 		//statIndexToCSV(hcI.getSubIndex(time), "NUTS_ID", outFile);
 
 		//output structure
-		//StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
+		StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
 
 		//go through nace codes
-		for(String nace : new String[]{/*"I551-I553",*/"I551","I552","I553"}){
+		for(String nace : new String[]{"I551-I553","I551","I552","I553"}){
 
 			//create dasymetric analysis object
 			DasymetricMapping dm = new DasymetricMapping(
 					new ShapeFile(NUTS_SHP_LVL2).getFeatureStore(),
 					"NUTS_ID",
 					null,
-					new ShapeFile(POI_SHP+nace+".shp").getFeatureStore(),
+					new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
 					"ID",
 					new ShapeFile(NUTS_SHP_LVL3).getFeatureStore(),
 					"NUTS_ID"
 					);
 
-			dm.computeGeoStatInitial();
-			CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats_"+nace+".csv");
-			//dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/1_geo_to_ini_stats_"+nace+".csv", "value");
-			//dm.geoStatsInitialHC.printInfo();
+			dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats_"+nace+".csv");
+			//dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_2___"+nace+".csv", "value");
 
-			dm.computeGeoStatFinal();
-			CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats_"+nace+".csv");
-			//dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/1_geo_to_fin_stats_"+nace+".csv", "value");
-			//dm.geoStatsFinalHC.printInfo();
+			dm.computeGeoStatFinal();   CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats_"+nace+".csv");
+			//dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_3___"+nace+".csv", "value");
 
 			//compute values for all years
-			/*for(String time : hcI.getKeys(nace)){
+			for(String time : hcI.getKeys(nace)){
 				//get stat values
 				dm.statValuesInitial = hcI.getSubIndex(nace, time);
 				if(dm.statValuesInitial == null) continue;
@@ -124,9 +119,9 @@ public class TourismUseCase {
 					s.dims.put("indic_to", "B006");
 				}
 				out.stats.addAll(dm.finalStatsSimplifiedHC.stats);
-			}*/
+			}
 		}
-		//CSV.save(out, "value", "H:/methnet/geostat/out/", "3_final.csv");
+		CSV.save(out, "value", "H:/methnet/geostat/out/", "3_final.csv");
 
 
 		//compute validation figures
