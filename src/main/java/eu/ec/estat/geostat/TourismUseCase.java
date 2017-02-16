@@ -49,18 +49,15 @@ public class TourismUseCase {
 		System.out.println("Start.");
 
 		//download/update data for tourism
-		EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
-		EurostatTSV.load("H:/eurobase/urb_ctour.tsv").printInfo();
+		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
-		//runDasymetric()
+		runDasymetric();
 
 		System.out.println("End.");
 	}
 
 
 	public static void runDasymetric(){
-
-
 
 		//load tourism data
 		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
@@ -73,7 +70,7 @@ public class TourismUseCase {
 						//keep only years after 2010
 						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace(" ", "")) >= 2010; } }
 						));
-		hc.delete("unit"); hc.delete("indic_to"); hc.delete("nace_r2");
+		hc.delete("unit"); hc.delete("indic_to");
 		StatsIndex hcI = new StatsIndex(hc, "nace_r2", "time", "geo");
 		//hc.printInfo();
 		//hcI.print();
@@ -84,10 +81,10 @@ public class TourismUseCase {
 		//statIndexToCSV(hcI.getSubIndex(time), "NUTS_ID", outFile);
 
 		//output structure
-		StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
+		//StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
 
 		//go through nace codes
-		for(String nace : new String[]{"I551-I553","I551","I552","I553"}){
+		for(String nace : new String[]{/*"I551-I553",*/"I551","I552","I553"}){
 
 			//create dasymetric analysis object
 			DasymetricMapping dm = new DasymetricMapping(
@@ -111,7 +108,7 @@ public class TourismUseCase {
 			//dm.geoStatsFinalHC.printInfo();
 
 			//compute values for all years
-			for(String time : hcI.getKeys(nace)){
+			/*for(String time : hcI.getKeys(nace)){
 				//get stat values
 				dm.statValuesInitial = hcI.getSubIndex(nace, time);
 				if(dm.statValuesInitial == null) continue;
@@ -127,9 +124,9 @@ public class TourismUseCase {
 					s.dims.put("indic_to", "B006");
 				}
 				out.stats.addAll(dm.finalStatsSimplifiedHC.stats);
-			}
+			}*/
 		}
-		CSV.save(out, "value", "H:/methnet/geostat/out/", "3_final.csv");
+		//CSV.save(out, "value", "H:/methnet/geostat/out/", "3_final.csv");
 
 
 		//compute validation figures
