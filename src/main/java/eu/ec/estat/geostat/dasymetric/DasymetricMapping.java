@@ -11,7 +11,6 @@ import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 
@@ -38,13 +37,11 @@ public class DasymetricMapping {
 	//the geographical features
 	private SimpleFeatureStore geoFeatureStore;
 	private String geoIdFieldName;
-	//TODO handle several geometry types
+	//private String geoGeomType; TODO
 
 	//the target statistical units (as new geographical level)
 	private SimpleFeatureStore statUnitsFinalFeatureStore;
 	private String statUnitsFinalIdFieldName;
-
-	private GeometryType geomType;
 
 	//default constructor
 	public DasymetricMapping(
@@ -66,6 +63,8 @@ public class DasymetricMapping {
 	}
 
 
+	//this should apply only if:
+	// - The geo geometrytype is
 	public void runSimplified(){
 		//Step 1: compute statistics on geo features at initial stat unit level
 		computeGeoStatInitial();
@@ -127,7 +126,6 @@ public class DasymetricMapping {
 				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
 
 				//get all geo features intersecting the stat unit (with spatial index)
-				//System.out.println("get geom statUnitGeom");
 				Geometry statUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
 				//Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
 				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitGeom));
