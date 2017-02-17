@@ -41,6 +41,7 @@ public class TourismUseCase {
 	public static String NUTS_SHP_LVL3 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl3.shp";
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
+
 	//TODO validation with other figures
 	//better analyse validation results: show on map !
 	//analyse maximum errors
