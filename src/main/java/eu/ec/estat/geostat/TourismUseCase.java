@@ -39,9 +39,9 @@ public class TourismUseCase {
 	public static String NUTS_SHP_LVL3 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl3.shp";
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
-	//TODO show maps
 	//TODO validation with other figures
-	//TODO aggregate at 5/10km grid level
+	//TODO show maps
+	//TODO aggregate at 10km grid level
 	//TODO run use case on urban audit data? Use for validation?
 
 	public static void main(String[] args) throws Exception {
@@ -51,8 +51,8 @@ public class TourismUseCase {
 		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
 		//runDasymetric();
-		//
-		produceMaps();
+		computeValidation();
+		//produceMaps();
 
 		System.out.println("End.");
 	}
@@ -125,14 +125,39 @@ public class TourismUseCase {
 		}
 		CSV.save(out, "value", "H:/methnet/geostat/out/", "tour_occ_nin2_nuts3.csv");
 
+	}
 
-		//compute validation figures
 
+	private static void computeValidation() {
+
+		//load data
+		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553");
+		hc.delete("unit"); hc.delete("indic_to"); hc.delete("nace_r2");
+		StatsIndex hcI = new StatsIndex(hc, "geo", "time");
+		hc = null;
+
+		//load validation data
+		StatsIndex hcIval = new StatsIndex(EurostatTSV.load("H:/methnet/geostat/validation/validation_data.tsv"), "geo", "time");
+
+		//time
+		//[2010 , 2011 , 2012 , 2013 , 2014 , 2015 ]
+		//[2009, 2008, 2007, 2006, 2005, 2013, 2012, 2011, 2010]
+		// -> [2010 , 2011 , 2012 , 2013 ]
+
+
+		for(String geo : hcI.getKeys()){
+			if(hcIval.getKeys(geo) == null) continue;
+			for(String time : hcI.getKeys(geo)){
+				double valVal = hcIval.getSingleValue(geo, time.replace(" ", ""));
+				if(Double.isNaN(valVal)) continue;
+				double val = hcI.getSingleValue(geo, time);
+				System.out.println(geo+" "+time+ (100*(val-valVal)/valVal) );
+			}
+		}
 
 	}
 
 
-	
 	private static void produceMaps() {
 		//show results on maps
 
@@ -207,7 +232,7 @@ public class TourismUseCase {
 	}
 
 
-	//TODO: move to java4eurostat
+	//TODO: move that to java4eurostat
 	public static void statIndexToCSV(StatsIndex hcI, String idName, String outFile) {
 		try {
 			File outFile_ = new File(outFile);
