@@ -12,6 +12,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -28,6 +29,7 @@ import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 import eu.ec.estat.java4eurostat.io.CSV;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
+import eu.ec.estat.java4eurostat.util.StatsUtil;
 
 /**
  * @author julien Gaffuri
@@ -40,9 +42,14 @@ public class TourismUseCase {
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
 	//TODO validation with other figures
+	//better analyse validation results: show on map !
+	//analyse maximum errors
 	//TODO show maps
+
 	//TODO aggregate at 10km grid level
+
 	//TODO run use case on urban audit data? Use for validation?
+	//TODO focus on FR.
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
@@ -51,7 +58,8 @@ public class TourismUseCase {
 		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
 		//runDasymetric();
-		computeValidation();
+		//computeValidationData();
+		//analyseValidationData();
 		//produceMaps();
 
 		System.out.println("End.");
@@ -104,6 +112,8 @@ public class TourismUseCase {
 			//dm.computeGeoStatFinal();   CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats_"+nace+".csv");
 			dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_3___"+nace+".csv", "value");
 
+
+
 			//compute values for all years
 			for(String time : hcI.getKeys(nace)){
 				//get stat values
@@ -128,7 +138,7 @@ public class TourismUseCase {
 	}
 
 
-	private static void computeValidation() {
+	private static void computeValidationData() {
 
 		//load data
 		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553");
@@ -145,16 +155,53 @@ public class TourismUseCase {
 		// -> [2010 , 2011 , 2012 , 2013 ]
 
 
+		StatsHypercube diffHC = new StatsHypercube("geo","time");
+		StatsHypercube diffPercHC = new StatsHypercube("geo","time");
 		for(String geo : hcI.getKeys()){
 			if(hcIval.getKeys(geo) == null) continue;
 			for(String time : hcI.getKeys(geo)){
+
+				//retrieve both values to compare
 				double valVal = hcIval.getSingleValue(geo, time.replace(" ", ""));
-				if(Double.isNaN(valVal)) continue;
+				if(Double.isNaN(valVal) || valVal == 0) continue;
 				double val = hcI.getSingleValue(geo, time);
-				System.out.println(geo+" "+time+ (100*(val-valVal)/valVal) );
+				if(Double.isNaN(val) || val == 0) continue;
+
+				//store comparison figures
+				diffHC.stats.add(new Stat(Math.abs(val-valVal), "geo", geo, "time", time));
+				diffPercHC.stats.add(new Stat(100*Math.abs(val-valVal)/valVal, "geo", geo, "time", time));
 			}
 		}
 
+		CSV.save(diffHC, "diff", "H:/methnet/geostat/validation/", "validation_result_diff.csv");
+		CSV.save(diffPercHC, "diffPerc", "H:/methnet/geostat/validation/", "validation_result_diff_perc.csv");
+	}
+
+	private static void analyseValidationData() {
+
+		//load data
+		StatsHypercube diffHC = CSV.load("H:/methnet/geostat/validation/validation_result_diff.csv", "diff");
+		StatsHypercube diffPercHC = CSV.load("H:/methnet/geostat/validation/validation_result_diff_perc.csv", "diffPerc");
+
+		System.out.println();
+		printAnalysis(diffHC);
+		System.out.println();
+		printAnalysis(diffPercHC);
+		System.out.println();
+
+	}
+
+
+
+	//TODO move to java4eurostat
+	public static void printAnalysis(StatsHypercube hc){
+		ArrayList<Double> vals = new ArrayList<Double>();
+		for(Stat s : hc.stats){
+			if(Double.isNaN(s.value)) continue;
+			vals.add(s.value);
+		}
+		double[] vals_ = new double[vals.size()]; for(int i=0; i<vals.size(); i++) vals_[i]=vals.get(i);
+		StatsUtil.printStats(vals_);
 	}
 
 
