@@ -39,9 +39,10 @@ public class TourismUseCase {
 
 
 	//TODO validation with other figures
-	//better analyse validation results: show on map !
+	//check values of the validation are the right ones. camping, etc included? Check on maximum values.
 	//analyse maximum errors
-	//TODO show maps
+	//better analyse validation results: show on map !
+	//TODO show maps - make generic library
 
 	//TODO aggregate at 10km grid level
 
