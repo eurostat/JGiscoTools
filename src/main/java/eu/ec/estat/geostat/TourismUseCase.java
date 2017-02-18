@@ -8,11 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -23,13 +19,13 @@ import org.geotools.renderer.lite.StreamingRenderer;
 
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
 import eu.ec.estat.geostat.io.ShapeFile;
+import eu.ec.estat.java4eurostat.analysis.Validation;
 import eu.ec.estat.java4eurostat.base.Selection;
 import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 import eu.ec.estat.java4eurostat.io.CSV;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
-import eu.ec.estat.java4eurostat.util.StatsUtil;
 
 /**
  * @author julien Gaffuri
@@ -185,25 +181,14 @@ public class TourismUseCase {
 		StatsHypercube diffPercHC = CSV.load("H:/methnet/geostat/validation/validation_result_diff_perc.csv", "diffPerc");
 
 		System.out.println();
-		printAnalysis(diffHC);
+		Validation.printBasicStatistics(diffHC);
 		System.out.println();
-		printAnalysis(diffPercHC);
+		Validation.printBasicStatistics(diffPercHC);
 		System.out.println();
 
 	}
 
 
-
-	//TODO move to java4eurostat
-	public static void printAnalysis(StatsHypercube hc){
-		ArrayList<Double> vals = new ArrayList<Double>();
-		for(Stat s : hc.stats){
-			if(Double.isNaN(s.value)) continue;
-			vals.add(s.value);
-		}
-		double[] vals_ = new double[vals.size()]; for(int i=0; i<vals.size(); i++) vals_[i]=vals.get(i);
-		StatsUtil.printStats(vals_);
-	}
 
 
 	private static void produceMaps() {
@@ -277,24 +262,6 @@ public class TourismUseCase {
 
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
-	}
-
-
-	//TODO: move that to java4eurostat
-	public static void statIndexToCSV(StatsIndex hcI, String idName, String outFile) {
-		try {
-			File outFile_ = new File(outFile);
-			if(outFile_.exists()) outFile_.delete();
-			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile_, true));
-			//write header
-			bw.write(idName+",value"); bw.newLine();
-			//write file
-			for(String geo : hcI.getKeys()){
-				bw.write(geo+","+hcI.getSingleValue(geo));
-				bw.newLine();
-			}
-			bw.close();
-		} catch (IOException e) { e.printStackTrace(); }
 	}
 
 }
