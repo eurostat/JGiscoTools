@@ -42,6 +42,7 @@ public class TourismUseCase {
 	//check values of the validation are the right ones. camping, etc included? Check on maximum values.
 	//analyse maximum errors
 	//better analyse validation results: show on map !
+	//check consistency of validation data: compute aggregation of NUTS3 values to NUTS2
 	//TODO show maps - make generic library
 
 	//TODO aggregate at 10km grid level
