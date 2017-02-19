@@ -38,9 +38,9 @@ public class TourismUseCase {
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
 
-	//TODO validation with other figures
+	//TODO validation with E4 figures
 	//check values of the validation are the right ones. camping, etc included? Check on maximum values.
-	//analyse maximum errors
+	//futher analyse maximum errors
 	//better analyse validation results: show on map !
 	//check consistency of validation data: compute aggregation of NUTS3 values to NUTS2
 	//TODO show maps - make generic library
