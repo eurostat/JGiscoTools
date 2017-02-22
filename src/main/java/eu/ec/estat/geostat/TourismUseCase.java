@@ -142,23 +142,20 @@ public class TourismUseCase {
 	}
 
 	
+	//compute difference of two datasets. It is assumed both have the same structure
+	//TODO move to java4eurostat
 	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsHypercube hc2){
-		return computeDifference( hc1, new StatsIndex(hc2, hc2.dimLabels.toArray(new String[hc2.dimLabels.size()])) );
-	}
-	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsIndex hcI2){
-		StatsHypercube out = new StatsHypercube( hc1.dimLabels.toArray(new String[hc1.dimLabels.size()]) );
+		StatsHypercube out = new StatsHypercube( hc1.getDimLabels() );
+		StatsIndex hcI2 = new StatsIndex(hc2, );
 		for(Stat s : hc1.stats){
 			//retrieve both values to compare
-			s.dims
-			double valVal = hcI2.getSingleValue(geo, time.replace(" ", ""));
+			double val = s.value;
+			double valVal = hcI2.getSingleValue(s.getDims());
 			if(Double.isNaN(valVal) || valVal == 0) continue;
-			double val = hcI1.getSingleValue(geo, time);
-			if(Double.isNaN(val) || val == 0) continue;
 
 			//store comparison figures
 			out.stats.add(new Stat(Math.abs(val-valVal), "geo", geo, "time", time));
 			//diffPercHC.stats.add(new Stat(100*Math.abs(val-valVal)/valVal, "geo", geo, "time", time));
-			
 		}
 		return out;
 	}
