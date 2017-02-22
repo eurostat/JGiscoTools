@@ -16,3 +16,6 @@ EuroGeoStat library incudes:
 (TODO document dasymetric)
 (TODO document intersection matrix)
 
+## Support and contribution
+
+Feel free to [ask support](https://github.com/jgaffuri/EuroGeoStat/issues/new), fork the project or simply star it (it's always a pleasure).
