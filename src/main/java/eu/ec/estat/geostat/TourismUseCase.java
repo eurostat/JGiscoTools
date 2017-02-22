@@ -49,6 +49,7 @@ public class TourismUseCase {
 
 	//TODO run use case on urban audit data? Use for validation?
 	//TODO focus on FR.
+	//TODO enrich/extract NUTSUtils library
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
