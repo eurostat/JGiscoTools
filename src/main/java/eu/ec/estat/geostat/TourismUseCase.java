@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -62,8 +63,11 @@ public class TourismUseCase {
 		//analyseValidationData();
 		//produceMaps();
 
+		//computeE4ValidationDataAggregatesNUTS2();
+
 		System.out.println("End.");
 	}
+
 
 
 	public static void runDasymetric(){
@@ -137,6 +141,27 @@ public class TourismUseCase {
 
 	}
 
+	
+	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsHypercube hc2){
+		return computeDifference( hc1, new StatsIndex(hc2, hc2.dimLabels.toArray(new String[hc2.dimLabels.size()])) );
+	}
+	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsIndex hcI2){
+		StatsHypercube out = new StatsHypercube( hc1.dimLabels.toArray(new String[hc1.dimLabels.size()]) );
+		for(Stat s : hc1.stats){
+			//retrieve both values to compare
+			s.dims
+			double valVal = hcI2.getSingleValue(geo, time.replace(" ", ""));
+			if(Double.isNaN(valVal) || valVal == 0) continue;
+			double val = hcI1.getSingleValue(geo, time);
+			if(Double.isNaN(val) || val == 0) continue;
+
+			//store comparison figures
+			out.stats.add(new Stat(Math.abs(val-valVal), "geo", geo, "time", time));
+			//diffPercHC.stats.add(new Stat(100*Math.abs(val-valVal)/valVal, "geo", geo, "time", time));
+			
+		}
+		return out;
+	}
 
 	private static void computeValidationData() {
 
@@ -155,6 +180,8 @@ public class TourismUseCase {
 		// -> [2010 , 2011 , 2012 , 2013 ]
 
 
+		//compute difference
+		//TODO extract generic
 		StatsHypercube diffHC = new StatsHypercube("geo","time");
 		StatsHypercube diffPercHC = new StatsHypercube("geo","time");
 		for(String geo : hcI.getKeys()){
@@ -191,6 +218,37 @@ public class TourismUseCase {
 
 	}
 
+
+	private static void computeE4ValidationDataAggregatesNUTS2() {
+
+		//load validation data
+		StatsHypercube hcVal = EurostatTSV.load("H:/methnet/geostat/validation/validation_data.tsv");
+		//hcVal.printInfo();
+
+		//TODO extract generic nuts aggregate computation
+		//compute aggregates
+		HashMap<String,Stat> data = new HashMap<String,Stat>();
+		for(Stat s : hcVal.stats){
+			String geo = s.dims.get("geo").substring(0, 4);
+			String time = s.dims.get("time");
+			String key = geo+"_"+time;
+			Stat s_ = data.get(key);
+			if(s_ == null){
+				s_ = new Stat(s.value,"geo",geo,"time",time);
+				data.put(key, s_);
+			} else {
+				s_.value += s.value;
+			}
+		}
+
+		//transform into hc structure
+		StatsHypercube hcNuts2 = new StatsHypercube("geo", "time");
+		hcNuts2.stats.addAll(data.values());
+		//hcNuts2.printInfo();
+
+		//save
+		CSV.save(hcNuts2, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg.csv");
+	}
 
 
 
