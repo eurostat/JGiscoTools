@@ -15,7 +15,6 @@ import eu.ec.estat.java4eurostat.util.Util;
  *
  */
 public class GeoUtils {
-	//TODO move to java4inspire ?
 	//http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing?sort=1&file=dic%2Fen%2Fgeo.dic
 
 
@@ -72,5 +71,5 @@ public class GeoUtils {
 		if(countryCodes3 == null){ loadCountryCodeDicts(); countryCodes3 = countryCode3to2.keySet(); }
 		return countryCodes3;
 	}
-	
+
 }
