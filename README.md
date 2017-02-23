@@ -2,8 +2,8 @@
 
 [EuroGeoStat](https://github.com/jgaffuri/EuroGeoStat) is a software library for the manipulation of geographical and statistical data, with a focus on European data produced by [Eurostat](http://ec.europa.eu/eurostat).
 
-EuroGeoStat library incudes:
-- Generic functions for NUTS regions.
+EuroGeoStat library currently incudes:
+- Generic functions for NUTS regions and NUTS codes manipulations.
 - Some experiments on the combined use of geographical and statistical data such as dasymetric mapping.
 - (TODO describe)
 
