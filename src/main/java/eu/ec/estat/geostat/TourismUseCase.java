@@ -141,38 +141,8 @@ public class TourismUseCase {
 
 	}
 
-
-	//compute difference of two datasets. It is assumed both have the same structure
-	//TODO test and move to java4eurostat
-	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsHypercube hc2){ return computeDifference(hc1, hc2, false, false); }
-	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsHypercube hc2, boolean abs, boolean ratio){
-		String[] dimLabels = hc1.getDimLabels();
-		StatsHypercube out = new StatsHypercube(dimLabels);
-		StatsIndex hcI2 = new StatsIndex(hc2, dimLabels);
-		for(Stat s : hc1.stats){
-			//get stat value
-			double val = s.value;
-			if(Double.isNaN(val)) continue;
-
-			//retrieve value to compare with
-			String[] dimValues = new String[dimLabels.length];
-			for(int i=0; i<dimLabels.length; i++) dimValues[i] = s.dims.get(dimLabels[i]);
-			double valVal = hcI2.getSingleValue(dimValues);
-			if(Double.isNaN(valVal)) continue;
-
-			//compute comparison figure
-			double compVal = valVal - val;
-			if(ratio) compVal*=100/val;
-			if(abs) compVal=Math.abs(compVal);
-
-			//store comparison figures
-			Stat sc = new Stat(compVal);
-			for(int i=0; i<dimLabels.length; i++) sc.dims.put(dimLabels[i], s.dims.get(dimLabels[i]));
-			out.stats.add(sc);
-		}
-		return out;
-	}
-
+	
+	//TODO test and use Validation.computeDifference
 
 	private static void computeValidationData() {
 
