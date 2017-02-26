@@ -141,21 +141,34 @@ public class TourismUseCase {
 
 	}
 
-	
+
 	//compute difference of two datasets. It is assumed both have the same structure
 	//TODO move to java4eurostat
-	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsHypercube hc2){
-		StatsHypercube out = new StatsHypercube( hc1.getDimLabels() );
-		StatsIndex hcI2 = new StatsIndex(hc2, );
+	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsHypercube hc2, boolean abs, boolean ratio){
+		String[] dimLabels = hc1.getDimLabels();
+		StatsHypercube out = new StatsHypercube(dimLabels);
+		StatsIndex hcI2 = new StatsIndex(hc2, dimLabels);
 		for(Stat s : hc1.stats){
-			//retrieve both values to compare
+			//get stat value
 			double val = s.value;
-			double valVal = hcI2.getSingleValue(s.getDims());
+			if(Double.isNaN(val) || val == 0) continue;
+
+			//retrieve value to compare with
+			String[] dimValues = new String[dimLabels.length];
+			for(int i=0; i<dimLabels.length; i++) dimValues[i]=s.dims.get(dimLabels[i]);
+			double valVal = hcI2.getSingleValue(dimValues);
 			if(Double.isNaN(valVal) || valVal == 0) continue;
 
+			//compute comparison figure
+			double comp = valVal-val;
+			if(ratio) comp*=100/val;
+			if(abs) comp=Math.abs(comp);
+
 			//store comparison figures
-			out.stats.add(new Stat(Math.abs(val-valVal), "geo", geo, "time", time));
-			//diffPercHC.stats.add(new Stat(100*Math.abs(val-valVal)/valVal, "geo", geo, "time", time));
+			Stat sc = new Stat(comp);
+			for(int i=0; i<dimLabels.length; i++) sc.dims.put(dimLabels[i], s.dims.get(dimLabels[i]));
+
+			out.stats.add(sc);
 		}
 		return out;
 	}
