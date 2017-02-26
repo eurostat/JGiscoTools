@@ -152,23 +152,22 @@ public class TourismUseCase {
 		for(Stat s : hc1.stats){
 			//get stat value
 			double val = s.value;
-			if(Double.isNaN(val) || val == 0) continue;
+			if(Double.isNaN(val)) continue;
 
 			//retrieve value to compare with
 			String[] dimValues = new String[dimLabels.length];
-			for(int i=0; i<dimLabels.length; i++) dimValues[i]=s.dims.get(dimLabels[i]);
+			for(int i=0; i<dimLabels.length; i++) dimValues[i] = s.dims.get(dimLabels[i]);
 			double valVal = hcI2.getSingleValue(dimValues);
-			if(Double.isNaN(valVal) || valVal == 0) continue;
+			if(Double.isNaN(valVal)) continue;
 
 			//compute comparison figure
-			double comp = valVal-val;
-			if(ratio) comp*=100/val;
-			if(abs) comp=Math.abs(comp);
+			double compVal = valVal - val;
+			if(ratio) compVal*=100/val;
+			if(abs) compVal=Math.abs(compVal);
 
 			//store comparison figures
-			Stat sc = new Stat(comp);
+			Stat sc = new Stat(compVal);
 			for(int i=0; i<dimLabels.length; i++) sc.dims.put(dimLabels[i], s.dims.get(dimLabels[i]));
-
 			out.stats.add(sc);
 		}
 		return out;
