@@ -143,7 +143,8 @@ public class TourismUseCase {
 
 
 	//compute difference of two datasets. It is assumed both have the same structure
-	//TODO move to java4eurostat
+	//TODO test and move to java4eurostat
+	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsHypercube hc2){ return computeDifference(hc1, hc2, false, false); }
 	public static StatsHypercube computeDifference(StatsHypercube hc1, StatsHypercube hc2, boolean abs, boolean ratio){
 		String[] dimLabels = hc1.getDimLabels();
 		StatsHypercube out = new StatsHypercube(dimLabels);
@@ -172,6 +173,7 @@ public class TourismUseCase {
 		}
 		return out;
 	}
+
 
 	private static void computeValidationData() {
 
