@@ -63,7 +63,8 @@ public class TourismUseCase {
 		//analyseValidationData();
 		//produceMaps();
 
-		//computeE4ValidationDataAggregatesNUTS2();
+		//E4 data validation
+		checkE4ValidationDataAggregatesNUTS2();
 
 		System.out.println("End.");
 	}
@@ -141,8 +142,6 @@ public class TourismUseCase {
 
 	}
 
-	
-	//TODO test and use Validation.computeDifference
 
 	private static void computeValidationData() {
 
@@ -200,7 +199,7 @@ public class TourismUseCase {
 	}
 
 
-	private static void computeE4ValidationDataAggregatesNUTS2() {
+	private static void checkE4ValidationDataAggregatesNUTS2() {
 
 		//load validation data
 		StatsHypercube hcVal = EurostatTSV.load("H:/methnet/geostat/validation/validation_data.tsv");
@@ -215,7 +214,7 @@ public class TourismUseCase {
 			String key = geo+"_"+time;
 			Stat s_ = data.get(key);
 			if(s_ == null){
-				s_ = new Stat(s.value,"geo",geo,"time",time);
+				s_ = new Stat(s.value,"geo",geo,"time",time+" ");
 				data.put(key, s_);
 			} else {
 				s_.value += s.value;
@@ -227,11 +226,40 @@ public class TourismUseCase {
 		hcNuts2.stats.addAll(data.values());
 		//hcNuts2.printInfo();
 
+		hcVal = null;
+		data = null;
+
 		//save
-		CSV.save(hcNuts2, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg.csv");
+		//CSV.save(hcNuts2, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg.csv");
+
+		//load eurobase data
+		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
+				new Selection.And(
+						new Selection.DimValueEqualTo("unit","NR"), //Number
+						//new Selection.DimValueEqualTo("nace_r2","I551-I553"), //Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks
+						//new Selection.DimValueEqualTo("indic_to","B006"), //Nights spent, total
+						//keep only nuts 2 regions
+						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } }
+						));
+		hc.delete("unit");
+
+		//show all possibilities
+		for(String nace : hc.getDimValues("nace_r2")){
+			//for(String indic : hc.getDimValues("indic_to")){
+			String indic = "B006";
+			System.out.println( nace + "   " + indic );
+
+			StatsHypercube hc_;
+			hc_ = hc.selectDimValueEqualTo("nace_r2", nace);
+			hc_ = hc_.selectDimValueEqualTo("indic_to", indic);
+
+			StatsHypercube diff = Validation.computeDifference(hcNuts2, hc_, true, false);
+			Validation.printBasicStatistics(diff);
+			System.out.println();
+			//}
+		}
+
 	}
-
-
 
 	private static void produceMaps() {
 		//show results on maps
