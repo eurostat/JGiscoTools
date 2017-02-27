@@ -243,9 +243,12 @@ public class TourismUseCase {
 						));
 		hc.delete("unit");
 
+		//out structure
+		StatsHypercube out = new StatsHypercube(hc.getDimLabels());
+
 		//show all possibilities
 		//for(String nace : hc.getDimValues("nace_r2")){
-			//for(String indic : hc.getDimValues("indic_to"))
+		//for(String indic : hc.getDimValues("indic_to"))
 		{
 			String indic = "B006";
 			String nace = "I551-I553";
@@ -274,6 +277,8 @@ public class TourismUseCase {
 			CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
 		}
 		//}
+		
+		
 
 	}
 
