@@ -244,8 +244,23 @@ public class TourismUseCase {
 		hc.delete("unit");
 
 		//show all possibilities
-		for(String nace : hc.getDimValues("nace_r2")){
-			//for(String indic : hc.getDimValues("indic_to")){
+		//for(String nace : hc.getDimValues("nace_r2")){
+			//for(String indic : hc.getDimValues("indic_to"))
+		{
+			String indic = "B006";
+			String nace = "I551-I553";
+			System.out.println( nace + "   " + indic );
+
+			StatsHypercube hc_;
+			hc_ = hc.selectDimValueEqualTo("nace_r2", nace);
+			hc_ = hc_.selectDimValueEqualTo("indic_to", indic);
+
+			StatsHypercube diff = Validation.computeDifference(hcNuts2, hc_, false, true);
+			//Validation.printBasicStatistics(diff);
+			System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
+			CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
+		}{
+			String nace = "I551";
 			String indic = "B006";
 			System.out.println( nace + "   " + indic );
 
@@ -253,11 +268,12 @@ public class TourismUseCase {
 			hc_ = hc.selectDimValueEqualTo("nace_r2", nace);
 			hc_ = hc_.selectDimValueEqualTo("indic_to", indic);
 
-			StatsHypercube diff = Validation.computeDifference(hcNuts2, hc_, true, false);
-			Validation.printBasicStatistics(diff);
-			System.out.println();
-			//}
+			StatsHypercube diff = Validation.computeDifference(hcNuts2, hc_, false, true);
+			//Validation.printBasicStatistics(diff);
+			System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
+			CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
 		}
+		//}
 
 	}
 
