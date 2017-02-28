@@ -260,8 +260,8 @@ public class TourismUseCase {
 
 			StatsHypercube diff = Validation.computeDifference(hcNuts2, hc_, false, true);
 			//Validation.printBasicStatistics(diff);
-			System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
-			CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
+			//System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
+			//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
 		}{
 			String nace = "I551";
 			String indic = "B006";
@@ -273,8 +273,8 @@ public class TourismUseCase {
 
 			StatsHypercube diff = Validation.computeDifference(hcNuts2, hc_, false, true);
 			//Validation.printBasicStatistics(diff);
-			System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
-			CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
+			//System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
+			//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
 		}
 		//}
 		
