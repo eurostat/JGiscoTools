@@ -26,12 +26,12 @@ SI01,,Boundary shift,
 SI02,,Boundary shift,
 ,SI04,New region,recalculation by NSI
 UKI1,,Split,
-UKI1 (part),UKI3,New region,"UKI3 + UKI4 = UKI1, recalculation by NSI"
-UKI1 (part),UKI4,New region,"UKI3 + UKI4 = UKI1, recalculation by NSI"
+UKI1 (part),UKI3,New region,UKI3 + UKI4 = UKI1; recalculation by NSI
+UKI1 (part),UKI4,New region,UKI3 + UKI4 = UKI1; recalculation by NSI
 UKI2,,Split,
-UKI2 (part),UKI5,New region,"UKI5 + UKI6 + UKI7 = UKI2, recalculation by NSI"
-UKI2 (part),UKI6,New region,"UKI5 + UKI6 + UKI7 = UKI2, recalculation by NSI"
-UKI2 (part),UKI7,New region,"UKI5 + UKI6 + UKI7 = UKI2, recalculation by NSI"
+UKI2 (part),UKI5,New region,UKI5 + UKI6 + UKI7 = UKI2; recalculation by NSI
+UKI2 (part),UKI6,New region,UKI5 + UKI6 + UKI7 = UKI2; recalculation by NSI
+UKI2 (part),UKI7,New region,UKI5 + UKI6 + UKI7 = UKI2; recalculation by NSI
 CZ063,CZ063,Name change,n.a.
 DE801,,Merged,
 DE808,,Split,
@@ -60,7 +60,7 @@ EL111,EL511,Code change,EL511 = EL111
 EL112,EL512,Code change,EL512 = EL112
 EL113,EL513,Code change,EL513 = EL113
 EL114,EL514,Code change,EL514 = EL114
-EL115,EL515,"Code, name change",EL515 = EL115
+EL115,EL515,Code; name change,EL515 = EL115
 EL121,EL521,Code change,EL521 = EL121
 EL122,EL522,Code change,EL522 = EL122
 EL123,EL523,Code change,EL523 = EL123
@@ -85,7 +85,7 @@ EL142,EL612,Code change,EL612 = EL142
 EL143,EL613,Code change,EL613 = EL143
 EL221,EL621,Code change,EL621 = EL221
 EL222,EL622,Code change,EL622 = EL222
-EL223,EL623,"Code, name change",EL623 = EL223
+EL223,EL623,Code; name change,EL623 = EL223
 EL224,EL624,Code change,EL624 = EL224
 EL231,EL631,Code change,EL631 = EL231
 EL232,EL632,Code change,EL632 = EL232
@@ -213,64 +213,64 @@ SI022,SI042,Code change,SI022 = SI042
 SI023,SI043,Code change,SI023 = SI043
 SI024,SI044,Code change,SI024 = SI044
 UKD31,,Split,
-UKD31 (part),UKD33,New region,"UKD33 + UKD34 + UKD35 = UKD31, recalculation by NSI"
-UKD31 (part),UKD34,New region,"UKD33 + UKD34 + UKD35 = UKD31, recalculation by NSI"
-UKD31 (part),UKD35,New region,"UKD33 + UKD34 + UKD35 = UKD31, recalculation by NSI"
+UKD31 (part),UKD33,New region,UKD33 + UKD34 + UKD35 = UKD31; recalculation by NSI
+UKD31 (part),UKD34,New region,UKD33 + UKD34 + UKD35 = UKD31; recalculation by NSI
+UKD31 (part),UKD35,New region,UKD33 + UKD34 + UKD35 = UKD31; recalculation by NSI
 UKD32,,Split,
-UKD32 (part),UKD36,New region,"UKD36 + UKD37 = UKD32, recalculation by NSI"
-UKD32 (part),UKD37,New region,"UKD36 + UKD37 = UKD32, recalculation by NSI"
+UKD32 (part),UKD36,New region,UKD36 + UKD37 = UKD32; recalculation by NSI
+UKD32 (part),UKD37,New region,UKD36 + UKD37 = UKD32; recalculation by NSI
 UKD43,,Split,
-UKD43 (part),UKD44,New region,"UKD44 + UKD45 + UKD46 + UKD47 = UKD43, recalculation by NSI"
-UKD43 (part),UKD45,New region,"UKD44 + UKD45 + UKD46 + UKD47 = UKD43, recalculation by NSI"
-UKD43 (part),UKD46,New region,"UKD44 + UKD45 + UKD46 + UKD47 = UKD43, recalculation by NSI"
-UKD43 (part),UKD47,New region,"UKD44 + UKD45 + UKD46 + UKD47 = UKD43, recalculation by NSI"
+UKD43 (part),UKD44,New region,UKD44 + UKD45 + UKD46 + UKD47 = UKD43; recalculation by NSI
+UKD43 (part),UKD45,New region,UKD44 + UKD45 + UKD46 + UKD47 = UKD43; recalculation by NSI
+UKD43 (part),UKD46,New region,UKD44 + UKD45 + UKD46 + UKD47 = UKD43; recalculation by NSI
+UKD43 (part),UKD47,New region,UKD44 + UKD45 + UKD46 + UKD47 = UKD43; recalculation by NSI
 UKH13,,Split,
-UKH13 (part),UKH15,New region,"UKH15 + UKH16 + UKH17 = UKH13, recalculation by NSI"
-UKH13 (part),UKH16,New region,"UKH15 + UKH16 + UKH17 = UKH13, recalculation by NSI"
-UKH13 (part),UKH17,New region,"UKH15 + UKH16 + UKH17 = UKH13, recalculation by NSI"
+UKH13 (part),UKH15,New region,UKH15 + UKH16 + UKH17 = UKH13; recalculation by NSI
+UKH13 (part),UKH16,New region,UKH15 + UKH16 + UKH17 = UKH13; recalculation by NSI
+UKH13 (part),UKH17,New region,UKH15 + UKH16 + UKH17 = UKH13; recalculation by NSI
 UKH33,,Split,
-UKH33 (part),UKH34,New region,"UKH34 + UKH35 + UKH36 + UKH37 = UKH33, recalculation by NSI"
-UKH33 (part),UKH35,New region,"UKH34 + UKH35 + UKH36 + UKH37 = UKH33, recalculation by NSI"
-UKH33 (part),UKH36,New region,"UKH34 + UKH35 + UKH36 + UKH37 = UKH33, recalculation by NSI"
-UKH33 (part),UKH37,New region,"UKH34 + UKH35 + UKH36 + UKH37 = UKH33, recalculation by NSI"
+UKH33 (part),UKH34,New region,UKH34 + UKH35 + UKH36 + UKH37 = UKH33; recalculation by NSI
+UKH33 (part),UKH35,New region,UKH34 + UKH35 + UKH36 + UKH37 = UKH33; recalculation by NSI
+UKH33 (part),UKH36,New region,UKH34 + UKH35 + UKH36 + UKH37 = UKH33; recalculation by NSI
+UKH33 (part),UKH37,New region,UKH34 + UKH35 + UKH36 + UKH37 = UKH33; recalculation by NSI
 UKI11,,Split,
-UKI11 (part),UKI31,New region,"UKI31 + UKI32 + UKI33 + UKI34 = UKI11, recalculation by NSI"
-UKI11 (part),UKI32,New region,"UKI31 + UKI32 + UKI33 + UKI34 = UKI11, recalculation by NSI"
-UKI11 (part),UKI33,New region,"UKI31 + UKI32 + UKI33 + UKI34 = UKI11, recalculation by NSI"
-UKI11 (part),UKI34,New region,"UKI31 + UKI32 + UKI33 + UKI34 = UKI11, recalculation by NSI"
+UKI11 (part),UKI31,New region,UKI31 + UKI32 + UKI33 + UKI34 = UKI11; recalculation by NSI
+UKI11 (part),UKI32,New region,UKI31 + UKI32 + UKI33 + UKI34 = UKI11; recalculation by NSI
+UKI11 (part),UKI33,New region,UKI31 + UKI32 + UKI33 + UKI34 = UKI11; recalculation by NSI
+UKI11 (part),UKI34,New region,UKI31 + UKI32 + UKI33 + UKI34 = UKI11; recalculation by NSI
 UKI12,,Split,
-UKI12 (part),UKI41,New region,"UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12, recalculation by NSI"
-UKI12 (part),UKI42,New region,"UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12, recalculation by NSI"
-UKI12 (part),UKI43,New region,"UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12, recalculation by NSI"
-UKI12 (part),UKI44,New region,"UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12, recalculation by NSI"
-UKI12 (part),UKI45,New region,"UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12, recalculation by NSI"
+UKI12 (part),UKI41,New region,UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12; recalculation by NSI
+UKI12 (part),UKI42,New region,UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12; recalculation by NSI
+UKI12 (part),UKI43,New region,UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12; recalculation by NSI
+UKI12 (part),UKI44,New region,UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12; recalculation by NSI
+UKI12 (part),UKI45,New region,UKI41 + UKI42 + UKI43 + UKI44 + UKI45= UKI12; recalculation by NSI
 UKI21,,Split,
-UKI21 (part),UKI51,New region,"UKI51 + UKI52 + UKI53 + UKI54 = UKI21, recalculation by NSI"
-UKI21 (part),UKI52,New region,"UKI51 + UKI52 + UKI53 + UKI54 = UKI21, recalculation by NSI"
-UKI21 (part),UKI53,New region,"UKI51 + UKI52 + UKI53 + UKI54 = UKI21, recalculation by NSI"
-UKI21 (part),UKI54,New region,"UKI51 + UKI52 + UKI53 + UKI54 = UKI21, recalculation by NSI"
+UKI21 (part),UKI51,New region,UKI51 + UKI52 + UKI53 + UKI54 = UKI21; recalculation by NSI
+UKI21 (part),UKI52,New region,UKI51 + UKI52 + UKI53 + UKI54 = UKI21; recalculation by NSI
+UKI21 (part),UKI53,New region,UKI51 + UKI52 + UKI53 + UKI54 = UKI21; recalculation by NSI
+UKI21 (part),UKI54,New region,UKI51 + UKI52 + UKI53 + UKI54 = UKI21; recalculation by NSI
 UKI22,,Split,
-UKI22 (part),UKI61,New region,"UKI61 + UKI62 + UKI63 = UKI22, recalculation by NSI"
-UKI22 (part),UKI62,New region,"UKI61 + UKI62 + UKI63 = UKI22, recalculation by NSI"
-UKI22 (part),UKI63,New region,"UKI61 + UKI62 + UKI63 = UKI22, recalculation by NSI"
+UKI22 (part),UKI61,New region,UKI61 + UKI62 + UKI63 = UKI22; recalculation by NSI
+UKI22 (part),UKI62,New region,UKI61 + UKI62 + UKI63 = UKI22; recalculation by NSI
+UKI22 (part),UKI63,New region,UKI61 + UKI62 + UKI63 = UKI22; recalculation by NSI
 UKI23,,Split,
-UKI23 (part),UKI71,New region,"UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23, recalculation by NSI"
-UKI23 (part),UKI72,New region,"UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23, recalculation by NSI"
-UKI23 (part),UKI73,New region,"UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23, recalculation by NSI"
-UKI23 (part),UKI74,New region,"UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23, recalculation by NSI"
-UKI23 (part),UKI75,New region,"UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23, recalculation by NSI"
+UKI23 (part),UKI71,New region,UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23; recalculation by NSI
+UKI23 (part),UKI72,New region,UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23; recalculation by NSI
+UKI23 (part),UKI73,New region,UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23; recalculation by NSI
+UKI23 (part),UKI74,New region,UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23; recalculation by NSI
+UKI23 (part),UKI75,New region,UKI71 + UKI72 + UKI73 + UKI74 + UKI75= UKI23; recalculation by NSI
 UKJ23,,Split,
-UKJ23 (part),UKJ25,New region,"UKJ25 + UKJ26 = UKJ23, recalculation by NSI"
-UKJ23 (part),UKJ26,New region,"UKJ25 + UKJ26 = UKJ23, recalculation by NSI"
+UKJ23 (part),UKJ25,New region,UKJ25 + UKJ26 = UKJ23; recalculation by NSI
+UKJ23 (part),UKJ26,New region,UKJ25 + UKJ26 = UKJ23; recalculation by NSI
 UKJ24,,Split,
-UKJ24 (part),UKJ27,New region,"UKJ27 + UKJ28 = UKJ24, recalculation by NSI"
-UKJ24 (part),UKJ28,New region,"UKJ27 + UKJ28 = UKJ24, recalculation by NSI"
+UKJ24 (part),UKJ27,New region,UKJ27 + UKJ28 = UKJ24; recalculation by NSI
+UKJ24 (part),UKJ28,New region,UKJ27 + UKJ28 = UKJ24; recalculation by NSI
 UKJ33,,Split,
-UKJ33 (part),UKJ35,New region,"UKJ35 + UKJ36 + UKJ37 = UKJ33, recalculation by NSI"
-UKJ33 (part),UKJ36,New region,"UKJ35 + UKJ36 + UKJ37 = UKJ33, recalculation by NSI"
-UKJ33 (part),UKJ37,New region,"UKJ35 + UKJ36 + UKJ37 = UKJ33, recalculation by NSI"
+UKJ33 (part),UKJ35,New region,UKJ35 + UKJ36 + UKJ37 = UKJ33; recalculation by NSI
+UKJ33 (part),UKJ36,New region,UKJ35 + UKJ36 + UKJ37 = UKJ33; recalculation by NSI
+UKJ33 (part),UKJ37,New region,UKJ35 + UKJ36 + UKJ37 = UKJ33; recalculation by NSI
 UKJ42,,Split,
-UKJ42 (part),UKJ43,New region,"UKJ43 + UKJ44 + UKJ45 + UKJ46 = UKJ42, recalculation by NSI"
-UKJ42 (part),UKJ44,New region,"UKJ43 + UKJ44 + UKJ45 + UKJ46 = UKJ42, recalculation by NSI"
-UKJ42 (part),UKJ45,New region,"UKJ43 + UKJ44 + UKJ45 + UKJ46 = UKJ42, recalculation by NSI"
-UKJ42 (part),UKJ46,New region,"UKJ43 + UKJ44 + UKJ45 + UKJ46 = UKJ42, recalculation by NSI"
+UKJ42 (part),UKJ43,New region,UKJ43 + UKJ44 + UKJ45 + UKJ46 = UKJ42; recalculation by NSI
+UKJ42 (part),UKJ44,New region,UKJ43 + UKJ44 + UKJ45 + UKJ46 = UKJ42; recalculation by NSI
+UKJ42 (part),UKJ45,New region,UKJ43 + UKJ44 + UKJ45 + UKJ46 = UKJ42; recalculation by NSI
+UKJ42 (part),UKJ46,New region,UKJ43 + UKJ44 + UKJ45 + UKJ46 = UKJ42; recalculation by NSI
