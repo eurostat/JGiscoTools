@@ -202,13 +202,12 @@ public class TourismUseCase {
 	private static void checkE4ValidationDataAggregatesNUTS2() {
 
 		//load validation data
-		StatsHypercube hcVal = EurostatTSV.load("H:/methnet/geostat/validation/validation_data.tsv");
-		//hcVal.printInfo();
+		StatsHypercube hcValNuts3 = EurostatTSV.load("H:/methnet/geostat/validation/validation_data.tsv");
 
 		//TODO extract generic nuts aggregate computation
 		//compute aggregates
 		HashMap<String,Stat> data = new HashMap<String,Stat>();
-		for(Stat s : hcVal.stats){
+		for(Stat s : hcValNuts3.stats){
 			String geo = s.dims.get("geo").substring(0, 4);
 			String time = s.dims.get("time");
 			String key = geo+"_"+time;
@@ -222,29 +221,24 @@ public class TourismUseCase {
 		}
 
 		//transform into hc structure
-		StatsHypercube hcNuts2 = new StatsHypercube("geo", "time");
-		hcNuts2.stats.addAll(data.values());
-		//hcNuts2.printInfo();
-
-		hcVal = null;
+		StatsHypercube hcValNuts2 = new StatsHypercube("geo", "time");
+		hcValNuts2.stats.addAll(data.values());
 		data = null;
-
-		//save
 		//CSV.save(hcNuts2, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg.csv");
 
+
 		//load eurobase data
-		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
+		StatsHypercube hcEBNuts2 = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
 				new Selection.And(
-						new Selection.DimValueEqualTo("unit","NR"), //Number
-						//new Selection.DimValueEqualTo("nace_r2","I551-I553"), //Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks
-						//new Selection.DimValueEqualTo("indic_to","B006"), //Nights spent, total
+						new Selection.DimValueEqualTo("unit","NR"),
 						//keep only nuts 2 regions
 						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } }
 						));
-		hc.delete("unit");
+		hcEBNuts2.delete("unit");
 
 		//out structure
-		StatsHypercube out = new StatsHypercube(hc.getDimLabels());
+		StatsHypercube out = new StatsHypercube(hcEBNuts2.getDimLabels());
+		out.printInfo();
 
 		//show all possibilities
 		//for(String nace : hc.getDimValues("nace_r2")){
@@ -255,10 +249,10 @@ public class TourismUseCase {
 			System.out.println( nace + "   " + indic );
 
 			StatsHypercube hc_;
-			hc_ = hc.selectDimValueEqualTo("nace_r2", nace);
+			hc_ = hcEBNuts2.selectDimValueEqualTo("nace_r2", nace);
 			hc_ = hc_.selectDimValueEqualTo("indic_to", indic);
 
-			StatsHypercube diff = Validation.computeDifference(hcNuts2, hc_, false, true);
+			StatsHypercube diff = Validation.computeDifference(hcValNuts2, hc_, false, true);
 			//Validation.printBasicStatistics(diff);
 			//System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
 			//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
@@ -268,10 +262,10 @@ public class TourismUseCase {
 			System.out.println( nace + "   " + indic );
 
 			StatsHypercube hc_;
-			hc_ = hc.selectDimValueEqualTo("nace_r2", nace);
+			hc_ = hcEBNuts2.selectDimValueEqualTo("nace_r2", nace);
 			hc_ = hc_.selectDimValueEqualTo("indic_to", indic);
 
-			StatsHypercube diff = Validation.computeDifference(hcNuts2, hc_, false, true);
+			StatsHypercube diff = Validation.computeDifference(hcValNuts2, hc_, false, true);
 			//Validation.printBasicStatistics(diff);
 			//System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
 			//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
