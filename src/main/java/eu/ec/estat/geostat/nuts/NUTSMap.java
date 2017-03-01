@@ -13,8 +13,6 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
@@ -29,7 +27,6 @@ import org.geotools.styling.Rule;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
-import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
