@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat.mapping;
+package eu.ec.estat.geostat.nuts;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -13,11 +13,12 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
-import org.geotools.map.MapViewport;
 import org.geotools.referencing.CRS;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
@@ -28,10 +29,9 @@ import org.geotools.styling.Rule;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import eu.ec.estat.geostat.io.ShapeFile;
 
 /**
  * 
@@ -46,16 +46,10 @@ public class NUTSMap {
 	//http://docs.geotools.org/latest/userguide/library/render/index.html
 	//http://gis.stackexchange.com/questions/123903/how-to-create-a-map-and-save-it-to-an-image-with-geotools
 
-
-
 	private static CoordinateReferenceSystem LAEA_CRS = null;
 	static{
 		try { LAEA_CRS = CRS.decode("EPSG:3035"); } catch (Exception e) { e.printStackTrace(); }
 	}
-
-	//TODO change with resource ones
-	public static String NUTS_SHP_LVL2 = "H:/geodata/gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl2.shp";
-	public static String NUTS_SHP_LVL3 = "H:/geodata/gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl3.shp";
 
 	MapContent map = null;
 
@@ -72,8 +66,6 @@ public class NUTSMap {
 
 
 	public void produce() {
-
-		ShapeFile shpFileNUTS = new ShapeFile(NUTS_SHP_LVL2);
 
 		//style
 		// create a partially opaque outline stroke
@@ -96,16 +88,17 @@ public class NUTSMap {
 		Style style = styleFactory.createStyle();
 		style.featureTypeStyles().add(fts);
 
+
 		//create and add layer
-		Layer layer = new FeatureLayer(shpFileNUTS.getFeatureCollection(), style);
+		Filter f = null;
+		try { f = CQL.toFilter("STAT_LEVL_ = 3"); } catch (CQLException e) { e.printStackTrace(); }
+		Layer layer = new FeatureLayer(NUTSShapeFile.getShpFileNUTS().getFeatureCollection(f), style);
 		map.addLayer(layer);
 
 		//
 		//JMapFrame.showMap(map);
 		saveImage(map, "H:/desktop/ex.png", 800);
 	}
-
-
 
 
 

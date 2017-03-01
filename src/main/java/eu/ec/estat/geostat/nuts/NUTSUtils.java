@@ -1,4 +1,4 @@
-package eu.ec.estat.geostat;
+package eu.ec.estat.geostat.nuts;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
