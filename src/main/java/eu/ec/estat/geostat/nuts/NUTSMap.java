@@ -27,6 +27,7 @@ import org.geotools.styling.Rule;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
+import org.geotools.swing.JMapFrame;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -49,12 +50,14 @@ public class NUTSMap {
 	}
 
 	MapContent map = null;
+	int level = 3;
 
 	public NUTSMap(){
-		this("NUTS map");
+		this(3, "NUTS map");
 	}
 
-	public NUTSMap(String title){
+	public NUTSMap(int level, String title){
+		this.level = level;
 		map = new MapContent();
 		map.setTitle(title);
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
@@ -62,42 +65,33 @@ public class NUTSMap {
 	}
 
 
-	public void produce() {
-
+	public NUTSMap produce() {
 		//style
-		// create a partially opaque outline stroke
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
-		Stroke stroke = styleFactory.createStroke(
-				filterFactory.literal(Color.WHITE),
-				filterFactory.literal(1),
-				filterFactory.literal(0.5));
-
-		// create a partial opaque fill
-		Fill fill = styleFactory.createFill(
-				filterFactory.literal(Color.gray),
-				filterFactory.literal(0.5));
+		Stroke stroke = styleFactory.createStroke(filterFactory.literal(Color.WHITE), filterFactory.literal(1));
+		Fill fill = styleFactory.createFill(filterFactory.literal(Color.GRAY));
 		PolygonSymbolizer sym = styleFactory.createPolygonSymbolizer(stroke, fill, null);
+
 		Rule rule = styleFactory.createRule();
 		rule.symbolizers().add(sym);
 		FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
 		Style style = styleFactory.createStyle();
 		style.featureTypeStyles().add(fts);
 
-
 		//create and add layer
-		Layer layer = new FeatureLayer(NUTSShapeFile.getShpFileNUTS().getFeatureCollection(NUTSShapeFile.getFilterLvl(2)), style);
+		Layer layer = new FeatureLayer(NUTSShapeFile.getShpFileNUTS().getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), style);
 		map.addLayer(layer);
-
-		//
-		//JMapFrame.showMap(map);
-		saveImage(map, "H:/desktop/ex.png", 800);
+		return this;
 	}
 
+	public NUTSMap show() {
+		JMapFrame.showMap(map);
+		return this;
+	}
 
-
-	public static void saveImage(final MapContent map, final String file, final int imageWidth) {
+	public NUTSMap saveAsImage(final String file, final int imageWidth) {
 		try {
 			ReferencedEnvelope mapBounds = map.getViewport().getBounds();
 			Rectangle imageBounds = new Rectangle(0, 0, imageWidth, (int) Math.round(imageWidth * mapBounds.getSpan(1) / mapBounds.getSpan(0)));
@@ -114,8 +108,17 @@ public class NUTSMap {
 
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
+		return this;
 	}
 
 
+
+	public static void main(String[] args) throws Exception {
+		System.out.println("Start.");
+		new NUTSMap().produce().show();
+		//new NUTSMap().produce().saveAsImage("H:/desktop/ex.png", 800);
+
+		System.out.println("End.");
+	}
 
 }
