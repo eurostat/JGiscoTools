@@ -41,8 +41,6 @@ public class TourismUseCase {
 
 
 	//TODO validation with E4 figures
-	//*** check consistency of validation data: compute aggregation of NUTS3 values to NUTS2. For few examples.
-	//*** check values of the validation are the right ones. camping, etc included? Check on maximum values or random values?
 	//futher analyse maximum errors
 	//better analyse validation results: show on map !
 	//TODO show maps - make generic library
@@ -60,12 +58,11 @@ public class TourismUseCase {
 		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
 		//runDasymetric();
-		//computeValidationData();
-		//analyseValidationData();
+		//computeValidation();
 		//produceMaps();
 
 		//E4 data validation
-		//checkE4ValidationDataAggregatesNUTS2();
+		//filterE4ValidationDataAggregatesNUTS2();
 		//finalCheckE4ValidationData();
 
 		System.out.println("End.");
@@ -145,60 +142,35 @@ public class TourismUseCase {
 	}
 
 
-	private static void computeValidationData() {
+	private static void computeValidation() {
 
-		//load data
-		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553");
-		hc.delete("unit"); hc.delete("indic_to"); hc.delete("nace_r2");
-		StatsIndex hcI = new StatsIndex(hc, "geo", "time");
-		hc = null;
+		//load data to validate
+		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value");
+		hc.delete("unit");
 
 		//load validation data
-		StatsIndex hcIval = new StatsIndex(CSV.load("H:/methnet/geostat/validation/validation_data_2013_filtered.csv", "value"), "geo", "time");
+		StatsHypercube hcVal = CSV.load("H:/methnet/geostat/validation/validation_data_2013_filtered.csv", "value");
 
-		//time
-		//[2010 , 2011 , 2012 , 2013 , 2014 , 2015 ]
-		//[2009, 2008, 2007, 2006, 2005, 2013, 2012, 2011, 2010]
-		// -> [2010 , 2011 , 2012 , 2013 ]
+		StatsHypercube diff;
 
+		diff = Validation.computeDifference(hcVal, hc, false, false);
+		Validation.printBasicStatistics(diff);
+		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff.csv");
 
-		//compute difference
-		//TODO extract generic
-		StatsHypercube diffHC = new StatsHypercube("geo","time");
-		StatsHypercube diffPercHC = new StatsHypercube("geo","time");
-		for(String geo : hcI.getKeys()){
-			if(hcIval.getKeys(geo) == null) continue;
-			for(String time : hcI.getKeys(geo)){
+		diff = Validation.computeDifference(hcVal, hc, true, false);
+		Validation.printBasicStatistics(diff);
+		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_abs.csv");
 
-				//retrieve both values to compare
-				double valVal = hcIval.getSingleValue(geo, time.replace(" ", ""));
-				if(Double.isNaN(valVal) || valVal == 0) continue;
-				double val = hcI.getSingleValue(geo, time);
-				if(Double.isNaN(val) || val == 0) continue;
+		diff = Validation.computeDifference(hcVal, hc, false, true);
+		Validation.printBasicStatistics(diff);
+		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_ratio.csv");
 
-				//store comparison figures
-				diffHC.stats.add(new Stat(Math.abs(val-valVal), "geo", geo, "time", time));
-				diffPercHC.stats.add(new Stat(100*Math.abs(val-valVal)/valVal, "geo", geo, "time", time));
-			}
-		}
-
-		CSV.save(diffHC, "diff", "H:/methnet/geostat/validation/", "validation_result_diff.csv");
-		CSV.save(diffPercHC, "diffPerc", "H:/methnet/geostat/validation/", "validation_result_diff_perc.csv");
-	}
-
-	private static void analyseValidationData() {
-
-		//load data
-		StatsHypercube diffHC = CSV.load("H:/methnet/geostat/validation/validation_result_diff.csv", "diff");
-		StatsHypercube diffPercHC = CSV.load("H:/methnet/geostat/validation/validation_result_diff_perc.csv", "diffPerc");
-
-		System.out.println();
-		Validation.printBasicStatistics(diffHC);
-		System.out.println();
-		Validation.printBasicStatistics(diffPercHC);
-		System.out.println();
+		diff = Validation.computeDifference(hcVal, hc, true, true);
+		Validation.printBasicStatistics(diff);
+		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_abs_ratio.csv");
 
 	}
+
 
 	private static void produceMaps() {
 		//show results on maps
@@ -287,13 +259,13 @@ public class TourismUseCase {
 
 
 
-	
-	
 
 
 
 
-	private static void checkE4ValidationDataAggregatesNUTS2() {
+
+
+	private static void filterE4ValidationDataAggregatesNUTS2() {
 
 		//load validation data
 		StatsHypercube hcValNuts3 = EurostatTSV.load("H:/methnet/geostat/validation/validation_data_2013.tsv");
