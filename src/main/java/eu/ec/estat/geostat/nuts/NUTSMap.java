@@ -90,9 +90,7 @@ public class NUTSMap {
 
 
 		//create and add layer
-		Filter f = null;
-		try { f = CQL.toFilter("STAT_LEVL_ = 3"); } catch (CQLException e) { e.printStackTrace(); }
-		Layer layer = new FeatureLayer(NUTSShapeFile.getShpFileNUTS().getFeatureCollection(f), style);
+		Layer layer = new FeatureLayer(NUTSShapeFile.getShpFileNUTS().getFeatureCollection(NUTSShapeFile.getFilterLvl(2)), style);
 		map.addLayer(layer);
 
 		//

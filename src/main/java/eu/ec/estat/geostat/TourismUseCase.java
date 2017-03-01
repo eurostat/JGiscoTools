@@ -29,7 +29,6 @@ public class TourismUseCase {
 
 
 	//TODO show maps - make generic library
-
 	//TODO aggregate at 10km grid level
 
 	//TODO run use case on urban audit data? Use for validation?

@@ -3,6 +3,10 @@
  */
 package eu.ec.estat.geostat.nuts;
 
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
+import org.opengis.filter.Filter;
+
 import eu.ec.estat.geostat.io.ShapeFile;
 
 /**
@@ -21,5 +25,20 @@ public class NUTSShapeFile {
 		return shpFileNUTS;
 	}
 
+
+	private static Filter[] fLvl = null;
+	public static Filter getFilterLvl(int lvl){
+		if(fLvl == null)
+			try {
+				fLvl = new Filter[]{
+						CQL.toFilter("STAT_LEVL_ = 0"),
+						CQL.toFilter("STAT_LEVL_ = 1"),
+						CQL.toFilter("STAT_LEVL_ = 2"),
+						CQL.toFilter("STAT_LEVL_ = 3")
+				};
+			} catch (CQLException e) { e.printStackTrace(); }
+
+		return fLvl[lvl];
+	}
 
 }
