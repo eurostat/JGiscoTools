@@ -72,23 +72,35 @@ public class NUTSMap {
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
-		//polygon styles
-		Style polyStyle;
+		//RG style
+		Style RGStyle;
 		{
-			Stroke stroke = styleFactory.createStroke(filterFactory.literal(Color.WHITE), filterFactory.literal(1));
+			//Stroke stroke = styleFactory.createStroke(filterFactory.literal(Color.WHITE), filterFactory.literal(1));
 			Fill fill = styleFactory.createFill(filterFactory.literal(Color.GRAY));
-			PolygonSymbolizer polSymb = styleFactory.createPolygonSymbolizer(stroke, fill, null);
+			PolygonSymbolizer polSymb = styleFactory.createPolygonSymbolizer(/*stroke*/null, fill, null);
 			Rule rule = styleFactory.createRule();
 			rule.symbolizers().add(polSymb);
 			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
-			polyStyle = styleFactory.createStyle();
-			polyStyle.featureTypeStyles().add(fts);
+			RGStyle = styleFactory.createStyle();
+			RGStyle.featureTypeStyles().add(fts);
 		}
 
-		//sepa and join styles
+		//BN style
+		Style BNStyle;
+		{
+			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.4));
+			LineSymbolizer sepaJoinSymb = styleFactory.createLineSymbolizer(stroke, null);
+			Rule rule = styleFactory.createRule();
+			rule.symbolizers().add(sepaJoinSymb);
+			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
+			BNStyle = styleFactory.createStyle();
+			BNStyle.featureTypeStyles().add(fts);
+		}
+
+		//sepa and join style
 		Style sepaJoinStyle;
 		{
-			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.GRAY), filterFactory.literal(1));
+			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.GRAY), filterFactory.literal(0.3));
 			LineSymbolizer sepaJoinSymb = styleFactory.createLineSymbolizer(stroke, null);
 			Rule rule = styleFactory.createRule();
 			rule.symbolizers().add(sepaJoinSymb);
@@ -101,24 +113,34 @@ public class NUTSMap {
 		switch (level) {
 		case 0:
 		{
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), polyStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level)), RGStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 		}
 		break;
 		case 1:
 		{
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), polyStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level)), RGStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 		}
 		break;
 		case 2:
 		{
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), polyStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level)), RGStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 		}
 		break;
 		case 3:
 		{
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), polyStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(), sepaJoinStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(), sepaJoinStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level)), RGStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 		}
 		break;
 		}
@@ -156,11 +178,13 @@ public class NUTSMap {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
 
-		new NUTSMap(3,1,"").produce().saveAsImage("H:/desktop/ex3_1.png", 1400);
+		new NUTSMap(3,20,"").produce().show();
+
+		/*new NUTSMap(3,1,"").produce().saveAsImage("H:/desktop/ex3_1.png", 1400);
 		new NUTSMap(3,3,"").produce().saveAsImage("H:/desktop/ex3_3.png", 1400);
 		new NUTSMap(3,10,"").produce().saveAsImage("H:/desktop/ex3_10.png", 1400);
 		new NUTSMap(3,20,"").produce().saveAsImage("H:/desktop/ex3_20.png", 1400);
-		new NUTSMap(3,60,"").produce().saveAsImage("H:/desktop/ex3_60.png", 1400);
+		new NUTSMap(3,60,"").produce().saveAsImage("H:/desktop/ex3_60.png", 1400);*/
 
 		System.out.println("End.");
 	}

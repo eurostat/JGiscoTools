@@ -3,6 +3,8 @@
  */
 package eu.ec.estat.geostat.nuts;
 
+import java.util.HashMap;
+
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.filter.Filter;
@@ -17,11 +19,6 @@ public class NUTSShapeFile {
 
 	private static final String BASE_PATH = "resources/NUTS/";
 
-	public static ShapeFile get(){ return get("RG"); }
-	public static ShapeFile get(String type){ return get(1, type); }
-	public static ShapeFile get(int lod, String type){ return get(lod, "LAEA", type); }
-	public static ShapeFile get(int lod, String proj, String type){ return get(2013, lod, proj, type); }
-
 	/**
 	 * @param year
 	 * @param lod The level of detail, among 1, 3, 10, 20 or 60
@@ -33,16 +30,43 @@ public class NUTSShapeFile {
 		return new ShapeFile(BASE_PATH + year + "/" + lod + "M/" + proj + "/" + type + ".shp");
 	}
 
+	public static ShapeFile get(){ return get("RG"); }
+	public static ShapeFile get(String type){ return get(1, type); }
+	public static ShapeFile get(int lod, String type){ return get(lod, "LAEA", type); }
+	public static ShapeFile get(int lod, String proj, String type){ return get(2013, lod, proj, type); }
 
-	private static Filter[] fLvl = null;
-	public static Filter getFilterLvl(int lvl){
-		if(fLvl == null)
+
+	//filters for nuts regions, by level
+	private static Filter[] filterRGLevel = null;
+	public static Filter getFilterRGLevel(int lvl){
+		if(filterRGLevel == null)
 			try {
-				fLvl = new Filter[4];
-				for(int i=0; i<=3; i++) fLvl[i] = CQL.toFilter("STAT_LEVL_ = "+i);
+				filterRGLevel = new Filter[4];
+				for(int i=0; i<=3; i++) filterRGLevel[i] = CQL.toFilter("STAT_LEVL_ = "+i);
 			} catch (CQLException e) { e.printStackTrace(); }
 
-		return fLvl[lvl];
+		return filterRGLevel[lvl];
+	}
+
+	//filters for nuts boundaries
+	//TODO
+	//EU_FLAG CC_FLAG EFTA_FLAG OTHR_CNTR_ COAS_FLAG STAT_LEVEL_
+
+
+
+	//filters for join and sepa, by lod
+	private static HashMap<Integer,Filter> filterSepaJoinLoD = null;
+	public static Filter getFilterSepaJoinLoD(int lod){
+		if(filterSepaJoinLoD == null)
+			try {
+				filterSepaJoinLoD = new HashMap<Integer,Filter>();
+				filterSepaJoinLoD.put(1, CQL.toFilter("MIN_SCAL >= 1000000"));
+				filterSepaJoinLoD.put(3, CQL.toFilter("MIN_SCAL >= 3000000"));
+				filterSepaJoinLoD.put(10, CQL.toFilter("MIN_SCAL >= 10000000"));
+				filterSepaJoinLoD.put(20, CQL.toFilter("MIN_SCAL >= 20000000"));
+				filterSepaJoinLoD.put(60, CQL.toFilter("MIN_SCAL >= 60000000"));
+			} catch (CQLException e) { e.printStackTrace(); }
+		return filterSepaJoinLoD.get(lod);
 	}
 
 }
