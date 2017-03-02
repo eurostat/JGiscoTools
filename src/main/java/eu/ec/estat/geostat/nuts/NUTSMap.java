@@ -15,13 +15,13 @@ import javax.imageio.ImageIO;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
-import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.referencing.CRS;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
+import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Stroke;
@@ -53,9 +53,10 @@ public class NUTSMap {
 	private int level = 3;
 	private int lod = 1; //can be 1, 3, 10, 20 or 60
 
-	public NUTSMap(){ this(3, "NUTS map"); }
-	public NUTSMap(int level, String title){
+	public NUTSMap(){ this(3, 1, "NUTS map"); }
+	public NUTSMap(int level, int lod, String title){
 		this.level = level;
+		this.lod = lod;
 		map = new MapContent();
 		map.setTitle(title);
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
@@ -68,23 +69,59 @@ public class NUTSMap {
 	}
 
 	public NUTSMap produce() {
-		//style
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
-		Stroke stroke = styleFactory.createStroke(filterFactory.literal(Color.WHITE), filterFactory.literal(1));
-		Fill fill = styleFactory.createFill(filterFactory.literal(Color.GRAY));
-		PolygonSymbolizer sym = styleFactory.createPolygonSymbolizer(stroke, fill, null);
+		//polygon styles
+		Style polyStyle;
+		{
+			Stroke stroke = styleFactory.createStroke(filterFactory.literal(Color.WHITE), filterFactory.literal(1));
+			Fill fill = styleFactory.createFill(filterFactory.literal(Color.GRAY));
+			PolygonSymbolizer polSymb = styleFactory.createPolygonSymbolizer(stroke, fill, null);
+			Rule rule = styleFactory.createRule();
+			rule.symbolizers().add(polSymb);
+			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
+			polyStyle = styleFactory.createStyle();
+			polyStyle.featureTypeStyles().add(fts);
+		}
 
-		Rule rule = styleFactory.createRule();
-		rule.symbolizers().add(sym);
-		FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
-		Style style = styleFactory.createStyle();
-		style.featureTypeStyles().add(fts);
+		//sepa and join styles
+		Style sepaJoinStyle;
+		{
+			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.GRAY), filterFactory.literal(1));
+			LineSymbolizer sepaJoinSymb = styleFactory.createLineSymbolizer(stroke, null);
+			Rule rule = styleFactory.createRule();
+			rule.symbolizers().add(sepaJoinSymb);
+			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
+			sepaJoinStyle = styleFactory.createStyle();
+			sepaJoinStyle.featureTypeStyles().add(fts);
+		}
 
-		//create and add layer
-		Layer layer = new FeatureLayer(NUTSShapeFile.getShpFileNUTS().getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), style);
-		map.addLayer(layer);
+		//create and add layers
+		switch (level) {
+		case 0:
+		{
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), polyStyle) );
+		}
+		break;
+		case 1:
+		{
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), polyStyle) );
+		}
+		break;
+		case 2:
+		{
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), polyStyle) );
+		}
+		break;
+		case 3:
+		{
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterLvl(level)), polyStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(), sepaJoinStyle) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(), sepaJoinStyle) );
+		}
+		break;
+		}
 		return this;
 	}
 
@@ -118,9 +155,12 @@ public class NUTSMap {
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
-		new NUTSMap().produce()
-		//.show()
-		.saveAsImage("H:/desktop/ex.png", 1400);
+
+		new NUTSMap(3,1,"").produce().saveAsImage("H:/desktop/ex3_1.png", 1400);
+		new NUTSMap(3,3,"").produce().saveAsImage("H:/desktop/ex3_3.png", 1400);
+		new NUTSMap(3,10,"").produce().saveAsImage("H:/desktop/ex3_10.png", 1400);
+		new NUTSMap(3,20,"").produce().saveAsImage("H:/desktop/ex3_20.png", 1400);
+		new NUTSMap(3,60,"").produce().saveAsImage("H:/desktop/ex3_60.png", 1400);
 
 		System.out.println("End.");
 	}

@@ -14,16 +14,23 @@ import eu.ec.estat.geostat.io.ShapeFile;
  *
  */
 public class NUTSShapeFile {
-	//TODO handle LoD - can be 1, 3, 10, 20 or 60
 
-	private static final String BASE_PATH = "resources/nuts_2013_shp_laea/";
+	private static final String BASE_PATH = "resources/NUTS/";
 
-	private static ShapeFile shpFileNUTS = null;
-	public static ShapeFile getShpFileNUTS(){
-		if(shpFileNUTS == null){
-			shpFileNUTS = new ShapeFile(BASE_PATH + "NUTS_RG_01M_2013_LAEA.shp");
-		}
-		return shpFileNUTS;
+	public static ShapeFile get(){ return get("RG"); }
+	public static ShapeFile get(String type){ return get(1, type); }
+	public static ShapeFile get(int lod, String type){ return get(lod, "LAEA", type); }
+	public static ShapeFile get(int lod, String proj, String type){ return get(2013, lod, proj, type); }
+
+	/**
+	 * @param year
+	 * @param lod The level of detail, among 1, 3, 10, 20 or 60
+	 * @param proj The projection, among LAEA and ETRS89
+	 * @param type The object type, among RG,BN,LB,JOIN,SEPA
+	 * @return
+	 */
+	public static ShapeFile get(int year, int lod, String proj, String type){
+		return new ShapeFile(BASE_PATH + year + "/" + lod + "M/" + proj + "/" + type + ".shp");
 	}
 
 
@@ -31,12 +38,8 @@ public class NUTSShapeFile {
 	public static Filter getFilterLvl(int lvl){
 		if(fLvl == null)
 			try {
-				fLvl = new Filter[]{
-						CQL.toFilter("STAT_LEVL_ = 0"),
-						CQL.toFilter("STAT_LEVL_ = 1"),
-						CQL.toFilter("STAT_LEVL_ = 2"),
-						CQL.toFilter("STAT_LEVL_ = 3")
-				};
+				fLvl = new Filter[4];
+				for(int i=0; i<=3; i++) fLvl[i] = CQL.toFilter("STAT_LEVL_ = "+i);
 			} catch (CQLException e) { e.printStackTrace(); }
 
 		return fLvl[lvl];
