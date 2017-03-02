@@ -49,21 +49,22 @@ public class NUTSMap {
 		try { LAEA_CRS = CRS.decode("EPSG:3035"); } catch (Exception e) { e.printStackTrace(); }
 	}
 
-	MapContent map = null;
-	int level = 3;
+	private MapContent map = null;
+	private int level = 3;
 
-	public NUTSMap(){
-		this(3, "NUTS map");
-	}
-
+	public NUTSMap(){ this(3, "NUTS map"); }
 	public NUTSMap(int level, String title){
 		this.level = level;
 		map = new MapContent();
 		map.setTitle(title);
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
-		map.getViewport().setBounds(new ReferencedEnvelope(2500000.0,5600000.0,1700000.0,4700000.0, LAEA_CRS ));
+		this.setBounds(2550000.0, 7400000.0, 1200000.0, 5500000.0);
 	}
 
+	public NUTSMap setBounds(double x1, double x2, double y1, double y2) {
+		map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, LAEA_CRS ));
+		return this;
+	}
 
 	public NUTSMap produce() {
 		//style
@@ -91,12 +92,13 @@ public class NUTSMap {
 		return this;
 	}
 
+
 	public NUTSMap saveAsImage(final String file, final int imageWidth) {
 		try {
+			//prepare image
 			ReferencedEnvelope mapBounds = map.getViewport().getBounds();
-			Rectangle imageBounds = new Rectangle(0, 0, imageWidth, (int) Math.round(imageWidth * mapBounds.getSpan(1) / mapBounds.getSpan(0)));
+			Rectangle imageBounds = new Rectangle(0, 0, imageWidth, (int) Math.round(imageWidth * mapBounds.getSpan(0) / mapBounds.getSpan(1)));
 			BufferedImage image = new BufferedImage(imageBounds.width, imageBounds.height, BufferedImage.TYPE_INT_RGB);
-
 			Graphics2D gr = image.createGraphics();
 			gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			gr.setPaint(Color.WHITE);
@@ -115,8 +117,9 @@ public class NUTSMap {
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
-		new NUTSMap().produce().show();
-		//new NUTSMap().produce().saveAsImage("H:/desktop/ex.png", 800);
+		new NUTSMap().produce()
+		//.show()
+		.saveAsImage("H:/desktop/ex.png", 1400);
 
 		System.out.println("End.");
 	}
