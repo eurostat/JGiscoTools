@@ -14,6 +14,7 @@ import eu.ec.estat.geostat.io.ShapeFile;
  *
  */
 public class NUTSShapeFile {
+	//TODO handle LoD - can be 1, 3, 10, 20 or 60
 
 	private static final String BASE_PATH = "resources/nuts_2013_shp_laea/";
 

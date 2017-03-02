@@ -51,6 +51,7 @@ public class NUTSMap {
 
 	private MapContent map = null;
 	private int level = 3;
+	private int lod = 1; //can be 1, 3, 10, 20 or 60
 
 	public NUTSMap(){ this(3, "NUTS map"); }
 	public NUTSMap(int level, String title){
