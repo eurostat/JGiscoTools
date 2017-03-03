@@ -39,6 +39,20 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  */
 public class NUTSMap {
+	//TODO colors http://docs.geotools.org/stable/userguide/extension/brewer/index.html
+
+	//TODO show properly borders depending on nuts level
+
+	//TODO thematic mapping
+	//http://docs.geotools.org/latest/tutorials/map/style.html   --   http://docs.geotools.org/latest/tutorials/map/style.html#controlling-the-rendering-process
+	//http://leafletjs.com/examples/choropleth/
+	
+	//TODO legend
+	//http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
+	
+	//TODO show other countries
+	
+	
 	//https://github.com/geotools/geotools/blob/master/docs/src/main/java/org/geotools/tutorial/style/StyleLab.java
 	//http://docs.geotools.org/latest/userguide/library/render/gtrenderer.html
 	//http://docs.geotools.org/latest/userguide/library/render/index.html
