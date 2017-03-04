@@ -58,6 +58,7 @@ public class NUTSMap {
 	//http://docs.geotools.org/latest/userguide/library/render/index.html
 	//http://gis.stackexchange.com/questions/123903/how-to-create-a-map-and-save-it-to-an-image-with-geotools
 
+
 	private static CoordinateReferenceSystem LAEA_CRS = null;
 	static{
 		try { LAEA_CRS = CRS.decode("EPSG:3035"); } catch (Exception e) { e.printStackTrace(); }
