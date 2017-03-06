@@ -16,6 +16,7 @@ import eu.ec.estat.java4eurostat.util.Util;
  */
 public class GeoUtils {
 	//Info from geo.dic file: http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing?sort=1&file=dic%2Fen%2Fgeo.dic
+	//or use NUTS_AT_2013.csv
 
 
 	/**

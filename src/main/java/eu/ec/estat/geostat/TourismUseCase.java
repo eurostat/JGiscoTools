@@ -28,7 +28,7 @@ public class TourismUseCase {
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
 
-	//TODO show maps - make generic library
+	//TODO show maps
 	//TODO aggregate at 10km grid level
 
 	//TODO run use case on urban audit data? Use for validation?
