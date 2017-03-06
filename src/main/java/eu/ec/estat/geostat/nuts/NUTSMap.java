@@ -45,9 +45,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  */
 public class NUTSMap {
-	//TODO colors http://docs.geotools.org/stable/userguide/extension/brewer/index.html
-	//http://docs.geotools.org/stable/userguide/extension/brewer/colorbrewer.html
-	//http://docs.geotools.org/stable/userguide/extension/brewer/classifier.html
+	//TODO manage join
 
 	//TODO show properly borders depending on nuts level
 
@@ -184,6 +182,8 @@ public class NUTSMap {
 	//classifier = EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
 	//paletteName = "GrBu"
 	private FeatureTypeStyle getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName){
+		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
+
 		//classify
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 		PropertyName propExp = ff.property(propName);
@@ -247,8 +247,8 @@ public class NUTSMap {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
 
-		new NUTSMap(3,20,"").produce().show();
-
+		//new NUTSMap(3,20,"").produce().show();
+		new NUTSMap(3,20,"").produce("STAT_LEVL_", "Quantile", 10, "GrBu").show();
 
 		/*new NUTSMap(3,1,"").produce().saveAsImage("H:/desktop/ex3_1.png", 1400);
 		new NUTSMap(3,3,"").produce().saveAsImage("H:/desktop/ex3_3.png", 1400);
