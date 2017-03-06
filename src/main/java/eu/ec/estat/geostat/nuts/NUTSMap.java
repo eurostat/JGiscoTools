@@ -12,7 +12,11 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import org.geotools.brewer.color.ColorBrewer;
+import org.geotools.brewer.color.StyleGenerator;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.function.Classifier;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
@@ -29,6 +33,8 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -48,13 +54,13 @@ public class NUTSMap {
 	//TODO thematic mapping
 	//http://docs.geotools.org/latest/tutorials/map/style.html   --   http://docs.geotools.org/latest/tutorials/map/style.html#controlling-the-rendering-process
 	//http://leafletjs.com/examples/choropleth/
-	
+
 	//TODO legend
 	//http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
-	
+
 	//TODO show other countries
-	
-	
+
+
 	//https://github.com/geotools/geotools/blob/master/docs/src/main/java/org/geotools/tutorial/style/StyleLab.java
 	//http://docs.geotools.org/latest/userguide/library/render/gtrenderer.html
 	//http://docs.geotools.org/latest/userguide/library/render/index.html
@@ -85,6 +91,8 @@ public class NUTSMap {
 		return this;
 	}
 
+
+
 	public NUTSMap produce() {
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
@@ -101,6 +109,12 @@ public class NUTSMap {
 			RGStyle = styleFactory.createStyle();
 			RGStyle.featureTypeStyles().add(fts);
 		}
+
+		return produce(RGStyle);
+	}
+	public NUTSMap produce(Style RGStyle) {
+		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
 		//BN style
 		Style BNStyle;
@@ -164,6 +178,44 @@ public class NUTSMap {
 		return this;
 	}
 
+
+
+
+
+	//paletteName = "GrBu"
+	private FeatureTypeStyle getThematicStyle(SimpleFeatureCollection fc, String propName, int nbQuantiles, String paletteName){
+		//classify
+		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+		PropertyName propExp = ff.property(propName);
+		Classifier groups = (Classifier) (ff.function("Quantile", propExp, ff.literal(nbQuantiles))).evaluate(fc);
+
+		//get colors
+		Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(nbQuantiles);
+
+		return StyleGenerator.createFeatureTypeStyle(
+				groups, propExp, colors,
+				propName+"-"+nbQuantiles+"-"+paletteName,
+				fc.getSchema().getGeometryDescriptor(),
+				StyleGenerator.ELSEMODE_IGNORE,
+				1, //opacity
+				null //default stroke
+				);
+	}
+
+	private FeatureTypeStyle getNutsRGThematicStyle(String propName, int nbQuantiles, String paletteName){
+		SimpleFeatureCollection fc = NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level));
+		return getThematicStyle(fc, propName, nbQuantiles, paletteName);
+	}
+
+	public NUTSMap produce(String propName, int nbQuantiles, String paletteName) {
+		return produce((Style) getNutsRGThematicStyle(propName, nbQuantiles, paletteName));
+	}
+
+
+
+
+
+
 	public NUTSMap show() {
 		JMapFrame.showMap(map);
 		return this;
@@ -196,6 +248,8 @@ public class NUTSMap {
 		System.out.println("Start.");
 
 		new NUTSMap(3,20,"").produce().show();
+
+
 
 		/*new NUTSMap(3,1,"").produce().saveAsImage("H:/desktop/ex3_1.png", 1400);
 		new NUTSMap(3,3,"").produce().saveAsImage("H:/desktop/ex3_3.png", 1400);
