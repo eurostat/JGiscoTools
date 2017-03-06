@@ -23,7 +23,9 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  */
 public class TourismUseCase {
 	public static String BASE_PATH = "H:/geodata/";
+	//TODO deprecated
 	public static String NUTS_SHP_LVL2 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl2.shp";
+	//TODO deprecated
 	public static String NUTS_SHP_LVL3 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl3.shp";
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 

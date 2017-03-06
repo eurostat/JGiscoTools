@@ -9,13 +9,18 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.StyleGenerator;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.filter.function.Classifier;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
@@ -32,10 +37,17 @@ import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.vividsolutions.jts.geom.MultiPolygon;
+
+import eu.ec.estat.java4eurostat.base.StatsHypercube;
+import eu.ec.estat.java4eurostat.io.CSV;
 
 /**
  * 
@@ -59,6 +71,8 @@ public class NUTSMap {
 	private int level = 3; //NUTS level. can be 0, 1, 2, 3
 	private int lod = 1; //Level of detail / scale. can be 1, 3, 10, 20 or 60
 
+	private SimpleFeatureCollection fcRG;
+
 	public Color imgBckgrdColor = Color.WHITE;
 
 	public NUTSMap(){ this(3, 1, "NUTS map"); }
@@ -69,6 +83,8 @@ public class NUTSMap {
 		map.setTitle(title);
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
 		this.setBounds(2550000.0, 7400000.0, 1200000.0, 5500000.0);
+
+		fcRG = NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level));
 	}
 
 	public NUTSMap setBounds(double x1, double x2, double y1, double y2) {
@@ -129,7 +145,7 @@ public class NUTSMap {
 		switch (level) {
 		case 0:
 		{
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level)), RGStyle) );
+			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
@@ -137,7 +153,7 @@ public class NUTSMap {
 		break;
 		case 1:
 		{
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level)), RGStyle) );
+			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
@@ -145,7 +161,7 @@ public class NUTSMap {
 		break;
 		case 2:
 		{
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level)), RGStyle) );
+			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
@@ -153,7 +169,7 @@ public class NUTSMap {
 		break;
 		case 3:
 		{
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level)), RGStyle) );
+			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
@@ -168,7 +184,7 @@ public class NUTSMap {
 
 	//classifier = EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
 	//paletteName = "RdBu" - see http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
-	private Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName){
+	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName){
 		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
 
 		//classify
@@ -194,8 +210,7 @@ public class NUTSMap {
 	}
 
 	private Style getNutsRGThematicStyle(String propName, String classifier, int classNb, String paletteName){
-		SimpleFeatureCollection fc = NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level));
-		return getThematicStyle(fc, propName, classifier, classNb, paletteName);
+		return getThematicStyle(fcRG, propName, classifier, classNb, paletteName);
 	}
 
 	public NUTSMap produce(String propName, String classifier, int classNb, String paletteName) {
@@ -234,18 +249,40 @@ public class NUTSMap {
 	}
 
 
+	private void join(HashMap<String, Double> statData, String propName) {
+		try {
+			SimpleFeatureType ft = DataUtilities.createType("NUTS_RG_joined","NUTS_ID:String,the_geom:MultiPolygon,"+propName+":Double");
+			DefaultFeatureCollection fcRGJoin = new DefaultFeatureCollection("id", ft);
+
+			//TODO handle null values - or do oposite
+			SimpleFeatureIterator it = fcRG.features();
+			while (it.hasNext()) {
+				SimpleFeature f = it.next();
+				String id = (String) f.getAttribute("NUTS_ID");
+				Double value = statData.get(id);
+				SimpleFeature f2 = SimpleFeatureBuilder.build( ft, new Object[]{ id, (MultiPolygon) f.getAttribute("the_geom"), value }, null);
+				fcRGJoin.add(f2);
+			}
+			it.close();
+			fcRG = fcRGJoin;
+		} catch (Exception e) { e.printStackTrace(); }
+	}
+
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
 
-		//new NUTSMap(3,20,"").produce().show();
-		new NUTSMap(3,20,"").produce("STAT_LEVL_", "Quantile", 5, "RdBu").show();
+		//load stat data
+		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553").selectDimValueEqualTo("time", "2015 ");
+		hc.delete("unit").delete("indic_to").delete("time").delete("nace_r2");
+		HashMap<String, Double> statData = hc.toMap();
+		hc = null;
 
-		/*new NUTSMap(3,1,"").produce().saveAsImage("H:/desktop/ex3_1.png", 1400);
-		new NUTSMap(3,3,"").produce().saveAsImage("H:/desktop/ex3_3.png", 1400);
-		new NUTSMap(3,10,"").produce().saveAsImage("H:/desktop/ex3_10.png", 1400);
-		new NUTSMap(3,20,"").produce().saveAsImage("H:/desktop/ex3_20.png", 1400);
-		new NUTSMap(3,60,"").produce().saveAsImage("H:/desktop/ex3_60.png", 1400);*/
+		//make map
+		NUTSMap map = new NUTSMap(3, 20, "");
+		map.join(statData, "value");
+		map.produce("value", "Quantile", 9, "OrRd").show();
+		map.saveAsImage("H:/desktop/ex3_60.png", 1400);
 
 		System.out.println("End.");
 	}
