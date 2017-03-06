@@ -45,25 +45,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  */
 public class NUTSMap {
-	//TODO manage join
-
+	//TODO manage join - show
 	//TODO show properly borders depending on nuts level
-
-	//TODO thematic mapping
-	//http://docs.geotools.org/latest/tutorials/map/style.html   --   http://docs.geotools.org/latest/tutorials/map/style.html#controlling-the-rendering-process
-	//http://leafletjs.com/examples/choropleth/
-
-	//TODO legend
-	//http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
-
+	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO show other countries
-
-
-	//https://github.com/geotools/geotools/blob/master/docs/src/main/java/org/geotools/tutorial/style/StyleLab.java
-	//http://docs.geotools.org/latest/userguide/library/render/gtrenderer.html
-	//http://docs.geotools.org/latest/userguide/library/render/index.html
-	//http://gis.stackexchange.com/questions/123903/how-to-create-a-map-and-save-it-to-an-image-with-geotools
-
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;
 	static{
@@ -71,8 +56,10 @@ public class NUTSMap {
 	}
 
 	private MapContent map = null;
-	private int level = 3;
-	private int lod = 1; //can be 1, 3, 10, 20 or 60
+	private int level = 3; //NUTS level. can be 0, 1, 2, 3
+	private int lod = 1; //Level of detail / scale. can be 1, 3, 10, 20 or 60
+
+	public Color imgBckgrdColor = Color.WHITE;
 
 	public NUTSMap(){ this(3, 1, "NUTS map"); }
 	public NUTSMap(int level, int lod, String title){
@@ -180,8 +167,8 @@ public class NUTSMap {
 
 
 	//classifier = EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
-	//paletteName = "GrBu"
-	private FeatureTypeStyle getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName){
+	//paletteName = "RdBu" - see http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
+	private Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName){
 		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
 
 		//classify
@@ -192,7 +179,8 @@ public class NUTSMap {
 		//get colors
 		Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
 
-		return StyleGenerator.createFeatureTypeStyle(
+		//create style
+		FeatureTypeStyle fts = StyleGenerator.createFeatureTypeStyle(
 				groups, propExp, colors,
 				propName+"-"+classifier+"-"+classNb+"-"+paletteName,
 				fc.getSchema().getGeometryDescriptor(),
@@ -200,15 +188,18 @@ public class NUTSMap {
 				1, //opacity
 				null //default stroke
 				);
+		Style sty = CommonFactoryFinder.getStyleFactory().createStyle();
+		sty.featureTypeStyles().add(fts);
+		return sty;
 	}
 
-	private FeatureTypeStyle getNutsRGThematicStyle(String propName, String classifier, int classNb, String paletteName){
+	private Style getNutsRGThematicStyle(String propName, String classifier, int classNb, String paletteName){
 		SimpleFeatureCollection fc = NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level));
 		return getThematicStyle(fc, propName, classifier, classNb, paletteName);
 	}
 
 	public NUTSMap produce(String propName, String classifier, int classNb, String paletteName) {
-		return produce((Style) getNutsRGThematicStyle(propName, classifier, classNb, paletteName));
+		return produce(getNutsRGThematicStyle(propName, classifier, classNb, paletteName));
 	}
 
 
@@ -230,7 +221,7 @@ public class NUTSMap {
 			BufferedImage image = new BufferedImage(imageBounds.width, imageBounds.height, BufferedImage.TYPE_INT_RGB);
 			Graphics2D gr = image.createGraphics();
 			gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			gr.setPaint(Color.WHITE);
+			gr.setPaint(imgBckgrdColor);
 			gr.fill(imageBounds);
 
 			GTRenderer renderer = new StreamingRenderer();
@@ -248,7 +239,7 @@ public class NUTSMap {
 		System.out.println("Start.");
 
 		//new NUTSMap(3,20,"").produce().show();
-		new NUTSMap(3,20,"").produce("STAT_LEVL_", "Quantile", 10, "GrBu").show();
+		new NUTSMap(3,20,"").produce("STAT_LEVL_", "Quantile", 5, "RdBu").show();
 
 		/*new NUTSMap(3,1,"").produce().saveAsImage("H:/desktop/ex3_1.png", 1400);
 		new NUTSMap(3,3,"").produce().saveAsImage("H:/desktop/ex3_3.png", 1400);
