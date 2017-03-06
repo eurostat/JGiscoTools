@@ -45,7 +45,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  */
 public class NUTSMap {
-	//TODO manage join - show
+	//TODO manage join. Do in memory? - show
 	//TODO show properly borders depending on nuts level
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO show other countries
