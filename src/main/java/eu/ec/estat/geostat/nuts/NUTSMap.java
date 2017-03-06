@@ -181,20 +181,20 @@ public class NUTSMap {
 
 
 
-
+	//classifier = EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
 	//paletteName = "GrBu"
-	private FeatureTypeStyle getThematicStyle(SimpleFeatureCollection fc, String propName, int nbQuantiles, String paletteName){
+	private FeatureTypeStyle getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName){
 		//classify
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 		PropertyName propExp = ff.property(propName);
-		Classifier groups = (Classifier) (ff.function("Quantile", propExp, ff.literal(nbQuantiles))).evaluate(fc);
+		Classifier groups = (Classifier) (ff.function(classifier, propExp, ff.literal(classNb))).evaluate(fc);
 
 		//get colors
-		Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(nbQuantiles);
+		Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
 
 		return StyleGenerator.createFeatureTypeStyle(
 				groups, propExp, colors,
-				propName+"-"+nbQuantiles+"-"+paletteName,
+				propName+"-"+classifier+"-"+classNb+"-"+paletteName,
 				fc.getSchema().getGeometryDescriptor(),
 				StyleGenerator.ELSEMODE_IGNORE,
 				1, //opacity
@@ -202,13 +202,13 @@ public class NUTSMap {
 				);
 	}
 
-	private FeatureTypeStyle getNutsRGThematicStyle(String propName, int nbQuantiles, String paletteName){
+	private FeatureTypeStyle getNutsRGThematicStyle(String propName, String classifier, int classNb, String paletteName){
 		SimpleFeatureCollection fc = NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level));
-		return getThematicStyle(fc, propName, nbQuantiles, paletteName);
+		return getThematicStyle(fc, propName, classifier, classNb, paletteName);
 	}
 
-	public NUTSMap produce(String propName, int nbQuantiles, String paletteName) {
-		return produce((Style) getNutsRGThematicStyle(propName, nbQuantiles, paletteName));
+	public NUTSMap produce(String propName, String classifier, int classNb, String paletteName) {
+		return produce((Style) getNutsRGThematicStyle(propName, classifier, classNb, paletteName));
 	}
 
 
@@ -248,7 +248,6 @@ public class NUTSMap {
 		System.out.println("Start.");
 
 		new NUTSMap(3,20,"").produce().show();
-
 
 
 		/*new NUTSMap(3,1,"").produce().saveAsImage("H:/desktop/ex3_1.png", 1400);
