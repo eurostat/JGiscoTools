@@ -31,7 +31,7 @@
 		<repository>
 			<id>local_repository</id>
 			<name>local_repository</name>
-<!-- 			<url>file:H:/.m2/repository/</url> -->
+			<!-- <url>file:H:/.m2/repository/</url> -->
 			<url>file:~/.m2/repository/</url>
 		</repository>
 	</distributionManagement>
@@ -59,12 +59,12 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
-<!-- 				<configuration> -->
-<!-- 					<verbose>true</verbose> -->
-<!-- 					<fork>true</fork> -->
-<!-- 					<executable>C:\Program Files\Java\jdk1.8.0_71\bin\javac.exe</executable> -->
-<!-- 					<compilerVersion>1.7</compilerVersion> -->
-<!-- 				</configuration> -->
+				<!-- <configuration> -->
+				<!-- <verbose>true</verbose> -->
+				<!-- <fork>true</fork> -->
+				<!-- <executable>C:\Program Files\Java\jdk1.8.0_71\bin\javac.exe</executable> -->
+				<!-- <compilerVersion>1.7</compilerVersion> -->
+				<!-- </configuration> -->
 			</plugin>
 
 		</plugins>
@@ -114,16 +114,22 @@
 			<artifactId>gt-render</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-swing</artifactId>
-            <version>${geotools.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-swing</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.4.1212.jre7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-brewer</artifactId>
+			<version>${geotools.version}</version>
 		</dependency>
 
 		<dependency>

@@ -40,6 +40,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class NUTSMap {
 	//TODO colors http://docs.geotools.org/stable/userguide/extension/brewer/index.html
+	//http://docs.geotools.org/stable/userguide/extension/brewer/colorbrewer.html
+	//http://docs.geotools.org/stable/userguide/extension/brewer/classifier.html
 
 	//TODO show properly borders depending on nuts level
 
