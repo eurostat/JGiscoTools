@@ -60,6 +60,7 @@ public class NUTSMap {
 	//TODO show properly borders depending on nuts level
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO show other countries
+	//TODO handle null values - or do opposite
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;
 	static{
@@ -68,21 +69,23 @@ public class NUTSMap {
 
 	private MapContent map = null;
 	private int level = 3; //NUTS level. can be 0, 1, 2, 3
-	private int lod = 1; //Level of detail / scale. can be 1, 3, 10, 20 or 60
+	private int lod = 20; //Level of detail / scale. can be 1, 3, 10, 20 or 60
 	public String propName = null; //te property to map
 	public String classifier = "Quantile"; //EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
 	public int classNb = 9;
 	public String paletteName = "OrRd"; //see http://colorbrewer2.org
 
+	private HashMap<String, Double> statData = null;
 	private SimpleFeatureCollection fcRG;
 	private Style RGStyle;
 
 	public Color imgBckgrdColor = Color.WHITE;
 
-	public NUTSMap(){ this(3, 1, "NUTS map"); }
-	public NUTSMap(int level, int lod, String title){
+	public NUTSMap(String title, int level, int lod, HashMap<String, Double> statData, String propName){
 		this.level = level;
 		this.lod = lod;
+		this.statData = statData;
+		this.propName = propName;
 		map = new MapContent();
 		map.setTitle(title);
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
@@ -90,6 +93,10 @@ public class NUTSMap {
 
 		//get region features
 		fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(this.level));
+
+		//join stat data, if any
+		if(this.statData != null)
+			join(this.statData, this.propName);
 
 		//buid region style
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
@@ -173,7 +180,30 @@ public class NUTSMap {
 	}
 
 
+	public NUTSMap show() {
+		JMapFrame.showMap(map);
+		return this;
+	}
 
+
+	private void join(HashMap<String, Double> statData, String propName) {
+		try {
+			SimpleFeatureType ft = DataUtilities.createType("NUTS_RG_joined","NUTS_ID:String,the_geom:MultiPolygon,"+propName+":Double");
+			DefaultFeatureCollection fcRGJoin = new DefaultFeatureCollection("id", ft);
+
+			//TODO handle null values - or do opposite
+			SimpleFeatureIterator it = fcRG.features();
+			while (it.hasNext()) {
+				SimpleFeature f = it.next();
+				String id = (String) f.getAttribute("NUTS_ID");
+				Double value = statData.get(id);
+				SimpleFeature f2 = SimpleFeatureBuilder.build( ft, new Object[]{ id, (MultiPolygon) f.getAttribute("the_geom"), value }, null);
+				fcRGJoin.add(f2);
+			}
+			it.close();
+			fcRG = fcRGJoin;
+		} catch (Exception e) { e.printStackTrace(); }
+	}
 
 
 	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName){
@@ -203,13 +233,6 @@ public class NUTSMap {
 
 
 
-
-	public NUTSMap show() {
-		JMapFrame.showMap(map);
-		return this;
-	}
-
-
 	public NUTSMap saveAsImage(final String file, final int imageWidth) {
 		try {
 			//prepare image
@@ -231,26 +254,6 @@ public class NUTSMap {
 	}
 
 
-	private void join(HashMap<String, Double> statData, String propName) {
-		try {
-			SimpleFeatureType ft = DataUtilities.createType("NUTS_RG_joined","NUTS_ID:String,the_geom:MultiPolygon,"+propName+":Double");
-			DefaultFeatureCollection fcRGJoin = new DefaultFeatureCollection("id", ft);
-
-			//TODO handle null values - or do oposite
-			SimpleFeatureIterator it = fcRG.features();
-			while (it.hasNext()) {
-				SimpleFeature f = it.next();
-				String id = (String) f.getAttribute("NUTS_ID");
-				Double value = statData.get(id);
-				SimpleFeature f2 = SimpleFeatureBuilder.build( ft, new Object[]{ id, (MultiPolygon) f.getAttribute("the_geom"), value }, null);
-				fcRGJoin.add(f2);
-			}
-			it.close();
-			fcRG = fcRGJoin;
-		} catch (Exception e) { e.printStackTrace(); }
-	}
-
-
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
 
@@ -261,8 +264,7 @@ public class NUTSMap {
 		hc = null;
 
 		//make map
-		NUTSMap map = new NUTSMap(3, 20, "");
-		map.join(statData, "value");
+		NUTSMap map = new NUTSMap("", 3, 20, statData, "geo");
 		map.show();
 		map.saveAsImage("H:/desktop/ex3_60.png", 1400);
 

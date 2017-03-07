@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
 import eu.ec.estat.geostat.io.ShapeFile;
-import eu.ec.estat.geostat.nuts.NUTSMap;
 import eu.ec.estat.java4eurostat.analysis.Validation;
 import eu.ec.estat.java4eurostat.base.Selection;
 import eu.ec.estat.java4eurostat.base.Stat;
@@ -45,7 +44,7 @@ public class TourismUseCase {
 
 		//runDasymetric();
 		//computeValidation();
-		new NUTSMap().show();
+		//new NUTSMap().show();
 
 		//E4 data validation
 		//filterE4ValidationDataAggregatesNUTS2();
