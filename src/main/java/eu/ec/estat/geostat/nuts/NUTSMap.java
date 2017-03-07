@@ -25,7 +25,6 @@ import org.geotools.filter.function.Classifier;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
-import org.geotools.referencing.CRS;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.FeatureTypeStyle;
@@ -46,7 +45,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
-import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.io.CSV;
 
 /**
@@ -58,13 +56,15 @@ import eu.ec.estat.java4eurostat.io.CSV;
  */
 public class NUTSMap {
 	//TODO show properly borders depending on nuts level
+	//TODO handle null values - or do opposite
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO show other countries
-	//TODO handle null values - or do opposite
+	//TODO show dom
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;
 	static{
-		try { LAEA_CRS = CRS.decode("EPSG:3035"); } catch (Exception e) { e.printStackTrace(); }
+		//try { LAEA_CRS = CRS.decode("EPSG:3035"); } catch (Exception e) { e.printStackTrace(); }
+		LAEA_CRS = NUTSShapeFile.get(60, "RG").getCRS();
 	}
 
 	private MapContent map = null;
@@ -77,7 +77,6 @@ public class NUTSMap {
 
 	private HashMap<String, Double> statData = null;
 	private SimpleFeatureCollection fcRG;
-	private Style RGStyle;
 
 	public Color imgBckgrdColor = Color.WHITE;
 
@@ -99,6 +98,7 @@ public class NUTSMap {
 			join(this.statData, this.propName);
 
 		//buid region style
+		Style RGStyle;
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 		if(propName == null){
@@ -110,8 +110,10 @@ public class NUTSMap {
 			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
 			RGStyle = styleFactory.createStyle();
 			RGStyle.featureTypeStyles().add(fts);
-		} else
-			RGStyle = getThematicStyle(fcRG, propName, classifier, classNb, paletteName);
+		} else {
+			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
+			RGStyle = getThematicStyle(fcRG, propName, classifier, classNb, paletteName, stroke);
+		}
 
 		//BN style
 		Style BNStyle;
@@ -188,8 +190,8 @@ public class NUTSMap {
 
 	private void join(HashMap<String, Double> statData, String propName) {
 		try {
-			//TODO specify CRS
-			SimpleFeatureType ft = DataUtilities.createType("NUTS_RG_joined","NUTS_ID:String,the_geom:MultiPolygon,"+propName+":Double");
+			SimpleFeatureType ft = DataUtilities.createType("NUTS_RG_joined","NUTS_ID:String,the_geom:MultiPolygon,"+propName+":Double"); //:srid=3035
+			ft = DataUtilities.createSubType(ft, null, LAEA_CRS);
 			DefaultFeatureCollection fcRGJoin = new DefaultFeatureCollection("id", ft);
 
 			//TODO handle null values - or do opposite
@@ -207,7 +209,7 @@ public class NUTSMap {
 	}
 
 
-	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName){
+	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName, Stroke stroke){
 		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
 
 		//classify
@@ -218,7 +220,6 @@ public class NUTSMap {
 		//get colors
 		Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
 
-		//TODO remove black stroke
 		//create style
 		FeatureTypeStyle fts = StyleGenerator.createFeatureTypeStyle(
 				groups, propExp, colors,
@@ -226,7 +227,7 @@ public class NUTSMap {
 				fc.getSchema().getGeometryDescriptor(),
 				StyleGenerator.ELSEMODE_IGNORE,
 				1, //opacity
-				null //default stroke
+				stroke
 				);
 		Style sty = CommonFactoryFinder.getStyleFactory().createStyle();
 		sty.featureTypeStyles().add(fts);
@@ -260,15 +261,15 @@ public class NUTSMap {
 		System.out.println("Start.");
 
 		//load stat data
-		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553").selectDimValueEqualTo("time", "2015 ");
-		hc.delete("unit").delete("indic_to").delete("time").delete("nace_r2");
-		HashMap<String, Double> statData = hc.toMap();
-		hc = null;
+		HashMap<String, Double> statData =
+				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
+				.delete("unit").delete("indic_to").delete("time").delete("nace_r2")
+				.toMap();
 
 		//make map
 		NUTSMap map = new NUTSMap("", 3, 20, statData, "geo");
 		map.show();
-		map.saveAsImage("H:/desktop/ex3_60.png", 1400);
+		//map.saveAsImage("H:/desktop/ex3_60.png", 1400);
 
 		System.out.println("End.");
 	}
