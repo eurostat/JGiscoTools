@@ -56,7 +56,6 @@ import eu.ec.estat.java4eurostat.io.CSV;
  */
 public class NUTSMap {
 	//TODO show properly borders depending on nuts level
-	//TODO handle null values - or do opposite
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO show other countries
 	//TODO show dom
@@ -70,13 +69,12 @@ public class NUTSMap {
 	private MapContent map = null;
 	private int level = 3; //NUTS level. can be 0, 1, 2, 3
 	private int lod = 20; //Level of detail / scale. can be 1, 3, 10, 20 or 60
-	public String propName = null; //te property to map
+	public String propName = null; //the property to map
 	public String classifier = "Quantile"; //EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
 	public int classNb = 9;
 	public String paletteName = "OrRd"; //see http://colorbrewer2.org
 
 	private HashMap<String, Double> statData = null;
-	private SimpleFeatureCollection fcRG;
 
 	public Color imgBckgrdColor = Color.WHITE;
 
@@ -91,26 +89,30 @@ public class NUTSMap {
 		this.setBounds(2550000.0, 7400000.0, 1200000.0, 5500000.0);
 
 		//get region features
-		fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(this.level));
+		SimpleFeatureCollection fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(this.level));
+		SimpleFeatureCollection fcRGNoDta = null;
 
 		//join stat data, if any
-		if(this.statData != null)
-			join(this.statData, this.propName);
+		SimpleFeatureCollection[] out = join(fcRG, this.statData, this.propName);
+		fcRG = out[0]; fcRGNoDta = out[1];
 
-		//buid region style
-		Style RGStyle;
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
-		if(propName == null){
+
+		//buid region style
+		Style RGStyleNoData;
+		{
 			//Stroke stroke = styleFactory.createStroke(filterFactory.literal(Color.WHITE), filterFactory.literal(1));
 			Fill fill = styleFactory.createFill(filterFactory.literal(Color.GRAY));
 			PolygonSymbolizer polSymb = styleFactory.createPolygonSymbolizer(/*stroke*/null, fill, null);
 			Rule rule = styleFactory.createRule();
 			rule.symbolizers().add(polSymb);
 			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
-			RGStyle = styleFactory.createStyle();
-			RGStyle.featureTypeStyles().add(fts);
-		} else {
+			RGStyleNoData = styleFactory.createStyle();
+			RGStyleNoData.featureTypeStyles().add(fts);
+		}
+		Style RGStyle = null;
+		if(fcRG.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
 			RGStyle = getThematicStyle(fcRG, propName, classifier, classNb, paletteName, stroke);
 		}
@@ -143,6 +145,7 @@ public class NUTSMap {
 		switch (level) {
 		case 0:
 		{
+			map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
 			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
@@ -151,6 +154,7 @@ public class NUTSMap {
 		break;
 		case 1:
 		{
+			map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
 			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
@@ -159,6 +163,7 @@ public class NUTSMap {
 		break;
 		case 2:
 		{
+			map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
 			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
@@ -167,6 +172,7 @@ public class NUTSMap {
 		break;
 		case 3:
 		{
+			map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
 			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
@@ -188,24 +194,32 @@ public class NUTSMap {
 	}
 
 
-	private void join(HashMap<String, Double> statData, String propName) {
+
+	private SimpleFeatureCollection[] join(SimpleFeatureCollection fc, HashMap<String, Double> statData, String propName) {
 		try {
 			SimpleFeatureType ft = DataUtilities.createType("NUTS_RG_joined","NUTS_ID:String,the_geom:MultiPolygon,"+propName+":Double"); //:srid=3035
-			ft = DataUtilities.createSubType(ft, null, LAEA_CRS);
-			DefaultFeatureCollection fcRGJoin = new DefaultFeatureCollection("id", ft);
+			ft = DataUtilities.createSubType(ft, null, fc.getSchema().getCoordinateReferenceSystem());
+			DefaultFeatureCollection fcRGJoin = new DefaultFeatureCollection("fc_joined", ft);
+			DefaultFeatureCollection fcRGNoData = new DefaultFeatureCollection("fc_nodata", ft);
 
-			//TODO handle null values - or do opposite
-			SimpleFeatureIterator it = fcRG.features();
+			SimpleFeatureIterator it = fc.features();
 			while (it.hasNext()) {
 				SimpleFeature f = it.next();
 				String id = (String) f.getAttribute("NUTS_ID");
-				Double value = statData.get(id);
-				SimpleFeature f2 = SimpleFeatureBuilder.build( ft, new Object[]{ id, (MultiPolygon) f.getAttribute("the_geom"), value }, null);
-				fcRGJoin.add(f2);
+				Double value = null;
+				if(statData != null) value = statData.get(id);
+				if(value==null) {
+					SimpleFeature f2 = SimpleFeatureBuilder.build( ft, new Object[]{ id, (MultiPolygon)f.getAttribute("the_geom"), 0 }, null);
+					fcRGNoData.add(f2);
+				} else {
+					SimpleFeature f2 = SimpleFeatureBuilder.build( ft, new Object[]{ id, (MultiPolygon)f.getAttribute("the_geom"), value.doubleValue() }, null);
+					fcRGJoin.add(f2);
+				}
 			}
 			it.close();
-			fcRG = fcRGJoin;
+			return new SimpleFeatureCollection[]{fcRGJoin, fcRGNoData};
 		} catch (Exception e) { e.printStackTrace(); }
+		return null;
 	}
 
 
@@ -267,9 +281,9 @@ public class NUTSMap {
 				.toMap();
 
 		//make map
-		NUTSMap map = new NUTSMap("", 3, 20, statData, "geo");
-		map.show();
-		//map.saveAsImage("H:/desktop/ex3_60.png", 1400);
+		NUTSMap map = new NUTSMap("", 3, 60, statData, "geo");
+		//map.show();
+		map.saveAsImage("H:/desktop/ex3_60.png", 1400);
 
 		System.out.println("End.");
 	}
