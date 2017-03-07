@@ -36,17 +36,28 @@ public class NUTSShapeFile {
 	public static ShapeFile get(int lod, String proj, String type){ return get(2013, lod, proj, type); }
 
 
-	//filters for nuts regions, by level
-	private static Filter[] filterRGLevel = null;
-	public static Filter getFilterRGLevel(int lvl){
-		if(filterRGLevel == null)
+	//filters by level
+	private static Filter[] filterByLevel = null;
+	public static Filter getFilterByLevel(int lvl){
+		if(filterByLevel == null)
 			try {
-				filterRGLevel = new Filter[4];
-				for(int i=0; i<=3; i++) filterRGLevel[i] = CQL.toFilter("STAT_LEVL_ = "+i);
+				filterByLevel = new Filter[4];
+				for(int i=0; i<=3; i++) filterByLevel[i] = CQL.toFilter("STAT_LEVL_ = "+i);
 			} catch (CQLException e) { e.printStackTrace(); }
 
-		return filterRGLevel[lvl];
+		return filterByLevel[lvl];
 	}
+	private static Filter[] filterByLevel_ = null;
+	public static Filter getFilterByLevel_(int lvl){
+		if(filterByLevel_ == null)
+			try {
+				filterByLevel_ = new Filter[4];
+				for(int i=0; i<=3; i++) filterByLevel_[i] = CQL.toFilter("STAT_LEVL_ <= "+i);
+			} catch (CQLException e) { e.printStackTrace(); }
+
+		return filterByLevel_[lvl];
+	}
+
 
 	//filters for nuts boundaries
 	//TODO

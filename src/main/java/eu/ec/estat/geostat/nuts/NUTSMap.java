@@ -49,16 +49,17 @@ import eu.ec.estat.java4eurostat.io.CSV;
 
 /**
  * 
- * Library to produce NUTS based maps.
+ * Library to easily produce maps based on NUTS regions.
  * 
  * @author Julien Gaffuri
  *
  */
 public class NUTSMap {
-	//TODO show properly borders depending on nuts level
+	//TODO BN do not show coastal
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO show other countries
-	//TODO show dom
+	//TODO borders: coastal, etc
+	//TODO show DOM
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;
 	static{
@@ -73,6 +74,7 @@ public class NUTSMap {
 	public String classifier = "Quantile"; //EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
 	public int classNb = 9;
 	public String paletteName = "OrRd"; //see http://colorbrewer2.org
+	boolean showJoin=false, showSepa=false;
 
 	private HashMap<String, Double> statData = null;
 
@@ -86,10 +88,12 @@ public class NUTSMap {
 		map = new MapContent();
 		map.setTitle(title);
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
-		this.setBounds(2550000.0, 7400000.0, 1200000.0, 5500000.0);
+		this.setBounds(1200000.0, 5500000.0, 2550000.0, 7400000.0);
+
+
 
 		//get region features
-		SimpleFeatureCollection fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(this.level));
+		SimpleFeatureCollection fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterByLevel(this.level));
 		SimpleFeatureCollection fcRGNoDta = null;
 
 		//join stat data, if any
@@ -117,21 +121,30 @@ public class NUTSMap {
 			RGStyle = getThematicStyle(fcRG, propName, classifier, classNb, paletteName, stroke);
 		}
 
+		map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
+		map.addLayer( new FeatureLayer(fcRG, RGStyle) );
+
+
+
 		//BN style
-		Style BNStyle;
-		{
-			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.4));
-			LineSymbolizer sepaJoinSymb = styleFactory.createLineSymbolizer(stroke, null);
-			Rule rule = styleFactory.createRule();
-			rule.symbolizers().add(sepaJoinSymb);
-			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
-			BNStyle = styleFactory.createStyle();
-			BNStyle.featureTypeStyles().add(fts);
+		//TODO propose generic border display pattern - level-width-color
+		if(this.level == 0){
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(0)), getLineStyle(Color.WHITE, 0.8)) );
+		} else if(this.level == 1){
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(0)), getLineStyle(Color.WHITE, 0.8)) );
+		} else if(this.level == 2){
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(1)), getLineStyle(Color.WHITE, 0.6)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(0)), getLineStyle(Color.WHITE, 0.8)) );
+		} else if(this.level == 3){
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(2)), getLineStyle(Color.WHITE, 0.6)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(0)), getLineStyle(Color.WHITE, 1.2)) );
 		}
 
-		//sepa and join style
-		Style sepaJoinStyle;
-		{
+
+
+		//sepa and join
+		if(showJoin || showSepa){
+			Style sepaJoinStyle;
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.GRAY), filterFactory.literal(0.3));
 			LineSymbolizer sepaJoinSymb = styleFactory.createLineSymbolizer(stroke, null);
 			Rule rule = styleFactory.createRule();
@@ -139,47 +152,11 @@ public class NUTSMap {
 			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
 			sepaJoinStyle = styleFactory.createStyle();
 			sepaJoinStyle.featureTypeStyles().add(fts);
+
+			if(showJoin) map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
+			if(showSepa) map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 		}
 
-		//create and add layers
-		switch (level) {
-		case 0:
-		{
-			map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
-			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
-		}
-		break;
-		case 1:
-		{
-			map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
-			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
-		}
-		break;
-		case 2:
-		{
-			map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
-			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
-		}
-		break;
-		case 3:
-		{
-			map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
-			map.addLayer( new FeatureLayer(fcRG, RGStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(), BNStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
-		}
-		break;
-		}
 	}
 
 	public NUTSMap setBounds(double x1, double x2, double y1, double y2) {
@@ -248,13 +225,28 @@ public class NUTSMap {
 		return sty;
 	}
 
+	private static Style getLineStyle(Color col, double width){
+		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
+
+		Stroke stroke = styleFactory.createStroke( filterFactory.literal(col), filterFactory.literal(width));
+		LineSymbolizer symb = styleFactory.createLineSymbolizer(stroke, null);
+		Rule rule = styleFactory.createRule();
+		rule.symbolizers().add(symb);
+		FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
+		Style s = styleFactory.createStyle();
+		s.featureTypeStyles().add(fts);
+		return s;
+	}
+
+
 
 
 	public NUTSMap saveAsImage(final String file, final int imageWidth) {
 		try {
 			//prepare image
 			ReferencedEnvelope mapBounds = map.getViewport().getBounds();
-			Rectangle imageBounds = new Rectangle(0, 0, imageWidth, (int) Math.round(imageWidth * mapBounds.getSpan(0) / mapBounds.getSpan(1)));
+			Rectangle imageBounds = new Rectangle(0, 0, imageWidth, (int) Math.round(imageWidth * mapBounds.getSpan(1) / mapBounds.getSpan(0)));
 			BufferedImage image = new BufferedImage(imageBounds.width, imageBounds.height, BufferedImage.TYPE_INT_RGB);
 			Graphics2D gr = image.createGraphics();
 			gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -283,7 +275,7 @@ public class NUTSMap {
 		//make map
 		NUTSMap map = new NUTSMap("", 3, 60, statData, "geo");
 		//map.show();
-		map.saveAsImage("H:/desktop/ex3_60.png", 1400);
+		map.saveAsImage("H:/desktop/map.png", 1000);
 
 		System.out.println("End.");
 	}
