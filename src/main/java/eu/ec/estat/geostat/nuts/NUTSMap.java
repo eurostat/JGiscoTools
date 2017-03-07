@@ -55,7 +55,7 @@ import eu.ec.estat.java4eurostat.io.CSV;
  *
  */
 public class NUTSMap {
-	//TODO BN do not show coastal
+	//TODO TEST = BN do not show coastal
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO show other countries
 	//TODO borders: coastal, etc
@@ -80,7 +80,7 @@ public class NUTSMap {
 
 	public Color imgBckgrdColor = Color.WHITE;
 
-	public NUTSMap(String title, int level, int lod, HashMap<String, Double> statData, String propName){
+	public NUTSMap(String title, int level, int lod, String propName, HashMap<String, Double> statData){
 		this.level = level;
 		this.lod = lod;
 		this.statData = statData;
@@ -129,15 +129,15 @@ public class NUTSMap {
 		//BN style
 		//TODO propose generic border display pattern - level-width-color
 		if(this.level == 0){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(0)), getLineStyle(Color.WHITE, 0.8)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.8)) );
 		} else if(this.level == 1){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(0)), getLineStyle(Color.WHITE, 0.8)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.8)) );
 		} else if(this.level == 2){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(1)), getLineStyle(Color.WHITE, 0.6)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(0)), getLineStyle(Color.WHITE, 0.8)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.6)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.8)) );
 		} else if(this.level == 3){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(2)), getLineStyle(Color.WHITE, 0.6)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection(NUTSShapeFile.getFilterByLevel_(0)), getLineStyle(Color.WHITE, 1.2)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.6)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 1.2)) );
 		}
 
 
@@ -273,9 +273,10 @@ public class NUTSMap {
 				.toMap();
 
 		//make map
-		NUTSMap map = new NUTSMap("", 3, 60, statData, "geo");
+		NUTSMap map = new NUTSMap("", 3, 60, "geo", statData);
 		//map.show();
 		map.saveAsImage("H:/desktop/map.png", 1000);
+		//map.saveAsImage("/home/juju/Bureau/map.png", 1000);
 
 		System.out.println("End.");
 	}

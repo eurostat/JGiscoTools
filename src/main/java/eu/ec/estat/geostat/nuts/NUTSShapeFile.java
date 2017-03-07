@@ -60,8 +60,17 @@ public class NUTSShapeFile {
 
 
 	//filters for nuts boundaries
-	//TODO
-	//EU_FLAG CC_FLAG EFTA_FLAG OTHR_CNTR_ COAS_FLAG STAT_LEVEL_
+	//EU_FLAG, CC_FLAG, EFTA_FLAG, OTHR_CNTR_, COAS_FLAG
+	private static HashMap<String,Filter> filtersBN_TRUE = new HashMap<String,Filter>();
+	private static HashMap<String,Filter> filtersBN_FALSE = new HashMap<String,Filter>();
+	public Filter getFilterBN(String property, boolean val){
+		Filter f = (val?filtersBN_TRUE:filtersBN_FALSE).get(property);
+		if(f==null){
+			try { f = CQL.toFilter(property+" = "+(val?"TRUE":"FALSE")); } catch (CQLException e) { e.printStackTrace(); }
+			(val?filtersBN_TRUE:filtersBN_FALSE).put(property,f);
+		}
+		return f;
+	}
 
 
 
