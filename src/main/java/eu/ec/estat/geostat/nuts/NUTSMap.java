@@ -188,6 +188,7 @@ public class NUTSMap {
 
 	private void join(HashMap<String, Double> statData, String propName) {
 		try {
+			//TODO specify CRS
 			SimpleFeatureType ft = DataUtilities.createType("NUTS_RG_joined","NUTS_ID:String,the_geom:MultiPolygon,"+propName+":Double");
 			DefaultFeatureCollection fcRGJoin = new DefaultFeatureCollection("id", ft);
 
@@ -217,6 +218,7 @@ public class NUTSMap {
 		//get colors
 		Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
 
+		//TODO remove black stroke
 		//create style
 		FeatureTypeStyle fts = StyleGenerator.createFeatureTypeStyle(
 				groups, propExp, colors,
