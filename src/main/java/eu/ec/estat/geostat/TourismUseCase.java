@@ -45,7 +45,7 @@ public class TourismUseCase {
 
 		//runDasymetric();
 		//computeValidation();
-		new NUTSMap().produce();
+		new NUTSMap().show();
 
 		//E4 data validation
 		//filterE4ValidationDataAggregatesNUTS2();
@@ -161,11 +161,11 @@ public class TourismUseCase {
 
 
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	private static void filterE4ValidationDataAggregatesNUTS2() {
 
 		//load validation data

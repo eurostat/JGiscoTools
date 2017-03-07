@@ -57,7 +57,6 @@ import eu.ec.estat.java4eurostat.io.CSV;
  *
  */
 public class NUTSMap {
-	//TODO manage join. Do in memory? - show
 	//TODO show properly borders depending on nuts level
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO show other countries
@@ -70,8 +69,13 @@ public class NUTSMap {
 	private MapContent map = null;
 	private int level = 3; //NUTS level. can be 0, 1, 2, 3
 	private int lod = 1; //Level of detail / scale. can be 1, 3, 10, 20 or 60
+	public String propName = null; //te property to map
+	public String classifier = "Quantile"; //EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
+	public int classNb = 9;
+	public String paletteName = "OrRd"; //see http://colorbrewer2.org
 
 	private SimpleFeatureCollection fcRG;
+	private Style RGStyle;
 
 	public Color imgBckgrdColor = Color.WHITE;
 
@@ -84,23 +88,13 @@ public class NUTSMap {
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
 		this.setBounds(2550000.0, 7400000.0, 1200000.0, 5500000.0);
 
-		fcRG = NUTSShapeFile.get(lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(level));
-	}
+		//get region features
+		fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterRGLevel(this.level));
 
-	public NUTSMap setBounds(double x1, double x2, double y1, double y2) {
-		map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, LAEA_CRS ));
-		return this;
-	}
-
-
-
-	public NUTSMap produce() {
+		//buid region style
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
-
-		//RG style
-		Style RGStyle;
-		{
+		if(propName == null){
 			//Stroke stroke = styleFactory.createStroke(filterFactory.literal(Color.WHITE), filterFactory.literal(1));
 			Fill fill = styleFactory.createFill(filterFactory.literal(Color.GRAY));
 			PolygonSymbolizer polSymb = styleFactory.createPolygonSymbolizer(/*stroke*/null, fill, null);
@@ -109,13 +103,8 @@ public class NUTSMap {
 			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
 			RGStyle = styleFactory.createStyle();
 			RGStyle.featureTypeStyles().add(fts);
-		}
-
-		return produce(RGStyle);
-	}
-	public NUTSMap produce(Style RGStyle) {
-		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
-		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
+		} else
+			RGStyle = getThematicStyle(fcRG, propName, classifier, classNb, paletteName);
 
 		//BN style
 		Style BNStyle;
@@ -176,14 +165,17 @@ public class NUTSMap {
 		}
 		break;
 		}
+	}
+
+	public NUTSMap setBounds(double x1, double x2, double y1, double y2) {
+		map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, LAEA_CRS ));
 		return this;
 	}
 
 
 
 
-	//classifier = EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
-	//paletteName = "RdBu" - see http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3
+
 	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName){
 		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
 
@@ -208,16 +200,6 @@ public class NUTSMap {
 		sty.featureTypeStyles().add(fts);
 		return sty;
 	}
-
-	private Style getNutsRGThematicStyle(String propName, String classifier, int classNb, String paletteName){
-		return getThematicStyle(fcRG, propName, classifier, classNb, paletteName);
-	}
-
-	public NUTSMap produce(String propName, String classifier, int classNb, String paletteName) {
-		return produce(getNutsRGThematicStyle(propName, classifier, classNb, paletteName));
-	}
-
-
 
 
 
@@ -281,7 +263,7 @@ public class NUTSMap {
 		//make map
 		NUTSMap map = new NUTSMap(3, 20, "");
 		map.join(statData, "value");
-		map.produce("value", "Quantile", 9, "OrRd").show();
+		map.show();
 		map.saveAsImage("H:/desktop/ex3_60.png", 1400);
 
 		System.out.println("End.");
