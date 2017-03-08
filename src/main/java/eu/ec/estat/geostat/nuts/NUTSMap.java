@@ -45,7 +45,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
-import eu.ec.estat.java4eurostat.io.CSV;
+import eu.ec.estat.java4eurostat.base.Selection;
+import eu.ec.estat.java4eurostat.base.Stat;
+import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
  * 
@@ -55,9 +57,8 @@ import eu.ec.estat.java4eurostat.io.CSV;
  *
  */
 public class NUTSMap {
-	//TODO TEST = BN do not show coastal
+	//TODO show other countries + blue see
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
-	//TODO show other countries
 	//TODO borders: coastal, etc
 	//TODO show DOM
 
@@ -129,15 +130,16 @@ public class NUTSMap {
 		//BN style
 		//TODO propose generic border display pattern - level-width-color
 		if(this.level == 0){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.8)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(Color.WHITE, 0.8)) );
 		} else if(this.level == 1){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.8)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG='F'"), getLineStyle(Color.LIGHT_GRAY, 0.3)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(Color.WHITE, 1)) );
 		} else if(this.level == 2){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.6)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.8)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), getLineStyle(Color.LIGHT_GRAY, 0.3)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(Color.WHITE, 1)) );
 		} else if(this.level == 3){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 0.6)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG=FALSE"), getLineStyle(Color.WHITE, 1.2)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), getLineStyle(Color.LIGHT_GRAY, 0.5)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(Color.WHITE, 1)) );
 		}
 
 
@@ -267,16 +269,29 @@ public class NUTSMap {
 		System.out.println("Start.");
 
 		//load stat data
-		HashMap<String, Double> statData =
+		HashMap<String, Double> statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
+				new Selection.And(
+						new Selection.DimValueEqualTo("unit","NR"),
+						new Selection.DimValueEqualTo("nace_r2","I551-I553"),
+						new Selection.DimValueEqualTo("indic_to","B006"),
+						new Selection.DimValueEqualTo("time","2015 "),
+						//keep only nuts 2 regions
+						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } }
+						))
+				.delete("unit").delete("nace_r2").delete("indic_to").delete("time")
+				.toMap();
+		NUTSMap map = new NUTSMap("", 2, 60, "geo", statData);
+		map.saveAsImage("H:/desktop/map.png", 1000);
+
+
+		/*HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
 				.delete("unit").delete("indic_to").delete("time").delete("nace_r2")
 				.toMap();
-
-		//make map
 		NUTSMap map = new NUTSMap("", 3, 60, "geo", statData);
 		//map.show();
 		map.saveAsImage("H:/desktop/map.png", 1000);
-		//map.saveAsImage("/home/juju/Bureau/map.png", 1000);
+		//map.saveAsImage("/home/juju/Bureau/map.png", 1000);*/
 
 		System.out.println("End.");
 	}

@@ -60,7 +60,7 @@ public class NUTSShapeFile {
 
 
 	//filters for nuts boundaries
-	//EU_FLAG, CC_FLAG, EFTA_FLAG, OTHR_CNTR_, COAS_FLAG
+	//EU_FLAG, CC_FLAG, EFTA_FLAG, OTHR_CNTR_, COAS_FLAG. values are "T" or "F"
 	private static HashMap<String,Filter> filtersBN_TRUE = new HashMap<String,Filter>();
 	private static HashMap<String,Filter> filtersBN_FALSE = new HashMap<String,Filter>();
 	public Filter getFilterBN(String property, boolean val){
