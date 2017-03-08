@@ -55,6 +55,8 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  *
  */
 public class NUTSMap {
+	//TODO print classification/legend
+	//TODO see how to fix classification/legend
 	//TODO show other countries + blue see
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO borders: coastal, etc
@@ -210,6 +212,7 @@ public class NUTSMap {
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 		PropertyName propExp = ff.property(propName);
 		Classifier groups = (Classifier) (ff.function(classifier, propExp, ff.literal(classNb))).evaluate(fc);
+		//TODO System.out.println(groups);
 
 		//get colors
 		Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
