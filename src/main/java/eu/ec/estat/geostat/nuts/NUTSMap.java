@@ -45,8 +45,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
-import eu.ec.estat.java4eurostat.base.Selection;
-import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
@@ -79,7 +77,10 @@ public class NUTSMap {
 
 	private HashMap<String, Double> statData = null;
 
-	public Color imgBckgrdColor = Color.WHITE;
+	//public Color imgBckgrdColor = Color.WHITE;
+	//public Color imgBckgrdColor = new Color(240,248,255); //aliceblue
+	public Color imgBckgrdColor = new Color(173,216,230); //lightblue
+	//public Color imgBckgrdColor = new Color(70,130,180); //steelblue
 
 	public NUTSMap(String title, int level, int lod, String propName, HashMap<String, Double> statData){
 		this.level = level;
@@ -89,7 +90,7 @@ public class NUTSMap {
 		map = new MapContent();
 		map.setTitle(title);
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
-		this.setBounds(1200000.0, 5500000.0, 2550000.0, 7400000.0);
+		this.setBounds(1340000.0, 5450000.0, 2580000.0, 7350000.0);
 
 
 
@@ -269,20 +270,10 @@ public class NUTSMap {
 		System.out.println("Start.");
 
 		//load stat data
-		HashMap<String, Double> statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
-				new Selection.And(
-						new Selection.DimValueEqualTo("unit","NR"),
-						new Selection.DimValueEqualTo("nace_r2","I551-I553"),
-						new Selection.DimValueEqualTo("indic_to","B006"),
-						new Selection.DimValueEqualTo("time","2015 "),
-						//keep only nuts 2 regions
-						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } }
-						))
-				.delete("unit").delete("nace_r2").delete("indic_to").delete("time")
-				.toMap();
+		HashMap<String, Double> statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006","time","2015 ")
+				.delete("unit").delete("nace_r2").delete("indic_to").delete("time").toMap();
 		NUTSMap map = new NUTSMap("", 2, 60, "geo", statData);
 		map.saveAsImage("H:/desktop/map.png", 1000);
-
 
 		/*HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")

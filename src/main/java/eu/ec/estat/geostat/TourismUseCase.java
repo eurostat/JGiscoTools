@@ -3,11 +3,13 @@
  */
 package eu.ec.estat.geostat;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.HashMap;
 
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
 import eu.ec.estat.geostat.io.ShapeFile;
+import eu.ec.estat.geostat.nuts.NUTSMap;
 import eu.ec.estat.java4eurostat.analysis.Validation;
 import eu.ec.estat.java4eurostat.base.Selection;
 import eu.ec.estat.java4eurostat.base.Stat;
@@ -44,7 +46,8 @@ public class TourismUseCase {
 
 		//runDasymetric();
 		//computeValidation();
-		//new NUTSMap().show();
+		makeMaps();
+		
 
 		//E4 data validation
 		//filterE4ValidationDataAggregatesNUTS2();
@@ -52,7 +55,6 @@ public class TourismUseCase {
 
 		System.out.println("End.");
 	}
-
 
 
 	public static void runDasymetric(){
@@ -157,6 +159,14 @@ public class TourismUseCase {
 	}
 
 
+	public static void makeMaps(){
+		//nuts 2 level map
+		HashMap<String, Double> statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006","time","2015 ")
+				.delete("unit").delete("nace_r2").delete("indic_to").delete("time").toMap();
+		NUTSMap map = new NUTSMap("", 2, 60, "geo", statData);
+		map.saveAsImage("H:/desktop/map.png", 1000);
+
+	}
 
 
 
