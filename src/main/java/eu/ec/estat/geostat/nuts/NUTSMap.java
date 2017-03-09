@@ -118,7 +118,8 @@ public class NUTSMap {
 		Style RGStyle = RGStyleNoData;
 		if(fcRG.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
-			RGStyle = getThematicStyle(fcRG, propName, classifier, classNb, paletteName, stroke);
+			Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
+			RGStyle = getThematicStyle(fcRG, propName, classifier, classNb, colors, stroke);
 		}
 
 		map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
@@ -191,22 +192,23 @@ public class NUTSMap {
 	}
 
 
-	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifier, int classNb, String paletteName, Stroke stroke){
-		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
 
-		//classify
+
+	private static Classifier getClassifier(SimpleFeatureCollection fc, String propName, String classifierName, int classNb){
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 		PropertyName propExp = ff.property(propName);
-		Classifier groups = (Classifier) (ff.function(classifier, propExp, ff.literal(classNb))).evaluate(fc);
-		//TODO System.out.println(groups);
+		return (Classifier) (ff.function(classifierName, propExp, ff.literal(classNb))).evaluate(fc);
+	}
 
-		//get colors
-		Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
+	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifierName, int classNb, Color[] colors, Stroke stroke){
+		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
 
 		//create style
+		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+		PropertyName propExp = ff.property(propName);
 		FeatureTypeStyle fts = StyleGenerator.createFeatureTypeStyle(
-				groups, propExp, colors,
-				propName+"-"+classifier+"-"+classNb+"-"+paletteName,
+				getClassifier(fc, propName, classifierName, classNb), propExp, colors,
+				propName+"-"+classifierName+"-"+classNb,
 				fc.getSchema().getGeometryDescriptor(),
 				StyleGenerator.ELSEMODE_IGNORE,
 				1, //opacity
