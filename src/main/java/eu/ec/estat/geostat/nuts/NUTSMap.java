@@ -60,6 +60,7 @@ public class NUTSMap {
 	//TODO show other countries + blue see
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO borders: coastal, etc
+	//TODO habillage, etc.
 	//TODO show DOM
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;

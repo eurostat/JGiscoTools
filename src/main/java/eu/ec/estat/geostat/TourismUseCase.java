@@ -30,11 +30,13 @@ public class TourismUseCase {
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
 
+	//TODO correct maps (static classification)
+	//TODO show legend
+	//TODO better analyse validation data
+	//TODO contact tomtom guys. ask for data
 	//TODO aggregate at 10km grid level
-
-	//TODO run use case on urban audit data? Use for validation?
+	//TODO validation of accomodation data
 	//TODO focus on FR.
-	//TODO enrich/extract NUTSUtils library
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
