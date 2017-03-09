@@ -71,35 +71,48 @@ public class NUTSMap {
 	}
 
 	private MapContent map = null;
-	private int level = 3; //NUTS level. can be 0, 1, 2, 3
-	private int lod = 20; //Level of detail / scale. can be 1, 3, 10, 20 or 60
-	public String propName = null; //the property to map
-	public String classifier = "Quantile"; //EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
-	public int classNb = 9;
-	public String paletteName = "OrRd"; //see http://colorbrewer2.org
-	boolean showJoin=false, showSepa=false;
 
-	private HashMap<String, Double> statData = null;
+	public int level = 3; //NUTS level. can be 0, 1, 2, 3
+	public int lod = 20; //Level of detail / scale. can be 1, 3, 10, 20 or 60
+
+	public HashMap<String, Double> statData = null;
+	public String propName = null; //the property to map
+
+	public Classifier classifier;
+	public String classifierName = "Quantile"; //EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
+	public int classNb = 9;
+	public String paletteName = "YlOrRd"; //"OrRd"; //see http://colorbrewer2.org
+
+	boolean showJoin=false, showSepa=false;
 
 	//public Color imgBckgrdColor = Color.WHITE;
 	//public Color imgBckgrdColor = new Color(240,248,255); //aliceblue
 	public Color imgBckgrdColor = new Color(173,216,230); //lightblue
 	//public Color imgBckgrdColor = new Color(70,130,180); //steelblue
+	public Color cntrRGColor = Color.LIGHT_GRAY;
+	public Color cntrBNColor = Color.WHITE;
+	public Color nutsBNColor1 = Color.LIGHT_GRAY;
+	public Color nutsBNColor2 = Color.WHITE;
 
-	public NUTSMap(String title, int level, int lod, String propName, HashMap<String, Double> statData){
+
+	public NUTSMap(int level, int lod, String propName, HashMap<String, Double> statData, Classifier classifier){
 		this.level = level;
 		this.lod = lod;
 		this.statData = statData;
 		this.propName = propName;
+		this.classifier = classifier;
+	}
+
+	public NUTSMap make(){
 		map = new MapContent();
-		map.setTitle(title);
+		//map.setTitle(title);
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
 		this.setBounds(1340000.0, 5450000.0, 2580000.0, 7350000.0);
 
 
 		//countries
-		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "RG").getFeatureCollection(NUTSShapeFile.CNTR_NEIG_CNTR), getPolygonStyle(Color.LIGHT_GRAY, null)) );
-		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "BN").getFeatureCollection("COAS_FLAG='F'"), getLineStyle(Color.WHITE, 0.2)) );
+		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "RG").getFeatureCollection(NUTSShapeFile.CNTR_NEIG_CNTR), getPolygonStyle(cntrRGColor, null)) );
+		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "BN").getFeatureCollection("COAS_FLAG='F'"), getLineStyle(cntrBNColor, 0.2)) );
 
 
 		//get region features
@@ -119,27 +132,26 @@ public class NUTSMap {
 		if(fcRG.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
 			Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
-			RGStyle = getThematicStyle(fcRG, propName, classifier, classNb, colors, stroke);
+			if(this.classifier==null) this.classifier = getClassifier(fcRG, propName, classifierName, classNb);
+			RGStyle = getThematicStyle(fcRG, propName, this.classifier, colors, stroke);
 		}
 
 		map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
 		map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 
-
-
 		//BN style
 		//TODO propose generic border display pattern - level-width-color
 		if(this.level == 0){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(Color.WHITE, 0.8)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor2, 0.8)) );
 		} else if(this.level == 1){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG='F'"), getLineStyle(Color.LIGHT_GRAY, 0.3)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(Color.WHITE, 1)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor1, 0.3)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor2, 1)) );
 		} else if(this.level == 2){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), getLineStyle(Color.LIGHT_GRAY, 0.3)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(Color.WHITE, 1)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor1, 0.3)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor2, 1)) );
 		} else if(this.level == 3){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), getLineStyle(Color.LIGHT_GRAY, 0.5)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(Color.WHITE, 1)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor1, 0.5)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor2, 1)) );
 		}
 
 		//sepa and join
@@ -149,6 +161,7 @@ public class NUTSMap {
 			if(showSepa) map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 		}
 
+		return this;
 	}
 
 	public NUTSMap setBounds(double x1, double x2, double y1, double y2) {
@@ -200,15 +213,15 @@ public class NUTSMap {
 		return (Classifier) (ff.function(classifierName, propExp, ff.literal(classNb))).evaluate(fc);
 	}
 
-	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, String classifierName, int classNb, Color[] colors, Stroke stroke){
+	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, Classifier classifier, Color[] colors, Stroke stroke){
 		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
 
 		//create style
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 		PropertyName propExp = ff.property(propName);
 		FeatureTypeStyle fts = StyleGenerator.createFeatureTypeStyle(
-				getClassifier(fc, propName, classifierName, classNb), propExp, colors,
-				propName+"-"+classifierName+"-"+classNb,
+				classifier, propExp, colors,
+				propName,
 				fc.getSchema().getGeometryDescriptor(),
 				StyleGenerator.ELSEMODE_IGNORE,
 				1, //opacity
@@ -279,8 +292,13 @@ public class NUTSMap {
 		//load stat data
 		HashMap<String, Double> statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006","time","2015 ")
 				.delete("unit").delete("nace_r2").delete("indic_to").delete("time").toMap();
-		NUTSMap map = new NUTSMap("", 2, 60, "geo", statData);
-		map.saveAsImage("H:/desktop/map.png", 1000);
+		NUTSMap map = new NUTSMap(2, 60, "geo", statData, null);
+		map.imgBckgrdColor = Color.BLACK;
+		map.cntrRGColor = Color.DARK_GRAY;
+		map.cntrBNColor = Color.BLACK;
+		map.nutsBNColor1 = Color.DARK_GRAY;
+		map.nutsBNColor2 = Color.BLACK;
+		map.make().saveAsImage("H:/desktop/map.png", 1000);
 
 		/*HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
