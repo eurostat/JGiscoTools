@@ -57,11 +57,12 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
 public class NUTSMap {
 	//TODO print classification/legend
 	//TODO see how to fix classification/legend
-	//TODO show other countries + blue see
+	//TODO show other countries
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO borders: coastal, etc
-	//TODO habillage, etc.
 	//TODO show DOM
+	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
+	//TODO show scale bar?
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;
 	static{
@@ -96,6 +97,10 @@ public class NUTSMap {
 		this.setBounds(1340000.0, 5450000.0, 2580000.0, 7350000.0);
 
 
+		//countries
+		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "RG").getFeatureCollection(NUTSShapeFile.CNTR_NEIG_CNTR), getPolygonStyle(Color.LIGHT_GRAY, null)) );
+		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "BN").getFeatureCollection("COAS_FLAG='F'"), getLineStyle(Color.WHITE, 0.2)) );
+
 
 		//get region features
 		SimpleFeatureCollection fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterByLevel(this.level));
@@ -109,18 +114,8 @@ public class NUTSMap {
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
 		//buid region style
-		Style RGStyleNoData;
-		{
-			//Stroke stroke = styleFactory.createStroke(filterFactory.literal(Color.WHITE), filterFactory.literal(1));
-			Fill fill = styleFactory.createFill(filterFactory.literal(Color.GRAY));
-			PolygonSymbolizer polSymb = styleFactory.createPolygonSymbolizer(/*stroke*/null, fill, null);
-			Rule rule = styleFactory.createRule();
-			rule.symbolizers().add(polSymb);
-			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
-			RGStyleNoData = styleFactory.createStyle();
-			RGStyleNoData.featureTypeStyles().add(fts);
-		}
-		Style RGStyle = null;
+		Style RGStyleNoData = getPolygonStyle(Color.GRAY, null);
+		Style RGStyle = RGStyleNoData;
 		if(fcRG.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
 			RGStyle = getThematicStyle(fcRG, propName, classifier, classNb, paletteName, stroke);
@@ -146,19 +141,9 @@ public class NUTSMap {
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(Color.WHITE, 1)) );
 		}
 
-
-
 		//sepa and join
 		if(showJoin || showSepa){
-			Style sepaJoinStyle;
-			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.GRAY), filterFactory.literal(0.3));
-			LineSymbolizer sepaJoinSymb = styleFactory.createLineSymbolizer(stroke, null);
-			Rule rule = styleFactory.createRule();
-			rule.symbolizers().add(sepaJoinSymb);
-			FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
-			sepaJoinStyle = styleFactory.createStyle();
-			sepaJoinStyle.featureTypeStyles().add(fts);
-
+			Style sepaJoinStyle = getLineStyle(Color.GRAY, 0.3);
 			if(showJoin) map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 			if(showSepa) map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 		}
@@ -246,6 +231,20 @@ public class NUTSMap {
 		return s;
 	}
 
+	private static Style getPolygonStyle(Color fillCol, Stroke stroke){
+		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
+
+		Fill fill = styleFactory.createFill(filterFactory.literal(fillCol));
+		PolygonSymbolizer polSymb = styleFactory.createPolygonSymbolizer(stroke, fill, null);
+		Rule rule = styleFactory.createRule();
+		rule.symbolizers().add(polSymb);
+		FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
+		Style s = styleFactory.createStyle();
+		s.featureTypeStyles().add(fts);
+		return s;
+	}
+
 
 
 
@@ -268,6 +267,8 @@ public class NUTSMap {
 		} catch (Exception e) { e.printStackTrace(); }
 		return this;
 	}
+
+
 
 
 	public static void main(String[] args) throws Exception {

@@ -89,4 +89,44 @@ public class NUTSShapeFile {
 		return filterSepaJoinLoD.get(lod);
 	}
 
+
+
+
+
+
+	/*
+	 * For other countries
+	 * RG: CNTR_ID - 2 letters country code
+	 * BN: EU_FLAG, EFTA_FLAG, CC_FLAG, COAS_FLAG, OTHR_FLAG. F/T
+	 * CAPT
+	 * LB
+	 */
+
+	private static final String BASE_PATH_CNTR = "resources/CNTR/";
+
+	/**
+	 * @param year
+	 * @param lod The level of detail, among 3, 10, 20 or 60
+	 * @param proj The projection, among LAEA and ETRS89
+	 * @param type The object type, among RG,BN,LB,CAPT
+	 * @return
+	 */
+	public static ShapeFile getCNTR(int year, int lod, String proj, String type){
+		return new ShapeFile(BASE_PATH_CNTR + year + "/" + lod + "M/" + proj + "/" + type + ".shp");
+	}
+
+	public static ShapeFile getCNTR(){ return getCNTR("RG"); }
+	public static ShapeFile getCNTR(String type){ return getCNTR(3, type); }
+	public static ShapeFile getCNTR(int lod, String type){ return getCNTR(lod, "LAEA", type); }
+	public static ShapeFile getCNTR(int lod, String proj, String type){ return getCNTR(2014, lod==1?3:lod, proj, type); }
+
+	//used to filter only neighbour countries
+	public static final String CNTR_NEIG_CNTR = "CNTR_ID='SM' OR CNTR_ID='VA' OR CNTR_ID='AD' OR CNTR_ID='MC' OR CNTR_ID='LI' OR CNTR_ID='AX'"
+			+ " OR CNTR_ID='BA' OR CNTR_ID='RS' OR CNTR_ID='AL' OR CNTR_ID='XK'"
+			+ " OR CNTR_ID='RU' OR CNTR_ID='BY' OR CNTR_ID='UA' OR CNTR_ID='MD' OR CNTR_ID='KZ'"
+			+ " OR CNTR_ID='GE' OR CNTR_ID='AM' OR CNTR_ID='AZ' OR CNTR_ID='IR' OR CNTR_ID='SY' OR CNTR_ID='LB'"
+			+ " OR CNTR_ID='IQ' OR CNTR_ID='JO' OR CNTR_ID='SA' OR CNTR_ID='IL' OR CNTR_ID='PS'"
+			+ " OR CNTR_ID='TN' OR CNTR_ID='DZ' OR CNTR_ID='MA' OR CNTR_ID='GI'"
+			+ " OR CNTR_ID='FO' OR CNTR_ID='SJ' OR CNTR_ID='GL' OR CNTR_ID='GG' OR CNTR_ID='JE' OR CNTR_ID='IM'";
+
 }
