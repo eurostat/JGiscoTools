@@ -177,7 +177,7 @@ public class TourismUseCase {
 		//*/
 
 
-		//validation data - 2013 !!!
+		/*/validation data - 2013 !!!
 		for(int time_ = 2005; time_<= 2013; time_++){
 			statData = CSV.load("H:/methnet/geostat/validation/validation_data_2013_filtered.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006","time",time_+" ")
 					.delete("nace_r2").delete("indic_to").delete("time").toMap();
