@@ -30,8 +30,9 @@ public class TourismUseCase {
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
 
-	//TODO correct maps (static classification)
+	//TODO correct maps: show density + unique classification
 	//TODO show legend
+
 	//TODO better analyse validation data
 	//TODO contact tomtom guys. ask for data
 	//TODO aggregate at 10km grid level
