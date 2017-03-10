@@ -62,6 +62,7 @@ public class NUTSMap {
 	//TODO borders: coastal, etc
 	//TODO show DOM
 	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
+	//TODO show graticule
 	//TODO show scale bar?
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;
