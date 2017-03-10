@@ -6,17 +6,58 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import eu.ec.estat.java4eurostat.base.StatsIndex;
+import eu.ec.estat.java4eurostat.io.EurobaseIO;
+import eu.ec.estat.java4eurostat.io.EurostatTSV;
+
 /**
  * 
  * @author julien Gaffuri
  *
  */
 public class NUTSUtils {
-	//TODO develop/extract generic functions on NUTS regions
 
 	public static void main(String[] args) {
-		load2010_2013();
+		//for(int time=1985; time<=2020; time++) System.out.println(getNUTSPopulation("FR", time));
+		for(int time=1985; time<=2020; time++) {
+			System.out.println(getNUTSPopulation("FR", time) / getNUTSArea("FR", time));
+		}
+		//EurostatTSV.load("stat_cache/demo_r_d3area.tsv").selectDimValueEqualTo("unit","KM2","geo","FR").printInfo();
 	}
+
+
+	//Population on 1 January by broad age group, sex and NUTS 3 region (demo_r_pjanaggr3)	AGE=TOTAL;SEX=T;UNIT="NR"
+	private static StatsIndex nutsPop = null;
+	public static double getNUTSPopulation(String nutsCode, int time){
+		if(nutsPop == null){
+			EurobaseIO.update("stat_cache/", "demo_r_pjanaggr3");
+			nutsPop = new StatsIndex(
+					EurostatTSV.load("stat_cache/demo_r_pjanaggr3.tsv").selectDimValueEqualTo("age","TOTAL", "sex","T", "unit","NR")
+					.delete("age").delete("sex").delete("unit"),
+					"time", "geo"
+					);
+		}
+		return nutsPop.getSingleValue(time+" ", nutsCode);
+	}
+
+	//Area by NUTS 3 region (demo_r_d3area) LANDUSE=L0008;TOTAL  UNIT=KM2
+	private static StatsIndex nutsArea = null;
+	public static double getNUTSArea(String nutsCode, int time){ return getNUTSArea(nutsCode, time, "TOTAL"); }
+	public static double getNUTSArea(String nutsCode, int time, String landuse){
+		if(nutsArea == null){
+			EurobaseIO.update("stat_cache/", "demo_r_d3area");
+			nutsArea = new StatsIndex(
+					EurostatTSV.load("stat_cache/demo_r_d3area.tsv").selectDimValueEqualTo("unit","KM2")
+					.delete("unit"),
+					"landuse", "time", "geo"
+					);
+		}
+		return nutsArea.getSingleValue(landuse, time+" ", nutsCode);
+	}
+
+
+
+
 
 	private static class NUTSChange{
 		public String codeIni, codeFin, change, explanation;

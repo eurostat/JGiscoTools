@@ -30,7 +30,11 @@ public class TourismUseCase {
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
 
-	//TODO correct maps: show density + unique classification
+	//TODO correct maps: show density
+	//Population on 1 January by broad age group, sex and NUTS 3 region (demo_r_pjanaggr3)	AGE=TOTAL;SEX=T;UNIT="NR"
+	//Area by NUTS 3 region (demo_r_d3area) LANDUSE=L0008;TOTAL  UNIT=KM2
+
+	//TODO correct maps: unique classification
 	//TODO show legend
 
 	//TODO better analyse validation data
