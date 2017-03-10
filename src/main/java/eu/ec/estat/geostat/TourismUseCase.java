@@ -6,9 +6,12 @@ package eu.ec.estat.geostat;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.geotools.filter.function.Classifier;
+
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
 import eu.ec.estat.geostat.io.ShapeFile;
 import eu.ec.estat.geostat.nuts.NUTSMap;
+import eu.ec.estat.geostat.nuts.NUTSUtils;
 import eu.ec.estat.java4eurostat.analysis.Validation;
 import eu.ec.estat.java4eurostat.base.Selection;
 import eu.ec.estat.java4eurostat.base.Stat;
@@ -50,7 +53,8 @@ public class TourismUseCase {
 
 		//runDasymetric();
 		//computeValidation();
-		//makeMaps();
+		//computeDensityPopRatio();
+		makeMaps();
 
 
 		//E4 data validation
@@ -162,21 +166,43 @@ public class TourismUseCase {
 
 	}
 
+	public static void computeDensityPopRatio(){
+		//load computed data
+		StatsHypercube sh = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value");
+
+		//compute P_THAB	Per thousand inhabitants
+		StatsHypercube  shPop = NUTSUtils.computePopRatioFigures(sh);
+		for(Stat s : shPop.stats) s.dims.put("unit", "P_THAB");
+
+		//compute P_KM2	Per km2
+		StatsHypercube  shDens = NUTSUtils.computeDensityFigures(sh);
+		for(Stat s : shDens.stats) s.dims.put("unit", "P_KM2");
+
+		//merge and save
+		sh.stats.addAll(shPop.stats);
+		sh.stats.addAll(shDens.stats);
+		CSV.save(sh, "value", "H:/methnet/geostat/out/", "tour_occ_nin2_nuts3_popratio_dens.csv");
+	}
 
 	public static void makeMaps(){
 		HashMap<String, Double> statData;
 		int time = 2015;
 
 		//nuts 2 level map
-		statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006","time",time+" ")
+		statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+" ")
 				.delete("unit").delete("nace_r2").delete("indic_to").delete("time").toMap();
-		new NUTSMap(2, 60, "geo", statData, null).make().saveAsImage("H:/methnet/geostat/maps/map_nuts2_"+time+".png", 1000);
+		NUTSMap map = new NUTSMap(2, 60, "geo", statData, null).make();
+		Classifier classifier = map.classifier;
+		map.saveAsImage("H:/methnet/geostat/maps/map_nuts2_"+time+".png", 1000);
 		//*/
 
-		//nuts 3 level map
-		statData = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006","time",time+" ")
+		//computed data: nuts 3 level map
+		statData = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens.csv", "value").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+" ")
 				.delete("unit").delete("nace_r2").delete("indic_to").delete("time").toMap();
-		new NUTSMap(3, 60, "geo", statData, null).make().saveAsImage("H:/methnet/geostat/maps/map_result_nuts3_"+time+".png", 1000);
+		map = new NUTSMap(3, 60, "geo", statData, null);
+		//TODO - check that !!!
+		map.classifier = classifier;
+		map.make().saveAsImage("H:/methnet/geostat/maps/map_result_nuts3_"+time+".png", 1000);
 		//*/
 
 		//validation data
@@ -194,6 +220,9 @@ public class TourismUseCase {
 		//*/
 
 	}
+
+
+
 
 
 

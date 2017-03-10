@@ -6,6 +6,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.geotools.feature.FeatureIterator;
+import org.opengis.feature.simple.SimpleFeature;
+
+import com.vividsolutions.jts.geom.Geometry;
+
+import eu.ec.estat.geostat.io.ShapeFile;
+import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 import eu.ec.estat.java4eurostat.io.EurobaseIO;
@@ -20,25 +27,42 @@ public class NUTSUtils {
 
 	public static void main(String[] args) {
 		//for(int time=1985; time<=2020; time++) System.out.println(getNUTSPopulation("FR", time));
-		for(int time=1985; time<=2020; time++) {
-			System.out.println(getNUTSPopulation("FR", time) / getNUTSArea("FR", time));
-		}
+		//for(int time=1985; time<=2020; time++) System.out.println(getNUTSPopulation("FR", time) / getNUTSArea("FR", time));
 		//EurostatTSV.load("stat_cache/demo_r_d3area.tsv").selectDimValueEqualTo("unit","KM2","geo","FR").printInfo();
 	}
 
 
 	//compute figures divided by nuts area
-	public StatsHypercube computeDensityFigures(StatsHypercube sh, String unitDim, String unit){
-		StatsHypercube out = null;
-		//TODO
+	public static StatsHypercube computeDensityFigures(StatsHypercube sh){
+		StatsHypercube out = new StatsHypercube(sh.getDimLabels());
+		for(Stat s : sh.stats){
+			String geo = s.dims.get("geo");
+			double area = getNUTSArea(geo);
+			if(Double.isNaN(area)){
+				System.err.println("Could not find area of NUTS region "+geo);
+				continue;
+			}
+			Stat s2 = new Stat(s); s2.value = s.value/area;
+			out.stats.add(s2);
+		}
 		return out;
 	}
 
 	//compute figures divided by nuts population
-	public StatsHypercube computePopRatioFigures(StatsHypercube sh, String unitDim, String unit){ return computePopRatioFigures(sh, unitDim, unit, 1000); }
-	public StatsHypercube computePopRatioFigures(StatsHypercube sh, String unitDim, String unit, int multi){
-		StatsHypercube out = null;
-		//TODO
+	public static StatsHypercube computePopRatioFigures(StatsHypercube sh){ return computePopRatioFigures(sh, 1000); }
+	public static StatsHypercube computePopRatioFigures(StatsHypercube sh, int multi){
+		StatsHypercube out = new StatsHypercube(sh.getDimLabels());
+		for(Stat s : sh.stats){
+			String geo = s.dims.get("geo");
+			int year = Integer.parseInt(s.dims.get("time").replace(" ", ""));
+			double pop = getNUTSPopulation(geo, year);
+			if(Double.isNaN(pop)){
+				System.err.println("Could not find population of NUTS region "+geo+" in "+year);
+				continue;
+			}
+			Stat s2 = new Stat(s); s2.value = s.value/pop;
+			out.stats.add(s2);
+		}
 		return out;
 	}
 
@@ -46,7 +70,7 @@ public class NUTSUtils {
 
 	//Population on 1 January by broad age group, sex and NUTS 3 region (demo_r_pjanaggr3)	AGE=TOTAL;SEX=T;UNIT="NR"
 	private static StatsIndex nutsPop = null;
-	public static double getNUTSPopulation(String nutsCode, int time){
+	public static double getNUTSPopulation(String nutsCode, int year){
 		if(nutsPop == null){
 			EurobaseIO.update("stat_cache/", "demo_r_pjanaggr3");
 			nutsPop = new StatsIndex(
@@ -55,13 +79,13 @@ public class NUTSUtils {
 					"time", "geo"
 					);
 		}
-		return nutsPop.getSingleValue(time+" ", nutsCode);
+		return nutsPop.getSingleValue(year+" ", nutsCode);
 	}
 
 	//Area by NUTS 3 region (demo_r_d3area) LANDUSE=L0008;TOTAL  UNIT=KM2
-	private static StatsIndex nutsArea = null;
+	/*private static StatsIndex nutsArea = null;
 	public static double getNUTSArea(String nutsCode, int time){ return getNUTSArea(nutsCode, time, "TOTAL"); }
-	public static double getNUTSArea(String nutsCode, int time, String landuse){
+	public static double getNUTSArea(String nutsCode, int year, String landuse){
 		if(nutsArea == null){
 			EurobaseIO.update("stat_cache/", "demo_r_d3area");
 			nutsArea = new StatsIndex(
@@ -70,13 +94,32 @@ public class NUTSUtils {
 					"landuse", "time", "geo"
 					);
 		}
-		return nutsArea.getSingleValue(landuse, time+" ", nutsCode);
+		return nutsArea.getSingleValue(landuse, year+" ", nutsCode);
+	}*/
+
+	private static HashMap<String,Double> nutsArea = null;
+	public static double getNUTSArea(String geo){
+		if(nutsArea == null){
+			nutsArea = new HashMap<String,Double>();
+			ShapeFile shp = NUTSShapeFile.get();
+			FeatureIterator<SimpleFeature> it = shp.getFeatures();
+			while (it.hasNext()) {
+				SimpleFeature f = it.next();
+				String geo_ = f.getAttribute("NUTS_ID").toString();
+				double area = ((Geometry)f.getDefaultGeometry()).getArea();
+				nutsArea.put(geo_, area);
+			}
+			it.close();
+		}
+		return nutsArea.get(geo);
 	}
+	
 
 
 
 
-
+	
+	
 	private static class NUTSChange{
 		public String codeIni, codeFin, change, explanation;
 		@Override
