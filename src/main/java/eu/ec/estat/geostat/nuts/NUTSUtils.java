@@ -28,15 +28,15 @@ public class NUTSUtils {
 
 
 	//compute figures divided by nuts area
-	public StatsHypercube computeDensityFigures(StatsHypercube sh){
+	public StatsHypercube computeDensityFigures(StatsHypercube sh, String unitDim, String unit){
 		StatsHypercube out = null;
 		//TODO
 		return out;
 	}
 
 	//compute figures divided by nuts population
-	public StatsHypercube computePopRatioFigures(StatsHypercube sh){ return computePopRatioFigures(sh, 1000); }
-	public StatsHypercube computePopRatioFigures(StatsHypercube sh, int multi){
+	public StatsHypercube computePopRatioFigures(StatsHypercube sh, String unitDim, String unit){ return computePopRatioFigures(sh, unitDim, unit, 1000); }
+	public StatsHypercube computePopRatioFigures(StatsHypercube sh, String unitDim, String unit, int multi){
 		StatsHypercube out = null;
 		//TODO
 		return out;
