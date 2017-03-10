@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 import eu.ec.estat.java4eurostat.io.EurobaseIO;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
@@ -24,6 +25,23 @@ public class NUTSUtils {
 		}
 		//EurostatTSV.load("stat_cache/demo_r_d3area.tsv").selectDimValueEqualTo("unit","KM2","geo","FR").printInfo();
 	}
+
+
+	//compute figures divided by nuts area
+	public StatsHypercube computeDensityFigures(StatsHypercube sh){
+		StatsHypercube out = null;
+		//TODO
+		return out;
+	}
+
+	//compute figures divided by nuts population
+	public StatsHypercube computePopRatioFigures(StatsHypercube sh){ return computePopRatioFigures(sh, 1000); }
+	public StatsHypercube computePopRatioFigures(StatsHypercube sh, int multi){
+		StatsHypercube out = null;
+		//TODO
+		return out;
+	}
+
 
 
 	//Population on 1 January by broad age group, sex and NUTS 3 region (demo_r_pjanaggr3)	AGE=TOTAL;SEX=T;UNIT="NR"
