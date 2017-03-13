@@ -42,6 +42,7 @@ public class TourismUseCase {
 	//TODO better analyse validation data
 	//TODO contact tomtom guys. ask for data
 	//TODO aggregate at 10km grid level
+	//TODO validation with it data http://dati.istat.it/?lang=en
 	//TODO validation of accomodation data
 	//TODO focus on FR.
 
