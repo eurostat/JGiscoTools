@@ -232,11 +232,19 @@ public class NUTSMap {
 
 
 
-	private static Classifier getClassifier(SimpleFeatureCollection fc, String propName, String classifierName, int classNb){
+	public static Classifier getClassifier(SimpleFeatureCollection fc, String propName, String classifierName, int classNb){
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 		PropertyName propExp = ff.property(propName);
 		return (Classifier) (ff.function(classifierName, propExp, ff.literal(classNb))).evaluate(fc);
 	}
+
+	public static RangedClassifier getClassifier(double... breaks) {
+		Double[] min = new Double[breaks.length-1]; for(int i=0; i<min.length; i++) min[i]=breaks[i];
+		Double[] max = new Double[breaks.length-1]; for(int i=0; i<max.length; i++) max[i]=breaks[i+1];
+		RangedClassifier rc = new RangedClassifier(min, max);
+		return rc;
+	}
+
 
 	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, Classifier classifier, Color[] colors, Stroke stroke){
 		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
@@ -323,6 +331,7 @@ public class NUTSMap {
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
 		data.printQuantiles(9);
+		//Classifier classifier = getClassifier();
 		//TODO build classifier
 
 		for(int year = 2010; year<=2015; year++)
