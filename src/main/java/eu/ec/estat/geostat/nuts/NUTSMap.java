@@ -22,6 +22,8 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.filter.function.Classifier;
+import org.geotools.filter.function.ExplicitClassifier;
+import org.geotools.filter.function.RangedClassifier;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
@@ -55,7 +57,6 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  *
  */
 public class NUTSMap {
-	//TODO print classification/legend
 	//TODO see how to fix classification/legend
 	//TODO show other countries
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
@@ -205,6 +206,19 @@ public class NUTSMap {
 		return null;
 	}
 
+	public void printClassification() {
+		System.out.println("Classifier "+ this.classifier.getSize());
+		if(this.classifier instanceof RangedClassifier){
+			RangedClassifier rc = (RangedClassifier)this.classifier;
+			for(int slot=0; slot<rc.getSize(); slot++){
+				System.out.println("From " + rc.getMin(slot) + " to " + rc.getMax(slot)+ "    - title: " + rc.getTitle(slot));
+			}
+		} else if(this.classifier instanceof ExplicitClassifier){
+			System.out.println("ExplicitClassifier not handled yet");
+		}
+	}
+
+
 
 
 
@@ -304,7 +318,9 @@ public class NUTSMap {
 		map.cntrBNColor = Color.BLACK;
 		map.nutsBNColor1 = Color.DARK_GRAY;
 		map.nutsBNColor2 = Color.BLACK;
-		map.make().saveAsImage(outPath + "map.png", 1000);
+		map.make();
+		map.printClassification();
+		map.saveAsImage(outPath + "map.png", 1000);
 
 
 		/*HashMap<String, Double> statData =
