@@ -47,6 +47,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
+import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
@@ -214,7 +215,7 @@ public class NUTSMap {
 		return null;
 	}
 
-	public void printClassification() {
+	public NUTSMap printClassification() {
 		System.out.println("Classifier "+ this.classifier.getSize());
 		if(this.classifier instanceof RangedClassifier){
 			RangedClassifier rc = (RangedClassifier)this.classifier;
@@ -224,6 +225,7 @@ public class NUTSMap {
 		} else if(this.classifier instanceof ExplicitClassifier){
 			System.out.println("ExplicitClassifier not handled yet");
 		}
+		return this;
 	}
 
 
@@ -318,14 +320,16 @@ public class NUTSMap {
 		//EurobaseIO.update(dataPath, "tour_occ_nim", "tour_occ_nin2");
 
 		//load stat data
-		HashMap<String, Double> statData = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006","time","2015 ")
-				.delete("unit").delete("nace_r2").delete("indic_to").delete("time").toMap();
-		NUTSMap map = new NUTSMap(2, 60, "geo", statData, null);
-		//map.makeDark();
-		map.make();
-		map.printClassification();
-		map.saveAsImage(outPath + "map.png", 1000);
+		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
+				.delete("unit").delete("nace_r2").delete("indic_to");
+		//TODO show stat info on hc (quantiles?)
+		//TODO build classifier
 
+		for(int year = 2010; year<=2015; year++)
+			new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
+			.makeDark().make().printClassification()
+			.saveAsImage(outPath + "map_"+year+".png", 1000)
+			; //TODO save legend
 
 		/*HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
