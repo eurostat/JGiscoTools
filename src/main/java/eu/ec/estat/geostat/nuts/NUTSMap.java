@@ -177,6 +177,14 @@ public class NUTSMap {
 		return this;
 	}
 
+	public NUTSMap makeDark() {
+		this.imgBckgrdColor = Color.BLACK;
+		this.cntrRGColor = Color.DARK_GRAY;
+		this.cntrBNColor = Color.BLACK;
+		this.nutsBNColor1 = Color.DARK_GRAY;
+		this.nutsBNColor2 = Color.BLACK;
+		return this;
+	}
 
 
 	private SimpleFeatureCollection[] join(SimpleFeatureCollection fc, HashMap<String, Double> statData, String propName) {
@@ -313,11 +321,7 @@ public class NUTSMap {
 		HashMap<String, Double> statData = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006","time","2015 ")
 				.delete("unit").delete("nace_r2").delete("indic_to").delete("time").toMap();
 		NUTSMap map = new NUTSMap(2, 60, "geo", statData, null);
-		map.imgBckgrdColor = Color.BLACK;
-		map.cntrRGColor = Color.DARK_GRAY;
-		map.cntrBNColor = Color.BLACK;
-		map.nutsBNColor1 = Color.DARK_GRAY;
-		map.nutsBNColor2 = Color.BLACK;
+		//map.makeDark();
 		map.make();
 		map.printClassification();
 		map.saveAsImage(outPath + "map.png", 1000);
