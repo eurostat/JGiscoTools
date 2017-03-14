@@ -289,9 +289,14 @@ public class NUTSMap {
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
+		//String outPath = "H:/desktop";
+		String outPath = "/home/juju/Bureau/";
+		String dataPath = "stat_cache/";
+
+		//EurobaseIO.update(dataPath, "tour_occ_nim", "tour_occ_nin2");
 
 		//load stat data
-		HashMap<String, Double> statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006","time","2015 ")
+		HashMap<String, Double> statData = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006","time","2015 ")
 				.delete("unit").delete("nace_r2").delete("indic_to").delete("time").toMap();
 		NUTSMap map = new NUTSMap(2, 60, "geo", statData, null);
 		map.imgBckgrdColor = Color.BLACK;
@@ -299,7 +304,8 @@ public class NUTSMap {
 		map.cntrBNColor = Color.BLACK;
 		map.nutsBNColor1 = Color.DARK_GRAY;
 		map.nutsBNColor2 = Color.BLACK;
-		map.make().saveAsImage("H:/desktop/map.png", 1000);
+		map.make().saveAsImage(outPath + "map.png", 1000);
+
 
 		/*HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
@@ -307,8 +313,7 @@ public class NUTSMap {
 				.toMap();
 		NUTSMap map = new NUTSMap("", 3, 60, "geo", statData);
 		//map.show();
-		map.saveAsImage("H:/desktop/map.png", 1000);
-		//map.saveAsImage("/home/juju/Bureau/map.png", 1000);*/
+		map.saveAsImage("H:/desktop/map.png", 1000); */
 
 		System.out.println("End.");
 	}
