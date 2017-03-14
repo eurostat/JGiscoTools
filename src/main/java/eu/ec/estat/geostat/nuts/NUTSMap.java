@@ -322,7 +322,7 @@ public class NUTSMap {
 		//load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
-		//TODO show stat info on hc (quantiles?)
+		data.printQuantiles(9);
 		//TODO build classifier
 
 		for(int year = 2010; year<=2015; year++)
