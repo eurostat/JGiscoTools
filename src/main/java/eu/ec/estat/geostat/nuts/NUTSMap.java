@@ -59,14 +59,15 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  *
  */
 public class NUTSMap {
-	//TODO legend
+	//TODO draw legend
+
+	//TODO small multiple
+	//TODO gif animation on time
+
 	//TODO show DOM
 	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
 	//TODO show graticule
 	//TODO show scale bar?
-
-	//TODO small multiple
-	//TODO gif animation on time
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;
 	static{
@@ -255,14 +256,20 @@ public class NUTSMap {
 	}
 
 	public static void drawLegend(Graphics2D gr, RangedClassifier classifier, int offsetX, int offsetY, int width, int height) {
+		int nb = classifier.getSize();
 		gr.setColor(Color.WHITE); gr.fillRect(offsetX, offsetY, width, height);
 		gr.setColor(Color.BLACK); gr.drawRect(offsetX, offsetY, width-1, height-1);
-		for(int slot=0; slot<classifier.getSize(); slot++) {
-			gr.setColor(Color.RED);
-			//gr.drawRect(0,slot*25,20,20);
-			gr.setColor(Color.WHITE);
-			//gr.drawString(classifier.getTitle(slot),30,slot*25);
+		int padding = 5;
+		int colorRampWidth = 50;
+		int height_ = (int) ((height-2*padding)/(1.0*nb));
+		for(int slot=0; slot<nb; slot++) {
+			gr.setColor(Color.RED); //TODO get right color
+			gr.fillRect(padding, padding+slot*height_, colorRampWidth, height_);
+			gr.setColor(Color.BLACK);
+			gr.setFont(new Font("Arial",Font.PLAIN,20));
+			if(slot!=nb-1) gr.drawString(""+classifier.getMax(slot), padding+colorRampWidth+3, padding+(slot+1)*height_);
 		}
+		gr.setColor(Color.BLACK); gr.drawRect(offsetX+padding, offsetY+padding, colorRampWidth, height-2*padding);
 	}
 
 	public static void saveAsImage(RangedClassifier classifier, String file) { saveAsImage(classifier, file, 200, 300); }
