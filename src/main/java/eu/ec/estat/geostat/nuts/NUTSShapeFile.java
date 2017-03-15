@@ -135,5 +135,6 @@ public class NUTSShapeFile {
 	public static ShapeFile getGraticules(){
 		return new ShapeFile(BASE_PATH_GRATICULES + "graticules.shp");
 	}
+	public static final String GRATICULE_FILTER_5 = "degrees5=1";
 
 }

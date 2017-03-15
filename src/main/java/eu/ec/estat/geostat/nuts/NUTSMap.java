@@ -60,8 +60,6 @@ import eu.ec.estat.java4eurostat.util.Util;
  *
  */
 public class NUTSMap {
-	//TODO show graticule
-
 	//TODO fix problems in ratio/density
 	//TODO nice classes - nice labels
 
@@ -94,8 +92,8 @@ public class NUTSMap {
 
 	boolean showJoin=false, showSepa=false;
 	public boolean showGraticules = true;
-	public Color graticulesColor = Color.LIGHT_GRAY;
-	public double graticulesWidth = 0.5;
+	public Color graticulesColor = new Color(200,200,200);
+	public double graticulesWidth = 0.4;
 
 	//public Color imgBckgrdColor = Color.WHITE;
 	//public Color imgBckgrdColor = new Color(240,248,255); //aliceblue
@@ -143,7 +141,7 @@ public class NUTSMap {
 
 		//graticules
 		if(this.showGraticules)
-			map.addLayer( new FeatureLayer(NUTSShapeFile.getGraticules().getFeatureCollection(), getLineStyle(this.graticulesColor, this.graticulesWidth)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.getGraticules().getFeatureCollection(NUTSShapeFile.GRATICULE_FILTER_5), getLineStyle(this.graticulesColor, this.graticulesWidth)) );
 
 
 		//countries
