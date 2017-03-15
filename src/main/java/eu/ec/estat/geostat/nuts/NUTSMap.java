@@ -116,8 +116,20 @@ public class NUTSMap {
 		map = new MapContent();
 	}
 
-	private NUTSMap setTitle(String title) {
+	public NUTSMap setTitle(String title) {
 		map.setTitle(title);
+		return this;
+	}
+
+	public void dispose() { this.map.dispose(); }
+
+	public NUTSMap setBounds(double x1, double x2, double y1, double y2) {
+		map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, LAEA_CRS ));
+		return this;
+	}
+
+	public NUTSMap show() {
+		JMapFrame.showMap(map);
 		return this;
 	}
 
@@ -177,17 +189,6 @@ public class NUTSMap {
 			if(showSepa) map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 		}
 
-		return this;
-	}
-
-	public NUTSMap setBounds(double x1, double x2, double y1, double y2) {
-		map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, LAEA_CRS ));
-		return this;
-	}
-
-
-	public NUTSMap show() {
-		JMapFrame.showMap(map);
 		return this;
 	}
 
@@ -350,8 +351,9 @@ public class NUTSMap {
 		//load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
-		//data.printQuantiles(9);
-		Classifier cl = getClassifier(0,2800000,4300000,6000000,7500000,10000000,18000000,35000000,1e10);
+		data = NUTSUtils.computePopRatioFigures(data);
+		data.printQuantiles(9);
+		Classifier cl = getClassifier(1.1,1.9,2.5,3.2,4,5,6.3,9.1,1000);
 
 		for(int year = 2010; year<=2015; year++){
 			NUTSMap map = new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
@@ -360,6 +362,7 @@ public class NUTSMap {
 			map.make()//.printClassification()
 			.saveAsImage(outPath + "map_"+year+".png", 1000)
 			; //TODO save legend
+			map.dispose();
 		}
 
 		/*HashMap<String, Double> statData =
