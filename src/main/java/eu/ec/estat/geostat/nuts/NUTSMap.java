@@ -87,6 +87,7 @@ public class NUTSMap {
 	public String classifierName = "Quantile"; //EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
 	public int classNb = 9;
 	public String paletteName = "YlOrRd"; //"OrRd"; //see http://colorbrewer2.org
+	public Color[] colors = null;
 
 	boolean showJoin=false, showSepa=false;
 
@@ -105,7 +106,7 @@ public class NUTSMap {
 	public Color nutsBNColor2 = Color.WHITE;
 
 	public int legendWidth = 200;
-	public int legendHeight = 300;
+	public int legendHeightPerClass = 20;
 	public int legendPadding = 5;
 
 
@@ -154,9 +155,9 @@ public class NUTSMap {
 		Style RGStyle = RGStyleNoData;
 		if(fcRG.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
-			Color[] colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
+			this.colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
 			if(this.classifier==null) this.classifier = getClassifier(fcRG, propName, classifierName, classNb);
-			RGStyle = getThematicStyle(fcRG, propName, this.classifier, colors, stroke);
+			RGStyle = getThematicStyle(fcRG, propName, this.classifier, this.colors, stroke);
 		}
 
 		map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
@@ -255,30 +256,31 @@ public class NUTSMap {
 		return rc;
 	}
 
-	public static void drawLegend(Graphics2D gr, RangedClassifier classifier, int offsetX, int offsetY, int width, int height) {
+	public static void drawLegend(Graphics2D gr, RangedClassifier classifier, Color[] colors, int offsetX, int offsetY, int width, int heightPerClass, int padding) {
+		int colorRampWidth = 50;
 		int nb = classifier.getSize();
+		int height = heightPerClass * nb + 2*padding;
 		gr.setColor(Color.WHITE); gr.fillRect(offsetX, offsetY, width, height);
 		gr.setColor(Color.BLACK); gr.drawRect(offsetX, offsetY, width-1, height-1);
-		int padding = 5;
-		int colorRampWidth = 50;
-		int height_ = (int) ((height-2*padding)/(1.0*nb));
 		for(int slot=0; slot<nb; slot++) {
-			gr.setColor(Color.RED); //TODO get right color
-			gr.fillRect(padding, padding+slot*height_, colorRampWidth, height_);
+			gr.setColor(colors[slot]);
+			gr.fillRect(offsetX+padding, offsetY+padding+slot*heightPerClass, colorRampWidth, heightPerClass);
 			gr.setColor(Color.BLACK);
-			gr.setFont(new Font("Arial",Font.PLAIN,20));
-			if(slot!=nb-1) gr.drawString(""+classifier.getMax(slot), padding+colorRampWidth+3, padding+(slot+1)*height_);
+			int fontSize = heightPerClass-3;
+			gr.setFont(new Font("Arial", Font.BOLD, fontSize));
+			if(slot!=nb-1) gr.drawString(""+classifier.getMax(slot), offsetX+padding+colorRampWidth+padding, (int)(offsetY+padding+(slot+1)*heightPerClass+fontSize*0.5));
 		}
 		gr.setColor(Color.BLACK); gr.drawRect(offsetX+padding, offsetY+padding, colorRampWidth, height-2*padding);
 	}
 
-	public static void saveAsImage(RangedClassifier classifier, String file) { saveAsImage(classifier, file, 200, 300); }
-	public static void saveAsImage(RangedClassifier classifier, String file, int width, int height) {
+	public static void saveAsImage(RangedClassifier classifier, Color[] colors, String file) { saveAsImage(classifier, colors, file, 200, 20, 5); }
+	public static void saveAsImage(RangedClassifier classifier, Color[] colors, String file, int width, int heightPerClass, int padding) {
 		try {
+			int height = heightPerClass * classifier.getSize() + 2*padding;
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 			Graphics2D gr = image.createGraphics();
 			gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			drawLegend(gr, classifier, 0, 0, width, height);
+			drawLegend(gr, classifier, colors, 0, 0, width, heightPerClass, padding);
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
 	}
@@ -358,10 +360,16 @@ public class NUTSMap {
 			}
 
 			if(withLegend)
-				drawLegend(gr, (RangedClassifier)this.classifier, imageWidth-legendWidth-legendPadding, legendPadding, legendWidth, legendHeight);
+				drawLegend(gr, (RangedClassifier)this.classifier, this.colors, imageWidth-legendWidth-legendPadding, legendPadding, legendWidth, legendHeightPerClass, legendPadding);
 
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
+		return this;
+	}
+
+	private NUTSMap saveLegendAsImage(String file) { saveLegendAsImage(file, 100, 20, 5); return this; }
+	private NUTSMap saveLegendAsImage(String file, int width, int heightPerClass, int padding) {
+		saveAsImage((RangedClassifier) this.classifier, this.colors, file, width, heightPerClass, padding);
 		return this;
 	}
 
@@ -379,15 +387,15 @@ public class NUTSMap {
 		data = NUTSUtils.computePopRatioFigures(data, 1000, false);
 		//data.printQuantiles(9);
 		RangedClassifier cl = getClassifier(1.1,1.9,2.5,3.2,4,5,6.3,9.1,1000);
-		saveAsImage(cl, outPath + "legend.png");
 
 		for(int year = 2010; year<=2015; year++){
 			NUTSMap map = new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
 					.makeDark().setTitle(year+"")
 					.setClassifier(cl)
 					.make()
-					.saveAsImage(outPath + "map_"+year+".png", 1000, true, false);
-			;
+					.saveAsImage(outPath + "map_"+year+".png", 1000, true, true)
+					.saveLegendAsImage(outPath + "legend.png")
+					;
 			map.dispose();
 		}
 
