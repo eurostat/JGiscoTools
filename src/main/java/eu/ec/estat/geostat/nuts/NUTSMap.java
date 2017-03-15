@@ -116,22 +116,15 @@ public class NUTSMap {
 		map = new MapContent();
 	}
 
-	public NUTSMap setTitle(String title) {
-		map.setTitle(title);
-		return this;
-	}
-
-	public void dispose() { this.map.dispose(); }
-
 	public NUTSMap setBounds(double x1, double x2, double y1, double y2) {
 		map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, LAEA_CRS ));
 		return this;
 	}
 
-	public NUTSMap show() {
-		JMapFrame.showMap(map);
-		return this;
-	}
+	public void dispose() { this.map.dispose(); }
+	public NUTSMap setTitle(String title) { map.setTitle(title); return this; }
+	public NUTSMap setClassifier(Classifier classifier) { this.classifier = classifier; return this; }
+	public NUTSMap show() { JMapFrame.showMap(map); return this; }
 
 	public NUTSMap make(){
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
@@ -327,7 +320,6 @@ public class NUTSMap {
 			renderer.paint(gr, imageBounds, mapBounds);
 
 			//write title
-			//TODO improve
 			gr.setColor(fontColor);
 			gr.setFont(new Font(fontFamily, fontStrength, fontSize));
 			gr.drawString(map.getTitle(), 10, fontSize+5);
@@ -357,11 +349,11 @@ public class NUTSMap {
 
 		for(int year = 2010; year<=2015; year++){
 			NUTSMap map = new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
-					.makeDark().setTitle(year+"");
-			map.classifier = cl;
-			map.make()//.printClassification()
-			.saveAsImage(outPath + "map_"+year+".png", 1000)
-			; //TODO save legend
+					.makeDark().setTitle(year+"")
+					.setClassifier(cl)
+					.make()
+					.saveAsImage(outPath + "map_"+year+".png", 1000)
+					; //TODO save legend
 			map.dispose();
 		}
 
