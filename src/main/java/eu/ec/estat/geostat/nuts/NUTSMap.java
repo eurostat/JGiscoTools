@@ -59,14 +59,15 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  *
  */
 public class NUTSMap {
-	//TODO draw legend
+	//TODO fix ratio/density
+	//TODO automated classes
 
 	//TODO small multiple
 	//TODO gif animation on time
 
+	//TODO show graticule
 	//TODO show DOM
 	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
-	//TODO show graticule
 	//TODO show scale bar?
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;
