@@ -49,15 +49,15 @@ public class NUTSUtils {
 	}
 
 	//compute figures divided by nuts population
-	public static StatsHypercube computePopRatioFigures(StatsHypercube sh){ return computePopRatioFigures(sh, 1000); }
-	public static StatsHypercube computePopRatioFigures(StatsHypercube sh, int multi){
+	public static StatsHypercube computePopRatioFigures(StatsHypercube sh){ return computePopRatioFigures(sh, 1000, false); }
+	public static StatsHypercube computePopRatioFigures(StatsHypercube sh, int multi, boolean showMessages){
 		StatsHypercube out = new StatsHypercube(sh.getDimLabels());
 		for(Stat s : sh.stats){
 			String geo = s.dims.get("geo");
 			int year = Integer.parseInt(s.dims.get("time").replace(" ", ""));
 			double pop = getNUTSPopulation(geo, year);
 			if(Double.isNaN(pop)){
-				System.err.println("Could not find population of NUTS region "+geo+" in "+year);
+				if(showMessages) System.err.println("Could not find population of NUTS region "+geo+" in "+year);
 				continue;
 			}
 			Stat s2 = new Stat(s); s2.value = s.value/pop;

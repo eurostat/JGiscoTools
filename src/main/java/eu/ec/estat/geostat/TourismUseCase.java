@@ -194,7 +194,7 @@ public class TourismUseCase {
 				.delete("unit").delete("nace_r2").delete("indic_to").delete("time").toMap();
 		NUTSMap map = new NUTSMap(2, 60, "geo", statData, null).make();
 		Classifier classifier = map.classifier;
-		map.saveAsImage("H:/methnet/geostat/maps/map_nuts2_"+time+".png", 1000);
+		map.saveAsImage("H:/methnet/geostat/maps/map_nuts2_"+time+".png");
 		//*/
 
 		//computed data: nuts 3 level map
@@ -203,21 +203,21 @@ public class TourismUseCase {
 		map = new NUTSMap(3, 60, "geo", statData, null);
 		//TODO - check that !!!
 		map.classifier = classifier;
-		map.make().saveAsImage("H:/methnet/geostat/maps/map_result_nuts3_"+time+".png", 1000);
+		map.make().saveAsImage("H:/methnet/geostat/maps/map_result_nuts3_"+time+".png");
 		//*/
 
 		//validation data
 		for(int time_ = 2005; time_<= 2013; time_++){
 			statData = CSV.load("H:/methnet/geostat/validation/validation_data_2013_filtered.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006","time",time_+" ")
 					.delete("nace_r2").delete("indic_to").delete("time").toMap();
-			new NUTSMap(3, 60, "geo", statData, null).make().saveAsImage("H:/methnet/geostat/maps/map_validation_data_nuts3_"+time_+".png", 1000);
+			new NUTSMap(3, 60, "geo", statData, null).make().saveAsImage("H:/methnet/geostat/maps/map_validation_data_nuts3_"+time_+".png");
 		}
 		//*/
 
 		//CSV.load("H:/methnet/geostat/validation/validation_result_diff_abs.csv", "value").printInfo();
 		statData = CSV.load("H:/methnet/geostat/validation/validation_result_diff_abs.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006","time","2010 ")
 				.delete("nace_r2").delete("indic_to").delete("time").toMap();
-		new NUTSMap(3, 60, "geo", statData, null).make().saveAsImage("H:/methnet/geostat/maps/map_validation_result_diff_abs_"+"2010"+".png", 1000);
+		new NUTSMap(3, 60, "geo", statData, null).make().saveAsImage("H:/methnet/geostat/maps/map_validation_result_diff_abs_"+"2010"+".png");
 		//*/
 
 	}

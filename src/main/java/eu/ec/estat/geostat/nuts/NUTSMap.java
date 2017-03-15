@@ -59,10 +59,7 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  *
  */
 public class NUTSMap {
-	//TODO show title on image
-	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
-	//TODO show other countries
-	//TODO borders: coastal, etc
+	//TODO legend
 	//TODO show DOM
 	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
 	//TODO show graticule
@@ -105,6 +102,10 @@ public class NUTSMap {
 	public Color cntrBNColor = Color.WHITE;
 	public Color nutsBNColor1 = Color.LIGHT_GRAY;
 	public Color nutsBNColor2 = Color.WHITE;
+
+	public int legendWidth = 200;
+	public int legendHeight = 300;
+	public int legendPadding = 5;
 
 
 	public NUTSMap(int level, int lod, String propName, HashMap<String, Double> statData, Classifier classifier){
@@ -253,6 +254,28 @@ public class NUTSMap {
 		return rc;
 	}
 
+	public static void drawLegend(Graphics2D gr, RangedClassifier classifier, int offsetX, int offsetY, int width, int height) {
+		gr.setColor(Color.WHITE); gr.fillRect(offsetX, offsetY, width, height);
+		gr.setColor(Color.BLACK); gr.drawRect(offsetX, offsetY, width-1, height-1);
+		for(int slot=0; slot<classifier.getSize(); slot++) {
+			gr.setColor(Color.RED);
+			//gr.drawRect(0,slot*25,20,20);
+			gr.setColor(Color.WHITE);
+			//gr.drawString(classifier.getTitle(slot),30,slot*25);
+		}
+	}
+
+	public static void saveAsImage(RangedClassifier classifier, String file) { saveAsImage(classifier, file, 200, 300); }
+	public static void saveAsImage(RangedClassifier classifier, String file, int width, int height) {
+		try {
+			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			Graphics2D gr = image.createGraphics();
+			gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			drawLegend(gr, classifier, 0, 0, width, height);
+			ImageIO.write(image, "png", new File(file));
+		} catch (Exception e) { e.printStackTrace(); }
+	}
+
 
 	private static Style getThematicStyle(SimpleFeatureCollection fc, String propName, Classifier classifier, Color[] colors, Stroke stroke){
 		//See http://docs.geotools.org/stable/userguide/extension/brewer/index.html
@@ -304,7 +327,8 @@ public class NUTSMap {
 
 
 
-	public NUTSMap saveAsImage(final String file, final int imageWidth) {
+	public NUTSMap saveAsImage(final String file) { return saveAsImage(file, 1000, true, true); }
+	public NUTSMap saveAsImage(final String file, final int imageWidth, boolean withTitle, boolean withLegend) {
 		try {
 			//prepare image
 			ReferencedEnvelope mapBounds = map.getViewport().getBounds();
@@ -320,17 +344,19 @@ public class NUTSMap {
 			renderer.paint(gr, imageBounds, mapBounds);
 
 			//write title
-			gr.setColor(fontColor);
-			gr.setFont(new Font(fontFamily, fontStrength, fontSize));
-			gr.drawString(map.getTitle(), 10, fontSize+5);
+			if(withTitle){
+				gr.setColor(fontColor);
+				gr.setFont(new Font(fontFamily, fontStrength, fontSize));
+				gr.drawString(map.getTitle(), 10, fontSize+5);
+			}
+
+			if(withLegend)
+				drawLegend(gr, (RangedClassifier)this.classifier, imageWidth-legendWidth-legendPadding, legendPadding, legendWidth, legendHeight);
 
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
 		return this;
 	}
-
-
-
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
@@ -343,17 +369,18 @@ public class NUTSMap {
 		//load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
-		data = NUTSUtils.computePopRatioFigures(data);
+		data = NUTSUtils.computePopRatioFigures(data, 1000, false);
 		//data.printQuantiles(9);
-		Classifier cl = getClassifier(1.1,1.9,2.5,3.2,4,5,6.3,9.1,1000);
+		RangedClassifier cl = getClassifier(1.1,1.9,2.5,3.2,4,5,6.3,9.1,1000);
+		saveAsImage(cl, outPath + "legend.png");
 
 		for(int year = 2010; year<=2015; year++){
 			NUTSMap map = new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
 					.makeDark().setTitle(year+"")
 					.setClassifier(cl)
 					.make()
-					.saveAsImage(outPath + "map_"+year+".png", 1000)
-					; //TODO save legend
+					.saveAsImage(outPath + "map_"+year+".png", 1000, true, false);
+			;
 			map.dispose();
 		}
 
