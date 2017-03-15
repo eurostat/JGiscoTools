@@ -352,7 +352,7 @@ public class NUTSMap {
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
 		data = NUTSUtils.computePopRatioFigures(data);
-		data.printQuantiles(9);
+		//data.printQuantiles(9);
 		Classifier cl = getClassifier(1.1,1.9,2.5,3.2,4,5,6.3,9.1,1000);
 
 		for(int year = 2010; year<=2015; year++){
