@@ -4,6 +4,7 @@
 package eu.ec.estat.geostat.nuts;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -58,6 +59,7 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  *
  */
 public class NUTSMap {
+	//TODO show title on image
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
 	//TODO show other countries
 	//TODO borders: coastal, etc
@@ -65,6 +67,9 @@ public class NUTSMap {
 	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
 	//TODO show graticule
 	//TODO show scale bar?
+
+	//TODO small multiple
+	//TODO gif animation on time
 
 	private static CoordinateReferenceSystem LAEA_CRS = null;
 	static{
@@ -91,6 +96,11 @@ public class NUTSMap {
 	//public Color imgBckgrdColor = new Color(240,248,255); //aliceblue
 	public Color imgBckgrdColor = new Color(173,216,230); //lightblue
 	//public Color imgBckgrdColor = new Color(70,130,180); //steelblue
+	public Color fontColor = Color.BLACK;
+	public int fontSize = 30;
+	public String fontFamily = "Arial";
+	public int fontStrength = Font.PLAIN;
+
 	public Color cntrRGColor = Color.LIGHT_GRAY;
 	public Color cntrBNColor = Color.WHITE;
 	public Color nutsBNColor1 = Color.LIGHT_GRAY;
@@ -103,11 +113,15 @@ public class NUTSMap {
 		this.statData = statData;
 		this.propName = propName;
 		this.classifier = classifier;
+		map = new MapContent();
+	}
+
+	private NUTSMap setTitle(String title) {
+		map.setTitle(title);
+		return this;
 	}
 
 	public NUTSMap make(){
-		map = new MapContent();
-		//map.setTitle(title);
 		map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
 		this.setBounds(1340000.0, 5450000.0, 2580000.0, 7350000.0);
 
@@ -183,6 +197,7 @@ public class NUTSMap {
 		this.cntrBNColor = Color.BLACK;
 		this.nutsBNColor1 = Color.DARK_GRAY;
 		this.nutsBNColor2 = Color.BLACK;
+		this.fontColor = Color.WHITE;
 		return this;
 	}
 
@@ -310,6 +325,12 @@ public class NUTSMap {
 			renderer.setMapContent(map);
 			renderer.paint(gr, imageBounds, mapBounds);
 
+			//write title
+			//TODO improve
+			gr.setColor(fontColor);
+			gr.setFont(new Font(fontFamily, fontStrength, fontSize));
+			gr.drawString(map.getTitle(), 10, fontSize+5);
+
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
 		return this;
@@ -334,7 +355,7 @@ public class NUTSMap {
 
 		for(int year = 2010; year<=2015; year++){
 			NUTSMap map = new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
-					.makeDark();
+					.makeDark().setTitle(year+"");
 			map.classifier = cl;
 			map.make()//.printClassification()
 			.saveAsImage(outPath + "map_"+year+".png", 1000)
