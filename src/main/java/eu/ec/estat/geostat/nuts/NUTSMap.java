@@ -60,7 +60,7 @@ import eu.ec.estat.java4eurostat.util.Util;
  *
  */
 public class NUTSMap {
-	//TODO fix problems in ratio/density
+	//TODO fix problems in quantiles
 	//TODO nice classes - nice labels
 
 	//TODO small multiple
@@ -205,6 +205,7 @@ public class NUTSMap {
 		this.nutsBNColor1 = Color.DARK_GRAY;
 		this.nutsBNColor2 = Color.BLACK;
 		this.fontColor = Color.WHITE;
+		this.graticulesColor = new Color(40,40,40);
 		return this;
 	}
 
@@ -260,8 +261,8 @@ public class NUTSMap {
 	}
 
 	public static RangedClassifier getClassifier(double... breaks) {
-		Double[] min = new Double[breaks.length-1]; for(int i=0; i<min.length; i++) min[i]=breaks[i];
-		Double[] max = new Double[breaks.length-1]; for(int i=0; i<max.length; i++) max[i]=breaks[i+1];
+		Double[] min = new Double[breaks.length+1]; min[0]=-Double.MAX_VALUE; for(int i=1; i<breaks.length+1; i++) min[i]=breaks[i-1];
+		Double[] max = new Double[breaks.length+1]; for(int i=0; i<breaks.length; i++) max[i]=breaks[i]; max[breaks.length]=Double.MAX_VALUE;
 		RangedClassifier rc = new RangedClassifier(min, max);
 		return rc;
 	}
@@ -377,8 +378,8 @@ public class NUTSMap {
 		return this;
 	}
 
-	private NUTSMap saveLegendAsImage(String file) { saveLegendAsImage(file, 3, 100, 20, 5); return this; }
-	private NUTSMap saveLegendAsImage(String file, int decimalNB, int width, int heightPerClass, int padding) {
+	public NUTSMap saveLegendAsImage(String file) { saveLegendAsImage(file, 3, 100, 20, 5); return this; }
+	public NUTSMap saveLegendAsImage(String file, int decimalNB, int width, int heightPerClass, int padding) {
 		saveAsImage((RangedClassifier) this.classifier, this.colors, file, decimalNB, width, heightPerClass, padding);
 		return this;
 	}
@@ -394,19 +395,19 @@ public class NUTSMap {
 		//load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
-		//data = NUTSUtils.computePopRatioFigures(data, 1000, false);
+		data = NUTSUtils.computePopRatioFigures(data, 1000, false);
 		//data = NUTSUtils.computeDensityFigures(data);
 
-		RangedClassifier cl = getClassifier(data.getQuantiles(9)); //TODO only 8 classes?
+		RangedClassifier cl = getClassifier(data.getQuantiles(8));
 		for(int year = 2010; year<=2015; year++) {
 			new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
-			//.makeDark()
+			.makeDark()
 			.setTitle(year+"")
 			.setClassifier(cl)
 			.make()
 			//.printClassification()
 			.saveAsImage(outPath + "map_"+year+".png", 1000, true, true)
-			.saveLegendAsImage(outPath + "legend.png")
+			//.saveLegendAsImage(outPath + "legend.png")
 			.dispose()
 			;
 		}
