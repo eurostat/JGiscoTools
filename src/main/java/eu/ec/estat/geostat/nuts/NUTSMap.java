@@ -50,6 +50,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
+import eu.ec.estat.java4eurostat.util.Util;
 
 /**
  * 
@@ -59,8 +60,8 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  *
  */
 public class NUTSMap {
-	//TODO fix ratio/density
-	//TODO automated classes
+	//TODO fix problems in ratio/density
+	//TODO nice classes - nice labels
 
 	//TODO small multiple
 	//TODO gif animation on time
@@ -109,6 +110,7 @@ public class NUTSMap {
 	public int legendWidth = 200;
 	public int legendHeightPerClass = 20;
 	public int legendPadding = 5;
+	public int legendRoundingDecimalNB = 3;
 
 
 	public NUTSMap(int level, int lod, String propName, HashMap<String, Double> statData, Classifier classifier){
@@ -257,7 +259,7 @@ public class NUTSMap {
 		return rc;
 	}
 
-	public static void drawLegend(Graphics2D gr, RangedClassifier classifier, Color[] colors, int offsetX, int offsetY, int width, int heightPerClass, int padding) {
+	public static void drawLegend(Graphics2D gr, RangedClassifier classifier, Color[] colors, int decimalNB, int offsetX, int offsetY, int width, int heightPerClass, int padding) {
 		int colorRampWidth = 50;
 		int nb = classifier.getSize();
 		int height = heightPerClass * nb + 2*padding;
@@ -269,19 +271,19 @@ public class NUTSMap {
 			gr.setColor(Color.BLACK);
 			int fontSize = heightPerClass-3;
 			gr.setFont(new Font("Arial", Font.BOLD, fontSize));
-			if(slot!=nb-1) gr.drawString(""+classifier.getMax(slot), offsetX+padding+colorRampWidth+padding, (int)(offsetY+padding+(slot+1)*heightPerClass+fontSize*0.5));
+			if(slot!=nb-1) gr.drawString(""+Util.round((Double)classifier.getMax(slot), decimalNB), offsetX+padding+colorRampWidth+padding, (int)(offsetY+padding+(slot+1)*heightPerClass+fontSize*0.5));
 		}
 		gr.setColor(Color.BLACK); gr.drawRect(offsetX+padding, offsetY+padding, colorRampWidth, height-2*padding);
 	}
 
-	public static void saveAsImage(RangedClassifier classifier, Color[] colors, String file) { saveAsImage(classifier, colors, file, 200, 20, 5); }
-	public static void saveAsImage(RangedClassifier classifier, Color[] colors, String file, int width, int heightPerClass, int padding) {
+	public static void saveAsImage(RangedClassifier classifier, Color[] colors, String file) { saveAsImage(classifier, colors, file, 3, 200, 20, 5); }
+	public static void saveAsImage(RangedClassifier classifier, Color[] colors, String file, int decimalNB, int width, int heightPerClass, int padding) {
 		try {
 			int height = heightPerClass * classifier.getSize() + 2*padding;
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 			Graphics2D gr = image.createGraphics();
 			gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			drawLegend(gr, classifier, colors, 0, 0, width, heightPerClass, padding);
+			drawLegend(gr, classifier, colors, decimalNB, 0, 0, width, heightPerClass, padding);
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
 	}
@@ -361,16 +363,16 @@ public class NUTSMap {
 			}
 
 			if(withLegend)
-				drawLegend(gr, (RangedClassifier)this.classifier, this.colors, imageWidth-legendWidth-legendPadding, legendPadding, legendWidth, legendHeightPerClass, legendPadding);
+				drawLegend(gr, (RangedClassifier)this.classifier, this.colors, this.legendRoundingDecimalNB, imageWidth-legendWidth-legendPadding, legendPadding, legendWidth, legendHeightPerClass, legendPadding);
 
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
 		return this;
 	}
 
-	private NUTSMap saveLegendAsImage(String file) { saveLegendAsImage(file, 100, 20, 5); return this; }
-	private NUTSMap saveLegendAsImage(String file, int width, int heightPerClass, int padding) {
-		saveAsImage((RangedClassifier) this.classifier, this.colors, file, width, heightPerClass, padding);
+	private NUTSMap saveLegendAsImage(String file) { saveLegendAsImage(file, 3, 100, 20, 5); return this; }
+	private NUTSMap saveLegendAsImage(String file, int decimalNB, int width, int heightPerClass, int padding) {
+		saveAsImage((RangedClassifier) this.classifier, this.colors, file, decimalNB, width, heightPerClass, padding);
 		return this;
 	}
 
@@ -386,8 +388,7 @@ public class NUTSMap {
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
 		data = NUTSUtils.computePopRatioFigures(data, 1000, false);
-		//data.printQuantiles(9);
-		RangedClassifier cl = getClassifier(1.1,1.9,2.5,3.2,4,5,6.3,9.1,1000);
+		RangedClassifier cl = getClassifier(data.getQuantiles(9));
 
 		for(int year = 2010; year<=2015; year++){
 			NUTSMap map = new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
