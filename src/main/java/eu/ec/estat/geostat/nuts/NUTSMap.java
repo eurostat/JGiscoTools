@@ -127,7 +127,7 @@ public class NUTSMap {
 		return this;
 	}
 
-	public void dispose() { this.map.dispose(); }
+	public NUTSMap dispose() { this.map.dispose(); return this; }
 	public NUTSMap setTitle(String title) { map.setTitle(title); return this; }
 	public NUTSMap setClassifier(Classifier classifier) { this.classifier = classifier; return this; }
 	public NUTSMap show() { JMapFrame.showMap(map); return this; }
@@ -387,18 +387,21 @@ public class NUTSMap {
 		//load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
-		data = NUTSUtils.computePopRatioFigures(data, 1000, false);
-		RangedClassifier cl = getClassifier(data.getQuantiles(9));
+		//data = NUTSUtils.computePopRatioFigures(data, 1000, false);
+		//data = NUTSUtils.computeDensityFigures(data);
 
-		for(int year = 2010; year<=2015; year++){
-			NUTSMap map = new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
-					.makeDark().setTitle(year+"")
-					.setClassifier(cl)
-					.make()
-					.saveAsImage(outPath + "map_"+year+".png", 1000, true, true)
-					.saveLegendAsImage(outPath + "legend.png")
-					;
-			map.dispose();
+		RangedClassifier cl = getClassifier(data.getQuantiles(9)); //TODO only 8 classes?
+		for(int year = 2010; year<=2015; year++) {
+			new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
+			//.makeDark()
+			.setTitle(year+"")
+			.setClassifier(cl)
+			.make()
+			//.printClassification()
+			.saveAsImage(outPath + "map_"+year+".png", 1000, true, true)
+			.saveLegendAsImage(outPath + "legend.png")
+			.dispose()
+			;
 		}
 
 		/*HashMap<String, Double> statData =

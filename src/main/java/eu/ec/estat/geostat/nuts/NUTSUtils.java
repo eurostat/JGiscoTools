@@ -33,13 +33,14 @@ public class NUTSUtils {
 
 
 	//compute figures divided by nuts area
-	public static StatsHypercube computeDensityFigures(StatsHypercube sh){
+	public static StatsHypercube computeDensityFigures(StatsHypercube sh){ return computeDensityFigures(sh, false); }
+	public static StatsHypercube computeDensityFigures(StatsHypercube sh, boolean showMessages){
 		StatsHypercube out = new StatsHypercube(sh.getDimLabels());
 		for(Stat s : sh.stats){
 			String geo = s.dims.get("geo");
 			double area = getNUTSArea(geo);
 			if(Double.isNaN(area)){
-				System.err.println("Could not find area of NUTS region "+geo);
+				if(showMessages) System.err.println("Could not find area of NUTS region "+geo);
 				continue;
 			}
 			Stat s2 = new Stat(s); s2.value = s.value/area;
@@ -98,7 +99,7 @@ public class NUTSUtils {
 	}*/
 
 	private static HashMap<String,Double> nutsArea = null;
-	public static double getNUTSArea(String geo){
+	public static Double getNUTSArea(String geo){
 		if(nutsArea == null){
 			nutsArea = new HashMap<String,Double>();
 			ShapeFile shp = NUTSShapeFile.get();
@@ -111,15 +112,17 @@ public class NUTSUtils {
 			}
 			it.close();
 		}
-		return nutsArea.get(geo);
+		Double area = nutsArea.get(geo);
+		if(area==null) return Double.NaN;
+		return area.doubleValue();
 	}
-	
 
 
 
 
-	
-	
+
+
+
 	private static class NUTSChange{
 		public String codeIni, codeFin, change, explanation;
 		@Override
