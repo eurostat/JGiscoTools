@@ -60,13 +60,14 @@ import eu.ec.estat.java4eurostat.util.Util;
  *
  */
 public class NUTSMap {
+	//TODO show graticule
+
 	//TODO fix problems in ratio/density
 	//TODO nice classes - nice labels
 
 	//TODO small multiple
 	//TODO gif animation on time
 
-	//TODO show graticule
 	//TODO show DOM
 	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
 	//TODO show scale bar?
@@ -92,6 +93,9 @@ public class NUTSMap {
 	public Color[] colors = null;
 
 	boolean showJoin=false, showSepa=false;
+	public boolean showGraticules = true;
+	public Color graticulesColor = Color.LIGHT_GRAY;
+	public double graticulesWidth = 0.5;
 
 	//public Color imgBckgrdColor = Color.WHITE;
 	//public Color imgBckgrdColor = new Color(240,248,255); //aliceblue
@@ -137,6 +141,11 @@ public class NUTSMap {
 		this.setBounds(1340000.0, 5450000.0, 2580000.0, 7350000.0);
 
 
+		//graticules
+		if(this.showGraticules)
+			map.addLayer( new FeatureLayer(NUTSShapeFile.getGraticules().getFeatureCollection(), getLineStyle(this.graticulesColor, this.graticulesWidth)) );
+
+
 		//countries
 		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "RG").getFeatureCollection(NUTSShapeFile.CNTR_NEIG_CNTR), getPolygonStyle(cntrRGColor, null)) );
 		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "BN").getFeatureCollection("COAS_FLAG='F'"), getLineStyle(cntrBNColor, 0.2)) );
@@ -153,7 +162,7 @@ public class NUTSMap {
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
-		//buid region style
+		//RG
 		Style RGStyleNoData = getPolygonStyle(Color.GRAY, null);
 		Style RGStyle = RGStyleNoData;
 		if(fcRG.size()>0){
@@ -166,7 +175,7 @@ public class NUTSMap {
 		map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
 		map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 
-		//BN style
+		//BN
 		//TODO propose generic border display pattern - level-width-color
 		if(this.level == 0){
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor2, 0.8)) );

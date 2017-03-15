@@ -129,4 +129,11 @@ public class NUTSShapeFile {
 			+ " OR CNTR_ID='TN' OR CNTR_ID='DZ' OR CNTR_ID='MA' OR CNTR_ID='GI'"
 			+ " OR CNTR_ID='FO' OR CNTR_ID='SJ' OR CNTR_ID='GL' OR CNTR_ID='GG' OR CNTR_ID='JE' OR CNTR_ID='IM'";
 
+
+	
+	private static final String BASE_PATH_GRATICULES = "resources/graticules/";
+	public static ShapeFile getGraticules(){
+		return new ShapeFile(BASE_PATH_GRATICULES + "graticules.shp");
+	}
+
 }
