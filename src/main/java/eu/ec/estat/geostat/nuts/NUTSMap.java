@@ -58,9 +58,8 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  *
  */
 public class NUTSMap {
-	//TODO see how to fix classification/legend
-	//TODO show other countries
 	//TODO legend - http://gis.stackexchange.com/questions/22962/create-a-color-scale-legend-for-choropleth-map-using-geotools-or-other-open-sou
+	//TODO show other countries
 	//TODO borders: coastal, etc
 	//TODO show DOM
 	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
@@ -330,15 +329,17 @@ public class NUTSMap {
 		//load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
-		data.printQuantiles(9);
-		//Classifier classifier = getClassifier();
-		//TODO build classifier
+		//data.printQuantiles(9);
+		Classifier cl = getClassifier(0,2800000,4300000,6000000,7500000,10000000,18000000,35000000,1e10);
 
-		for(int year = 2010; year<=2015; year++)
-			new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
-			.makeDark().make().printClassification()
+		for(int year = 2010; year<=2015; year++){
+			NUTSMap map = new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
+					.makeDark();
+			map.classifier = cl;
+			map.make()//.printClassification()
 			.saveAsImage(outPath + "map_"+year+".png", 1000)
 			; //TODO save legend
+		}
 
 		/*HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
