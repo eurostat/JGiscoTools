@@ -60,11 +60,10 @@ import eu.ec.estat.java4eurostat.util.Util;
  *
  */
 public class NUTSMap {
-	//TODO fix problems in quantiles
-	//TODO nice classes - nice labels
-
+	//TODO generic functions
 	//TODO small multiple
 	//TODO gif animation on time
+	//TODO nice classes - nice labels
 
 	//TODO show DOM
 	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
