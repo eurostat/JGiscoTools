@@ -49,6 +49,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
+import eu.ec.estat.java4eurostat.io.EurobaseIO;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
 import eu.ec.estat.java4eurostat.util.Util;
 
@@ -78,7 +79,7 @@ public class NUTSMap {
 
 	private MapContent map = null;
 
-	public int level = 3; //NUTS level. can be 0, 1, 2, 3
+	public int nutsLevel = 3; //NUTS level. can be 0, 1, 2, 3
 	public int lod = 20; //Level of detail / scale. can be 1, 3, 10, 20 or 60
 
 	public HashMap<String, Double> statData = null;
@@ -115,8 +116,14 @@ public class NUTSMap {
 	public int legendRoundingDecimalNB = 3;
 
 
-	public NUTSMap(int level, int lod, String propName, HashMap<String, Double> statData, Classifier classifier){
-		this.level = level;
+	public NUTSMap(int nutsLevel, int lod, String databaseCode, Classifier classifier, String... dimLabelValues){
+		this(nutsLevel, lod, EurobaseIO.getData(databaseCode, dimLabelValues), classifier, dimLabelValues);
+	}
+	public NUTSMap(int nutsLevel, int lod, StatsHypercube sh, Classifier classifier, String... dimLabelValues){
+		this(nutsLevel, lod, "geo", sh.selectDimValueEqualTo(dimLabelValues).shrinkDims().toMap(), classifier);
+	}
+	public NUTSMap(int nutsLevel, int lod, String propName, HashMap<String, Double> statData, Classifier classifier){
+		this.nutsLevel = nutsLevel;
 		this.lod = lod;
 		this.statData = statData;
 		this.propName = propName;
@@ -150,7 +157,7 @@ public class NUTSMap {
 
 
 		//get region features
-		SimpleFeatureCollection fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterByLevel(this.level));
+		SimpleFeatureCollection fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterByLevel(this.nutsLevel));
 		SimpleFeatureCollection fcRGNoDta = null;
 
 		//join stat data, if any
@@ -175,15 +182,15 @@ public class NUTSMap {
 
 		//BN
 		//TODO propose generic border display pattern - level-width-color
-		if(this.level == 0){
+		if(this.nutsLevel == 0){
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor2, 0.8)) );
-		} else if(this.level == 1){
+		} else if(this.nutsLevel == 1){
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor1, 0.3)) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor2, 1)) );
-		} else if(this.level == 2){
+		} else if(this.nutsLevel == 2){
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor1, 0.3)) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor2, 1)) );
-		} else if(this.level == 3){
+		} else if(this.nutsLevel == 3){
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor1, 0.5)) );
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), getLineStyle(nutsBNColor2, 1)) );
 		}
@@ -393,7 +400,14 @@ public class NUTSMap {
 
 		//EurobaseIO.update(dataPath, "tour_occ_nim", "tour_occ_nin2");
 
-		//load stat data
+		//EurobaseIO.getData("tour_occ_nin2", "unit", "NR","nace_r2","I551-I553","indic_to","B006", "time", "2015 ").shrinkDims().printInfo();;
+		new NUTSMap(2, 60, "tour_occ_nin2", null, "unit","NR","nace_r2","I551-I553","indic_to","B006", "time", "2015 ")
+		.saveAsImage(outPath + "map_test.png", 1000, true, true)
+		.dispose()
+		;
+
+
+		/*/load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
 		//data = NUTSUtils.computePopRatioFigures(data, 1000, true);
@@ -412,6 +426,7 @@ public class NUTSMap {
 			.dispose()
 			;
 		}
+
 
 		/*HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
