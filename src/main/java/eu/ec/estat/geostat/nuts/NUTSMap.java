@@ -60,6 +60,7 @@ import eu.ec.estat.java4eurostat.util.Util;
  *
  */
 public class NUTSMap {
+	//TODO legend labels - fix extreme values
 	//TODO generic functions
 	//TODO small multiple
 	//TODO gif animation on time
