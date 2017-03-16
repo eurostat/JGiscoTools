@@ -61,8 +61,8 @@ import eu.ec.estat.java4eurostat.util.Util;
  *
  */
 public class NUTSMap {
+	//TODO generic functions - fix
 	//TODO legend labels - fix extreme values
-	//TODO generic functions
 	//TODO small multiple
 	//TODO gif animation on time
 	//TODO nice classes - nice labels
@@ -400,14 +400,13 @@ public class NUTSMap {
 
 		//EurobaseIO.update(dataPath, "tour_occ_nim", "tour_occ_nin2");
 
-		//EurobaseIO.getData("tour_occ_nin2", "unit", "NR","nace_r2","I551-I553","indic_to","B006", "time", "2015 ").shrinkDims().printInfo();;
-		new NUTSMap(2, 60, "tour_occ_nin2", null, "unit","NR","nace_r2","I551-I553","indic_to","B006", "time", "2015 ")
+		/*new NUTSMap(2, 60, "tour_occ_nin2", null, "unit", "NR","nace_r2","I551-I553","indic_to","B006", "time", "2013")
 		.saveAsImage(outPath + "map_test.png", 1000, true, true)
 		.dispose()
-		;
+		;*/
 
 
-		/*/load stat data
+		//load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
 		//data = NUTSUtils.computePopRatioFigures(data, 1000, true);
@@ -415,7 +414,7 @@ public class NUTSMap {
 
 		RangedClassifier cl = getClassifier(data.getQuantiles(8));
 		for(int year = 2010; year<=2015; year++) {
-			new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
+			new NUTSMap(2, 1, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
 			.makeDark()
 			.setTitle(year+"")
 			.setClassifier(cl)
