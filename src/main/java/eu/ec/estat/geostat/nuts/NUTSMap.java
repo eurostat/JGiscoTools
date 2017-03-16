@@ -277,9 +277,10 @@ public class NUTSMap {
 			gr.setColor(colors[slot]);
 			gr.fillRect(offsetX+padding, offsetY+padding+slot*heightPerClass, colorRampWidth, heightPerClass);
 			gr.setColor(Color.BLACK);
-			int fontSize = heightPerClass-3;
+			int fontSize = heightPerClass-4;
 			gr.setFont(new Font("Arial", Font.BOLD, fontSize));
-			if(slot!=nb-1) gr.drawString(""+Util.round((Double)classifier.getMax(slot), decimalNB), offsetX+padding+colorRampWidth+padding, (int)(offsetY+padding+(slot+1)*heightPerClass+fontSize*0.5));
+			double val = Util.round((Double)classifier.getMax(slot), decimalNB); //TODO make it nice
+			if(slot!=nb-1) gr.drawString(""+val, offsetX+padding+colorRampWidth+padding, (int)(offsetY+padding+(slot+1)*heightPerClass+fontSize*0.5));
 		}
 		gr.setColor(Color.BLACK); gr.drawRect(offsetX+padding, offsetY+padding, colorRampWidth, height-2*padding);
 	}
@@ -395,8 +396,8 @@ public class NUTSMap {
 		//load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
 				.delete("unit").delete("nace_r2").delete("indic_to");
-		data = NUTSUtils.computePopRatioFigures(data, 1000, false);
-		//data = NUTSUtils.computeDensityFigures(data);
+		//data = NUTSUtils.computePopRatioFigures(data, 1000, true);
+		data = NUTSUtils.computeDensityFigures(data);
 
 		RangedClassifier cl = getClassifier(data.getQuantiles(8));
 		for(int year = 2010; year<=2015; year++) {
