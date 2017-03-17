@@ -32,9 +32,9 @@ public class NUTSUtils {
 	}
 
 
-	//compute figures divided by nuts area
-	public static StatsHypercube computeDensityFigures(StatsHypercube sh){ return computeDensityFigures(sh, false); }
-	public static StatsHypercube computeDensityFigures(StatsHypercube sh, boolean showMessages){
+	//compute figures divided by nuts area (in km2)
+	public static StatsHypercube computeDensityFigures(StatsHypercube sh){ return computeDensityFigures(sh, 1, false); }
+	public static StatsHypercube computeDensityFigures(StatsHypercube sh, int multi, boolean showMessages){
 		StatsHypercube out = new StatsHypercube(sh.getDimLabels());
 		for(Stat s : sh.stats){
 			String geo = s.dims.get("geo");
@@ -43,7 +43,7 @@ public class NUTSUtils {
 				if(showMessages) System.err.println("Could not find area of NUTS region "+geo);
 				continue;
 			}
-			Stat s2 = new Stat(s); s2.value = s.value/area;
+			Stat s2 = new Stat(s); s2.value = multi*1e6*s.value/area;
 			out.stats.add(s2);
 		}
 		return out;
@@ -61,7 +61,7 @@ public class NUTSUtils {
 				if(showMessages) System.err.println("Could not find population of NUTS region "+geo+" in "+year);
 				continue;
 			}
-			Stat s2 = new Stat(s); s2.value = s.value/pop;
+			Stat s2 = new Stat(s); s2.value = multi*s.value/pop;
 			out.stats.add(s2);
 		}
 		return out;
