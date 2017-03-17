@@ -49,7 +49,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
-import eu.ec.estat.java4eurostat.io.EurobaseIO;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
 import eu.ec.estat.java4eurostat.util.Util;
 
@@ -61,8 +60,8 @@ import eu.ec.estat.java4eurostat.util.Util;
  *
  */
 public class NUTSMap {
-	//TODO generic functions - fix
 	//TODO legend labels - fix extreme values
+	//TODO generic functions - fix
 	//TODO small multiple
 	//TODO gif animation on time
 	//TODO nice classes - nice labels
@@ -116,12 +115,14 @@ public class NUTSMap {
 	public int legendRoundingDecimalNB = 3;
 
 
-	public NUTSMap(int nutsLevel, int lod, String databaseCode, Classifier classifier, String... dimLabelValues){
+	//TODO solve time+" " issue
+	/*public NUTSMap(int nutsLevel, int lod, String databaseCode, Classifier classifier, String... dimLabelValues){
 		this(nutsLevel, lod, EurobaseIO.getData(databaseCode, dimLabelValues), classifier, dimLabelValues);
 	}
 	public NUTSMap(int nutsLevel, int lod, StatsHypercube sh, Classifier classifier, String... dimLabelValues){
 		this(nutsLevel, lod, "geo", sh.selectDimValueEqualTo(dimLabelValues).shrinkDims().toMap(), classifier);
-	}
+	}*/
+
 	public NUTSMap(int nutsLevel, int lod, String propName, HashMap<String, Double> statData, Classifier classifier){
 		this.nutsLevel = nutsLevel;
 		this.lod = lod;
@@ -394,17 +395,12 @@ public class NUTSMap {
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
-		//String outPath = "H:/desktop";
-		String outPath = "/home/juju/Bureau/";
+
+		String outPath = "H:/desktop/";
+		//String outPath = "/home/juju/Bureau/";
 		String dataPath = "stat_cache/";
 
 		//EurobaseIO.update(dataPath, "tour_occ_nim", "tour_occ_nin2");
-
-		/*new NUTSMap(2, 60, "tour_occ_nin2", null, "unit", "NR","nace_r2","I551-I553","indic_to","B006", "time", "2013")
-		.saveAsImage(outPath + "map_test.png", 1000, true, true)
-		.dispose()
-		;*/
-
 
 		//load stat data
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
@@ -412,10 +408,11 @@ public class NUTSMap {
 		//data = NUTSUtils.computePopRatioFigures(data, 1000, true);
 		data = NUTSUtils.computeDensityFigures(data);
 
+
 		RangedClassifier cl = getClassifier(data.getQuantiles(8));
 		for(int year = 2010; year<=2015; year++) {
-			new NUTSMap(2, 1, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
-			.makeDark()
+			new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
+			//.makeDark()
 			.setTitle(year+"")
 			.setClassifier(cl)
 			.make()
