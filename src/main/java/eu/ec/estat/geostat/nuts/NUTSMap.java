@@ -48,8 +48,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 
-import eu.ec.estat.java4eurostat.base.StatsHypercube;
-import eu.ec.estat.java4eurostat.io.EurostatTSV;
 import eu.ec.estat.java4eurostat.util.Util;
 
 /**
@@ -373,7 +371,7 @@ public class NUTSMap {
 			renderer.paint(gr, imageBounds, mapBounds);
 
 			//write title
-			if(withTitle){
+			if(withTitle && map.getTitle()!=null){
 				gr.setColor(fontColor);
 				gr.setFont(new Font(fontFamily, fontStrength, fontSize));
 				gr.drawString(map.getTitle(), 10, fontSize+5);
@@ -402,16 +400,14 @@ public class NUTSMap {
 
 		//EurobaseIO.update(dataPath, "tour_occ_nim", "tour_occ_nin2");
 
-		//load stat data
-		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006")
-				.delete("unit").delete("nace_r2").delete("indic_to");
+		/*/load stat data
+		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006").shrinkDims();
 		//data = NUTSUtils.computePopRatioFigures(data, 1000, true);
 		data = NUTSUtils.computeDensityFigures(data);
 
-
 		RangedClassifier cl = getClassifier(data.getQuantiles(8));
 		for(int year = 2010; year<=2015; year++) {
-			new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").delete("time").toMap(), null)
+			new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").shrinkDims().toMap(), null)
 			//.makeDark()
 			.setTitle(year+"")
 			.setClassifier(cl)
@@ -421,17 +417,16 @@ public class NUTSMap {
 			//.saveLegendAsImage(outPath + "legend.png")
 			.dispose()
 			;
-		}
-
+		}*/
 
 		/*HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
-				.delete("unit").delete("indic_to").delete("time").delete("nace_r2")
-				.toMap();
-		NUTSMap map = new NUTSMap("", 3, 60, "geo", statData);
-		//map.show();
-		map.saveAsImage("H:/desktop/map.png", 1000); */
-
+				.shrinkDims().toMap();
+		new NUTSMap(3, 60, "geo", statData, null)
+		.make()
+		//.show()
+		.saveAsImage(outPath+"map.png", 1000, true, true)
+		.dispose();*/
 		System.out.println("End.");
 	}
 
