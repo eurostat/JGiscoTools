@@ -32,6 +32,7 @@ public class TourismUseCase {
 	public static String NUTS_SHP_LVL3 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl3.shp";
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
+	//TODO produce maps
 	//TODO better analyse validation data
 	//TODO contact tomtom guys. ask for data
 	//TODO aggregate at 10km grid level
@@ -62,7 +63,7 @@ public class TourismUseCase {
 
 	public static void runDasymetric(){
 
-		//load tourism data
+		//load tourism datato disaggregate
 		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
 				new Selection.And(
 						new Selection.DimValueEqualTo("unit","NR"), //Number
@@ -83,7 +84,7 @@ public class TourismUseCase {
 		//String time = "2015 ", outFile = "H:/methnet/geostat/out/stats_lvl2_"+time+".csv";
 		//statIndexToCSV(hcI.getSubIndex(time), "NUTS_ID", outFile);
 
-		//output structure
+		//build output structure
 		StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
 
 		//go through nace codes
@@ -131,11 +132,29 @@ public class TourismUseCase {
 
 	}
 
+	public static void computeDensityPopRatio(){
+		//load computed data
+		StatsHypercube sh = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value");
+
+		//compute P_THAB	Per thousand inhabitants
+		StatsHypercube  shPop = NUTSUtils.computePopRatioFigures(sh);
+		for(Stat s : shPop.stats) s.dims.put("unit", "P_THAB");
+
+		//compute P_KM2	Per km2
+		StatsHypercube  shDens = NUTSUtils.computeDensityFigures(sh);
+		for(Stat s : shDens.stats) s.dims.put("unit", "P_KM2");
+
+		//merge and save
+		sh.stats.addAll(shPop.stats);
+		sh.stats.addAll(shDens.stats);
+		CSV.save(sh, "value", "H:/methnet/geostat/out/", "tour_occ_nin2_nuts3_popratio_dens.csv");
+	}
+
 
 	private static void computeValidation() {
 
 		//load data to validate
-		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value");
+		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens", "value").selectDimValueEqualTo("unit","NR");
 		hc.delete("unit");
 
 		//load validation data
@@ -159,24 +178,6 @@ public class TourismUseCase {
 		Validation.printBasicStatistics(diff);
 		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_abs_ratio.csv");
 
-	}
-
-	public static void computeDensityPopRatio(){
-		//load computed data
-		StatsHypercube sh = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value");
-
-		//compute P_THAB	Per thousand inhabitants
-		StatsHypercube  shPop = NUTSUtils.computePopRatioFigures(sh);
-		for(Stat s : shPop.stats) s.dims.put("unit", "P_THAB");
-
-		//compute P_KM2	Per km2
-		StatsHypercube  shDens = NUTSUtils.computeDensityFigures(sh);
-		for(Stat s : shDens.stats) s.dims.put("unit", "P_KM2");
-
-		//merge and save
-		sh.stats.addAll(shPop.stats);
-		sh.stats.addAll(shDens.stats);
-		CSV.save(sh, "value", "H:/methnet/geostat/out/", "tour_occ_nin2_nuts3_popratio_dens.csv");
 	}
 
 
