@@ -26,15 +26,19 @@ public class NUTSShapeFile {
 	 * @param type The object type, among RG,BN,LB,JOIN,SEPA
 	 * @return
 	 */
-	public static ShapeFile get(int year, int lod, String proj, String type){
-		return new ShapeFile(BASE_PATH + year + "/" + lod + "M/" + proj + "/" + type + ".shp");
+	public static ShapeFile get(int year, int lod, String proj, String type, Filter filter){
+		return new ShapeFile(BASE_PATH + year + "/" + lod + "M/" + proj + "/" + type + ".shp", filter);
 	}
 
 	public static ShapeFile get(){ return get("RG"); }
 	public static ShapeFile get(String type){ return get(1, type); }
 	public static ShapeFile get(int lod, String type){ return get(lod, "LAEA", type); }
-	public static ShapeFile get(int lod, String proj, String type){ return get(2013, lod, proj, type); }
+	public static ShapeFile get(int lod, String proj, String type){ return get(2013, lod, proj, type, null); }
+	public static ShapeFile get(int lod, String proj, String type, Filter filter){ return get(2013, lod, proj, type, filter); }
 
+	public static ShapeFile getRG(int lvl){ return getRG(1,"LAEA",lvl); }
+	public static ShapeFile getRG(int lod, String proj, int lvl){ return getRG(lod, proj, getFilterByLevel(lvl)); }
+	public static ShapeFile getRG(int lod, String proj, Filter filter){ return get(2013, lod, proj, "RG", filter); }
 
 	//filters by level
 	private static Filter[] filterByLevel = null;
@@ -130,7 +134,7 @@ public class NUTSShapeFile {
 			+ " OR CNTR_ID='FO' OR CNTR_ID='SJ' OR CNTR_ID='GL' OR CNTR_ID='GG' OR CNTR_ID='JE' OR CNTR_ID='IM'";
 
 
-	
+
 	private static final String BASE_PATH_GRATICULES = "resources/graticules/";
 	public static ShapeFile getGraticules(){
 		return new ShapeFile(BASE_PATH_GRATICULES + "graticules.shp");

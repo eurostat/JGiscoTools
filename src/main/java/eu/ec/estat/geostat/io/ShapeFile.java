@@ -43,8 +43,11 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 public class ShapeFile {
+	private static final FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+
 	private ShapefileDataStore dataStore;
 	private SimpleFeatureStore featureStore; //ShapefileFeatureStore
+	private Filter fil;
 
 	public SimpleFeatureStore getFeatureStore(){ return featureStore; }
 
@@ -52,8 +55,11 @@ public class ShapeFile {
 	 * Open a shapefile
 	 * 
 	 * @param path
+	 * @param fil
 	 */
-	public ShapeFile(String path){ open(path); }
+	public ShapeFile(String path, Filter fil){ this.fil=fil; open(path); }
+	public ShapeFile(String path, String fil){ this(path, fil==null? Filter.INCLUDE : getFilterFromCQL(fil)); }
+	public ShapeFile(String path){ this(path, Filter.INCLUDE); }
 
 	/**
 	 * Create a shapefile
@@ -129,15 +135,15 @@ public class ShapeFile {
 	}
 
 
-	public FeatureIterator<SimpleFeature> getFeatures() { return getFeatures(Filter.INCLUDE); }
-	public FeatureIterator<SimpleFeature> getFeatures(BoundingBox intersectionBB, String geometryAttribute, FilterFactory2 ff) {
+	public FeatureIterator<SimpleFeature> getFeatures() { return getFeatures(fil); }
+	public FeatureIterator<SimpleFeature> getFeatures(BoundingBox intersectionBB, String geometryAttribute) {
 		//Filter filter = ff.intersects(ff.property(geometryAttribute), ff.literal(StatUnitGeom));
-		return getFeatures(ff.bbox(ff.property(geometryAttribute), intersectionBB));
+		return getFeatures( ff.and(fil, ff.bbox(ff.property(geometryAttribute), intersectionBB)) );
 	}
 	public FeatureIterator<SimpleFeature> getFeatures(String cqlString){ return getFeatures(getFilterFromCQL(cqlString)); }
 	public FeatureIterator<SimpleFeature> getFeatures(Filter filter) {
 		try {
-			return ((SimpleFeatureCollection) featureStore.getFeatures(filter)).features();
+			return ((SimpleFeatureCollection) featureStore.getFeatures(ff.and(fil, filter))).features();
 		} catch (IOException e) { e.printStackTrace(); }
 		return null;
 	}
@@ -145,7 +151,7 @@ public class ShapeFile {
 
 	public SimpleFeature getSingleFeature(String cqlString){ return getSingleFeature(getFilterFromCQL(cqlString)); }
 	public SimpleFeature getSingleFeature(Filter filter){
-		FeatureIterator<SimpleFeature> it = getFeatures(filter);
+		FeatureIterator<SimpleFeature> it = getFeatures(ff.and(fil, filter));
 		if(!it.hasNext()) return null;
 		SimpleFeature f = it.next();
 		it.close();
@@ -154,33 +160,32 @@ public class ShapeFile {
 
 
 	public SimpleFeatureCollection getSimpleFeatures(){ return getSimpleFeatures(null); }
-	public SimpleFeatureCollection getSimpleFeatures(Filter f){
-		try { return DataUtilities.collection(featureStore.getFeatures(f)); } catch (Exception e) { e.printStackTrace(); }
+	public SimpleFeatureCollection getSimpleFeatures(Filter filter){
+		try { return DataUtilities.collection(featureStore.getFeatures(ff.and(fil, filter))); } catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
 
 
 
-	public int count(){ return count(Filter.INCLUDE); }
+	public int count(){ return count(fil); }
 	public int count(String cqlString){ return count(getFilterFromCQL(cqlString)); }
 	public int count(Filter filter){
 		try {
-			return featureStore.getCount(new Query( featureStore.getSchema().getTypeName(), filter ));
+			return featureStore.getCount(new Query( featureStore.getSchema().getTypeName(), ff.and(fil, filter) ));
 		} catch (IOException e) { e.printStackTrace(); }
 		return -1;
 	}
 
 	public SimpleFeatureCollection getFeatureCollection(Geometry geomIntersects, String geometryAttribute){
 		//ECQL.toFilter("BBOX(THE_GEOM, 10,20,30,40)")
-		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 		Filter filter = ff.intersects(ff.property(geometryAttribute), ff.literal(geomIntersects));
 		return getFeatureCollection(filter);
 	}
-	public SimpleFeatureCollection getFeatureCollection(){ return getFeatureCollection(Filter.INCLUDE); }
+	public SimpleFeatureCollection getFeatureCollection(){ return getFeatureCollection(fil); }
 	public SimpleFeatureCollection getFeatureCollection(String cqlString){ return getFeatureCollection(getFilterFromCQL(cqlString)); }
 	public SimpleFeatureCollection getFeatureCollection(Filter filter){
 		try {
-			return (SimpleFeatureCollection) featureStore.getFeatures(filter);
+			return (SimpleFeatureCollection) featureStore.getFeatures(ff.and(fil, filter));
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
@@ -190,7 +195,7 @@ public class ShapeFile {
 	public ShapeFile filter(Filter filter, String outPath, String outFile, boolean withSpatialIndex, boolean override){
 		int bufferSize = 500;
 		ShapeFile shpOut = new ShapeFile(getSchema(), outPath, outFile, withSpatialIndex, override);
-		FeatureIterator<SimpleFeature> it = getFeatures(filter);
+		FeatureIterator<SimpleFeature> it = getFeatures(ff.and(fil, filter));
 		DefaultFeatureCollection fs = new DefaultFeatureCollection("ZZZ"+this+Math.random(), getSchema());
 		while(it.hasNext()){
 			SimpleFeature f = it.next();
@@ -219,17 +224,11 @@ public class ShapeFile {
 	}
 	public ShapeFile add(SimpleFeatureCollection fs) {
 		try {
-			System.out.println("aaaaa");
 			Transaction tr = new DefaultTransaction("create");
-			System.out.println("bbbbb");
 			featureStore.setTransaction(tr);
-			System.out.println("ccccc");
 			try {
-				System.out.println("ddddd");
 				featureStore.addFeatures(fs);
-				System.out.println("eeeeee");
 				tr.commit();
-				System.out.println("fffff");
 			} catch (Exception problem) {
 				problem.printStackTrace();
 				tr.rollback();
@@ -264,8 +263,8 @@ public class ShapeFile {
 
 
 	public ShapeFile remove(String cqlString){ return remove(getFilterFromCQL(cqlString)); }
-	public ShapeFile remove(Filter f) {
-		try { featureStore.removeFeatures(f); } catch (IOException e) { e.printStackTrace(); }
+	public ShapeFile remove(Filter filter) {
+		try { featureStore.removeFeatures(ff.and(fil, filter)); } catch (IOException e) { e.printStackTrace(); }
 		return this;
 	}
 

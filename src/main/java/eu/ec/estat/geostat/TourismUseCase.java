@@ -11,6 +11,7 @@ import org.geotools.filter.function.RangedClassifier;
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
 import eu.ec.estat.geostat.io.ShapeFile;
 import eu.ec.estat.geostat.nuts.NUTSMap;
+import eu.ec.estat.geostat.nuts.NUTSShapeFile;
 import eu.ec.estat.geostat.nuts.NUTSUtils;
 import eu.ec.estat.java4eurostat.analysis.Validation;
 import eu.ec.estat.java4eurostat.base.Selection;
@@ -26,10 +27,6 @@ import eu.ec.estat.java4eurostat.io.EurostatTSV;
  */
 public class TourismUseCase {
 	public static String BASE_PATH = "H:/geodata/";
-	//TODO deprecated
-	public static String NUTS_SHP_LVL2 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl2.shp";
-	//TODO deprecated
-	public static String NUTS_SHP_LVL3 = BASE_PATH + "gisco_stat_units/NUTS_2013_01M_SH/data/NUTS_RG_01M_2013_LAEA_lvl3.shp";
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
 	//TODO produce maps
@@ -92,12 +89,12 @@ public class TourismUseCase {
 
 			//create dasymetric analysis object
 			DasymetricMapping dm = new DasymetricMapping(
-					new ShapeFile(NUTS_SHP_LVL2).getFeatureStore(),
+					new NUTSShapeFile().getRG(2).getFeatureStore(),
 					"NUTS_ID",
 					null,
 					new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
 					"ID",
-					new ShapeFile(NUTS_SHP_LVL3).getFeatureStore(),
+					new NUTSShapeFile().getRG(3).getFeatureStore(),
 					"NUTS_ID"
 					);
 
@@ -196,7 +193,7 @@ public class TourismUseCase {
 		map.dispose();
 		//*/
 
-		//computed data: nuts 3 level map //TODO fix that
+		//computed data: nuts 3 level map
 		statData = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens.csv", "value").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+" ").shrinkDims().toMap();
 		map = new NUTSMap(3, 60, "geo", statData, classifier);
 		map.make().saveAsImage(outPath+"map_result_nuts3_"+time+".png").dispose();
