@@ -72,7 +72,7 @@ public class StatisticalUnitsIntersectionMatrix {
 			double a1 = geom1.getArea();
 
 			//get all su2 intersecting the su1 (with spatial index)
-			FeatureIterator<SimpleFeature> itSu2 = shpFile2.getFeatures(f1.getBounds(), "the_geom", ff);
+			FeatureIterator<SimpleFeature> itSu2 = shpFile2.getFeatures(f1.getBounds(), "the_geom");
 
 			while (itSu2.hasNext()) {
 				SimpleFeature f2 = itSu2.next();

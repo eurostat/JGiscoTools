@@ -240,7 +240,7 @@ public class DasymetricMappingOld {
 				Geometry geoGeom = (Geometry) geoUnit.getDefaultGeometryProperty().getValue();
 
 				//get all stat units intersecting the geo (with spatial index)
-				FeatureIterator<SimpleFeature> itStat = statShp.getFeatures(geoUnit.getBounds(), "the_geom", ff);
+				FeatureIterator<SimpleFeature> itStat = statShp.getFeatures(geoUnit.getBounds(), "the_geom");
 
 				int nbStat = 0;
 				double geoStatValue = 0;
@@ -319,7 +319,7 @@ public class DasymetricMappingOld {
 				Geometry statGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
 
 				//get all geos intersecting the stat unit (with spatial index)
-				FeatureIterator<SimpleFeature> itGeo = geoShp.getFeatures(statUnit.getBounds(), "the_geom", ff);
+				FeatureIterator<SimpleFeature> itGeo = geoShp.getFeatures(statUnit.getBounds(), "the_geom");
 
 				int nbGeos = 0;
 				double statValue = 0;
