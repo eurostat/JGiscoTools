@@ -29,7 +29,7 @@ public class TourismUseCase {
 	public static String BASE_PATH = "H:/geodata/";
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
-	//TODO produce maps
+	//TODO maps: fix bug in NUTS3 map
 	//TODO better analyse validation data
 	//TODO contact tomtom guys. ask for data
 	//TODO aggregate at 10km grid level
@@ -43,11 +43,11 @@ public class TourismUseCase {
 		//download/update data for tourism
 		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
-		runDasymetric();
-		computeDensityPopRatio();
+		//runDasymetric();
+		//computeDensityPopRatio();
 
 		computeValidation();
-		makeMaps();
+		//makeMaps();
 
 
 		//E4 data validation
@@ -151,7 +151,7 @@ public class TourismUseCase {
 	private static void computeValidation() {
 
 		//load data to validate
-		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens", "value").selectDimValueEqualTo("unit","NR");
+		StatsHypercube hc = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens.csv", "value").selectDimValueEqualTo("unit","NR");
 		hc.delete("unit");
 
 		//load validation data
