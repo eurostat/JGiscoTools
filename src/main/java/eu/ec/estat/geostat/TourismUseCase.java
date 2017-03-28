@@ -46,8 +46,8 @@ public class TourismUseCase {
 		//runDasymetric();
 		//computeDensityPopRatio();
 
-		computeValidation();
-		//makeMaps();
+		//computeValidation();
+		makeMaps();
 
 
 		//E4 data validation
@@ -160,19 +160,19 @@ public class TourismUseCase {
 		StatsHypercube diff;
 
 		diff = Validation.computeDifference(hcVal, hc, false, false);
-		Validation.printBasicStatistics(diff);
+		Validation.printBasicStatistics(diff); System.out.println("");
 		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff.csv");
 
 		diff = Validation.computeDifference(hcVal, hc, true, false);
-		Validation.printBasicStatistics(diff);
+		Validation.printBasicStatistics(diff); System.out.println("");
 		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_abs.csv");
 
 		diff = Validation.computeDifference(hcVal, hc, false, true);
-		Validation.printBasicStatistics(diff);
+		Validation.printBasicStatistics(diff); System.out.println("");
 		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_ratio.csv");
 
 		diff = Validation.computeDifference(hcVal, hc, true, true);
-		Validation.printBasicStatistics(diff);
+		Validation.printBasicStatistics(diff); System.out.println("");
 		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_abs_ratio.csv");
 
 	}
@@ -182,10 +182,11 @@ public class TourismUseCase {
 		HashMap<String, Double> statData;
 		String outPath = "H:/methnet/geostat/maps/";
 		int time = 2015;
+		NUTSMap map;
 
-		//nuts 2 level map
+		/*/nuts 2 level map
 		statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+" ").shrinkDims().toMap();
-		NUTSMap map = new NUTSMap(2, 60, "geo", statData, null).make();
+		map = new NUTSMap(2, 60, "geo", statData, null).make();
 		RangedClassifier classifier = (RangedClassifier)map.classifier;
 		map.saveAsImage(outPath+"map_nuts2_"+time+".png");
 		map.saveLegendAsImage(outPath+"legend.png");
@@ -199,14 +200,15 @@ public class TourismUseCase {
 		map.make().saveAsImage(outPath+"map_result_nuts3_"+time+".png").dispose();
 		//*/
 
-		//validation data
+		/*/validation data
 		StatsHypercube hc = CSV.load("H:/methnet/geostat/validation/validation_data_2013_filtered.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006").shrinkDims();
 		hc = NUTSUtils.computePopRatioFigures(hc);
-		//Classifier cl = NUTSMap.getClassifier(hc.getQuantiles(8));
+		RangedClassifier cl = NUTSMap.getClassifier(hc.getQuantiles(8));
 		for(int time_ = 2005; time_<= 2013; time_++){
 			statData = hc.selectDimValueEqualTo("time",time_+" ").shrinkDims().toMap();
-			new NUTSMap(3, 60, "geo", statData, null).make()
-			.saveAsImage(outPath+"map_validation_data_nuts3_"+time_+".png").dispose();
+			NUTSMap map_ = new NUTSMap(3, 60, "geo", statData, null);
+			map_.classifier = cl;
+			map_.make().saveAsImage(outPath+"map_validation_data_nuts3_"+time_+".png").dispose();
 		}
 		//*/
 
