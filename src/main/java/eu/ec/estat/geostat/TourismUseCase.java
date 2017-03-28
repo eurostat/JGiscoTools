@@ -29,7 +29,9 @@ public class TourismUseCase {
 	public static String BASE_PATH = "H:/geodata/";
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
+	//TODO Test - aggregate at 100km grid level
 	//TODO aggregate at 10km grid level
+
 	//TODO contact tomtom guys. ask for data
 	//TODO validation with it data http://dati.istat.it/?lang=en
 	//TODO validation of accomodation data
@@ -95,7 +97,7 @@ public class TourismUseCase {
 				new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
 				"ID",
 				new ShapeFile(BASE_PATH+"grid/100km/grid100km.shp").getFeatureStore(),
-				"ID"
+				"ID_"
 				);
 
 		//get input stat values to disaggregate

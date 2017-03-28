@@ -245,7 +245,8 @@ public class DasymetricMapping {
 
 
 
-	//Step 2
+
+	//Step 2b
 
 	//the output value of the second step: statistical values at geo features level
 	public StatsHypercube statsGeoAllocationHC;
@@ -257,7 +258,6 @@ public class DasymetricMapping {
 			//initialise output structure
 			statsGeoAllocationHC = new StatsHypercube();
 			statsGeoAllocationHC.dimLabels.add("geo");
-			statsGeoAllocationHC.dimLabels.add("indic");
 
 			//prepare
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
@@ -322,7 +322,7 @@ public class DasymetricMapping {
 				if(nbStat == 0) continue;
 
 				//store
-				statsGeoAllocationHC.stats.add(new Stat(geoStatValue, "indic", "value", "geo", geoId));
+				statsGeoAllocationHC.stats.add(new Stat(geoStatValue, "geo", geoId));
 				//statsGeoAllocationHC.stats.add(new Stat(nbStat, "indic", "number", "geo", geoId));
 			}
 			itGeo.close();
@@ -330,9 +330,82 @@ public class DasymetricMapping {
 	}
 
 
-	//Step 3
+	//Step 3b
+
+	public StatsHypercube finalStatsHC;
+
 	public void aggregateGeoStat() {
-		//TODO
+		try {
+			//the statistics allocates at geo level
+			StatsIndex statsGeoAllocationI = new StatsIndex(statsGeoAllocationHC, "geo");
+
+			//initialise output structure
+			finalStatsHC = new StatsHypercube();
+			finalStatsHC.dimLabels.add("geo");
+
+			//prepare
+			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+
+			//go through statistical units
+			int statCounter = 1, nbStats = statUnitsFinalFeatureStore.getFeatures().size();
+			FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsFinalFeatureStore.getFeatures()).features();
+			while (itStat.hasNext()) {
+				SimpleFeature statUnit = itStat.next();
+				String statUnitId = statUnit.getAttribute(statUnitsFinalIdFieldName).toString();
+
+				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
+
+				//get all geo features intersecting the stat unit (with spatial index)
+				Geometry statUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
+				//Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
+				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitGeom));
+
+				//compute stat on geo features
+				double statSum=0, weightsSum=0;
+				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
+				while (itGeo.hasNext()) {
+					try {
+						SimpleFeature geo = itGeo.next();
+						String geoId = geo.getAttribute(geoIdFieldName).toString();
+						Geometry geoGeom = (Geometry) geo.getDefaultGeometryProperty().getValue();
+						if(geoGeom.getArea()==0 && geoGeom.getLength()==0) continue;
+						if(!statUnitGeom.intersects(geoGeom)) continue;
+
+						int geomCase = geoGeom.getArea()>0? 3 : geoGeom.getLength()>0? 2 : 1;
+
+						//get statistics allocates at geo level
+						double geoValue = statsGeoAllocationI.getSingleValue(geoId);
+						if(Double.isNaN(geoValue)) continue;
+
+						double weight = 0;
+						Geometry inter = geoGeom.intersection(statUnitGeom);
+						if(geomCase == 3){
+							//area case
+							weight = inter.getArea();
+						} else if(geomCase == 2){
+							//line case
+							weight = inter.getLength();
+						} else {
+							//point case
+							weight = inter.getCoordinates().length;
+						}
+
+						weightsSum += weight;
+						statSum += weight * geoValue;
+					} catch (TopologyException e) {
+						System.err.println("Topology error for intersection computation");
+					}
+				}
+				itGeo.close();
+
+				if(weightsSum == 0) continue;
+
+				//store
+				finalStatsHC.stats.add(new Stat(statSum/weightsSum, "geo", statUnitId));
+			}
+			itStat.close();
+		} catch (MalformedURLException e) { e.printStackTrace();
+		} catch (IOException e) { e.printStackTrace(); }
 	}
 
 }
