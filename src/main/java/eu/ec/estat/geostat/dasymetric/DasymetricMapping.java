@@ -133,13 +133,12 @@ public class DasymetricMapping {
 
 				//compute stat on geo features
 				double areaGeo=0, lengthGeo=0;
-				/*
 				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
-				System.out.println("compute stats");
 				while (itGeo.hasNext()) {
 					try {
 						SimpleFeature geo = itGeo.next();
 						Geometry geoGeom = (Geometry) geo.getDefaultGeometryProperty().getValue();
+						if(geoGeom.getArea()==0 && geoGeom.getLength()==0) continue;
 						if(!statUnitGeom.intersects(geoGeom)) continue;
 
 						Geometry inter = geoGeom.intersection(statUnitGeom);
@@ -149,7 +148,7 @@ public class DasymetricMapping {
 						System.err.println("Topology error for intersection computation");
 					}
 				}
-				itGeo.close();*/
+				itGeo.close();
 
 				if(numberGeo == 0) continue;
 
@@ -157,6 +156,7 @@ public class DasymetricMapping {
 				geoStatsHC.stats.add(new Stat(numberGeo, "indic", "number", "geo", statUnitId));
 				geoStatsHC.stats.add(new Stat(areaGeo, "indic", "area", "geo", statUnitId));
 				geoStatsHC.stats.add(new Stat(lengthGeo, "indic", "length", "geo", statUnitId));
+				geoStatsHC.stats.add(new Stat(numberGeo/statUnitGeom.getArea(), "indic", "density", "geo", statUnitId));
 				geoStatsHC.stats.add(new Stat(areaGeo/statUnitGeom.getArea(), "indic", "area_density", "geo", statUnitId));
 				geoStatsHC.stats.add(new Stat(lengthGeo/statUnitGeom.getArea(), "indic", "length_density", "geo", statUnitId));
 			}
@@ -251,9 +251,8 @@ public class DasymetricMapping {
 	public StatsHypercube statsGeoAllocationHC;
 
 	public void allocateStatGeo() {
-		/*try {
-
-			StatsIndex geoStatsHCI = new StatsIndex(geoStatsHC, "indic", "geo");
+		try {
+			StatsIndex geoStatsInitialHCI = new StatsIndex(geoStatsInitialHC, "indic", "geo");
 
 			//initialise output structure
 			statsGeoAllocationHC = new StatsHypercube();
@@ -269,11 +268,12 @@ public class DasymetricMapping {
 			while (itGeo.hasNext()) {
 				SimpleFeature geoUnit = itGeo.next();
 				String geoId = geoUnit.getAttribute(geoIdFieldName).toString();
+				Geometry geoGeom = (Geometry) geoUnit.getDefaultGeometryProperty().getValue();
+				int geomCase = geoGeom.getArea()>0? 3 : geoGeom.getLength()>0? 2 : 1;
 
 				System.out.println(geoId + " " + (geoCounter++) + "/" + nbGeo + " " + (Math.round(10000.0*geoCounter/nbGeo)*0.01) + "%");
 
 				//get all stat units intersecting the geo (with spatial index)
-				Geometry geoGeom = (Geometry) geoUnit.getDefaultGeometryProperty().getValue();
 				Filter f = ff.bbox(ff.property("the_geom"), geoUnit.getBounds());
 				FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures(f)).features();
 
@@ -295,11 +295,24 @@ public class DasymetricMapping {
 						double statValue = statValuesInitial.getSingleValue(statId);
 						if(Double.isNaN(statValue) || statValue == 0) continue;
 
-						//get stat unit geostat values
-						double statUnitGeoStatValue = geoStatsHCI.getSingleValue("area", statId);
-						if(Double.isNaN(statUnitGeoStatValue) || statUnitGeoStatValue == 0) continue;
+						//increment with stat unit geostat value
+						if(geomCase == 3){
+							//area case
+							double statUnitGeoStatValue = geoStatsInitialHCI.getSingleValue("area", statId);
+							if(!Double.isNaN(statUnitGeoStatValue) && statUnitGeoStatValue != 0)
+								geoStatValue += geoGeom.intersection(statUnitGeom).getArea() / statUnitGeoStatValue * statValue;
+						} else if(geomCase == 2){
+							//line case
+							double statUnitGeoStatValue = geoStatsInitialHCI.getSingleValue("length", statId);
+							if(!Double.isNaN(statUnitGeoStatValue) && statUnitGeoStatValue != 0)
+								geoStatValue += geoGeom.intersection(statUnitGeom).getLength() / statUnitGeoStatValue * statValue;
+						} else {
+							//point case
+							double statUnitGeoStatValue = geoStatsInitialHCI.getSingleValue("number", statId);
+							if(!Double.isNaN(statUnitGeoStatValue) && statUnitGeoStatValue != 0)
+								geoStatValue += geoGeom.intersection(statUnitGeom).getCoordinates().length / statUnitGeoStatValue * statValue;
+						}
 
-						geoStatValue += geoGeom.intersection(statUnitGeom).getArea() / statUnitGeoStatValue * statValue;
 					} catch (TopologyException e) {
 						System.err.println("Topology error.");
 					}
@@ -310,11 +323,10 @@ public class DasymetricMapping {
 
 				//store
 				statsGeoAllocationHC.stats.add(new Stat(geoStatValue, "indic", "value", "geo", geoId));
-				statsGeoAllocationHC.stats.add(new Stat(nbStat, "indic", "number", "geo", geoId));
-				statsGeoAllocationHC.stats.add(new Stat(geoStatValue/geoGeom.getArea(), "indic", "area", "geo", geoId));
+				//statsGeoAllocationHC.stats.add(new Stat(nbStat, "indic", "number", "geo", geoId));
 			}
 			itGeo.close();
-		} catch (Exception e) { e.printStackTrace(); }*/
+		} catch (Exception e) { e.printStackTrace(); }
 	}
 
 

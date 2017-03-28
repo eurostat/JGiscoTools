@@ -29,10 +29,8 @@ public class TourismUseCase {
 	public static String BASE_PATH = "H:/geodata/";
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
-	//TODO maps: fix bug in NUTS3 map
-	//TODO better analyse validation data
-	//TODO contact tomtom guys. ask for data
 	//TODO aggregate at 10km grid level
+	//TODO contact tomtom guys. ask for data
 	//TODO validation with it data http://dati.istat.it/?lang=en
 	//TODO validation of accomodation data
 	//TODO focus on FR.
@@ -49,19 +47,88 @@ public class TourismUseCase {
 		//makeMaps();
 
 		//computeValidation();
-		makeValidationMaps();
+		//makeValidationMaps();
 
 		//E4 data validation
 		//filterE4ValidationDataAggregatesNUTS2();
 		//finalCheckE4ValidationData();
 
+		runDasymetricGrid();
+
 		System.out.println("End.");
 	}
 
+	public static void runDasymetricGrid(){
+		//load tourism data to disaggregate
+		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
+				new Selection.And(
+						new Selection.DimValueEqualTo("unit","NR"), //Number
+						//new Selection.DimValueEqualTo("nace_r2","I551-I553"), //Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks
+						new Selection.DimValueEqualTo("indic_to","B006"), //Nights spent, total
+						//keep only nuts 2 regions
+						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } },
+						//keep only years after 2010
+						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace(" ", "")) >= 2010; } }
+						));
+		hc.delete("unit"); hc.delete("indic_to");
+		StatsIndex hcI = new StatsIndex(hc, "nace_r2", "time", "geo");
+		//hc.printInfo();
+		//hcI.print();
+		hc = null;
+
+		//build output structure
+		StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
+
+		//go through nace codes
+		//for(String nace : new String[]{"I551-I553","I551","I552","I553"}){
+		String nace = "I551-I553";
+
+		//compute values for all years
+		//for(String time : hcI.getKeys(nace)){
+		String time = "2015 ";
+
+		//create dasymetric analysis object
+		DasymetricMapping dm = new DasymetricMapping(
+				new NUTSShapeFile().getRG(2).getFeatureStore(),
+				"NUTS_ID",
+				null,
+				new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
+				"ID",
+				new ShapeFile(BASE_PATH+"grid/100km/grid100km.shp").getFeatureStore(),
+				"ID"
+				);
+
+		//get input stat values to disaggregate
+		dm.statValuesInitial = hcI.getSubIndex(nace, time);
+		if(dm.statValuesInitial == null) System.out.println("No values !");;
+
+		//run dasymetric mapping
+		//Step 1: compute statistics on geo features at initial stat unit level
+		//dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats_"+nace+".csv");
+		dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_2___"+nace+".csv", "value");
+		//Step 2b: allocate statistics at geo features level
+		dm.allocateStatGeo(); CSV.save(dm.statsGeoAllocationHC, "value", "H:/methnet/geostat/out/", "NUTS_2_to_POI___"+nace+".csv");
+		//dm.statsGeoAllocationHC = CSV.load("H:/methnet/geostat/out/NUTS_2_to_POI___"+nace+".csv", "value");
+
+		//Step 3b: aggregate statistics at target stat unit level
+		dm.aggregateGeoStat();
+
+		//
+		for(Stat s : dm.finalStatsSimplifiedHC.stats) {
+			s.dims.put("time", time);
+			s.dims.put("unit", "NR");
+			s.dims.put("nace_r2", nace);
+			s.dims.put("indic_to", "B006");
+		}
+		out.stats.addAll(dm.finalStatsSimplifiedHC.stats);
+		//} //time
+		//} //nace
+		CSV.save(out, "value", "H:/methnet/geostat/out/", "tour_occ_nin2_grid.csv");
+	}
 
 	public static void runDasymetric(){
 
-		//load tourism datato disaggregate
+		//load tourism data to disaggregate
 		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
 				new Selection.And(
 						new Selection.DimValueEqualTo("unit","NR"), //Number
