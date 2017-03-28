@@ -96,7 +96,7 @@ public class TourismUseCase {
 				null,
 				new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
 				"ID",
-				new ShapeFile(BASE_PATH+"grid/100km/grid100km.shp").getFeatureStore(),
+				new ShapeFile(BASE_PATH+"grid/10km/grid10km.shp").getFeatureStore(),
 				"ID_"
 				);
 
