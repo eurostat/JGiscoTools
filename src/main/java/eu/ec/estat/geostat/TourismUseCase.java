@@ -38,6 +38,19 @@ public class TourismUseCase {
 	//TODO focus on FR.
 
 	//TODO test with postgis as datasource
+	//http://docs.geotools.org/stable/userguide/library/jdbc/postgis.html
+	/*
+	  Map<String,Object> params = new HashMap<>();
+    params.put( "dbtype", "postgis");
+    params.put( "host", "localhost");
+    params.put( "port", 5432);
+    params.put( "schema", "public");
+    params.put( "database", "database");
+    params.put( "user", "postgres");
+    params.put( "passwd", "postgres");
+    
+    DataStore dataStore = DataStoreFinder.getDataStore(params);
+	*/
 	
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
