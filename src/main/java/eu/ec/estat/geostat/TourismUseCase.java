@@ -37,6 +37,8 @@ public class TourismUseCase {
 	//TODO validation of accomodation data
 	//TODO focus on FR.
 
+	//TODO test with postgis as datasource
+	
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
 
