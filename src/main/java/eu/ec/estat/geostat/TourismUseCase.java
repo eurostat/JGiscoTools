@@ -6,6 +6,7 @@ package eu.ec.estat.geostat;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.filter.function.RangedClassifier;
 
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
@@ -48,10 +49,10 @@ public class TourismUseCase {
     params.put( "database", "database");
     params.put( "user", "postgres");
     params.put( "passwd", "postgres");
-    
+
     DataStore dataStore = DataStoreFinder.getDataStore(params);
-	*/
-	
+	 */
+
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
 
@@ -110,7 +111,7 @@ public class TourismUseCase {
 				"NUTS_ID",
 				null,
 				new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
-				"ID",
+				"gid",
 				new ShapeFile(BASE_PATH+"grid/10km/grid10km.shp").getFeatureStore(),
 				"ID_"
 				);

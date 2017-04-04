@@ -271,7 +271,7 @@ public class DasymetricMapping {
 				Geometry geoGeom = (Geometry) geoUnit.getDefaultGeometryProperty().getValue();
 				int geomCase = geoGeom.getArea()>0? 3 : geoGeom.getLength()>0? 2 : 1;
 
-				System.out.println(geoId + " " + (geoCounter++) + "/" + nbGeo + " " + (Math.round(10000.0*geoCounter/nbGeo)*0.01) + "%");
+				System.out.println("geoid: " + geoId + " " + (geoCounter++) + "/" + nbGeo + " " + (Math.round(10000.0*geoCounter/nbGeo)*0.01) + "%");
 
 				//get all stat units intersecting the geo (with spatial index)
 				Filter f = ff.bbox(ff.property("the_geom"), geoUnit.getBounds());
