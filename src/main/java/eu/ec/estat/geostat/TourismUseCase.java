@@ -199,7 +199,7 @@ public class TourismUseCase {
 				if(dm.statValuesInitial == null) continue;
 
 				//compute values
-				dm.computeFinalStat();
+				dm.computeDisaggregatedStatsSimplified();
 
 				//
 				for(Stat s : dm.finalStatsSimplifiedHC.stats) {
