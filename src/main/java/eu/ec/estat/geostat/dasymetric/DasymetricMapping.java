@@ -3,9 +3,6 @@
  */
 package eu.ec.estat.geostat.dasymetric;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
@@ -28,7 +25,7 @@ import eu.ec.estat.java4eurostat.base.StatsIndex;
 public class DasymetricMapping {
 
 	//the initial statistical values to disaggregate. Index by geo -> value
-	public StatsIndex statValuesInitial;
+	public StatsIndex statValuesInitial; //TODO use hashmap instead.
 
 	//the initial statistical units
 	private SimpleFeatureStore statUnitsInitialFeatureStore;
@@ -170,8 +167,8 @@ public class DasymetricMapping {
 			itStat.close();
 
 			return geoStatsHC;
-		} catch (MalformedURLException e) { e.printStackTrace();
-		} catch (IOException e) { e.printStackTrace(); }
+
+		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
 
@@ -319,8 +316,7 @@ public class DasymetricMapping {
 				finalStatsHC.stats.add(new Stat(statSum/weightsSum, "geo", statUnitId));
 			}
 			itStat.close();
-		} catch (MalformedURLException e) { e.printStackTrace();
-		} catch (IOException e) { e.printStackTrace(); }
+		} catch (Exception e) { e.printStackTrace(); }
 	}
 
 
@@ -392,9 +388,7 @@ public class DasymetricMapping {
 				itStatFin.close();
 			}
 			itStatIni.close();
-
-		} catch (MalformedURLException e) { e.printStackTrace();
-		} catch (IOException e) { e.printStackTrace(); }
+		} catch (Exception e) { e.printStackTrace(); }
 	}
 
 }
