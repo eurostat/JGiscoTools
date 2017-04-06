@@ -44,17 +44,17 @@ public class DasymetricMapping {
 
 	//default constructor
 	public DasymetricMapping(
+			StatsIndex statValuesInitial,
 			SimpleFeatureStore statUnitsInitialFeatureStore,
 			String statUnitsInitialIdFieldName,
-			StatsIndex statValuesInitial,
 			SimpleFeatureStore geoFeatureStore,
 			String geoIdFieldName,
 			SimpleFeatureStore statUnitsFinalFeatureStore,
 			String statUnitsFinalIdFieldName
 			){
+		this.statValuesInitial = statValuesInitial;
 		this.statUnitsInitialFeatureStore = statUnitsInitialFeatureStore;
 		this.statUnitsInitialIdFieldName = statUnitsInitialIdFieldName;
-		this.statValuesInitial = statValuesInitial;
 		this.geoFeatureStore = geoFeatureStore;
 		this.geoIdFieldName = geoIdFieldName;
 		this.statUnitsFinalFeatureStore = statUnitsFinalFeatureStore;

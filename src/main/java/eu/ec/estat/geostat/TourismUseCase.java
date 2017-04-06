@@ -6,7 +6,6 @@ package eu.ec.estat.geostat;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.filter.function.RangedClassifier;
 
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
@@ -107,9 +106,9 @@ public class TourismUseCase {
 
 		//create dasymetric analysis object
 		DasymetricMapping dm = new DasymetricMapping(
-				new NUTSShapeFile().getRG(2).getFeatureStore(),
-				"NUTS_ID",
 				null,
+				NUTSShapeFile.getRG(2).getFeatureStore(),
+				"NUTS_ID",
 				new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
 				"gid",
 				new ShapeFile(BASE_PATH+"grid/10km/grid10km.shp").getFeatureStore(),
@@ -175,12 +174,12 @@ public class TourismUseCase {
 
 			//create dasymetric analysis object
 			DasymetricMapping dm = new DasymetricMapping(
-					new NUTSShapeFile().getRG(2).getFeatureStore(),
-					"NUTS_ID",
 					null,
+					NUTSShapeFile.getRG(2).getFeatureStore(),
+					"NUTS_ID",
 					new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
 					"ID",
-					new NUTSShapeFile().getRG(3).getFeatureStore(),
+					NUTSShapeFile.getRG(3).getFeatureStore(),
 					"NUTS_ID"
 					);
 
