@@ -110,7 +110,7 @@ public class TourismUseCase {
 				NUTSShapeFile.getRG(2).getFeatureStore(),
 				"NUTS_ID",
 				new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
-				"gid",
+				"ID2",
 				new ShapeFile(BASE_PATH+"grid/10km/grid10km.shp").getFeatureStore(),
 				"ID_"
 				);
@@ -120,26 +120,29 @@ public class TourismUseCase {
 		if(dm.statValuesInitial == null) System.out.println("No values !");;
 
 		//run dasymetric mapping
-		//Step 1: compute statistics on geo features at initial stat unit level
+
+		System.out.println("Step 1: compute statistics on geo features at initial stat unit level");
 		//dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats_"+nace+".csv");
 		dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_2___"+nace+".csv", "value");
-		//Step 2: allocate statistics at geo features level
+
+		System.out.println("Step 2: allocate statistics at geo features level");
 		dm.allocateStatGeo(); CSV.save(dm.statsGeoAllocationHC, "value", "H:/methnet/geostat/out/", "NUTS_2_to_POI___"+nace+".csv");
 		//dm.statsGeoAllocationHC = CSV.load("H:/methnet/geostat/out/NUTS_2_to_POI___"+nace+".csv", "value");
-		//Step 3: aggregate statistics at target stat unit level
-		dm.aggregateGeoStat(); CSV.save(dm.finalStatsHC, "value", "H:/methnet/geostat/out/", "grid10km___"+nace+".csv");
+
+		System.out.println("Step 3: aggregate statistics at target stat unit level");
+		dm.aggregateGeoStat();
 
 		//
-		for(Stat s : dm.finalStatsSimplifiedHC.stats) {
+		for(Stat s : dm.finalStatsHC.stats) {
 			s.dims.put("time", time);
 			s.dims.put("unit", "NR");
 			s.dims.put("nace_r2", nace);
 			s.dims.put("indic_to", "B006");
 		}
-		out.stats.addAll(dm.finalStatsSimplifiedHC.stats);
+		out.stats.addAll(dm.finalStatsHC.stats);
 		//} //time
 		//} //nace
-		CSV.save(out, "value", "H:/methnet/geostat/out/", "tour_occ_nin2_grid.csv");
+		CSV.save(out, "value", "H:/methnet/geostat/out/", "grid10km___"+nace+".csv");
 	}
 
 	public static void runDasymetric(){
