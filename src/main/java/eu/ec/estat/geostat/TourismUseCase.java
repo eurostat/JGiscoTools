@@ -127,7 +127,7 @@ public class TourismUseCase {
 		dm.allocateStatGeo(); CSV.save(dm.statsGeoAllocationHC, "value", "H:/methnet/geostat/out/", "NUTS_2_to_POI___"+nace+".csv");
 		//dm.statsGeoAllocationHC = CSV.load("H:/methnet/geostat/out/NUTS_2_to_POI___"+nace+".csv", "value");
 		//Step 3: aggregate statistics at target stat unit level
-		dm.aggregateGeoStat(); CSV.save(dm.finalStatsHC, "value", "H:/methnet/geostat/out/", "Grid10km___"+nace+".csv");
+		dm.aggregateGeoStat(); CSV.save(dm.finalStatsHC, "value", "H:/methnet/geostat/out/", "grid10km___"+nace+".csv");
 
 		//
 		for(Stat s : dm.finalStatsSimplifiedHC.stats) {
