@@ -113,9 +113,7 @@ public class DasymetricMapping {
 	private StatsHypercube computeGeoStat(SimpleFeatureStore statUnitsFeatureStore, String statUnitsIdFieldName ) {
 		try {
 			//initialise output structure
-			StatsHypercube geoStatsHC = new StatsHypercube();
-			geoStatsHC.dimLabels.add("geo");
-			geoStatsHC.dimLabels.add("indic");
+			StatsHypercube geoStatsHC = new StatsHypercube("geo", "indic");
 
 			//prepare
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
@@ -178,84 +176,8 @@ public class DasymetricMapping {
 	}
 
 
-	//step 3b
-	public StatsHypercube finalStatsSimplifiedHC;
 
-	public void computeDisaggregatedStatsSimplified() {
-		try {
-			StatsIndex geoStatsInitialHCI = new StatsIndex(geoStatsInitialHC, "indic", "geo");
-			StatsIndex geoStatsFinalHCI = new StatsIndex(geoStatsFinalHC, "indic", "geo");
-
-			//initialise output structure
-			finalStatsSimplifiedHC = new StatsHypercube();
-			finalStatsSimplifiedHC.dimLabels.add("geo");
-
-			//prepare
-			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-
-			//go through initial statistical units
-			int statCounter = 1, nbStats = statUnitsInitialFeatureStore.getFeatures().size();
-			FeatureIterator<SimpleFeature> itStatIni = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures()).features();
-			while (itStatIni.hasNext()) {
-				SimpleFeature statUnitIni = itStatIni.next();
-				String statUnitIniId = statUnitIni.getAttribute(statUnitsInitialIdFieldName).toString();
-
-				System.out.println(statUnitIniId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
-
-				//get statistical value
-				double iniStatValue = statValuesInitial.getSingleValue(statUnitIniId);
-				if(Double.isNaN(iniStatValue)) continue;
-				//get geostat value for ini
-				String indic = "number"; //TODO generalise
-				double iniGeoStatValue = geoStatsInitialHCI.getSingleValue(indic, statUnitIniId);
-				if(Double.isNaN(iniGeoStatValue) || iniGeoStatValue == 0) continue;
-
-				//get all final stat units intersecting the initial stat unit (with spatial index)
-				Geometry statUnitIniGeom = (Geometry) statUnitIni.getDefaultGeometryProperty().getValue();
-				//Filter f = ff.bbox(ff.property("the_geom"), statUnitIni.getBounds());
-				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitIniGeom));
-				FeatureIterator<SimpleFeature> itStatFin = ((SimpleFeatureCollection) statUnitsFinalFeatureStore.getFeatures(f)).features();
-
-				//compute stat on stat unit final
-				while (itStatFin.hasNext()) {
-					try {
-						SimpleFeature statUnitFin = itStatFin.next();
-
-						//get geostat value for fin
-						double finGeoStatValue = geoStatsFinalHCI.getSingleValue(indic, statUnitFinId);
-						if(Double.isNaN(finGeoStatValue)) continue;
-
-						//Geometry statUnitFinGeom = (Geometry) statUnitFin.getDefaultGeometryProperty().getValue();
-						//if(!statUnitIniGeom.intersects(statUnitFinGeom)) continue;
-						//Geometry inter = statUnitIniGeom.intersection(statUnitFinGeom);
-						//if(inter.getArea()/statUnitFinGeom.getArea() < 0.75) continue;
-
-						String statUnitFinId = statUnitFin.getAttribute(statUnitsFinalIdFieldName).toString();
-
-						//System.out.println("   "+statUnitFinId + " " + (inter.getArea()/statUnitFinGeom.getArea()));
-
-						//compute value
-						double value = iniStatValue * finGeoStatValue / iniGeoStatValue;
-
-						//store
-						finalStatsSimplifiedHC.stats.add(new Stat(value, "geo", statUnitFinId));
-					} catch (TopologyException e) {
-						System.err.println("Topology error for intersection computation");
-					}
-				}
-				itStatFin.close();
-			}
-			itStatIni.close();
-
-		} catch (MalformedURLException e) { e.printStackTrace();
-		} catch (IOException e) { e.printStackTrace(); }
-	}
-
-
-
-
-
-	//Step 2b
+	//Step 2: allocate statistics at geo features level
 
 	//the output value of the second step: statistical values at geo features level
 	public StatsHypercube statsGeoAllocationHC;
@@ -265,14 +187,11 @@ public class DasymetricMapping {
 			StatsIndex geoStatsInitialHCI = new StatsIndex(geoStatsInitialHC, "indic", "geo");
 
 			//initialise output structure
-			statsGeoAllocationHC = new StatsHypercube();
-			statsGeoAllocationHC.dimLabels.add("geo");
-
-			//prepare
-			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+			statsGeoAllocationHC = new StatsHypercube("geo");
 
 			//go through geo - purpose is to compute geo statistical value
 			double geoCounter = 1, nbGeo = geoFeatureStore.getFeatures().size();
+			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 			FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures()).features();
 			while (itGeo.hasNext()) {
 				SimpleFeature geoUnit = itGeo.next();
@@ -283,43 +202,43 @@ public class DasymetricMapping {
 				System.out.println("geoid: " + geoId + " " + (geoCounter++) + "/" + nbGeo + " " + (Math.round(10000.0*geoCounter/nbGeo)*0.01) + "%");
 
 				//get all stat units intersecting the geo (with spatial index)
-				Filter f = ff.bbox(ff.property("the_geom"), geoUnit.getBounds());
+				//Filter f = ff.bbox(ff.property("the_geom"), geoUnit.getBounds());
+				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(geoGeom));
 				FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures(f)).features();
 
-				int nbStat = 0;
-				double geoStatValue = 0;
-				//geoStatValue = Sum on SUs intersecting of:  surf(geo inter su)/statUnitGeoTotalArea * statUnitValue
+				int nbStat = 0; double geoStatValue = 0;
 				while (itStat.hasNext()) {
 					try {
 						SimpleFeature stat = itStat.next();
 						String statId = stat.getAttribute(statUnitsInitialIdFieldName).toString();
 
-						//get stat unit geometry
-						Geometry statUnitGeom = (Geometry) stat.getDefaultGeometryProperty().getValue();
-						if(!geoGeom.intersects(statUnitGeom)) continue;
-
-						nbStat++;
-
 						//get stat unit value
 						double statValue = statValuesInitial.getSingleValue(statId);
 						if(Double.isNaN(statValue) || statValue == 0) continue;
+
+						//get stat unit geometry
+						Geometry statUnitGeom = (Geometry) stat.getDefaultGeometryProperty().getValue();
+						Geometry inter = geoGeom.intersection(statUnitGeom);
+						if(inter.isEmpty()) continue;
+
+						nbStat++;
 
 						//increment with stat unit geostat value
 						if(geomCase == 3){
 							//area case
 							double statUnitGeoStatValue = geoStatsInitialHCI.getSingleValue("area", statId);
 							if(!Double.isNaN(statUnitGeoStatValue) && statUnitGeoStatValue != 0)
-								geoStatValue += geoGeom.intersection(statUnitGeom).getArea() / statUnitGeoStatValue * statValue;
+								geoStatValue += statValue * inter.getArea() / statUnitGeoStatValue;
 						} else if(geomCase == 2){
 							//line case
 							double statUnitGeoStatValue = geoStatsInitialHCI.getSingleValue("length", statId);
 							if(!Double.isNaN(statUnitGeoStatValue) && statUnitGeoStatValue != 0)
-								geoStatValue += geoGeom.intersection(statUnitGeom).getLength() / statUnitGeoStatValue * statValue;
+								geoStatValue += statValue * inter.getLength() / statUnitGeoStatValue;
 						} else {
 							//point case
 							double statUnitGeoStatValue = geoStatsInitialHCI.getSingleValue("number", statId);
 							if(!Double.isNaN(statUnitGeoStatValue) && statUnitGeoStatValue != 0)
-								geoStatValue += geoGeom.intersection(statUnitGeom).getCoordinates().length / statUnitGeoStatValue * statValue;
+								geoStatValue += statValue * inter.getCoordinates().length / statUnitGeoStatValue;
 						}
 
 					} catch (TopologyException e) {
@@ -339,7 +258,7 @@ public class DasymetricMapping {
 	}
 
 
-	//Step 3b
+	//Step 3: aggregate statistics at target stat unit level
 
 	public StatsHypercube finalStatsHC;
 
@@ -349,8 +268,7 @@ public class DasymetricMapping {
 			StatsIndex statsGeoAllocationI = new StatsIndex(statsGeoAllocationHC, "geo");
 
 			//initialise output structure
-			finalStatsHC = new StatsHypercube();
-			finalStatsHC.dimLabels.add("geo");
+			finalStatsHC = new StatsHypercube("geo");
 
 			//prepare
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
@@ -413,6 +331,80 @@ public class DasymetricMapping {
 				finalStatsHC.stats.add(new Stat(statSum/weightsSum, "geo", statUnitId));
 			}
 			itStat.close();
+		} catch (MalformedURLException e) { e.printStackTrace();
+		} catch (IOException e) { e.printStackTrace(); }
+	}
+
+
+
+
+	//Step 3b: compute statistics at target stat unit level
+	public StatsHypercube finalStatsSimplifiedHC;
+
+	public void computeDisaggregatedStatsSimplified() {
+		try {
+			StatsIndex geoStatsInitialHCI = new StatsIndex(geoStatsInitialHC, "indic", "geo");
+			StatsIndex geoStatsFinalHCI = new StatsIndex(geoStatsFinalHC, "indic", "geo");
+
+			//initialise output structure
+			finalStatsSimplifiedHC = new StatsHypercube("geo");
+
+			//prepare
+			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+
+			//go through initial statistical units
+			int statCounter = 1, nbStats = statUnitsInitialFeatureStore.getFeatures().size();
+			FeatureIterator<SimpleFeature> itStatIni = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures()).features();
+			while (itStatIni.hasNext()) {
+				SimpleFeature statUnitIni = itStatIni.next();
+				String statUnitIniId = statUnitIni.getAttribute(statUnitsInitialIdFieldName).toString();
+
+				System.out.println(statUnitIniId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
+
+				//get statistical value
+				double iniStatValue = statValuesInitial.getSingleValue(statUnitIniId);
+				if(Double.isNaN(iniStatValue)) continue;
+				//get geostat value for ini
+				String indic = "number"; //TODO generalise
+				double iniGeoStatValue = geoStatsInitialHCI.getSingleValue(indic, statUnitIniId);
+				if(Double.isNaN(iniGeoStatValue) || iniGeoStatValue == 0) continue;
+
+				//get all final stat units intersecting the initial stat unit (with spatial index)
+				Geometry statUnitIniGeom = (Geometry) statUnitIni.getDefaultGeometryProperty().getValue();
+				//Filter f = ff.bbox(ff.property("the_geom"), statUnitIni.getBounds());
+				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitIniGeom));
+				FeatureIterator<SimpleFeature> itStatFin = ((SimpleFeatureCollection) statUnitsFinalFeatureStore.getFeatures(f)).features();
+
+				//compute stat on stat unit final
+				while (itStatFin.hasNext()) {
+					try {
+						SimpleFeature statUnitFin = itStatFin.next();
+						String statUnitFinId = statUnitFin.getAttribute(statUnitsFinalIdFieldName).toString();
+
+						//get geostat value for fin
+						double finGeoStatValue = geoStatsFinalHCI.getSingleValue(indic, statUnitFinId);
+						if(Double.isNaN(finGeoStatValue)) continue;
+
+						Geometry statUnitFinGeom = (Geometry) statUnitFin.getDefaultGeometryProperty().getValue();
+						//if(!statUnitIniGeom.intersects(statUnitFinGeom)) continue;
+						Geometry inter = statUnitIniGeom.intersection(statUnitFinGeom);
+						if(inter.getArea()/statUnitFinGeom.getArea() < 0.75) continue;
+
+						//System.out.println("   "+statUnitFinId + " " + (inter.getArea()/statUnitFinGeom.getArea()));
+
+						//compute value
+						double value = iniStatValue * finGeoStatValue / iniGeoStatValue;
+
+						//store
+						finalStatsSimplifiedHC.stats.add(new Stat(value, "geo", statUnitFinId));
+					} catch (TopologyException e) {
+						System.err.println("Topology error for intersection computation");
+					}
+				}
+				itStatFin.close();
+			}
+			itStatIni.close();
+
 		} catch (MalformedURLException e) { e.printStackTrace();
 		} catch (IOException e) { e.printStackTrace(); }
 	}
