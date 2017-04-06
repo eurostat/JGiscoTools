@@ -270,52 +270,40 @@ public class DasymetricMapping {
 			//initialise output structure
 			finalStatsHC = new StatsHypercube("geo");
 
-			//prepare
-			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-
 			//go through statistical units
 			int statCounter = 1, nbStats = statUnitsFinalFeatureStore.getFeatures().size();
+			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 			FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsFinalFeatureStore.getFeatures()).features();
 			while (itStat.hasNext()) {
 				SimpleFeature statUnit = itStat.next();
 				String statUnitId = statUnit.getAttribute(statUnitsFinalIdFieldName).toString();
+				Geometry statUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
 
 				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
 
 				//get all geo features intersecting the stat unit (with spatial index)
-				Geometry statUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
 				//Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
 				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitGeom));
+				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
 
 				//compute stat on geo features
 				double statSum=0, weightsSum=0;
-				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
 				while (itGeo.hasNext()) {
 					try {
 						SimpleFeature geo = itGeo.next();
 						String geoId = geo.getAttribute(geoIdFieldName).toString();
 						Geometry geoGeom = (Geometry) geo.getDefaultGeometryProperty().getValue();
-						if(geoGeom.getArea()==0 && geoGeom.getLength()==0) continue;
-						if(!statUnitGeom.intersects(geoGeom)) continue;
 
-						int geomCase = geoGeom.getArea()>0? 3 : geoGeom.getLength()>0? 2 : 1;
+						if(geoGeom.isEmpty()) continue;
+						//if(!statUnitGeom.intersects(geoGeom)) continue;
 
-						//get statistics allocates at geo level
+						//get statistics allocated at geo level
 						double geoValue = statsGeoAllocationI.getSingleValue(geoId);
 						if(Double.isNaN(geoValue)) continue;
 
-						double weight = 0;
+						int geomCase = geoGeom.getArea()>0? 3 : geoGeom.getLength()>0? 2 : 1;
 						Geometry inter = geoGeom.intersection(statUnitGeom);
-						if(geomCase == 3){
-							//area case
-							weight = inter.getArea();
-						} else if(geomCase == 2){
-							//line case
-							weight = inter.getLength();
-						} else {
-							//point case
-							weight = inter.getCoordinates().length;
-						}
+						double weight = geomCase == 3? inter.getArea() : geomCase == 2? inter.getLength() : inter.getCoordinates().length;
 
 						weightsSum += weight;
 						statSum += weight * geoValue;
