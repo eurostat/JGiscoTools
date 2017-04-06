@@ -62,8 +62,12 @@ public class DasymetricMapping {
 	}
 
 
-	//this should apply only if:
-	// - The geo geometrytype is
+	/**
+	 * Run disaggregation (simplified process).
+	 * This should apply only if:
+	 *  - The geo objects are points
+	 *  - The target SUs are mapped to exactly one single initial SU
+	 */
 	public void runSimplified(){
 		//Step 1: compute statistics on geo features at initial stat unit level
 		computeGeoStatInitial();
