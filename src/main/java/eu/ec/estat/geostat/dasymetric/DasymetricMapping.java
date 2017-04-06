@@ -34,10 +34,9 @@ public class DasymetricMapping {
 	private SimpleFeatureStore statUnitsInitialFeatureStore;
 	private String statUnitsInitialIdFieldName;
 
-	//the geographical features
+	//the geographical features to base on to support the geographical disaggregation
 	private SimpleFeatureStore geoFeatureStore;
 	private String geoIdFieldName;
-	//private String geoGeomType; TODO
 
 	//the target statistical units (as new geographical level)
 	private SimpleFeatureStore statUnitsFinalFeatureStore;
@@ -46,18 +45,18 @@ public class DasymetricMapping {
 	//default constructor
 	public DasymetricMapping(
 			SimpleFeatureStore statUnitsInitialFeatureStore,
-			String statUnitsInitialId,
+			String statUnitsInitialIdFieldName,
 			StatsIndex statValuesInitial,
 			SimpleFeatureStore geoFeatureStore,
-			String geoId,
+			String geoIdFieldName,
 			SimpleFeatureStore statUnitsFinalFeatureStore,
 			String statUnitsFinalIdFieldName
 			){
 		this.statUnitsInitialFeatureStore = statUnitsInitialFeatureStore;
-		this.statUnitsInitialIdFieldName = statUnitsInitialId;
+		this.statUnitsInitialIdFieldName = statUnitsInitialIdFieldName;
 		this.statValuesInitial = statValuesInitial;
 		this.geoFeatureStore = geoFeatureStore;
-		this.geoIdFieldName = geoId;
+		this.geoIdFieldName = geoIdFieldName;
 		this.statUnitsFinalFeatureStore = statUnitsFinalFeatureStore;
 		this.statUnitsFinalIdFieldName = statUnitsFinalIdFieldName;
 	}
