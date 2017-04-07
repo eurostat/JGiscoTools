@@ -95,11 +95,12 @@ public class TourismUseCase {
 
 		//go through nace codes
 		for(String nace : new String[]{"I551-I553","I551","I552","I553"}){
-			if(!"I551-I553".equals(nace)) continue;
+			//if(!"I551-I553".equals(nace)) continue;
+			if(!"I551".equals(nace)) continue;
 
 			//compute values for all years
 			for(String time : hcI.getKeys(nace)){
-				if(!"2015 ".equals(time)) continue;
+				//if(!"2015 ".equals(time)) continue;
 
 				//create dasymetric analysis object
 				DasymetricMapping dm = new DasymetricMapping(
@@ -118,10 +119,9 @@ public class TourismUseCase {
 				if(dm.statValuesInitial == null) System.out.println("No values !");;
 
 				//run dasymetric mapping
-
 				System.out.println("Step 2: allocate statistics at geo features level");
-				dm.allocateStatGeo(true); CSV.save(dm.statsGeoAllocationHC, "value", "H:/methnet/geostat/out/", "NUTS_2_to_POI___"+nace+".csv");
-				//dm.statsGeoAllocationHC = CSV.load("H:/methnet/geostat/out/NUTS_2_to_POI___"+nace+".csv", "value");
+				dm.allocateStatGeo(true); CSV.save(dm.statsGeoAllocationHC, "value", "H:/methnet/geostat/out/", "NUTS_2_to_POI_"+nace+"_"+time+".csv");
+				//dm.statsGeoAllocationHC = CSV.load("H:/methnet/geostat/out/NUTS_2_to_POI_"+nace+"_"+time+".csv", "value");
 
 				System.out.println("Step 3: aggregate statistics at target stat unit level");
 				dm.aggregateGeoStat();
