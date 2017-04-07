@@ -489,6 +489,13 @@ public class ShapeFile {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
 
+		/*
+		ShapeFile n = NUTSShapeFile.get();
+		System.out.println("---");
+		ShapeFile shp = new ShapeFile("H:/geodata/eur2016_12/mnpoi_I551_I553_.shp");*/
+
+
+
 		//FilterFactory ff = CommonFactoryFinder.getFilterFactory();
 		//Filter f = ff.propertyLessThan( ff.property( "AGE"), ff.literal( 12 ) );
 		//Filter f = CQL.toFilter( "NATUR_CODE = 'BAT'" );

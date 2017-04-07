@@ -49,7 +49,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<geotools.version>16.0</geotools.version>
+		<geotools.version>17.0</geotools.version>
 	</properties>
 
 	<build>
