@@ -58,12 +58,12 @@ public class DasymetricMapping {
 		this.statUnitsFinalIdFieldName = statUnitsFinalIdFieldName;
 	}
 
-	public void run(){
+	public void run(boolean approximated){
 		//Step 1: compute statistics on geo features at initial stat unit level
-		computeGeoStatInitial();
+		if(!approximated) computeGeoStatInitial();
 
 		//Step 2: allocate statistics at geo features level
-		allocateStatGeo();
+		allocateStatGeo(approximated);
 
 		//Step 3: aggregate statistics at target stat unit level
 		aggregateGeoStat();
@@ -187,7 +187,7 @@ public class DasymetricMapping {
 			statsGeoAllocationHC = new StatsHypercube("geo");
 
 			//go through geo - purpose is to compute geo statistical value
-			double geoCounter = 1, nbGeo = geoFeatureStore.getFeatures().size();
+			int geoCounter = 1, nbGeo = geoFeatureStore.getFeatures().size();
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 			FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures()).features();
 			while (itGeo.hasNext()) {
@@ -196,11 +196,11 @@ public class DasymetricMapping {
 				Geometry geoGeom = (Geometry) geoUnit.getDefaultGeometryProperty().getValue();
 				int geomCase = geoGeom.getArea()>0? 3 : geoGeom.getLength()>0? 2 : 1;
 
-				System.out.println("geoid: " + geoId + " " + (geoCounter++) + "/" + nbGeo + " " + (Math.round(10000.0*geoCounter/nbGeo)*0.01) + "%");
+				System.out.println("geoId: " + geoId + " " + (geoCounter++) + "/" + nbGeo + " " + (Math.round(10000.0*(1.0*geoCounter)/(1.0*nbGeo))*0.01) + "%");
 
 				//get all stat units intersecting the geo (with spatial index)
-				//Filter f = ff.bbox(ff.property("the_geom"), geoUnit.getBounds());
-				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(geoGeom));
+				Filter f = ff.bbox(ff.property("the_geom"), geoUnit.getBounds());
+				//Filter f = ff.intersects(ff.property("the_geom"), ff.literal(geoGeom));
 				FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures(f)).features();
 
 				int nbStat = 0; double geoStatValue = 0;
@@ -248,11 +248,62 @@ public class DasymetricMapping {
 
 				//store
 				statsGeoAllocationHC.stats.add(new Stat(geoStatValue, "geo", geoId));
+				System.out.println(" -> value = "+geoStatValue);
 				//statsGeoAllocationHC.stats.add(new Stat(nbStat, "indic", "number", "geo", geoId));
 			}
 			itGeo.close();
 		} catch (Exception e) { e.printStackTrace(); }
 	}
+
+	//approximated version: suppose each geo is located into a single SU. This is the case for example when geo objects are points
+	public void allocateStatGeo(boolean approximated) {
+		if(!approximated){
+			allocateStatGeo();
+			return;
+		}
+
+		try {
+			//initialise output structure
+			statsGeoAllocationHC = new StatsHypercube("geo");
+
+			//go through init stats - purpose is to distribute stat value to geo objects
+			int statIniCounter = 1, nbStatIni = statUnitsInitialFeatureStore.getFeatures().size();
+			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+			FeatureIterator<SimpleFeature> itStatIni = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures()).features();
+			while (itStatIni.hasNext()) {
+				SimpleFeature statIni = itStatIni.next();
+				String statIniId = statIni.getAttribute(statUnitsInitialIdFieldName).toString();
+				Geometry statIniGeom = (Geometry) statIni.getDefaultGeometryProperty().getValue();
+
+				//get stat unit value
+				double statValue = statValuesInitial.getSingleValue(statIniId);
+				if(Double.isNaN(statValue) || statValue == 0) continue;
+
+				System.out.println("statIniId: " + statIniId + " " + (statIniCounter++) + "/" + nbStatIni + " " + (Math.round(10000.0*(1.0*statIniCounter)/(1.0*nbStatIni))*0.01) + "%");
+
+				//get all geo intersecting the statIni (with spatial index)
+				//Filter f = ff.bbox(ff.property("the_geom"), statIni.getBounds());
+				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statIniGeom));
+				SimpleFeatureCollection col = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f));
+				int nbGeo = col.size();
+				if(nbGeo == 0) continue;
+				FeatureIterator<SimpleFeature> itGeo = col.features();
+
+				double geoStatValue = statValue/nbGeo;
+				System.out.println(" -> nbGeo = "+nbGeo+" -> value = "+geoStatValue);
+				while (itGeo.hasNext()) {
+					SimpleFeature geo = itGeo.next();
+					String geoId = geo.getAttribute(geoIdFieldName).toString();
+
+					//store
+					statsGeoAllocationHC.stats.add(new Stat(geoStatValue, "geo", geoId));
+				}
+				itGeo.close();
+			}
+			itStatIni.close();
+		} catch (Exception e) { e.printStackTrace(); }
+	}
+
 
 
 	//Step 3: aggregate statistics at target stat unit level

@@ -93,56 +93,42 @@ public class TourismUseCase {
 		//hcI.print();
 		hc = null;
 
-		//build output structure
-		StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
-
 		//go through nace codes
-		//for(String nace : new String[]{"I551-I553","I551","I552","I553"}){
-		String nace = "I551-I553";
+		for(String nace : new String[]{"I551-I553","I551","I552","I553"}){
+			if(!"I551-I553".equals(nace)) continue;
 
-		//compute values for all years
-		//for(String time : hcI.getKeys(nace)){
-		String time = "2015 ";
+			//compute values for all years
+			for(String time : hcI.getKeys(nace)){
+				if(!"2015 ".equals(time)) continue;
 
-		//create dasymetric analysis object
-		DasymetricMapping dm = new DasymetricMapping(
-				null,
-				NUTSShapeFile.getRG(2).getFeatureStore(),
-				"NUTS_ID",
-				new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
-				"ID2",
-				new ShapeFile(BASE_PATH+"grid/10km/grid10km.shp").getFeatureStore(),
-				"ID_"
-				);
+				//create dasymetric analysis object
+				DasymetricMapping dm = new DasymetricMapping(
+						null,
+						new ShapeFile("resources/NUTS/2013/1M/LAEA/lvl2/RG.shp").getFeatureStore(),
+						//NUTSShapeFile.getRG(2).getFeatureStore(),
+						"NUTS_ID",
+						new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
+						"ID2",
+						new ShapeFile(BASE_PATH+"grid/10km/grid10km.shp").getFeatureStore(),
+						"ID_"
+						);
 
-		//get input stat values to disaggregate
-		dm.statValuesInitial = hcI.getSubIndex(nace, time);
-		if(dm.statValuesInitial == null) System.out.println("No values !");;
+				//get input stat values to disaggregate
+				dm.statValuesInitial = hcI.getSubIndex(nace, time);
+				if(dm.statValuesInitial == null) System.out.println("No values !");;
 
-		//run dasymetric mapping
+				//run dasymetric mapping
 
-		System.out.println("Step 1: compute statistics on geo features at initial stat unit level");
-		//dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats_"+nace+".csv");
-		dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_2___"+nace+".csv", "value");
+				System.out.println("Step 2: allocate statistics at geo features level");
+				dm.allocateStatGeo(true); CSV.save(dm.statsGeoAllocationHC, "value", "H:/methnet/geostat/out/", "NUTS_2_to_POI___"+nace+".csv");
+				//dm.statsGeoAllocationHC = CSV.load("H:/methnet/geostat/out/NUTS_2_to_POI___"+nace+".csv", "value");
 
-		System.out.println("Step 2: allocate statistics at geo features level");
-		dm.allocateStatGeo(); CSV.save(dm.statsGeoAllocationHC, "value", "H:/methnet/geostat/out/", "NUTS_2_to_POI___"+nace+".csv");
-		//dm.statsGeoAllocationHC = CSV.load("H:/methnet/geostat/out/NUTS_2_to_POI___"+nace+".csv", "value");
+				System.out.println("Step 3: aggregate statistics at target stat unit level");
+				dm.aggregateGeoStat();
 
-		System.out.println("Step 3: aggregate statistics at target stat unit level");
-		dm.aggregateGeoStat();
-
-		//
-		for(Stat s : dm.finalStatsHC.stats) {
-			s.dims.put("time", time);
-			s.dims.put("unit", "NR");
-			s.dims.put("nace_r2", nace);
-			s.dims.put("indic_to", "B006");
-		}
-		out.stats.addAll(dm.finalStatsHC.stats);
-		//} //time
-		//} //nace
-		CSV.save(out, "value", "H:/methnet/geostat/out/", "grid10km___"+nace+".csv");
+				CSV.save(dm.finalStatsHC, "value", "H:/methnet/geostat/out/", "grid10km_"+nace+"_"+time+".csv");
+			} //time
+		} //nace
 	}
 
 	public static void runDasymetric(){
@@ -177,7 +163,8 @@ public class TourismUseCase {
 			//create dasymetric analysis object
 			DasymetricMapping dm = new DasymetricMapping(
 					null,
-					NUTSShapeFile.getRG(2).getFeatureStore(),
+					new ShapeFile("resources/NUTS/2013/1M/LAEA/lvl2/RG.shp").getFeatureStore(),
+					//NUTSShapeFile.getRG(2).getFeatureStore(),
 					"NUTS_ID",
 					new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
 					"ID",
