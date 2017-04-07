@@ -39,8 +39,12 @@ public class DasymetricMapping {
 	private SimpleFeatureStore statUnitsFinalFeatureStore;
 	private String statUnitsFinalIdFieldName;
 
+	//3:area, 2:line, 1: point
+	private int geomCase = 1; //TODO use enumeration, from JTS/geotools?
+
 	//default constructor
 	public DasymetricMapping(
+			int geomCase,
 			StatsIndex statValuesInitial,
 			SimpleFeatureStore statUnitsInitialFeatureStore,
 			String statUnitsInitialIdFieldName,
@@ -49,6 +53,7 @@ public class DasymetricMapping {
 			SimpleFeatureStore statUnitsFinalFeatureStore,
 			String statUnitsFinalIdFieldName
 			){
+		this.geomCase = geomCase;
 		this.statValuesInitial = statValuesInitial;
 		this.statUnitsInitialFeatureStore = statUnitsInitialFeatureStore;
 		this.statUnitsInitialIdFieldName = statUnitsInitialIdFieldName;
@@ -63,7 +68,7 @@ public class DasymetricMapping {
 		if(!approximated) computeGeoStatInitial();
 
 		//Step 2: allocate statistics at geo features level
-		allocateStatGeo(approximated);
+		allocateStatGeo(approximated); //TODO make tests on geomtype there!
 
 		//Step 3: aggregate statistics at target stat unit level
 		aggregateGeoStat();
@@ -194,7 +199,6 @@ public class DasymetricMapping {
 				SimpleFeature geoUnit = itGeo.next();
 				String geoId = geoUnit.getAttribute(geoIdFieldName).toString();
 				Geometry geoGeom = (Geometry) geoUnit.getDefaultGeometryProperty().getValue();
-				int geomCase = geoGeom.getArea()>0? 3 : geoGeom.getLength()>0? 2 : 1;
 
 				System.out.println("geoId: " + geoId + " " + (geoCounter++) + "/" + nbGeo + " " + (Math.round(10000.0*(1.0*geoCounter)/(1.0*nbGeo))*0.01) + "%");
 
@@ -313,7 +317,7 @@ public class DasymetricMapping {
 	public void aggregateGeoStat() {
 		try {
 			//the statistics allocates at geo level
-			StatsIndex statsGeoAllocationI = new StatsIndex(statsGeoAllocationHC, "geo");
+			StatsIndex statsGeoAllocationI = new StatsIndex(statsGeoAllocationHC, "geo"); //TODO when point, should be number. When other should be length/area density
 
 			//initialise output structure
 			finalStatsHC = new StatsHypercube("geo");
@@ -327,11 +331,11 @@ public class DasymetricMapping {
 				String statUnitId = statUnit.getAttribute(statUnitsFinalIdFieldName).toString();
 				Geometry statUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
 
-				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
+				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000.0*statCounter/(1.0*nbStats)))*0.01 + "%");
 
 				//get all geo features intersecting the stat unit (with spatial index)
-				//Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
-				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitGeom));
+				Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
+				//Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitGeom));
 				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
 
 				//compute stat on geo features
@@ -343,14 +347,15 @@ public class DasymetricMapping {
 						Geometry geoGeom = (Geometry) geo.getDefaultGeometryProperty().getValue();
 
 						if(geoGeom.isEmpty()) continue;
-						//if(!statUnitGeom.intersects(geoGeom)) continue;
 
 						//get statistics allocated at geo level
 						double geoValue = statsGeoAllocationI.getSingleValue(geoId);
 						if(Double.isNaN(geoValue)) continue;
 
-						int geomCase = geoGeom.getArea()>0? 3 : geoGeom.getLength()>0? 2 : 1;
+						//compute intersection
 						Geometry inter = geoGeom.intersection(statUnitGeom);
+						if(inter.isEmpty()) continue;
+
 						double weight = geomCase == 3? inter.getArea() : geomCase == 2? inter.getLength() : inter.getCoordinates().length;
 
 						weightsSum += weight;
@@ -364,7 +369,9 @@ public class DasymetricMapping {
 				if(weightsSum == 0) continue;
 
 				//store
-				finalStatsHC.stats.add(new Stat(statSum/weightsSum, "geo", statUnitId));
+				double value = statSum;
+				if(geomCase != 1) value /= weightsSum;
+				finalStatsHC.stats.add(new Stat(value, "geo", statUnitId));
 			}
 			itStat.close();
 		} catch (Exception e) { e.printStackTrace(); }
@@ -400,7 +407,7 @@ public class DasymetricMapping {
 				double iniStatValue = statValuesInitial.getSingleValue(statUnitIniId);
 				if(Double.isNaN(iniStatValue)) continue;
 				//get geostat value for ini
-				String indic = "number"; //TODO generalise
+				String indic = "number"; //TODO generalise, using geomCase
 				double iniGeoStatValue = geoStatsInitialHCI.getSingleValue(indic, statUnitIniId);
 				if(Double.isNaN(iniGeoStatValue) || iniGeoStatValue == 0) continue;
 

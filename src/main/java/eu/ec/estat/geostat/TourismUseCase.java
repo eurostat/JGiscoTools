@@ -104,6 +104,7 @@ public class TourismUseCase {
 
 				//create dasymetric analysis object
 				DasymetricMapping dm = new DasymetricMapping(
+						1,
 						null,
 						new ShapeFile("resources/NUTS/2013/1M/LAEA/lvl2/RG.shp").getFeatureStore(),
 						//NUTSShapeFile.getRG(2).getFeatureStore(),
@@ -162,6 +163,7 @@ public class TourismUseCase {
 
 			//create dasymetric analysis object
 			DasymetricMapping dm = new DasymetricMapping(
+					1,
 					null,
 					new ShapeFile("resources/NUTS/2013/1M/LAEA/lvl2/RG.shp").getFeatureStore(),
 					//NUTSShapeFile.getRG(2).getFeatureStore(),
