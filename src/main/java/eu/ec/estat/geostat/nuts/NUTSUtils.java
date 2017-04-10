@@ -163,13 +163,3 @@ public class NUTSUtils {
 	}
 
 }
-
-
-//Boundary shift
-//Code change
-//Code; name change
-//Merged
-//Name change
-//New region
-//Split
-

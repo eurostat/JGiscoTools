@@ -35,9 +35,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.ec.estat.geostat.nuts.NUTSShapeFile;
 import eu.ec.estat.java4eurostat.util.Util;
 
 /**
@@ -50,12 +48,6 @@ import eu.ec.estat.java4eurostat.util.Util;
 public class MappingUtils {
 	//TODO gif animation on time
 	//TODO small multiple
-
-	public static CoordinateReferenceSystem LAEA_CRS = null;
-	static{
-		//try { LAEA_CRS = CRS.decode("EPSG:3035"); } catch (Exception e) { e.printStackTrace(); }
-		LAEA_CRS = NUTSShapeFile.get(60, "RG").getCRS();
-	}
 
 	//compute join
 	//TODO improve

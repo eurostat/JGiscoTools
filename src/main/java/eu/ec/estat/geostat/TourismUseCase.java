@@ -6,6 +6,7 @@ package eu.ec.estat.geostat;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.filter.function.RangedClassifier;
 
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
@@ -61,7 +62,7 @@ public class TourismUseCase {
 		//runDasymetric();
 		//computeDensityPopRatio();
 
-		makeMaps();
+		//makeMaps();
 
 		//computeValidation();
 		//makeValidationMaps();
@@ -71,6 +72,7 @@ public class TourismUseCase {
 		//finalCheckE4ValidationData();
 
 		//runDasymetricGrid();
+		makeGridMaps();
 
 		System.out.println("End.");
 	}
@@ -131,6 +133,21 @@ public class TourismUseCase {
 			} //time
 		} //nace
 	}
+
+
+	private static void makeGridMaps() {
+		String outPath = "H:/methnet/geostat/maps/";
+
+		HashMap<String, Double> stats = CSV.load("H:/methnet/geostat/out/grid10km_I551_2013 .csv", "value").toMap();
+		SimpleFeatureCollection grid = new ShapeFile("H:/geodata/grid/10km/grid10km.shp").getFeatureCollection();
+		new StatisticalMap(grid, "ID_", stats, null, null)
+		.make()
+		.saveAsImage(outPath+"map_grid.png")
+		;
+
+	}
+
+
 
 	public static void runDasymetric(){
 

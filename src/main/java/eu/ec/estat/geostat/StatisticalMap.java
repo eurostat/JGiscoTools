@@ -44,7 +44,7 @@ public class StatisticalMap {
 
 	protected MapContent map = null;
 
-	private SimpleFeatureCollection statisticalUnits = null;
+	protected SimpleFeatureCollection statisticalUnits = null;
 	private String idPropName = "ID";
 
 	public HashMap<String, Double> statData = null;
@@ -87,23 +87,17 @@ public class StatisticalMap {
 		this.borders = borders;
 		this.classifier = classifier;
 		this.map = new MapContent();
+		if(statisticalUnits != null){
+			CoordinateReferenceSystem crs = statisticalUnits.getSchema().getCoordinateReferenceSystem();
+			this.map.getViewport().setCoordinateReferenceSystem(crs);
+			this.map.getViewport().setBounds(statisticalUnits.getBounds());
+		}
 	}
-
-	public StatisticalMap setBounds(double x1, double x2, double y1, double y2, CoordinateReferenceSystem crs) {
-		this.map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, crs ));
-		return this;
-	}
-	public StatisticalMap setBounds(double x1, double x2, double y1, double y2) { return setBounds(x1,x2,y1,y2,this.map.getCoordinateReferenceSystem()); }
 
 	public StatisticalMap dispose() { this.map.dispose(); return this; }
 	public StatisticalMap setTitle(String title) { map.setTitle(title); return this; }
 	public StatisticalMap setClassifier(Classifier classifier) { this.classifier = classifier; return this; }
 	public StatisticalMap show() { JMapFrame.showMap(map); return this; }
-
-	public StatisticalMap setCRS(CoordinateReferenceSystem crs){
-		this.map.getViewport().setCoordinateReferenceSystem(crs);
-		return this;
-	}
 
 
 	public StatisticalMap make(){
@@ -185,7 +179,7 @@ public class StatisticalMap {
 				gr.drawString(map.getTitle(), 10, fontSize+5);
 			}
 
-			if(withLegend)
+			if(withLegend && this.classifier !=null)
 				MappingUtils.drawLegend(gr, (RangedClassifier)this.classifier, this.colors, this.legendRoundingDecimalNB, imageWidth-legendWidth-legendPadding, legendPadding, legendWidth, legendHeightPerClass, legendPadding);
 
 			ImageIO.write(image, "png", new File(file));

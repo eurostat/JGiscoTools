@@ -10,11 +10,13 @@ import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.function.Classifier;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.ec.estat.geostat.MappingUtils;
 import eu.ec.estat.geostat.StatisticalMap;
@@ -55,8 +57,12 @@ public class NUTSMap extends StatisticalMap {
 		this.nutsLevel = nutsLevel;
 		this.lod = lod;
 
-		this.setCRS(MappingUtils.LAEA_CRS);
-		this.setBounds(1340000.0, 5450000.0, 2580000.0, 7350000.0);
+		//stat units
+		this.statisticalUnits = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterByLevel(this.nutsLevel));
+
+		CoordinateReferenceSystem crs = statisticalUnits.getSchema().getCoordinateReferenceSystem();
+		this.map.getViewport().setCoordinateReferenceSystem(crs);
+		this.map.getViewport().setBounds(new ReferencedEnvelope(2580000.0, 7350000.0, 1340000.0, 5450000.0, crs));
 
 		graticulesFS = NUTSShapeFile.getGraticules().getFeatureCollection(NUTSShapeFile.GRATICULE_FILTER_5);
 	}
@@ -71,15 +77,10 @@ public class NUTSMap extends StatisticalMap {
 		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "RG").getFeatureCollection(NUTSShapeFile.CNTR_NEIG_CNTR), MappingUtils.getPolygonStyle(cntrRGColor, null)) );
 		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "BN").getFeatureCollection("COAS_FLAG='F'"), MappingUtils.getLineStyle(cntrBNColor, 0.2)) );
 
-
-		//get region features
-		SimpleFeatureCollection fcRG = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterByLevel(this.nutsLevel));
-		SimpleFeatureCollection fcRGNoDta = null;
-
 		//join stat data, if any
 		String valuePropName = "Prop"+((int)(1000000*Math.random()));
-		SimpleFeatureCollection[] out = MappingUtils.join(fcRG, "NUTS_ID", this.statData, valuePropName);
-		fcRG = out[0]; fcRGNoDta = out[1];
+		SimpleFeatureCollection[] out = MappingUtils.join(this.statisticalUnits, "NUTS_ID", this.statData, valuePropName);
+		SimpleFeatureCollection fcRG = out[0], fcRGNoData = out[1];
 
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
@@ -94,7 +95,7 @@ public class NUTSMap extends StatisticalMap {
 			RGStyle = MappingUtils.getThematicStyle(fcRG, valuePropName, this.classifier, this.colors, stroke);
 		}
 
-		map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
+		map.addLayer( new FeatureLayer(fcRGNoData, RGStyleNoData) );
 		map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 
 		//BN
