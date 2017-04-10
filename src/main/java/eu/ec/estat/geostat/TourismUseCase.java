@@ -61,7 +61,7 @@ public class TourismUseCase {
 		//runDasymetric();
 		//computeDensityPopRatio();
 
-		//makeMaps();
+		makeMaps();
 
 		//computeValidation();
 		//makeValidationMaps();
@@ -70,7 +70,7 @@ public class TourismUseCase {
 		//filterE4ValidationDataAggregatesNUTS2();
 		//finalCheckE4ValidationData();
 
-		runDasymetricGrid();
+		//runDasymetricGrid();
 
 		System.out.println("End.");
 	}
@@ -255,7 +255,7 @@ public class TourismUseCase {
 	}
 
 
-	static RangedClassifier classifier = NUTSMap.getClassifier(750,1500,2000,2500,3000,4000,6000,12000);
+	static RangedClassifier classifier = MappingUtils.getClassifier(750,1500,2000,2500,3000,4000,6000,12000);
 
 	public static void makeMaps(){
 		HashMap<String, Double> statData;
