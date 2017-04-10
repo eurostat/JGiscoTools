@@ -14,14 +14,23 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import org.geotools.brewer.color.ColorBrewer;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.function.Classifier;
 import org.geotools.filter.function.ExplicitClassifier;
 import org.geotools.filter.function.RangedClassifier;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
+import org.geotools.styling.Stroke;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
+import org.opengis.filter.FilterFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * @author Julien Gaffuri
@@ -34,8 +43,11 @@ public class StatisticalMap {
 	//TODO show scale bar?
 
 	protected MapContent map = null;
+
+	private SimpleFeatureCollection statisticalUnits = null;
+	private String idPropName = "ID";
+
 	public HashMap<String, Double> statData = null;
-	public String propName = null; //the property to map
 
 	public Classifier classifier;
 	public String classifierName = "Quantile"; //EqualInterval, Jenks, Quantile, StandardDeviation, UniqueInterval
@@ -45,17 +57,18 @@ public class StatisticalMap {
 
 	public Color borderColor = Color.WHITE;
 
-	public StatisticalMap setBounds(double x1, double x2, double y1, double y2) {
-		this.map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, this.map.getCoordinateReferenceSystem() ));
+	public StatisticalMap setBounds(double x1, double x2, double y1, double y2, CoordinateReferenceSystem crs) {
+		this.map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, crs ));
 		return this;
 	}
+	public StatisticalMap setBounds(double x1, double x2, double y1, double y2) { return setBounds(x1,x2,y1,y2,this.map.getCoordinateReferenceSystem()); }
 
 	public StatisticalMap dispose() { this.map.dispose(); return this; }
 	public StatisticalMap setTitle(String title) { map.setTitle(title); return this; }
 	public StatisticalMap setClassifier(Classifier classifier) { this.classifier = classifier; return this; }
 	public StatisticalMap show() { JMapFrame.showMap(map); return this; }
 
-	public boolean showGraticules = true;
+	public SimpleFeatureCollection graticulesFS = null;
 	public Color graticulesColor = new Color(200,200,200);
 	public double graticulesWidth = 0.4;
 
@@ -75,15 +88,62 @@ public class StatisticalMap {
 	public int legendRoundingDecimalNB = 3;
 
 
-	public StatisticalMap(String propName, HashMap<String, Double> statData, Classifier classifier){
+	public StatisticalMap(SimpleFeatureCollection statisticalUnits, String idPropName, HashMap<String, Double> statData, Classifier classifier){
+		this.statisticalUnits = statisticalUnits;
+		this.idPropName = idPropName;
 		this.statData = statData;
-		this.propName = propName;
 		this.classifier = classifier;
 		this.map = new MapContent();
 	}
 
+	public StatisticalMap setCRS(CoordinateReferenceSystem crs){
+		this.map.getViewport().setCoordinateReferenceSystem(crs);
+		return this;
+	}
+
+
 	public StatisticalMap make(){
-		//TODO
+
+		//graticules
+		if(graticulesFS != null)
+			map.addLayer( new FeatureLayer(graticulesFS, MappingUtils.getLineStyle(this.graticulesColor, this.graticulesWidth)) );
+
+		//join stat data, if any
+		String valuePropName = "Prop"+((int)(1000000*Math.random()));
+		SimpleFeatureCollection[] out = MappingUtils.join(statisticalUnits, this.idPropName, this.statData, valuePropName);
+		SimpleFeatureCollection fs = out[0], fsNoDta = out[1];
+
+		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
+
+		//no data
+		Style style = MappingUtils.getPolygonStyle(Color.GRAY, null);
+		map.addLayer( new FeatureLayer(fsNoDta, style) );
+
+		//data
+		if(fs.size()>0){
+			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
+			this.colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
+			if(this.classifier == null) this.classifier = MappingUtils.getClassifier(fs, valuePropName, classifierName, classNb);
+			style = MappingUtils.getThematicStyle(fs, valuePropName, this.classifier, this.colors, stroke);
+			map.addLayer( new FeatureLayer(fs, style) );
+		}
+
+
+		/*/BN
+		if(this.nutsLevel == 0){
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 0.8)) );
+		} else if(this.nutsLevel == 1){
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.3)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
+		} else if(this.nutsLevel == 2){
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.3)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
+		} else if(this.nutsLevel == 3){
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.5)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
+		}
+		 */
 		return this;
 	}
 

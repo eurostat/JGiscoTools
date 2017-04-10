@@ -264,14 +264,14 @@ public class TourismUseCase {
 
 		//computed data: nuts 3 level map
 		statData = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens.csv", "value").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+" ").shrinkDims().toMap();
-		new NUTSMap(3, 60, "geo", statData, classifier).setTitle("NUTS 3 - "+time).make()
+		new NUTSMap(3, 60, statData, classifier).setTitle("NUTS 3 - "+time).make()
 		.saveLegendAsImage(outPath+"legend.png", 0, 150, 20, 5)
 		.saveAsImage(outPath+"map_result_nuts3_"+time+".png").dispose();
 		//*/
 
 		//nuts 2 level map
 		statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+" ").shrinkDims().toMap();
-		new NUTSMap(2, 60, "geo", statData, classifier).setTitle("NUTS 2 - "+time).make()
+		new NUTSMap(2, 60, statData, classifier).setTitle("NUTS 2 - "+time).make()
 		.saveAsImage(outPath+"map_nuts2_"+time+".png").dispose();
 		//*/
 
@@ -280,7 +280,7 @@ public class TourismUseCase {
 		hc = NUTSUtils.computePopRatioFigures(hc);
 		for(int time_ = 2005; time_<= 2013; time_++){
 			statData = hc.selectDimValueEqualTo("time",time_+" ").shrinkDims().toMap();
-			new NUTSMap(3, 60, "geo", statData, classifier).setTitle("NUTS 3 validation - "+time_).make()
+			new NUTSMap(3, 60, statData, classifier).setTitle("NUTS 3 validation - "+time_).make()
 			.saveAsImage(outPath+"map_validation_data_nuts3_"+time_+".png", 1000, true, false).dispose();
 		}
 		//*/
@@ -293,7 +293,7 @@ public class TourismUseCase {
 		StatsHypercube hc = CSV.load("H:/methnet/geostat/validation/validation_result_diff_abs.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006").shrinkDims();
 		for(int time_ = 2010; time_<= 2013; time_++){
 			HashMap<String, Double> statData = hc.selectDimValueEqualTo("time",time_+" ").shrinkDims().toMap();
-			new NUTSMap(3, 60, "geo", statData, classifier).setTitle(time_+" - error").make().saveAsImage(outPath+"map_validation_result_diff_abs_"+time_+".png", 1000, true, false).dispose();
+			new NUTSMap(3, 60, statData, classifier).setTitle(time_+" - error").make().saveAsImage(outPath+"map_validation_result_diff_abs_"+time_+".png", 1000, true, false).dispose();
 		}
 		//*/
 

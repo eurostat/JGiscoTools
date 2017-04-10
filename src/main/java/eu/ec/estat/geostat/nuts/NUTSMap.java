@@ -15,7 +15,6 @@ import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.opengis.filter.FilterFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.ec.estat.geostat.MappingUtils;
 import eu.ec.estat.geostat.StatisticalMap;
@@ -31,12 +30,6 @@ import eu.ec.estat.java4eurostat.io.CSV;
 public class NUTSMap extends StatisticalMap {
 	//TODO show DOM
 	//TODO logo + copyright text "Administrative boundaries: (C) Eurogeographics (C) UN-FAO (C) Turksat"
-
-	static CoordinateReferenceSystem LAEA_CRS = null;
-	static{
-		//try { LAEA_CRS = CRS.decode("EPSG:3035"); } catch (Exception e) { e.printStackTrace(); }
-		LAEA_CRS = NUTSShapeFile.get(60, "RG").getCRS();
-	}
 
 	public int nutsLevel = 3; //NUTS level. can be 0, 1, 2, 3
 	public int lod = 20; //Level of detail / scale. can be 1, 3, 10, 20 or 60
@@ -57,19 +50,22 @@ public class NUTSMap extends StatisticalMap {
 		this(nutsLevel, lod, "geo", sh.selectDimValueEqualTo(dimLabelValues).shrinkDims().toMap(), classifier);
 	}*/
 
-	public NUTSMap(int nutsLevel, int lod, String propName, HashMap<String, Double> statData, Classifier classifier){
-		super(propName, statData, classifier);
+	public NUTSMap(int nutsLevel, int lod, HashMap<String, Double> statData, Classifier classifier){
+		super(null, "NUTS_ID", statData, classifier);
 		this.nutsLevel = nutsLevel;
 		this.lod = lod;
+
+		this.setCRS(MappingUtils.LAEA_CRS);
+		this.setBounds(1340000.0, 5450000.0, 2580000.0, 7350000.0);
+
+		graticulesFS = NUTSShapeFile.getGraticules().getFeatureCollection(NUTSShapeFile.GRATICULE_FILTER_5);
 	}
 
 	public NUTSMap make(){
-		this.map.getViewport().setCoordinateReferenceSystem(LAEA_CRS);
-		this.setBounds(1340000.0, 5450000.0, 2580000.0, 7350000.0);
 
 		//graticules
-		if(this.showGraticules)
-			map.addLayer( new FeatureLayer(NUTSShapeFile.getGraticules().getFeatureCollection(NUTSShapeFile.GRATICULE_FILTER_5), MappingUtils.getLineStyle(this.graticulesColor, this.graticulesWidth)) );
+		if(graticulesFS != null)
+			map.addLayer( new FeatureLayer(graticulesFS, MappingUtils.getLineStyle(this.graticulesColor, this.graticulesWidth)) );
 
 		//countries
 		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "RG").getFeatureCollection(NUTSShapeFile.CNTR_NEIG_CNTR), MappingUtils.getPolygonStyle(cntrRGColor, null)) );
@@ -81,7 +77,8 @@ public class NUTSMap extends StatisticalMap {
 		SimpleFeatureCollection fcRGNoDta = null;
 
 		//join stat data, if any
-		SimpleFeatureCollection[] out = MappingUtils.join(fcRG, this.statData, "NUTS_ID", this.propName);
+		String valuePropName = "Prop"+((int)(1000000*Math.random()));
+		SimpleFeatureCollection[] out = MappingUtils.join(fcRG, "NUTS_ID", this.statData, valuePropName);
 		fcRG = out[0]; fcRGNoDta = out[1];
 
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
@@ -93,8 +90,8 @@ public class NUTSMap extends StatisticalMap {
 		if(fcRG.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
 			this.colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
-			if(this.classifier==null) this.classifier = MappingUtils.getClassifier(fcRG, propName, classifierName, classNb);
-			RGStyle = MappingUtils.getThematicStyle(fcRG, propName, this.classifier, this.colors, stroke);
+			if(this.classifier==null) this.classifier = MappingUtils.getClassifier(fcRG, valuePropName, classifierName, classNb);
+			RGStyle = MappingUtils.getThematicStyle(fcRG, valuePropName, this.classifier, this.colors, stroke);
 		}
 
 		map.addLayer( new FeatureLayer(fcRGNoDta, RGStyleNoData) );
@@ -164,11 +161,12 @@ public class NUTSMap extends StatisticalMap {
 		HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
 				.shrinkDims().toMap();
-		new NUTSMap(3, 60, "geo", statData, null)
+		new NUTSMap(3, 60, statData, null)
 		.makeDark()
 		.make()
 		.saveAsImage(outPath+"map.png", 1000, true, true)
 		.dispose();
+
 		System.out.println("End.");
 	}
 
