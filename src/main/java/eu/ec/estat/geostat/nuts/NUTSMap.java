@@ -51,7 +51,7 @@ public class NUTSMap extends StatisticalMap {
 	}*/
 
 	public NUTSMap(int nutsLevel, int lod, HashMap<String, Double> statData, Classifier classifier){
-		super(null, "NUTS_ID", statData, classifier);
+		super(null, "NUTS_ID", statData, null, classifier);
 		this.nutsLevel = nutsLevel;
 		this.lod = lod;
 

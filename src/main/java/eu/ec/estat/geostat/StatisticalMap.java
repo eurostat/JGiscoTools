@@ -55,18 +55,10 @@ public class StatisticalMap {
 	public String paletteName = "YlOrRd"; //"OrRd"; //see http://colorbrewer2.org
 	public Color[] colors = null;
 
+
+	private SimpleFeatureCollection borders = null;
 	public Color borderColor = Color.WHITE;
-
-	public StatisticalMap setBounds(double x1, double x2, double y1, double y2, CoordinateReferenceSystem crs) {
-		this.map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, crs ));
-		return this;
-	}
-	public StatisticalMap setBounds(double x1, double x2, double y1, double y2) { return setBounds(x1,x2,y1,y2,this.map.getCoordinateReferenceSystem()); }
-
-	public StatisticalMap dispose() { this.map.dispose(); return this; }
-	public StatisticalMap setTitle(String title) { map.setTitle(title); return this; }
-	public StatisticalMap setClassifier(Classifier classifier) { this.classifier = classifier; return this; }
-	public StatisticalMap show() { JMapFrame.showMap(map); return this; }
+	public double borderWidth = 0.8;
 
 	public SimpleFeatureCollection graticulesFS = null;
 	public Color graticulesColor = new Color(200,200,200);
@@ -88,13 +80,25 @@ public class StatisticalMap {
 	public int legendRoundingDecimalNB = 3;
 
 
-	public StatisticalMap(SimpleFeatureCollection statisticalUnits, String idPropName, HashMap<String, Double> statData, Classifier classifier){
+	public StatisticalMap(SimpleFeatureCollection statisticalUnits, String idPropName, HashMap<String, Double> statData, SimpleFeatureCollection borders, Classifier classifier){
 		this.statisticalUnits = statisticalUnits;
 		this.idPropName = idPropName;
 		this.statData = statData;
+		this.borders = borders;
 		this.classifier = classifier;
 		this.map = new MapContent();
 	}
+
+	public StatisticalMap setBounds(double x1, double x2, double y1, double y2, CoordinateReferenceSystem crs) {
+		this.map.getViewport().setBounds(new ReferencedEnvelope(y1, y2, x1, x2, crs ));
+		return this;
+	}
+	public StatisticalMap setBounds(double x1, double x2, double y1, double y2) { return setBounds(x1,x2,y1,y2,this.map.getCoordinateReferenceSystem()); }
+
+	public StatisticalMap dispose() { this.map.dispose(); return this; }
+	public StatisticalMap setTitle(String title) { map.setTitle(title); return this; }
+	public StatisticalMap setClassifier(Classifier classifier) { this.classifier = classifier; return this; }
+	public StatisticalMap show() { JMapFrame.showMap(map); return this; }
 
 	public StatisticalMap setCRS(CoordinateReferenceSystem crs){
 		this.map.getViewport().setCoordinateReferenceSystem(crs);
@@ -116,11 +120,11 @@ public class StatisticalMap {
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
-		//no data
+		//add layer for no data
 		Style style = MappingUtils.getPolygonStyle(Color.GRAY, null);
 		map.addLayer( new FeatureLayer(fsNoDta, style) );
 
-		//data
+		//add layer for data
 		if(fs.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
 			this.colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
@@ -129,21 +133,10 @@ public class StatisticalMap {
 			map.addLayer( new FeatureLayer(fs, style) );
 		}
 
+		//borders
+		if(this.borders != null)
+			map.addLayer( new FeatureLayer(this.borders, MappingUtils.getLineStyle(this.borderColor, this.borderWidth)) );
 
-		/*/BN
-		if(this.nutsLevel == 0){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 0.8)) );
-		} else if(this.nutsLevel == 1){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.3)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
-		} else if(this.nutsLevel == 2){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.3)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
-		} else if(this.nutsLevel == 3){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.5)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
-		}
-		 */
 		return this;
 	}
 
