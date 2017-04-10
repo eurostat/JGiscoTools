@@ -7,26 +7,19 @@ import java.awt.Color;
 import java.util.HashMap;
 
 import org.geotools.brewer.color.ColorBrewer;
-import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.feature.DefaultFeatureCollection;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.filter.function.Classifier;
 import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.MultiPolygon;
-
 import eu.ec.estat.geostat.MappingUtils;
 import eu.ec.estat.geostat.StatisticalMap;
+import eu.ec.estat.java4eurostat.io.CSV;
 
 /**
  * 
@@ -88,7 +81,7 @@ public class NUTSMap extends StatisticalMap {
 		SimpleFeatureCollection fcRGNoDta = null;
 
 		//join stat data, if any
-		SimpleFeatureCollection[] out = join(fcRG, this.statData, this.propName);
+		SimpleFeatureCollection[] out = MappingUtils.join(fcRG, this.statData, "NUTS_ID", this.propName);
 		fcRG = out[0]; fcRGNoDta = out[1];
 
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
@@ -108,7 +101,6 @@ public class NUTSMap extends StatisticalMap {
 		map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 
 		//BN
-		//TODO propose generic border display pattern - level-width-color
 		if(this.nutsLevel == 0){
 			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 0.8)) );
 		} else if(this.nutsLevel == 1){
@@ -133,52 +125,18 @@ public class NUTSMap extends StatisticalMap {
 	}
 
 	public NUTSMap makeDark() {
-		this.imgBckgrdColor = Color.BLACK;
-		this.cntrRGColor = Color.DARK_GRAY;
-		this.cntrBNColor = Color.BLACK;
+		super.makeDark();
 		this.nutsBNColor1 = Color.DARK_GRAY;
 		this.nutsBNColor2 = Color.BLACK;
-		this.fontColor = Color.WHITE;
-		this.graticulesColor = new Color(40,40,40);
+		this.cntrRGColor = Color.DARK_GRAY;
+		this.cntrBNColor = Color.BLACK;
 		return this;
 	}
-
-
-	//TODO generic, to mapping utils
-	private static SimpleFeatureCollection[] join(SimpleFeatureCollection fc, HashMap<String, Double> statData, String propName) {
-		try {
-			//fc.getSchema().getGeometryDescriptor().getType()
-			SimpleFeatureType ft = DataUtilities.createType("NUTS_RG_joined","NUTS_ID:String,the_geom:MultiPolygon,"+propName+":Double"); //:srid=3035
-			ft = DataUtilities.createSubType(ft, null, fc.getSchema().getCoordinateReferenceSystem());
-			DefaultFeatureCollection fcRGJoin = new DefaultFeatureCollection("fc_joined", ft);
-			DefaultFeatureCollection fcRGNoData = new DefaultFeatureCollection("fc_nodata", ft);
-
-			SimpleFeatureIterator it = fc.features();
-			while (it.hasNext()) {
-				SimpleFeature f = it.next();
-				String id = (String) f.getAttribute("NUTS_ID");
-				Double value = null;
-				if(statData != null) value = statData.get(id);
-				if(value==null) {
-					SimpleFeature f2 = SimpleFeatureBuilder.build( ft, new Object[]{ id, (MultiPolygon)f.getAttribute("the_geom"), 0 }, null);
-					fcRGNoData.add(f2);
-				} else {
-					SimpleFeature f2 = SimpleFeatureBuilder.build( ft, new Object[]{ id, (MultiPolygon)f.getAttribute("the_geom"), value.doubleValue() }, null);
-					fcRGJoin.add(f2);
-				}
-			}
-			it.close();
-			return new SimpleFeatureCollection[]{fcRGJoin, fcRGNoData};
-		} catch (Exception e) { e.printStackTrace(); }
-		return null;
-	}
-
-
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
 
-		//String outPath = "H:/desktop/";
+		String outPath = "H:/desktop/";
 		//String outPath = "/home/juju/Bureau/";
 		//String dataPath = "stat_cache/";
 
@@ -203,14 +161,14 @@ public class NUTSMap extends StatisticalMap {
 			;
 		}*/
 
-		/*HashMap<String, Double> statData =
+		HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
 				.shrinkDims().toMap();
 		new NUTSMap(3, 60, "geo", statData, null)
+		.makeDark()
 		.make()
-		//.show()
 		.saveAsImage(outPath+"map.png", 1000, true, true)
-		.dispose();*/
+		.dispose();
 		System.out.println("End.");
 	}
 
