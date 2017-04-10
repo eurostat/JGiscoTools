@@ -64,7 +64,7 @@ public class NUTSMap extends StatisticalMap {
 		this.map.getViewport().setCoordinateReferenceSystem(crs);
 		this.map.getViewport().setBounds(new ReferencedEnvelope(2580000.0, 7350000.0, 1340000.0, 5450000.0, crs));
 
-		graticulesFS = NUTSShapeFile.getGraticules().getFeatureCollection(NUTSShapeFile.GRATICULE_FILTER_5);
+		setGraticule();
 	}
 
 	public NUTSMap make(){
@@ -86,7 +86,7 @@ public class NUTSMap extends StatisticalMap {
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
 		//RG
-		Style RGStyleNoData = MappingUtils.getPolygonStyle(Color.GRAY, null);
+		Style RGStyleNoData = MappingUtils.getPolygonStyle(this.noDataColor, null);
 		Style RGStyle = RGStyleNoData;
 		if(fcRG.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
@@ -164,8 +164,9 @@ public class NUTSMap extends StatisticalMap {
 				.shrinkDims().toMap();
 		new NUTSMap(3, 60, statData, null)
 		.makeDark()
+		.setTitle("2015")
 		.make()
-		.saveAsImage(outPath+"map.png", 1000, true, true)
+		.saveAsImage(outPath+"map.png")
 		.dispose();
 
 		System.out.println("End.");

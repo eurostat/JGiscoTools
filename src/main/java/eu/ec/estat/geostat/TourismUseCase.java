@@ -3,6 +3,7 @@
  */
 package eu.ec.estat.geostat;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -138,12 +139,20 @@ public class TourismUseCase {
 	private static void makeGridMaps() {
 		String outPath = "H:/methnet/geostat/maps/";
 
-		HashMap<String, Double> stats = CSV.load("H:/methnet/geostat/out/grid10km_I551_2013 .csv", "value").toMap();
-		SimpleFeatureCollection grid = new ShapeFile("H:/geodata/grid/10km/grid10km.shp").getFeatureCollection();
-		new StatisticalMap(grid, "ID_", stats, null, null)
-		.make()
-		.saveAsImage(outPath+"map_grid.png")
-		;
+		for(int year=2010; year<=2015; year++){
+			HashMap<String, Double> stats = CSV.load("H:/methnet/geostat/out/grid10km_I551_"+year+" .csv", "value").toMap();
+			SimpleFeatureCollection grid = new ShapeFile("H:/geodata/grid/10km/grid10km.shp").getFeatureCollection();
+
+			new StatisticalMap(grid, "ID_", stats, null, null)
+			.setNoDataColor(Color.WHITE)
+			.setGraticule()
+			.setTitle(""+year)
+			.make()
+			.saveAsImage(outPath+"map_grid10km_I551_"+year+".png")
+			.dispose()
+			;
+			
+		}
 
 	}
 

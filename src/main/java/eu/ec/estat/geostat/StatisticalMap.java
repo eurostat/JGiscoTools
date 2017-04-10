@@ -32,6 +32,8 @@ import org.geotools.swing.JMapFrame;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.ec.estat.geostat.nuts.NUTSShapeFile;
+
 /**
  * @author Julien Gaffuri
  *
@@ -55,15 +57,12 @@ public class StatisticalMap {
 	public String paletteName = "YlOrRd"; //"OrRd"; //see http://colorbrewer2.org
 	public Color[] colors = null;
 
+	public Color noDataColor = Color.GRAY;
+	public StatisticalMap setNoDataColor(Color noDataColor){ this.noDataColor=noDataColor; return this; }
 
 	private SimpleFeatureCollection borders = null;
 	public Color borderColor = Color.WHITE;
 	public double borderWidth = 0.8;
-
-	public SimpleFeatureCollection graticulesFS = null;
-	public Color graticulesColor = new Color(200,200,200);
-	public double graticulesWidth = 0.4;
-
 
 	//public Color imgBckgrdColor = Color.WHITE;
 	//public Color imgBckgrdColor = new Color(240,248,255); //aliceblue
@@ -79,6 +78,15 @@ public class StatisticalMap {
 	public int legendPadding = 5;
 	public int legendRoundingDecimalNB = 3;
 
+
+	public SimpleFeatureCollection graticulesFS = null;
+	public Color graticulesColor = new Color(200,200,200);
+	public double graticulesWidth = 0.4;
+
+	public StatisticalMap setGraticule(){
+		graticulesFS = NUTSShapeFile.getGraticules().getFeatureCollection(NUTSShapeFile.GRATICULE_FILTER_5);
+		return this;
+	}
 
 	public StatisticalMap(SimpleFeatureCollection statisticalUnits, String idPropName, HashMap<String, Double> statData, SimpleFeatureCollection borders, Classifier classifier){
 		this.statisticalUnits = statisticalUnits;
@@ -115,7 +123,7 @@ public class StatisticalMap {
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
 		//add layer for no data
-		Style style = MappingUtils.getPolygonStyle(Color.GRAY, null);
+		Style style = MappingUtils.getPolygonStyle(noDataColor, null);
 		map.addLayer( new FeatureLayer(fsNoDta, style) );
 
 		//add layer for data
@@ -156,8 +164,8 @@ public class StatisticalMap {
 	}
 
 
-	public StatisticalMap saveAsImage(final String file) { return saveAsImage(file, 1000, true, true); }
-	public StatisticalMap saveAsImage(final String file, final int imageWidth, boolean withTitle, boolean withLegend) {
+	public StatisticalMap saveAsImage(String file) { return saveAsImage(file, 1000, true, true); }
+	public StatisticalMap saveAsImage(String file, int imageWidth, boolean withTitle, boolean withLegend) {
 		try {
 			//prepare image
 			ReferencedEnvelope mapBounds = map.getViewport().getBounds();
@@ -165,22 +173,27 @@ public class StatisticalMap {
 			BufferedImage image = new BufferedImage(imageBounds.width, imageBounds.height, BufferedImage.TYPE_INT_RGB);
 			Graphics2D gr = image.createGraphics();
 			gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			//draw background
 			gr.setPaint(imgBckgrdColor);
 			gr.fill(imageBounds);
 
+			//paint map
 			GTRenderer renderer = new StreamingRenderer();
 			renderer.setMapContent(map);
 			renderer.paint(gr, imageBounds, mapBounds);
 
 			//write title
-			if(withTitle && map.getTitle()!=null){
+			if(withTitle && map.getTitle()!=null) {
 				gr.setColor(fontColor);
 				gr.setFont(new Font(fontFamily, fontStrength, fontSize));
 				gr.drawString(map.getTitle(), 10, fontSize+5);
 			}
 
-			if(withLegend && this.classifier !=null)
+			//draw legend
+			if(withLegend && this.classifier !=null) {
 				MappingUtils.drawLegend(gr, (RangedClassifier)this.classifier, this.colors, this.legendRoundingDecimalNB, imageWidth-legendWidth-legendPadding, legendPadding, legendWidth, legendHeightPerClass, legendPadding);
+			}
 
 			ImageIO.write(image, "png", new File(file));
 		} catch (Exception e) { e.printStackTrace(); }
