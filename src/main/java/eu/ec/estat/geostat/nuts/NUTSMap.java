@@ -10,13 +10,11 @@ import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.function.Classifier;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.opengis.filter.FilterFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.ec.estat.geostat.MappingUtils;
 import eu.ec.estat.geostat.StatisticalMap;
@@ -60,9 +58,8 @@ public class NUTSMap extends StatisticalMap {
 		//stat units
 		this.statisticalUnits = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterByLevel(this.nutsLevel));
 
-		CoordinateReferenceSystem crs = statisticalUnits.getSchema().getCoordinateReferenceSystem();
-		this.map.getViewport().setCoordinateReferenceSystem(crs);
-		this.map.getViewport().setBounds(new ReferencedEnvelope(2580000.0, 7350000.0, 1340000.0, 5450000.0, crs));
+		this.map.getViewport().setCoordinateReferenceSystem( this.statisticalUnits.getSchema().getCoordinateReferenceSystem() );
+		this.setBounds(2580000.0, 7350000.0, 1340000.0, 5450000.0);
 
 		setGraticule();
 	}
@@ -80,23 +77,22 @@ public class NUTSMap extends StatisticalMap {
 		//join stat data, if any
 		String valuePropName = "Prop"+((int)(1000000*Math.random()));
 		SimpleFeatureCollection[] out = MappingUtils.join(this.statisticalUnits, "NUTS_ID", this.statData, valuePropName);
-		SimpleFeatureCollection fcRG = out[0], fcRGNoData = out[1];
+		SimpleFeatureCollection fsRG = out[0], fsRGNoDta = out[1];
 
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
-		//RG
-		Style RGStyleNoData = MappingUtils.getPolygonStyle(this.noDataColor, null);
-		Style RGStyle = RGStyleNoData;
-		if(fcRG.size()>0){
+		//add layer for no data
+		map.addLayer( new FeatureLayer(fsRGNoDta, MappingUtils.getPolygonStyle(this.noDataColor, null)) );
+
+		//add layer for data
+		if(fsRG.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
 			this.colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
-			if(this.classifier==null) this.classifier = MappingUtils.getClassifier(fcRG, valuePropName, classifierName, classNb);
-			RGStyle = MappingUtils.getThematicStyle(fcRG, valuePropName, this.classifier, this.colors, stroke);
+			if(this.classifier==null) this.classifier = MappingUtils.getClassifier(fsRG, valuePropName, classifierName, classNb);
+			Style s = MappingUtils.getThematicStyle(fsRG, valuePropName, this.classifier, this.colors, stroke);
+			map.addLayer( new FeatureLayer(fsRG, s) );
 		}
-
-		map.addLayer( new FeatureLayer(fcRGNoData, RGStyleNoData) );
-		map.addLayer( new FeatureLayer(fcRG, RGStyle) );
 
 		//BN
 		if(this.nutsLevel == 0){
@@ -163,7 +159,8 @@ public class NUTSMap extends StatisticalMap {
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
 				.shrinkDims().toMap();
 		new NUTSMap(3, 60, statData, null)
-		.makeDark()
+		.setBounds(5580000.0, 6350000.0, 2340000.0, 3450000.0)
+		//.makeDark()
 		.setTitle("2015")
 		.make()
 		.saveAsImage(outPath+"map.png")

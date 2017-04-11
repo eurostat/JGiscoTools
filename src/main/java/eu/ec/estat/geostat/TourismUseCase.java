@@ -9,6 +9,8 @@ import java.util.HashMap;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.filter.function.RangedClassifier;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
 import eu.ec.estat.geostat.io.ShapeFile;
@@ -138,20 +140,27 @@ public class TourismUseCase {
 
 	private static void makeGridMaps() {
 		String outPath = "H:/methnet/geostat/maps/";
+		//String outPath = "H:/desktop/";
+
+		RangedClassifier classifier = MappingUtils.getClassifier(4500,7000,10000,15000,20000,30000,50000,100000);
 
 		for(int year=2010; year<=2015; year++){
+			//if(year != 2015) continue;
+
 			HashMap<String, Double> stats = CSV.load("H:/methnet/geostat/out/grid10km_I551_"+year+" .csv", "value").toMap();
 			SimpleFeatureCollection grid = new ShapeFile("H:/geodata/grid/10km/grid10km.shp").getFeatureCollection();
 
-			new StatisticalMap(grid, "ID_", stats, null, null)
+			new StatisticalMap(grid, "ID_", stats, null, classifier)
+			.setBounds(2580000.0, 7350000.0, 1340000.0, 5450000.0)
+			//.setBounds(5580000.0, 6350000.0, 2340000.0, 3450000.0)
+			.setTitle(""+year)
 			.setNoDataColor(Color.WHITE)
 			.setGraticule()
-			.setTitle(""+year)
 			.make()
 			.saveAsImage(outPath+"map_grid10km_I551_"+year+".png")
+			.saveLegendAsImage(outPath+"legend_grid10km_I551.png", 0, 200, 20, 5)
 			.dispose()
 			;
-			
 		}
 
 	}

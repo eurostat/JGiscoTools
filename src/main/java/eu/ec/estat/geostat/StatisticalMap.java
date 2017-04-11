@@ -11,6 +11,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -39,6 +40,7 @@ import eu.ec.estat.geostat.nuts.NUTSShapeFile;
  *
  */
 public class StatisticalMap {
+	//TODO background layers (countries)
 	//TODO legend labels - fix extreme values
 	//TODO generic functions - fix
 	//TODO nice classes - nice labels
@@ -94,6 +96,7 @@ public class StatisticalMap {
 		this.statData = statData;
 		this.borders = borders;
 		this.classifier = classifier;
+
 		this.map = new MapContent();
 		if(statisticalUnits != null){
 			CoordinateReferenceSystem crs = statisticalUnits.getSchema().getCoordinateReferenceSystem();
@@ -107,6 +110,11 @@ public class StatisticalMap {
 	public StatisticalMap setClassifier(Classifier classifier) { this.classifier = classifier; return this; }
 	public StatisticalMap show() { JMapFrame.showMap(map); return this; }
 
+	public StatisticalMap setBounds(double x1, double x2, double y1, double y2){ return setBounds(x1,x2,y1,y2,this.statisticalUnits.getSchema().getCoordinateReferenceSystem()); }
+	public StatisticalMap setBounds(double x1, double x2, double y1, double y2, CoordinateReferenceSystem crs){
+		this.map.getViewport().setBounds(new ReferencedEnvelope(x1,x2,y1,y2, crs));
+		return this;
+	}
 
 	public StatisticalMap make(){
 
@@ -123,16 +131,15 @@ public class StatisticalMap {
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
 		//add layer for no data
-		Style style = MappingUtils.getPolygonStyle(noDataColor, null);
-		map.addLayer( new FeatureLayer(fsNoDta, style) );
+		map.addLayer( new FeatureLayer(fsNoDta, MappingUtils.getPolygonStyle(noDataColor, null)) );
 
 		//add layer for data
 		if(fs.size()>0){
 			Stroke stroke = styleFactory.createStroke( filterFactory.literal(Color.WHITE), filterFactory.literal(0.0001), filterFactory.literal(0));
 			this.colors = ColorBrewer.instance().getPalette(paletteName).getColors(classNb);
 			if(this.classifier == null) this.classifier = MappingUtils.getClassifier(fs, valuePropName, classifierName, classNb);
-			style = MappingUtils.getThematicStyle(fs, valuePropName, this.classifier, this.colors, stroke);
-			map.addLayer( new FeatureLayer(fs, style) );
+			Style s = MappingUtils.getThematicStyle(fs, valuePropName, this.classifier, this.colors, stroke);
+			map.addLayer( new FeatureLayer(fs, s) );
 		}
 
 		//borders
@@ -168,7 +175,7 @@ public class StatisticalMap {
 	public StatisticalMap saveAsImage(String file, int imageWidth, boolean withTitle, boolean withLegend) {
 		try {
 			//prepare image
-			ReferencedEnvelope mapBounds = map.getViewport().getBounds();
+			ReferencedEnvelope mapBounds = this.map.getViewport().getBounds();
 			Rectangle imageBounds = new Rectangle(0, 0, imageWidth, (int) Math.round(imageWidth * mapBounds.getSpan(1) / mapBounds.getSpan(0)));
 			BufferedImage image = new BufferedImage(imageBounds.width, imageBounds.height, BufferedImage.TYPE_INT_RGB);
 			Graphics2D gr = image.createGraphics();
@@ -180,18 +187,29 @@ public class StatisticalMap {
 
 			//paint map
 			GTRenderer renderer = new StreamingRenderer();
-			renderer.setMapContent(map);
+			renderer.setMapContent(this.map);
+			renderer.setJava2DHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON ));
+			Map<Object,Object> rendererParams = new HashMap<Object,Object>();
+			rendererParams.put("optimizedDataLoadingEnabled", new Boolean(false) );
+			renderer.setRendererHints( rendererParams );
 			renderer.paint(gr, imageBounds, mapBounds);
 
+			//TODO bug here. Title and legend do not draw !
+			/*gr.setColor(fontColor);
+			gr.setFont(new Font(fontFamily, fontStrength, fontSize));
+			gr.drawString("AAAAAAAAA", 50, 50);*/
+			
 			//write title
-			if(withTitle && map.getTitle()!=null) {
+			if(withTitle && this.map.getTitle()!=null) {
+				//System.out.println( this.map.getTitle() );
 				gr.setColor(fontColor);
 				gr.setFont(new Font(fontFamily, fontStrength, fontSize));
-				gr.drawString(map.getTitle(), 10, fontSize+5);
+				gr.drawString(this.map.getTitle(), 10, fontSize+5);
 			}
 
 			//draw legend
 			if(withLegend && this.classifier !=null) {
+				//System.out.println( this.classifier );
 				MappingUtils.drawLegend(gr, (RangedClassifier)this.classifier, this.colors, this.legendRoundingDecimalNB, imageWidth-legendWidth-legendPadding, legendPadding, legendWidth, legendHeightPerClass, legendPadding);
 			}
 
