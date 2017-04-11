@@ -40,7 +40,9 @@ public class DasymetricMapping {
 	private String statUnitsFinalIdFieldName;
 
 	//3:area, 2:line, 1: point
-	private int geomCase = 1; //TODO use enumeration, from JTS/geotools?
+	//TODO use enumeration, from JTS/geotools?
+	//TODO select automatically from shp schema?
+	private int geomCase = 1;
 
 	//default constructor
 	public DasymetricMapping(

@@ -9,8 +9,6 @@ import java.util.HashMap;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.filter.function.RangedClassifier;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
 import eu.ec.estat.geostat.io.ShapeFile;
@@ -75,9 +73,44 @@ public class TourismUseCase {
 		//finalCheckE4ValidationData();
 
 		//runDasymetricGrid();
-		makeGridMaps();
+		//makeGridMaps();
 
+		
+		runDasymetricFrance();
+		//makeFranceMaps();
+
+		
+		
 		System.out.println("End.");
+	}
+
+	public static void runDasymetricFrance(){
+		//load tourism data to disaggregate
+		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
+				new Selection.And(
+						new Selection.DimValueEqualTo("unit","NR"), //Number
+						//new Selection.DimValueEqualTo("nace_r2","I551-I553"), //Hotels; holiday and other short-stay accommodation; camping grounds, recreational vehicle parks and trailer parks
+						new Selection.DimValueEqualTo("indic_to","B006"), //Nights spent, total
+						//keep only nuts 2 regions
+						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } },
+						//keep only years after 2010
+						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace(" ", "")) >= 2010; } }
+						));
+		hc.delete("unit"); hc.delete("indic_to");
+		StatsIndex hcI = new StatsIndex(hc, "nace_r2", "time", "geo");
+		//hc.printInfo();
+		//hcI.print();
+		hc = null;
+
+		//TODO
+		//look at the BPE data
+		//G102 hotel, G103 camping
+		//extract points by type
+		//check unlocated points in BPE ?
+		//run dasymetry with BPE
+		//* try to match tomtom with BPE
+		//* try to map geo with data from FR_registre_hebergements_classes
+
 	}
 
 	public static void runDasymetricGrid(){
