@@ -21,8 +21,8 @@ public class FRCommunesRectangleInter {
 
 			//compute matrix
 			StatisticalUnitsIntersectionMatrix suInter = new StatisticalUnitsIntersectionMatrix(
-					new ShapeFile(folder+"commune.shp", true).getFeatureStore(), "INSEE_COM",
-					new ShapeFile(folder+"carreau.shp", true).getFeatureStore(), "id"
+					new ShapeFile(folder+"commune.shp", true).getFeatureStore(), "INSEE_COM", true,
+					new ShapeFile(folder+"carreau.shp", true).getFeatureStore(), "id", true
 					)
 					.compute();
 

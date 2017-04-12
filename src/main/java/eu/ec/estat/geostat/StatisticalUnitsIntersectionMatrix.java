@@ -3,8 +3,10 @@ package eu.ec.estat.geostat;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.geotools.data.DataUtilities;
 import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -26,6 +28,7 @@ public class StatisticalUnitsIntersectionMatrix {
 	// The statistical unit feature stores and the attributes to use as identifiers.
 	private FeatureSource<SimpleFeatureType,SimpleFeature> su1, su2;
 	private String idField1, idField2;
+	private boolean cache1=false, cache2=false;
 
 
 	/**
@@ -41,10 +44,10 @@ public class StatisticalUnitsIntersectionMatrix {
 		this.su2 = su2;
 		this.idField1 = idField1;
 		this.idField2 = idField2;
-		
-		//SimpleFeatureStore sfs;
-		//sfs.getf
-
+	}
+	public StatisticalUnitsIntersectionMatrix(FeatureSource<SimpleFeatureType,SimpleFeature> su1, String idField1, boolean cache1, FeatureSource<SimpleFeatureType,SimpleFeature> su2, String idField2, boolean cache2){
+		this(su1, idField1, su2, idField2);
+		this.cache1=cache1; this.cache2=cache2;
 	}
 
 
@@ -69,7 +72,12 @@ public class StatisticalUnitsIntersectionMatrix {
 
 		//load statistical units 1
 		int nb1 = su1.getFeatures().size();
-		FeatureIterator<SimpleFeature> itSu1 = su1.getFeatures().features();
+		FeatureIterator<SimpleFeature> itSu1 = null;
+		if(cache1) itSu1 = DataUtilities.collection(su1.getFeatures()).features();
+		else itSu1 = su1.getFeatures().features();
+
+		DefaultFeatureCollection su2_ = null;
+		if(cache2) su2_ = DataUtilities.collection(su2.getFeatures());
 
 		//go through statistical units 1
 		int counter = 1;
@@ -85,7 +93,9 @@ public class StatisticalUnitsIntersectionMatrix {
 			//get all su2 intersecting the su1 (with spatial index)
 			//Filter f = ff.bbox(ff.property("the_geom"), f1.getBounds());
 			Filter f = ff.intersects(ff.property("the_geom"), ff.literal(geom1));
-			FeatureIterator<SimpleFeature> itSu2 = su2.getFeatures(f).features();
+			FeatureIterator<SimpleFeature> itSu2 = null;
+			if(cache2) itSu2 = su2_.subCollection(f).features();
+			else itSu2 = su2.getFeatures(f).features();
 			//System.out.println(" -> "+(data2.getFeatures(f).size())+" "+datasetName2);
 
 			while (itSu2.hasNext()) {
