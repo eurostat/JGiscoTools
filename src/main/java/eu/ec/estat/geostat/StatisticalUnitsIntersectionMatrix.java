@@ -4,10 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.HashMap;
 
-import org.geotools.data.shapefile.shp.ShapefileException;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
@@ -31,30 +29,29 @@ public class StatisticalUnitsIntersectionMatrix {
 	/**
 	 * Compute the intersection matrix between two statistical unit datasets of a same area of interest.
 	 * This intersection matrix computes the share of a statistical unit which intersects another ones of another statistical units dataset.
+	 * Value of the intersection area is also computed.
 	 * 
 	 * NB: this operation commutes.
 	 * 
-	 * @param datasetName1 name of the first dataset (for labelling)
-	 * @param shpFilePath1 path of the first dataset, as shapefile
+	 * @param suName1 name of the first dataset (for labelling)
+	 * @param su1 the first dataset
 	 * @param idField1 name of the first dataset id attribute
-	 * @param datasetName2 name of the second dataset (for labelling)
-	 * @param shpFilePath2 path of the second dataset, as shapefile. NB: for performence improvement, a spatial index should be created for this file.
+	 * @param suName2 name of the second dataset (for labelling)
+	 * @param su2 the second dataset
 	 * @param idField2 name of the second dataset id attribute
 	 * @param outFolder the folder where output files are stored
-	 * @throws ShapefileException
-	 * @throws MalformedURLException
-	 * @throws IOException
 	 */
-	public static void compute(String datasetName1, SimpleFeatureStore data1, String idField1, String datasetName2, SimpleFeatureStore data2, String idField2, String outFolder) throws ShapefileException, MalformedURLException, IOException{
-		//create out files
-		BufferedWriter bw1from2 = createFile(outFolder+"matrix_"+datasetName1+"_from_"+datasetName2+".csv", true);
-		bw1from2.write(datasetName1+","+datasetName2+",ratio,intersection_area"); bw1from2.newLine();
-		BufferedWriter bw2from1 = createFile(outFolder+"matrix_"+datasetName2+"_from_"+datasetName1+".csv", true);
-		bw2from1.write(datasetName2+","+datasetName1+",ratio,intersection_area"); bw2from1.newLine();
+	public static void compute(String suName1, SimpleFeatureStore su1, String idField1, String suName2, SimpleFeatureStore su2, String idField2, String outFolder) throws IOException{
+
+		//create output files
+		BufferedWriter bw1from2 = createFile(outFolder+"/matrix_"+suName1+"_from_"+suName2+".csv", true);
+		bw1from2.write(suName1+","+suName2+",ratio,intersection_area"); bw1from2.newLine();
+		BufferedWriter bw2from1 = createFile(outFolder+"/matrix_"+suName2+"_from_"+suName1+".csv", true);
+		bw2from1.write(suName2+","+suName1+",ratio,intersection_area"); bw2from1.newLine();
 
 		//load shapefile 1
-		int nb1 = data1.getFeatures().size();
-		FeatureIterator<SimpleFeature> itSu1 = data1.getFeatures().features();
+		int nb1 = su1.getFeatures().size();
+		FeatureIterator<SimpleFeature> itSu1 = su1.getFeatures().features();
 
 		//(pre)load shapefile 2
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
@@ -67,12 +64,12 @@ public class StatisticalUnitsIntersectionMatrix {
 			Geometry geom1 = (Geometry) f1.getDefaultGeometryProperty().getValue();
 			double a1 = geom1.getArea();
 
-			System.out.println(datasetName1+" - "+id1+" - ("+datasetName2+")" + " " + (counter++) + "/" + nb1 + " " + (Math.round(10000*counter/nb1))*0.01 + "%");
+			System.out.println(suName1+"(id="+id1+") intersection with "+ suName2 +". counter=" + " " + (counter++) + "/" + nb1 + " " + (Math.round(10000*counter/nb1))*0.01 + "%");
 
 			//get all su2 intersecting the su1 (with spatial index)
 			//Filter f = ff.bbox(ff.property("the_geom"), f1.getBounds());
 			Filter f = ff.intersects(ff.property("the_geom"), ff.literal(geom1));
-			FeatureIterator<SimpleFeature> itSu2 = data2.getFeatures(f).features();
+			FeatureIterator<SimpleFeature> itSu2 = su2.getFeatures(f).features();
 			//System.out.println(" -> "+(data2.getFeatures(f).size())+" "+datasetName2);
 
 			while (itSu2.hasNext()) {
