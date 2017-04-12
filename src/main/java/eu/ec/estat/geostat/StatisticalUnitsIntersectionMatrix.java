@@ -3,10 +3,11 @@ package eu.ec.estat.geostat;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 
@@ -23,7 +24,7 @@ import eu.ec.estat.java4eurostat.base.StatsIndex;
 public class StatisticalUnitsIntersectionMatrix {
 
 	// The statistical unit feature stores and the attributes to use as identifiers.
-	private SimpleFeatureStore su1, su2;
+	private FeatureSource<SimpleFeatureType,SimpleFeature> su1, su2;
 	private String idField1, idField2;
 
 
@@ -35,11 +36,15 @@ public class StatisticalUnitsIntersectionMatrix {
 	public StatsHypercube interSectionMatrix = null;
 
 
-	public StatisticalUnitsIntersectionMatrix(SimpleFeatureStore su1, String idField1, SimpleFeatureStore su2, String idField2){
+	public StatisticalUnitsIntersectionMatrix(FeatureSource<SimpleFeatureType,SimpleFeature> su1, String idField1, FeatureSource<SimpleFeatureType,SimpleFeature> su2, String idField2){
 		this.su1 = su1;
 		this.su2 = su2;
 		this.idField1 = idField1;
 		this.idField2 = idField2;
+		
+		//SimpleFeatureStore sfs;
+		//sfs.getf
+
 	}
 
 

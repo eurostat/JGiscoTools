@@ -16,6 +16,7 @@ import eu.ec.estat.geostat.io.ShapeFile;
  *
  */
 public class NUTSShapeFile {
+	public static boolean withMemoryMappedBuffer = false;
 
 	private static final String BASE_PATH = "resources/NUTS/";
 
@@ -27,7 +28,7 @@ public class NUTSShapeFile {
 	 * @return
 	 */
 	public static ShapeFile get(int year, int lod, String proj, String type, Filter filter){
-		return new ShapeFile(BASE_PATH + year + "/" + lod + "M/" + proj + "/" + type + ".shp", filter);
+		return new ShapeFile(BASE_PATH + year + "/" + lod + "M/" + proj + "/" + type + ".shp", withMemoryMappedBuffer, filter);
 	}
 
 	public static ShapeFile get(){ return get("RG"); }

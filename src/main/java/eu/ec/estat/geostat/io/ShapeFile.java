@@ -57,9 +57,10 @@ public class ShapeFile {
 	 * @param path
 	 * @param fil
 	 */
-	public ShapeFile(String path, Filter fil){ this.fil=fil; open(path); }
-	public ShapeFile(String path, String fil){ this(path, fil==null? Filter.INCLUDE : getFilterFromCQL(fil)); }
-	public ShapeFile(String path){ this(path, Filter.INCLUDE); }
+	public ShapeFile(String path, boolean withMemoryMappedBuffer, Filter fil){ this.fil=fil; open(path, withMemoryMappedBuffer); }
+	public ShapeFile(String path, boolean withMemoryMappedBuffer, String fil){ this(path, withMemoryMappedBuffer, fil==null? Filter.INCLUDE : getFilterFromCQL(fil)); }
+	public ShapeFile(String path, boolean withMemoryMappedBuffer){ this(path, withMemoryMappedBuffer, Filter.INCLUDE); }
+	public ShapeFile(String path){ this(path, false); }
 
 	/**
 	 * Create a shapefile
@@ -69,7 +70,7 @@ public class ShapeFile {
 	 * @param fileName
 	 * @param recreateOnExists
 	 */
-	public ShapeFile(SimpleFeatureType ft, String folderPath, String fileName, boolean withSpatialIndex, boolean recreateOnExists){
+	public ShapeFile(SimpleFeatureType ft, String folderPath, String fileName, boolean withSpatialIndex, boolean withMemoryMappedBuffer, boolean recreateOnExists){
 		try {
 			new File(folderPath).mkdirs();
 			File f = new File(folderPath+fileName);
@@ -78,12 +79,13 @@ public class ShapeFile {
 			if(!f.exists()){
 				HashMap<String, Serializable> params = new HashMap<String, Serializable>();
 				params.put("url", f.toURI().toURL());
-				if(withSpatialIndex) params.put("create spatial index", Boolean.TRUE);
+				if(withSpatialIndex) params.put("create spatial index", Boolean.TRUE); else params.put("create spatial index", Boolean.FALSE);
+				if(withMemoryMappedBuffer) params.put("memory mapped buffer", Boolean.TRUE); else params.put("memory mapped buffer", Boolean.FALSE);
 				ShapefileDataStore sfds =  (ShapefileDataStore) new ShapefileDataStoreFactory().createNewDataStore( params );
 				sfds.createSchema(ft);
 			}
 
-			open(folderPath+fileName);
+			open(folderPath+fileName, withMemoryMappedBuffer);
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 
@@ -97,14 +99,16 @@ public class ShapeFile {
 	 * @param fileName
 	 * @param recreateOnExists
 	 */
-	public ShapeFile(String geomType, int epsgCode, String attributes, String folderPath, String fileName, boolean withSpatialIndex, boolean recreateOnExists){
-		this(getFeatureType(geomType, epsgCode, attributes), folderPath, fileName, withSpatialIndex, recreateOnExists);
+	public ShapeFile(String geomType, int epsgCode, String attributes, String folderPath, String fileName, boolean withSpatialIndex, boolean withMemoryMappedBuffer, boolean recreateOnExists){
+		this(getFeatureType(geomType, epsgCode, attributes), folderPath, fileName, withSpatialIndex, withMemoryMappedBuffer, recreateOnExists);
 	}
 
 
-	private void open(String path){
+	private void open(String path, boolean withMemoryMappedBuffer){
 		try {
-			HashMap<String, Object> params = new HashMap<String, Object>(); params.put("url", new File(path).toURI().toURL());
+			HashMap<String, Object> params = new HashMap<String, Object>();
+			params.put("url", new File(path).toURI().toURL());
+			if(withMemoryMappedBuffer) params.put("memory mapped buffer", Boolean.TRUE); else params.put("memory mapped buffer", Boolean.FALSE);
 			dataStore = (ShapefileDataStore) DataStoreFinder.getDataStore(params);
 			featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
 		} catch (Exception e) { e.printStackTrace(); }
@@ -159,8 +163,8 @@ public class ShapeFile {
 	}
 
 
-	public SimpleFeatureCollection getSimpleFeatures(){ return getSimpleFeatures(null); }
-	public SimpleFeatureCollection getSimpleFeatures(Filter filter){
+	public DefaultFeatureCollection getSimpleFeatures(){ return getSimpleFeatures(null); }
+	public DefaultFeatureCollection getSimpleFeatures(Filter filter){
 		try { return DataUtilities.collection(featureStore.getFeatures(ff.and(fil, filter))); } catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
@@ -191,10 +195,10 @@ public class ShapeFile {
 	}
 
 	//"NATUR_CODE = 'BAT'"
-	public ShapeFile filter(String cqlString, String outPath, String outFile, boolean withSpatialIndex, boolean override){ return filter(getFilterFromCQL(cqlString), outPath, outFile, withSpatialIndex, override); }
-	public ShapeFile filter(Filter filter, String outPath, String outFile, boolean withSpatialIndex, boolean override){
+	public ShapeFile filter(String cqlString, String outPath, String outFile, boolean withSpatialIndex, boolean withMemoryMappedBuffer, boolean override){ return filter(getFilterFromCQL(cqlString), outPath, outFile, withSpatialIndex, withMemoryMappedBuffer, override); }
+	public ShapeFile filter(Filter filter, String outPath, String outFile, boolean withSpatialIndex, boolean withMemoryMappedBuffer, boolean override){
 		int bufferSize = 500;
-		ShapeFile shpOut = new ShapeFile(getSchema(), outPath, outFile, withSpatialIndex, override);
+		ShapeFile shpOut = new ShapeFile(getSchema(), outPath, outFile, withSpatialIndex, withMemoryMappedBuffer, override);
 		FeatureIterator<SimpleFeature> it = getFeatures(ff.and(fil, filter));
 		DefaultFeatureCollection fs = new DefaultFeatureCollection("ZZZ"+this+Math.random(), getSchema());
 		while(it.hasNext()){
