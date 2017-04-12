@@ -8,14 +8,15 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 
 import org.geotools.data.shapefile.shp.ShapefileException;
+import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import eu.ec.estat.geostat.io.ShapeFile;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 import eu.ec.estat.java4eurostat.io.CSV;
@@ -44,7 +45,7 @@ public class StatisticalUnitsIntersectionMatrix {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static void compute(String datasetName1, String shpFilePath1, String idField1, String datasetName2, String shpFilePath2, String idField2, String outFolder) throws ShapefileException, MalformedURLException, IOException{
+	public static void compute(String datasetName1, SimpleFeatureStore data1, String idField1, String datasetName2, SimpleFeatureStore data2, String idField2, String outFolder) throws ShapefileException, MalformedURLException, IOException{
 		//create out files
 		BufferedWriter bw1from2 = createFile(outFolder+"matrix_"+datasetName1+"_from_"+datasetName2+".csv", true);
 		bw1from2.write(datasetName1+","+datasetName2+",ratio,intersection_area"); bw1from2.newLine();
@@ -52,12 +53,10 @@ public class StatisticalUnitsIntersectionMatrix {
 		bw2from1.write(datasetName2+","+datasetName1+",ratio,intersection_area"); bw2from1.newLine();
 
 		//load shapefile 1
-		ShapeFile shpFile1 = new ShapeFile(shpFilePath1);
-		int nb1 = shpFile1.count();
-		FeatureIterator<SimpleFeature> itSu1 = shpFile1.dispose().getFeatures();
+		int nb1 = data1.getFeatures().size();
+		FeatureIterator<SimpleFeature> itSu1 = data1.getFeatures().features();
 
 		//(pre)load shapefile 2
-		ShapeFile shpFile2 = new ShapeFile(shpFilePath2);
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 		//go through shapefile 1
@@ -65,26 +64,28 @@ public class StatisticalUnitsIntersectionMatrix {
 		while (itSu1.hasNext()) {
 			SimpleFeature f1 = itSu1.next();
 			String id1 = f1.getAttribute(idField1).toString();
-
-			System.out.println(datasetName1+" - "+id1+" - ("+datasetName2+")" + " " + (counter++) + "/" + nb1 + " " + (Math.round(10000*counter/nb1))*0.01 + "%");
-
 			Geometry geom1 = (Geometry) f1.getDefaultGeometryProperty().getValue();
 			double a1 = geom1.getArea();
 
+			System.out.println(datasetName1+" - "+id1+" - ("+datasetName2+")" + " " + (counter++) + "/" + nb1 + " " + (Math.round(10000*counter/nb1))*0.01 + "%");
+
 			//get all su2 intersecting the su1 (with spatial index)
-			FeatureIterator<SimpleFeature> itSu2 = shpFile2.getFeatures(f1.getBounds(), "the_geom");
+			//Filter f = ff.bbox(ff.property("the_geom"), f1.getBounds());
+			Filter f = ff.intersects(ff.property("the_geom"), ff.literal(geom1));
+			FeatureIterator<SimpleFeature> itSu2 = data2.getFeatures(f).features();
+			//System.out.println(" -> "+(data2.getFeatures(f).size())+" "+datasetName2);
 
 			while (itSu2.hasNext()) {
 				SimpleFeature f2 = itSu2.next();
+				String id2 = f2.getAttribute(idField2).toString();
 				Geometry geom2 = (Geometry) f2.getDefaultGeometryProperty().getValue();
 
 				//check intersection
-				if(!geom1.intersects(geom2)) continue;
+				//if(!geom1.intersects(geom2)) continue;
 				double interArea = geom1.intersection(geom2).getArea();
 				if(interArea == 0) continue;
 
 				//store relation data
-				String id2 = f2.getAttribute(idField2).toString();
 				bw1from2.write( id1+","+id2+","+(interArea/geom2.getArea())+","+interArea );
 				bw1from2.newLine();
 				bw2from1.write( id2+","+id1+","+(interArea/a1)+","+interArea );
@@ -95,7 +96,6 @@ public class StatisticalUnitsIntersectionMatrix {
 		itSu1.close();
 		bw1from2.close();
 		bw2from1.close();
-
 	}
 
 

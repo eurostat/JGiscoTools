@@ -124,7 +124,7 @@ public class DasymetricMapping {
 
 			//go through statistical units
 			int statCounter = 1, nbStats = statUnitsFeatureStore.getFeatures().size();
-			FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsFeatureStore.getFeatures()).features();
+			FeatureIterator<SimpleFeature> itStat = statUnitsFeatureStore.getFeatures().features();
 			while (itStat.hasNext()) {
 				SimpleFeature statUnit = itStat.next();
 				String statUnitId = statUnit.getAttribute(statUnitsIdFieldName).toString();
@@ -135,7 +135,7 @@ public class DasymetricMapping {
 				Geometry statUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
 				//Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
 				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitGeom));
-				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
+				FeatureIterator<SimpleFeature> itGeo = geoFeatureStore.getFeatures(f).features();
 
 				//compute stat on geo features
 				double areaGeo=0, lengthGeo=0; int numberGeo=0;
@@ -196,7 +196,7 @@ public class DasymetricMapping {
 			//go through geo - purpose is to compute geo statistical value
 			int geoCounter = 1, nbGeo = geoFeatureStore.getFeatures().size();
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-			FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures()).features();
+			FeatureIterator<SimpleFeature> itGeo = geoFeatureStore.getFeatures().features();
 			while (itGeo.hasNext()) {
 				SimpleFeature geoUnit = itGeo.next();
 				String geoId = geoUnit.getAttribute(geoIdFieldName).toString();
@@ -207,7 +207,7 @@ public class DasymetricMapping {
 				//get all stat units intersecting the geo (with spatial index)
 				Filter f = ff.bbox(ff.property("the_geom"), geoUnit.getBounds());
 				//Filter f = ff.intersects(ff.property("the_geom"), ff.literal(geoGeom));
-				FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures(f)).features();
+				FeatureIterator<SimpleFeature> itStat = statUnitsInitialFeatureStore.getFeatures(f).features();
 
 				int nbStat = 0; double geoStatValue = 0;
 				while (itStat.hasNext()) {
@@ -275,7 +275,7 @@ public class DasymetricMapping {
 			//go through init stats - purpose is to distribute stat value to geo objects
 			int statIniCounter = 1, nbStatIni = statUnitsInitialFeatureStore.getFeatures().size();
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-			FeatureIterator<SimpleFeature> itStatIni = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures()).features();
+			FeatureIterator<SimpleFeature> itStatIni = statUnitsInitialFeatureStore.getFeatures().features();
 			while (itStatIni.hasNext()) {
 				SimpleFeature statIni = itStatIni.next();
 				String statIniId = statIni.getAttribute(statUnitsInitialIdFieldName).toString();
@@ -290,7 +290,7 @@ public class DasymetricMapping {
 				//get all geo intersecting the statIni (with spatial index)
 				//Filter f = ff.bbox(ff.property("the_geom"), statIni.getBounds());
 				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statIniGeom));
-				SimpleFeatureCollection col = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f));
+				SimpleFeatureCollection col = geoFeatureStore.getFeatures(f);
 				int nbGeo = col.size();
 				if(nbGeo == 0) continue;
 				FeatureIterator<SimpleFeature> itGeo = col.features();
@@ -327,7 +327,7 @@ public class DasymetricMapping {
 			//go through statistical units
 			int statCounter = 1, nbStats = statUnitsFinalFeatureStore.getFeatures().size();
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-			FeatureIterator<SimpleFeature> itStat = ((SimpleFeatureCollection) statUnitsFinalFeatureStore.getFeatures()).features();
+			FeatureIterator<SimpleFeature> itStat = statUnitsFinalFeatureStore.getFeatures().features();
 			while (itStat.hasNext()) {
 				SimpleFeature statUnit = itStat.next();
 				String statUnitId = statUnit.getAttribute(statUnitsFinalIdFieldName).toString();
@@ -338,7 +338,7 @@ public class DasymetricMapping {
 				//get all geo features intersecting the stat unit (with spatial index)
 				Filter f = ff.bbox(ff.property("the_geom"), statUnit.getBounds());
 				//Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitGeom));
-				FeatureIterator<SimpleFeature> itGeo = ((SimpleFeatureCollection) geoFeatureStore.getFeatures(f)).features();
+				FeatureIterator<SimpleFeature> itGeo = geoFeatureStore.getFeatures(f).features();
 
 				//compute stat on geo features
 				double statSum=0, weightsSum=0;
@@ -398,7 +398,7 @@ public class DasymetricMapping {
 
 			//go through initial statistical units
 			int statCounter = 1, nbStats = statUnitsInitialFeatureStore.getFeatures().size();
-			FeatureIterator<SimpleFeature> itStatIni = ((SimpleFeatureCollection) statUnitsInitialFeatureStore.getFeatures()).features();
+			FeatureIterator<SimpleFeature> itStatIni = statUnitsInitialFeatureStore.getFeatures().features();
 			while (itStatIni.hasNext()) {
 				SimpleFeature statUnitIni = itStatIni.next();
 				String statUnitIniId = statUnitIni.getAttribute(statUnitsInitialIdFieldName).toString();
@@ -417,7 +417,7 @@ public class DasymetricMapping {
 				Geometry statUnitIniGeom = (Geometry) statUnitIni.getDefaultGeometryProperty().getValue();
 				//Filter f = ff.bbox(ff.property("the_geom"), statUnitIni.getBounds());
 				Filter f = ff.intersects(ff.property("the_geom"), ff.literal(statUnitIniGeom));
-				FeatureIterator<SimpleFeature> itStatFin = ((SimpleFeatureCollection) statUnitsFinalFeatureStore.getFeatures(f)).features();
+				FeatureIterator<SimpleFeature> itStatFin = statUnitsFinalFeatureStore.getFeatures(f).features();
 
 				//compute stat on stat unit final
 				while (itStatFin.hasNext()) {
