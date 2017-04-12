@@ -1,8 +1,5 @@
 package eu.ec.estat.geostat;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -15,16 +12,36 @@ import org.opengis.filter.FilterFactory2;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
-import eu.ec.estat.java4eurostat.io.CSV;
-import eu.ec.estat.java4eurostat.io.DicUtil;
 
 /**
  * @author julien Gaffuri
  *
  */
 public class StatisticalUnitsIntersectionMatrix {
+
+	// The statistical unit feature stores and the attributes to use as identifiers.
+	private SimpleFeatureStore su1, su2;
+	private String idField1, idField2;
+
+
+	/**
+	 * The intersection matrix as stat hypercube. Dimensions are:
+	 * - idField1 and idField2: The ids of respectivelly the SU1 and SU2
+	 * - type: Values are "intersection_area", "ratio1from2" and "ratio2from1"
+	 */
+	public StatsHypercube interSectionMatrix = null;
+
+
+	public StatisticalUnitsIntersectionMatrix(SimpleFeatureStore su1, String idField1, SimpleFeatureStore su2, String idField2){
+		this.su1 = su1;
+		this.su2 = su2;
+		this.idField1 = idField1;
+		this.idField2 = idField2;
+	}
+
 
 	/**
 	 * Compute the intersection matrix between two statistical unit datasets of a same area of interest.
@@ -40,31 +57,25 @@ public class StatisticalUnitsIntersectionMatrix {
 	 * @param su2 the second dataset
 	 * @param idField2 name of the second dataset id attribute
 	 * @param outFolder the folder where output files are stored
+	 * @throws IOException 
 	 */
-	public static void compute(String suName1, SimpleFeatureStore su1, String idField1, String suName2, SimpleFeatureStore su2, String idField2, String outFolder) throws IOException{
+	public StatisticalUnitsIntersectionMatrix compute() throws IOException{
+		interSectionMatrix = new StatsHypercube(this.idField1, this.idField2, "type");
 
-		//create output files
-		BufferedWriter bw1from2 = createFile(outFolder+"/matrix_"+suName1+"_from_"+suName2+".csv", true);
-		bw1from2.write(suName1+","+suName2+",ratio,intersection_area"); bw1from2.newLine();
-		BufferedWriter bw2from1 = createFile(outFolder+"/matrix_"+suName2+"_from_"+suName1+".csv", true);
-		bw2from1.write(suName2+","+suName1+",ratio,intersection_area"); bw2from1.newLine();
-
-		//load shapefile 1
+		//load statistical units 1
 		int nb1 = su1.getFeatures().size();
 		FeatureIterator<SimpleFeature> itSu1 = su1.getFeatures().features();
 
-		//(pre)load shapefile 2
-		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
-
-		//go through shapefile 1
+		//go through statistical units 1
 		int counter = 1;
+		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 		while (itSu1.hasNext()) {
 			SimpleFeature f1 = itSu1.next();
 			String id1 = f1.getAttribute(idField1).toString();
 			Geometry geom1 = (Geometry) f1.getDefaultGeometryProperty().getValue();
 			double a1 = geom1.getArea();
 
-			System.out.println(suName1+"(id="+id1+") intersection with "+ suName2 +". counter=" + " " + (counter++) + "/" + nb1 + " " + (Math.round(10000*counter/nb1))*0.01 + "%");
+			System.out.println("SU1 (id="+id1+") intersection with SU2. counter=" + " " + (counter++) + "/" + nb1 + " " + (Math.round(10000*counter/nb1))*0.01 + "%");
 
 			//get all su2 intersecting the su1 (with spatial index)
 			//Filter f = ff.bbox(ff.property("the_geom"), f1.getBounds());
@@ -82,62 +93,55 @@ public class StatisticalUnitsIntersectionMatrix {
 				double interArea = geom1.intersection(geom2).getArea();
 				if(interArea == 0) continue;
 
-				//store relation data
-				bw1from2.write( id1+","+id2+","+(interArea/geom2.getArea())+","+interArea );
-				bw1from2.newLine();
-				bw2from1.write( id2+","+id1+","+(interArea/a1)+","+interArea );
-				bw2from1.newLine();
+				//store intersection data
+				interSectionMatrix.stats.add(new Stat(interArea, this.idField1, id1, this.idField2, id2, "type", "intersection_area"));
+				interSectionMatrix.stats.add(new Stat(interArea/geom2.getArea(), this.idField1, id1, this.idField2, id2, "type", "ratio1from2"));
+				interSectionMatrix.stats.add(new Stat(interArea/a1, this.idField1, id1, this.idField2, id2, "type", "ratio2from1"));
 			}
 			itSu2.close();
 		}
 		itSu1.close();
-		bw1from2.close();
-		bw2from1.close();
+
+		return this;
 	}
 
 
-	//TODO: document. compute 1 from 2. Can be seen as conversion from 2 to 1.
-	public static void computeStatValueFromIntersection(String datasetName1, String idField1, String datasetName2, String idField2, String statValuesFilePath2, String intersectionMatrix1from2, String outFolder) throws IOException {
-		//create out file
-		BufferedWriter bw1from2 = createFile(outFolder+"stat_values_"+datasetName1+"_from_"+datasetName2+"_intersection.csv", true);
-		bw1from2.write(datasetName1+",value_from_"+datasetName2+"_intersection"); bw1from2.newLine();
+	/**
+	 * Compute statistical values over SU2 from statistical valuesover SU1.
+	 * 
+	 * @param iniStatValues
+	 * @return
+	 */
+	public StatsHypercube computeStatValueFromIntersection(HashMap<String,Double> iniStatValues) {
+		String idFieldIni = this.idField1, idFieldFin = this.idField2, type = "ratio2from1";
 
-		//load intersection matrix
-		StatsHypercube matrix = CSV.load(intersectionMatrix1from2, "ratio"); matrix.delete("intersection_area");
-		StatsIndex matrixI = new StatsIndex(matrix, "municipality", "grid"); matrix = null;
-		//matrixI.print();
+		//the output data
+		StatsHypercube out = new StatsHypercube(idFieldFin);
 
-		//load 2 stat values
-		HashMap<String, String> statValues2 = DicUtil.load(statValuesFilePath2, ",");
+		//index matrix figures
+		StatsIndex interInd = new StatsIndex(interSectionMatrix.selectDimValueEqualTo("type",type).shrinkDims(), idFieldFin, idFieldIni);
 
-		for(String id1 : matrixI.getKeys()){
-			double statValue1 = 0;
+		for(String idFin : interInd.getKeys()){
+			double statValueFin = 0;
+			double sWeigths = 0;
+
 			//compute weigthted average of 2 contributions
-			for(String id2 : matrixI.getKeys(id1)){
-				String statValue2 = statValues2.get(id2);
-				if(statValue2 == null || statValue2.equals("")) continue;
+			for(String idIni : interInd.getKeys(idFin)){
+				double iniStatValue = iniStatValues.get(idIni);
+				if(Double.isNaN(iniStatValue)) continue;
 
-				String weight = matrixI.getSingleValueFlagged(id1, id2);
-				if(weight == null || weight.equals("")) continue;
+				double weight = interInd.getSingleValue(idFin, idIni);
+				if(Double.isNaN(weight)) continue;
 
-				statValue1 += Double.parseDouble(weight) * Double.parseDouble(statValue2);
+				statValueFin += weight * iniStatValue;
+				sWeigths += weight;
 			}
+			statValueFin = sWeigths==0? 0 : statValueFin/sWeigths;
 			//store
-			bw1from2.write( id1+","+statValue1 );
-			bw1from2.newLine();
+			out.stats.add( new Stat(statValueFin, idFieldFin, idFin) );
 		}
-		bw1from2.close();
-	}
 
-
-	//create out file
-	private static BufferedWriter createFile(String path, boolean override){
-		File f = new File(path);
-		if(override && f.exists()) f.delete();
-		try {
-			return new BufferedWriter(new FileWriter(f, true));
-		} catch (IOException e) { e.printStackTrace(); }
-		return null;
+		return out;
 	}
 
 }
