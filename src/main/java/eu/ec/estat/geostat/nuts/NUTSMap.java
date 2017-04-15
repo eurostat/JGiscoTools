@@ -56,7 +56,7 @@ public class NUTSMap extends StatisticalMap {
 		this.lod = lod;
 
 		//stat units
-		this.statisticalUnits = NUTSShapeFile.get(this.lod, "RG").getFeatureCollection(NUTSShapeFile.getFilterByLevel(this.nutsLevel));
+		this.statisticalUnits = NUTSShapeFile.getRG(this.lod, "RG", this.nutsLevel).getFeatureCollection();
 
 		this.map.getViewport().setCoordinateReferenceSystem( this.statisticalUnits.getSchema().getCoordinateReferenceSystem() );
 		this.setBounds(2580000.0, 7350000.0, 1340000.0, 5450000.0);

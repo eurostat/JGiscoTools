@@ -38,10 +38,10 @@ public class NUTSShapeFile {
 	public static ShapeFile get(int lod, String proj, String type, Filter filter){ return get(2013, lod, proj, type, filter); }
 
 	public static ShapeFile getRG(int lvl){ return getRG(1,"LAEA",lvl); }
-	public static ShapeFile getRG(int lod, String proj, int lvl){ return getRG(lod, proj, getFilterByLevel(lvl)); }
+	public static ShapeFile getRG(int lod, String proj, int lvl){ return new ShapeFile(BASE_PATH + 2013 + "/" + lod + "M/" + proj + "/" + "RG" + ".shp", withMemoryMappedBuffer); }
 	public static ShapeFile getRG(int lod, String proj, Filter filter){ return get(2013, lod, proj, "RG", filter); }
 
-	//filters by level
+	/*/filters by level
 	private static Filter[] filterByLevel = null;
 	public static Filter getFilterByLevel(int lvl){
 		if(filterByLevel == null)
@@ -61,7 +61,7 @@ public class NUTSShapeFile {
 			} catch (CQLException e) { e.printStackTrace(); }
 
 		return filterByLevel_[lvl];
-	}
+	}*/
 
 
 	//filters for nuts boundaries
