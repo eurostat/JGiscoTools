@@ -10,7 +10,6 @@ import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.function.Classifier;
-import org.geotools.filter.function.RangedClassifier;
 import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
@@ -21,7 +20,6 @@ import eu.ec.estat.geostat.MappingUtils;
 import eu.ec.estat.geostat.StatisticalMap;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.io.EurobaseIO;
-import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
  * 
@@ -45,7 +43,6 @@ public class NUTSMap extends StatisticalMap {
 	public Color nutsBNColor2 = Color.WHITE;
 
 
-	//TODO test
 	public NUTSMap(int nutsLevel, String databaseCode, Classifier classifier, String... dimLabelValues){
 		this(nutsLevel, 20, EurobaseIO.getData(databaseCode, dimLabelValues), classifier, dimLabelValues);
 	}
@@ -142,8 +139,19 @@ public class NUTSMap extends StatisticalMap {
 		//EurobaseIO.update(dataPath, "tour_occ_nim", "tour_occ_nin2");
 
 
-		//load stat data
+		//TODO bug in legend: always same values...
+		//TODO map ratio
+		new NUTSMap(1, 60, "tour_occ_nin2", null, "unit","NR","nace_r2","I551-I553","indic_to","B006","time","2012")
+		.makeDark()
+		.make()
+		//.printClassification()
+		.saveAsImage(outPath + "map.png", 1000, true, true)
+		.saveLegendAsImage(outPath + "legend.png")
+		.dispose()
+		;
 
+
+		/*
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006").shrinkDims();
 		//data = NUTSUtils.computePopRatioFigures(data, 1000, true);
 		data = NUTSUtils.computeDensityFigures(data);
@@ -159,7 +167,7 @@ public class NUTSMap extends StatisticalMap {
 			.saveLegendAsImage(outPath + "legend.png")
 			.dispose()
 			;
-		}
+		}*/
 
 
 		/*HashMap<String, Double> statData =
