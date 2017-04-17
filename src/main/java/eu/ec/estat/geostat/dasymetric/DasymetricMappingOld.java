@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
@@ -47,7 +48,7 @@ public class DasymetricMappingOld {
 		ShapeFile geoShp = new ShapeFile(geoSHPFile);
 
 		FeatureIterator<SimpleFeature> itStat = statShp.getFeatures();
-		aggregateGeoStatsFromGeoToStatisticalUnits(itStat, statUnitIdField, geoShp.getFeatureStore(), statUnitOutFile);
+		aggregateGeoStatsFromGeoToStatisticalUnits(itStat, statUnitIdField, geoShp.getFeatureSource(), statUnitOutFile);
 		itStat.close();
 	}
 
@@ -57,7 +58,7 @@ public class DasymetricMappingOld {
 		itStat.close();
 	}
 
-	public static void aggregateGeoStatsFromGeoToStatisticalUnits(FeatureIterator<SimpleFeature> itStat, String statUnitIdField, SimpleFeatureStore geoFeatureStore, String statUnitOutFile) {
+	public static void aggregateGeoStatsFromGeoToStatisticalUnits(FeatureIterator<SimpleFeature> itStat, String statUnitIdField, SimpleFeatureSource geoFeatureStore, String statUnitOutFile) {
 		try {
 			//create out file
 			File outFile_ = new File(statUnitOutFile);

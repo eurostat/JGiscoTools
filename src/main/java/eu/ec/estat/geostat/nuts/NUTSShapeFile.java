@@ -27,19 +27,27 @@ public class NUTSShapeFile {
 	 * @param type The object type, among RG,BN,LB,JOIN,SEPA
 	 * @return
 	 */
-	public static ShapeFile get(int year, int lod, String proj, String type, Filter filter){
-		return new ShapeFile(BASE_PATH + year + "/" + lod + "M/" + proj + "/" + type + ".shp", withMemoryMappedBuffer, filter);
-	}
 
 	public static ShapeFile get(){ return get("RG"); }
-	public static ShapeFile get(String type){ return get(1, type); }
-	public static ShapeFile get(int lod, String type){ return get(lod, "LAEA", type); }
-	public static ShapeFile get(int lod, String proj, String type){ return get(2013, lod, proj, type, null); }
-	public static ShapeFile get(int lod, String proj, String type, Filter filter){ return get(2013, lod, proj, type, filter); }
+	public static ShapeFile get(String type){ return get(type, 10); }
+	public static ShapeFile get(String type, int lod){ return get(type, 2013, lod, "LAEA"); }
+	public static ShapeFile get(String type, int year, int lod, String proj){
+		return new ShapeFile(BASE_PATH + year + "/" + lod + "M/" + proj + "/" + type + ".shp", withMemoryMappedBuffer);
+	}
 
-	public static ShapeFile getRG(int lvl){ return getRG(1,"LAEA",lvl); }
-	public static ShapeFile getRG(int lod, String proj, int lvl){ return new ShapeFile(BASE_PATH + 2013 + "/" + lod + "M/" + proj + "/" + "RG" + ".shp", withMemoryMappedBuffer); }
-	public static ShapeFile getRG(int lod, String proj, Filter filter){ return get(2013, lod, proj, "RG", filter); }
+	//public static ShapeFile get(int lod, String proj, String type, Filter filter){ return get(2013, lod, proj, type, filter); }
+
+	public static ShapeFile getRG(int lvl){ return getRG(lvl,20); }
+	public static ShapeFile getRG(int lvl, int lod){ return getRG(lvl,lod,"LAEA"); }
+	public static ShapeFile getRG(int lvl, int lod, String proj){ return getRG(2013,lvl,lod,"LAEA"); }
+	public static ShapeFile getRG(int year, int lvl, int lod, String proj){
+		return new ShapeFile(BASE_PATH + year + "/" + lod + "M/" + proj + "/lvl" + lvl + "/" + "RG.shp", withMemoryMappedBuffer);
+	}
+	//public static ShapeFile getRG(int lod, String proj, Filter filter){ return get(2013, lod, proj, "RG", filter); }
+
+	public static ShapeFile getRGForArea(){
+		return new ShapeFile(BASE_PATH + "2013/1M/LAEA/RG.shp", withMemoryMappedBuffer);
+	}
 
 	/*/filters by level
 	private static Filter[] filterByLevel = null;
@@ -121,9 +129,9 @@ public class NUTSShapeFile {
 	}
 
 	public static ShapeFile getCNTR(){ return getCNTR("RG"); }
-	public static ShapeFile getCNTR(String type){ return getCNTR(3, type); }
-	public static ShapeFile getCNTR(int lod, String type){ return getCNTR(lod, "LAEA", type); }
-	public static ShapeFile getCNTR(int lod, String proj, String type){ return getCNTR(2014, lod==1?3:lod, proj, type); }
+	public static ShapeFile getCNTR(String type){ return getCNTR(type, 3); }
+	public static ShapeFile getCNTR(String type, int lod){ return getCNTR(type, lod, "LAEA"); }
+	public static ShapeFile getCNTR(String type, int lod, String proj){ return getCNTR(2014, lod==1?3:lod, proj, type); }
 
 	//used to filter only neighbour countries
 	public static final String CNTR_NEIG_CNTR = "CNTR_ID='SM' OR CNTR_ID='VA' OR CNTR_ID='AD' OR CNTR_ID='MC' OR CNTR_ID='LI' OR CNTR_ID='AX'"

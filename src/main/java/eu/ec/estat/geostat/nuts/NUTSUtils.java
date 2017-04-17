@@ -80,7 +80,7 @@ public class NUTSUtils {
 					"time", "geo"
 					);
 		}
-		return nutsPop.getSingleValue(year+" ", nutsCode);
+		return nutsPop.getSingleValue(year+"", nutsCode);
 	}
 
 	//Area by NUTS 3 region (demo_r_d3area) LANDUSE=L0008;TOTAL  UNIT=KM2
@@ -95,14 +95,14 @@ public class NUTSUtils {
 					"landuse", "time", "geo"
 					);
 		}
-		return nutsArea.getSingleValue(landuse, year+" ", nutsCode);
+		return nutsArea.getSingleValue(landuse, year, nutsCode);
 	}*/
 
 	private static HashMap<String,Double> nutsArea = null;
 	public static Double getNUTSArea(String geo){
 		if(nutsArea == null){
 			nutsArea = new HashMap<String,Double>();
-			ShapeFile shp = NUTSShapeFile.get();
+			ShapeFile shp = NUTSShapeFile.getRGForArea();
 			FeatureIterator<SimpleFeature> it = shp.getFeatures();
 			while (it.hasNext()) {
 				SimpleFeature f = it.next();

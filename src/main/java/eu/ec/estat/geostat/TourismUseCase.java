@@ -94,7 +94,7 @@ public class TourismUseCase {
 						//keep only nuts 2 regions
 						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } },
 						//keep only years after 2010
-						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace(" ", "")) >= 2010; } }
+						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace("", "")) >= 2010; } }
 						));
 		hc.delete("unit"); hc.delete("indic_to");
 		StatsIndex hcI = new StatsIndex(hc, "nace_r2", "time", "geo");
@@ -123,7 +123,7 @@ public class TourismUseCase {
 						//keep only nuts 2 regions
 						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } },
 						//keep only years after 2010
-						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace(" ", "")) >= 2010; } }
+						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace("", "")) >= 2010; } }
 						));
 		hc.delete("unit"); hc.delete("indic_to");
 		StatsIndex hcI = new StatsIndex(hc, "nace_r2", "time", "geo");
@@ -144,12 +144,12 @@ public class TourismUseCase {
 				DasymetricMapping dm = new DasymetricMapping(
 						1,
 						null,
-						new ShapeFile("resources/NUTS/2013/1M/LAEA/lvl2/RG.shp").getFeatureStore(),
+						new ShapeFile("resources/NUTS/2013/1M/LAEA/lvl2/RG.shp").getFeatureSource(),
 						//NUTSShapeFile.getRG(2).getFeatureStore(),
 						"NUTS_ID",
-						new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
+						new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureSource(),
 						"ID2",
-						new ShapeFile(BASE_PATH+"grid/10km/grid10km.shp").getFeatureStore(),
+						new ShapeFile(BASE_PATH+"grid/10km/grid10km.shp").getFeatureSource(),
 						"ID_"
 						);
 
@@ -211,7 +211,7 @@ public class TourismUseCase {
 						//keep only nuts 2 regions
 						new Selection.Criteria() { public boolean keep(Stat stat) { return stat.dims.get("geo").length() == 4; } },
 						//keep only years after 2010
-						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace(" ", "")) >= 2010; } }
+						new Selection.Criteria() { public boolean keep(Stat stat) { return Integer.parseInt(stat.dims.get("time").replace("", "")) >= 2010; } }
 						));
 		hc.delete("unit"); hc.delete("indic_to");
 		StatsIndex hcI = new StatsIndex(hc, "nace_r2", "time", "geo");
@@ -233,12 +233,12 @@ public class TourismUseCase {
 			DasymetricMapping dm = new DasymetricMapping(
 					1,
 					null,
-					new ShapeFile("resources/NUTS/2013/1M/LAEA/lvl2/RG.shp").getFeatureStore(),
+					new ShapeFile("resources/NUTS/2013/1M/LAEA/lvl2/RG.shp").getFeatureSource(),
 					//NUTSShapeFile.getRG(2).getFeatureStore(),
 					"NUTS_ID",
-					new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureStore(),
+					new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureSource(),
 					"ID",
-					NUTSShapeFile.getRG(3).getFeatureStore(),
+					NUTSShapeFile.getRG(3).getFeatureSource(),
 					"NUTS_ID"
 					);
 
@@ -331,14 +331,14 @@ public class TourismUseCase {
 		int time = 2015;
 
 		//computed data: nuts 3 level map
-		statData = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens.csv", "value").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+" ").shrinkDims().toMap();
+		statData = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens.csv", "value").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+"").shrinkDims().toMap();
 		new NUTSMap(3, 60, statData, classifier).setTitle("NUTS 3 - "+time).make()
 		.saveLegendAsImage(outPath+"legend.png", 0, 150, 20, 5)
 		.saveAsImage(outPath+"map_result_nuts3_"+time+".png").dispose();
 		//*/
 
 		//nuts 2 level map
-		statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+" ").shrinkDims().toMap();
+		statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+"").shrinkDims().toMap();
 		new NUTSMap(2, 60, statData, classifier).setTitle("NUTS 2 - "+time).make()
 		.saveAsImage(outPath+"map_nuts2_"+time+".png").dispose();
 		//*/
@@ -347,7 +347,7 @@ public class TourismUseCase {
 		StatsHypercube hc = CSV.load("H:/methnet/geostat/validation/validation_data_2013_filtered.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006").shrinkDims();
 		hc = NUTSUtils.computePopRatioFigures(hc);
 		for(int time_ = 2005; time_<= 2013; time_++){
-			statData = hc.selectDimValueEqualTo("time",time_+" ").shrinkDims().toMap();
+			statData = hc.selectDimValueEqualTo("time",time_+"").shrinkDims().toMap();
 			new NUTSMap(3, 60, statData, classifier).setTitle("NUTS 3 validation - "+time_).make()
 			.saveAsImage(outPath+"map_validation_data_nuts3_"+time_+".png", 1000, true, false).dispose();
 		}
@@ -360,7 +360,7 @@ public class TourismUseCase {
 
 		StatsHypercube hc = CSV.load("H:/methnet/geostat/validation/validation_result_diff_abs.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006").shrinkDims();
 		for(int time_ = 2010; time_<= 2013; time_++){
-			HashMap<String, Double> statData = hc.selectDimValueEqualTo("time",time_+" ").shrinkDims().toMap();
+			HashMap<String, Double> statData = hc.selectDimValueEqualTo("time",time_+"").shrinkDims().toMap();
 			new NUTSMap(3, 60, statData, classifier).setTitle(time_+" - error").make().saveAsImage(outPath+"map_validation_result_diff_abs_"+time_+".png", 1000, true, false).dispose();
 		}
 		//*/
@@ -389,7 +389,7 @@ public class TourismUseCase {
 			String key = geo+"_"+time;
 			Stat s_ = data.get(key);
 			if(s_ == null){
-				s_ = new Stat(s.value,"geo",geo,"time",time+" ");
+				s_ = new Stat(s.value,"geo",geo,"time",time+"");
 				data.put(key, s_);
 			} else {
 				s_.value += s.value;
@@ -462,11 +462,11 @@ public class TourismUseCase {
 			String geo2 = geo.substring(0, 4);
 			String time = s.dims.get("time");
 
-			Collection<Stat> col = dataNuts2Ind.getCollection(geo2, time+" ");
+			Collection<Stat> col = dataNuts2Ind.getCollection(geo2, time+"");
 			if(col == null) continue;
 
 			for(Stat s2 : col){
-				s.dims.put("time", time+" ");
+				s.dims.put("time", time+"");
 				s.dims.put("nace_r2", s2.dims.get("nace_r2"));
 				s.dims.put("indic_to", "B006");
 				hcValNuts3Filtered.stats.add(s);

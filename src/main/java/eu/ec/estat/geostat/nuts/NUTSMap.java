@@ -10,6 +10,7 @@ import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.function.Classifier;
+import org.geotools.filter.function.RangedClassifier;
 import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
@@ -18,7 +19,9 @@ import org.opengis.filter.FilterFactory;
 
 import eu.ec.estat.geostat.MappingUtils;
 import eu.ec.estat.geostat.StatisticalMap;
-import eu.ec.estat.java4eurostat.io.CSV;
+import eu.ec.estat.java4eurostat.base.StatsHypercube;
+import eu.ec.estat.java4eurostat.io.EurobaseIO;
+import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
  * 
@@ -42,13 +45,16 @@ public class NUTSMap extends StatisticalMap {
 	public Color nutsBNColor2 = Color.WHITE;
 
 
-	//TODO solve time+" " issue
-	/*public NUTSMap(int nutsLevel, int lod, String databaseCode, Classifier classifier, String... dimLabelValues){
+	//TODO test
+	public NUTSMap(int nutsLevel, String databaseCode, Classifier classifier, String... dimLabelValues){
+		this(nutsLevel, 20, EurobaseIO.getData(databaseCode, dimLabelValues), classifier, dimLabelValues);
+	}
+	public NUTSMap(int nutsLevel, int lod, String databaseCode, Classifier classifier, String... dimLabelValues){
 		this(nutsLevel, lod, EurobaseIO.getData(databaseCode, dimLabelValues), classifier, dimLabelValues);
 	}
 	public NUTSMap(int nutsLevel, int lod, StatsHypercube sh, Classifier classifier, String... dimLabelValues){
-		this(nutsLevel, lod, "geo", sh.selectDimValueEqualTo(dimLabelValues).shrinkDims().toMap(), classifier);
-	}*/
+		this(nutsLevel, lod, sh.selectDimValueEqualTo(dimLabelValues).shrinkDims().toMap(), classifier);
+	}
 
 	public NUTSMap(int nutsLevel, int lod, HashMap<String, Double> statData, Classifier classifier){
 		super(null, "NUTS_ID", statData, null, classifier);
@@ -56,7 +62,7 @@ public class NUTSMap extends StatisticalMap {
 		this.lod = lod;
 
 		//stat units
-		this.statisticalUnits = NUTSShapeFile.getRG(this.lod, "RG", this.nutsLevel).getFeatureCollection();
+		this.statisticalUnits = NUTSShapeFile.getRG(this.nutsLevel, this.lod).getFeatureCollection();
 
 		this.map.getViewport().setCoordinateReferenceSystem( this.statisticalUnits.getSchema().getCoordinateReferenceSystem() );
 		this.setBounds(2580000.0, 7350000.0, 1340000.0, 5450000.0);
@@ -71,8 +77,8 @@ public class NUTSMap extends StatisticalMap {
 			map.addLayer( new FeatureLayer(graticulesFS, MappingUtils.getLineStyle(this.graticulesColor, this.graticulesWidth)) );
 
 		//countries
-		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "RG").getFeatureCollection(NUTSShapeFile.CNTR_NEIG_CNTR), MappingUtils.getPolygonStyle(cntrRGColor, null)) );
-		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR(lod, "BN").getFeatureCollection("COAS_FLAG='F'"), MappingUtils.getLineStyle(cntrBNColor, 0.2)) );
+		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR("RG", lod).getFeatureCollection(NUTSShapeFile.CNTR_NEIG_CNTR), MappingUtils.getPolygonStyle(cntrRGColor, null)) );
+		map.addLayer( new FeatureLayer(NUTSShapeFile.getCNTR("BN", lod).getFeatureCollection("COAS_FLAG='F'"), MappingUtils.getLineStyle(cntrBNColor, 0.2)) );
 
 		//join stat data, if any
 		String valuePropName = "Prop"+((int)(1000000*Math.random()));
@@ -96,23 +102,23 @@ public class NUTSMap extends StatisticalMap {
 
 		//BN
 		if(this.nutsLevel == 0){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 0.8)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get("BN", lod).getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 0.8)) );
 		} else if(this.nutsLevel == 1){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.3)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get("BN", lod).getFeatureCollection("STAT_LEVL_<=1 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.3)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get("BN", lod).getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
 		} else if(this.nutsLevel == 2){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.3)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get("BN", lod).getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.3)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get("BN", lod).getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
 		} else if(this.nutsLevel == 3){
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.5)) );
-			map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "BN").getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get("BN", lod).getFeatureCollection("STAT_LEVL_<=2 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor1, 0.5)) );
+			map.addLayer( new FeatureLayer(NUTSShapeFile.get("BN", lod).getFeatureCollection("STAT_LEVL_<=0 AND COAS_FLAG='F'"), MappingUtils.getLineStyle(nutsBNColor2, 1)) );
 		}
 
 		//sepa and join
 		if(showJoin || showSepa){
 			Style sepaJoinStyle = MappingUtils.getLineStyle(Color.GRAY, 0.3);
-			if(showJoin) map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "JOIN").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
-			if(showSepa) map.addLayer( new FeatureLayer(NUTSShapeFile.get(lod, "SEPA").getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
+			if(showJoin) map.addLayer( new FeatureLayer(NUTSShapeFile.get("JOIN", lod).getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
+			if(showSepa) map.addLayer( new FeatureLayer(NUTSShapeFile.get("SEPA", lod).getFeatureCollection(NUTSShapeFile.getFilterSepaJoinLoD(this.lod)), sepaJoinStyle) );
 		}
 
 		return this;
@@ -130,32 +136,33 @@ public class NUTSMap extends StatisticalMap {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");
 
-		String outPath = "H:/desktop/";
-		//String outPath = "/home/juju/Bureau/";
-		//String dataPath = "stat_cache/";
+		//String outPath = "H:/desktop/", dataPath = "stat_cache/";
+		String outPath = "/home/juju/Bureau/", dataPath = "/home/juju/stat_cache/";
 
 		//EurobaseIO.update(dataPath, "tour_occ_nim", "tour_occ_nin2");
 
-		/*/load stat data
+
+		//load stat data
+
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006").shrinkDims();
 		//data = NUTSUtils.computePopRatioFigures(data, 1000, true);
 		data = NUTSUtils.computeDensityFigures(data);
 
-		RangedClassifier cl = getClassifier(data.getQuantiles(8));
+		RangedClassifier cl = MappingUtils.getClassifier(data.getQuantiles(8));
 		for(int year = 2010; year<=2015; year++) {
-			new NUTSMap(2, 60, "geo", data.selectDimValueEqualTo("time",year+" ").shrinkDims().toMap(), null)
+			new NUTSMap(2, 60, data.selectDimValueEqualTo("time",year+"").shrinkDims().toMap(), cl)
 			//.makeDark()
 			.setTitle(year+"")
-			.setClassifier(cl)
 			.make()
 			//.printClassification()
 			.saveAsImage(outPath + "map_"+year+".png", 1000, true, true)
-			//.saveLegendAsImage(outPath + "legend.png")
+			.saveLegendAsImage(outPath + "legend.png")
 			.dispose()
 			;
-		}*/
+		}
 
-		HashMap<String, Double> statData =
+
+		/*HashMap<String, Double> statData =
 				CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3.csv", "value").selectDimValueEqualTo("nace_r2", "I551-I553", "time", "2015 ")
 				.shrinkDims().toMap();
 		new NUTSMap(3, 60, statData, null)
@@ -164,7 +171,9 @@ public class NUTSMap extends StatisticalMap {
 		.setTitle("2015")
 		.make()
 		.saveAsImage(outPath+"map.png")
-		.dispose();
+		.dispose();*/
+
+
 
 		System.out.println("End.");
 	}

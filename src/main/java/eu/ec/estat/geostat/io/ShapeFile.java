@@ -19,6 +19,7 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.data.store.ContentFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -46,10 +47,10 @@ public class ShapeFile {
 	private static final FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 	private ShapefileDataStore dataStore;
-	private SimpleFeatureStore featureStore; //ShapefileFeatureStore
+	private ContentFeatureSource featureSource; //SimpleFeatureStore //ContentFeatureSource //SimpleFeatureSource
 	private Filter fil;
 
-	public SimpleFeatureStore getFeatureStore(){ return featureStore; }
+	public ContentFeatureSource getFeatureSource(){ return featureSource; }
 
 	/**
 	 * Open a shapefile
@@ -110,7 +111,7 @@ public class ShapeFile {
 			params.put("url", new File(path).toURI().toURL());
 			if(withMemoryMappedBuffer) params.put("memory mapped buffer", Boolean.TRUE); else params.put("memory mapped buffer", Boolean.FALSE);
 			dataStore = (ShapefileDataStore) DataStoreFinder.getDataStore(params);
-			featureStore = (SimpleFeatureStore) dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
+			featureSource = (ContentFeatureSource) dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 
@@ -127,7 +128,7 @@ public class ShapeFile {
 
 	//get basic info on shp file
 
-	public SimpleFeatureType getSchema() { return featureStore.getSchema(); }
+	public SimpleFeatureType getSchema() { return featureSource.getSchema(); }
 	public String[] getAttributeNames(){
 		return getAttributeNames(getSchema());
 	}
@@ -147,7 +148,7 @@ public class ShapeFile {
 	public FeatureIterator<SimpleFeature> getFeatures(String cqlString){ return getFeatures(getFilterFromCQL(cqlString)); }
 	public FeatureIterator<SimpleFeature> getFeatures(Filter filter) {
 		try {
-			return ((SimpleFeatureCollection) featureStore.getFeatures(ff.and(fil, filter))).features();
+			return ((SimpleFeatureCollection) featureSource.getFeatures(ff.and(fil, filter))).features();
 		} catch (IOException e) { e.printStackTrace(); }
 		return null;
 	}
@@ -165,7 +166,7 @@ public class ShapeFile {
 
 	public DefaultFeatureCollection getSimpleFeatures(){ return getSimpleFeatures(null); }
 	public DefaultFeatureCollection getSimpleFeatures(Filter filter){
-		try { return DataUtilities.collection(featureStore.getFeatures(ff.and(fil, filter))); } catch (Exception e) { e.printStackTrace(); }
+		try { return DataUtilities.collection(featureSource.getFeatures(ff.and(fil, filter))); } catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
 
@@ -175,7 +176,7 @@ public class ShapeFile {
 	public int count(String cqlString){ return count(getFilterFromCQL(cqlString)); }
 	public int count(Filter filter){
 		try {
-			return featureStore.getCount(new Query( featureStore.getSchema().getTypeName(), ff.and(fil, filter) ));
+			return featureSource.getCount(new Query( featureSource.getSchema().getTypeName(), ff.and(fil, filter) ));
 		} catch (IOException e) { e.printStackTrace(); }
 		return -1;
 	}
@@ -189,7 +190,7 @@ public class ShapeFile {
 	public SimpleFeatureCollection getFeatureCollection(String cqlString){ return getFeatureCollection(getFilterFromCQL(cqlString)); }
 	public SimpleFeatureCollection getFeatureCollection(Filter filter){
 		try {
-			return (SimpleFeatureCollection) featureStore.getFeatures(ff.and(fil, filter));
+			return (SimpleFeatureCollection) featureSource.getFeatures(ff.and(fil, filter));
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
@@ -229,9 +230,9 @@ public class ShapeFile {
 	public ShapeFile add(SimpleFeatureCollection fs) {
 		try {
 			Transaction tr = new DefaultTransaction("create");
-			featureStore.setTransaction(tr);
+			featureSource.setTransaction(tr);
 			try {
-				featureStore.addFeatures(fs);
+				((SimpleFeatureStore)featureSource).addFeatures(fs);
 				tr.commit();
 			} catch (Exception problem) {
 				problem.printStackTrace();
@@ -268,7 +269,7 @@ public class ShapeFile {
 
 	public ShapeFile remove(String cqlString){ return remove(getFilterFromCQL(cqlString)); }
 	public ShapeFile remove(Filter filter) {
-		try { featureStore.removeFeatures(ff.and(fil, filter)); } catch (IOException e) { e.printStackTrace(); }
+		try { ((SimpleFeatureStore)featureSource).removeFeatures(ff.and(fil, filter)); } catch (IOException e) { e.printStackTrace(); }
 		return this;
 	}
 
