@@ -13,7 +13,11 @@ EuroGeoStat library currently allows:
 
 [EuroGeoStat](https://github.com/jgaffuri/EuroGeoStat) is mainly based on [GeoTools](http://www.geotools.org/) and [java4eurostat](https://github.com/jgaffuri/java4eurostat) libraries.
 
-## Usage
+## Quickstart
+
+(TODO - maven + nuts map creation)
+
+## More information
 
 (TODO document NUTSUtils and NUTSMap)
 
