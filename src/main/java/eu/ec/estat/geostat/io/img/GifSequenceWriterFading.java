@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat.io.gif;
+package eu.ec.estat.geostat.io.img;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

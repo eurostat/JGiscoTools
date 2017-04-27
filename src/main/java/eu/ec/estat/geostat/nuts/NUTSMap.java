@@ -19,7 +19,7 @@ import org.opengis.filter.FilterFactory;
 
 import eu.ec.estat.geostat.MappingUtils;
 import eu.ec.estat.geostat.StatisticalMap;
-import eu.ec.estat.geostat.io.gif.GifSequenceWriterFading;
+import eu.ec.estat.geostat.io.img.GifSequenceWriterFading;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.io.EurobaseIO;
 

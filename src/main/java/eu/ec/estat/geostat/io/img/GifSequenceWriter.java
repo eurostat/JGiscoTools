@@ -1,4 +1,4 @@
-package eu.ec.estat.geostat.io.gif;
+package eu.ec.estat.geostat.io.img;
 
 
 import javax.imageio.*;
