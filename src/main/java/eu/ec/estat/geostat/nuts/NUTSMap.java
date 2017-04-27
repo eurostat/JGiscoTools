@@ -140,8 +140,18 @@ public class NUTSMap extends StatisticalMap {
 
 
 		//TODO bug in legend: always same values...
-		//TODO map ratio
+		/*/TODO map ratio
 		new NUTSMap(1, 60, "tour_occ_nin2", null, "unit","NR","nace_r2","I551-I553","indic_to","B006","time","2012")
+		.makeDark()
+		.make()
+		//.printClassification()
+		.saveAsImage(outPath + "map.png", 1000, true, true)
+		.saveLegendAsImage(outPath + "legend.png")
+		.dispose()
+		;*/
+
+
+		new NUTSMap(2, 60, "lfst_r_lfu3rt", null, "unit","PC","sex","T","age","Y_GE15","time","2015")
 		.makeDark()
 		.make()
 		//.printClassification()
@@ -150,7 +160,8 @@ public class NUTSMap extends StatisticalMap {
 		.dispose()
 		;
 
-
+		
+		
 		/*
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006").shrinkDims();
 		//data = NUTSUtils.computePopRatioFigures(data, 1000, true);
