@@ -10,6 +10,7 @@ import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.function.Classifier;
+import org.geotools.filter.function.RangedClassifier;
 import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
@@ -18,6 +19,7 @@ import org.opengis.filter.FilterFactory;
 
 import eu.ec.estat.geostat.MappingUtils;
 import eu.ec.estat.geostat.StatisticalMap;
+import eu.ec.estat.geostat.io.gif.GifSequenceWriterFading;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.io.EurobaseIO;
 
@@ -151,17 +153,23 @@ public class NUTSMap extends StatisticalMap {
 		;*/
 
 
-		new NUTSMap(2, 60, "lfst_r_lfu3rt", null, "unit","PC","sex","T","age","Y_GE15","time","2015")
-		.makeDark()
-		.make()
-		//.printClassification()
-		.saveAsImage(outPath + "map.png", 1000, true, true)
-		.saveLegendAsImage(outPath + "legend.png")
-		.dispose()
-		;
+		//gif test
+		RangedClassifier classifier = MappingUtils.getClassifier(4,5,6,7,8,10,13,20);
+		String[] imgs = new String[12];
+		for(int year = 2005; year<=2016; year++) {
+			new NUTSMap(2, 60, "lfst_r_lfu3rt", classifier, "unit","PC","sex","T","age","Y_GE15","time",year+"")
+			.setTitle("Unemployment rate in "+year)
+			//.makeDark()
+			.make()
+			.saveAsImage(outPath + "map_"+year+".png", 1000, true, true)
+			.saveLegendAsImage(outPath + "legend.png")
+			.dispose()
+			;
+			imgs[year-2005] = outPath + "map_"+year+".png";
+		}
+		GifSequenceWriterFading.buildGIFWithFading(imgs, null, 1000, 5, outPath+"map.gif");
 
-		
-		
+
 		/*
 		StatsHypercube data = EurostatTSV.load(dataPath+"tour_occ_nin2.tsv").selectDimValueEqualTo("unit","NR","nace_r2","I551-I553","indic_to","B006").shrinkDims();
 		//data = NUTSUtils.computePopRatioFigures(data, 1000, true);

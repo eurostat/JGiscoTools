@@ -32,7 +32,6 @@ public class TourismUseCase {
 	public static String POI_TOURISEM_SHP_BASE = BASE_PATH + "eur2016_12/mnpoi_";
 
 	//TODO test memory mapping
-	//TODO aggregate at 10km grid level
 
 	//TODO contact tomtom guys. ask for data
 	//TODO validation with it data http://dati.istat.it/?lang=en
