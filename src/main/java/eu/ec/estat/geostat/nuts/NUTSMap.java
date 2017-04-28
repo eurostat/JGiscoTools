@@ -19,7 +19,7 @@ import org.opengis.filter.FilterFactory;
 
 import eu.ec.estat.geostat.MappingUtils;
 import eu.ec.estat.geostat.StatisticalMap;
-import eu.ec.estat.geostat.io.img.GifSequenceWriterFading;
+import eu.ec.estat.geostat.io.img.GifSequenceWriter;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.io.EurobaseIO;
 
@@ -167,7 +167,7 @@ public class NUTSMap extends StatisticalMap {
 			;
 			imgs[year-2005] = outPath + "map_"+year+".png";
 		}
-		GifSequenceWriterFading.buildGIFWithFading(imgs, null, 1000, 5, outPath+"map.gif");
+		GifSequenceWriter.make(imgs, null, 1000, 5, outPath+"map.gif");
 
 
 		/*
