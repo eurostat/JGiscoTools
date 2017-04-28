@@ -95,7 +95,7 @@ public class GifSequenceWriter {
 						img,
 						null,
 						imageMetaData),
-						imageWriteParam);
+				imageWriteParam);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class GifSequenceWriter {
 	 */
 
 
-	
+
 
 	/**
 	 * @param imageFilesIn The input images
@@ -216,20 +216,18 @@ public class GifSequenceWriter {
 				}
 				img1=img2;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) { e.printStackTrace(); }
 	}
 
-	
-	
-	
-	
-	
-	
 
-	
-	
+
+
+
+
+
+
+
+
 	public static void main(String[] args) throws Exception {
 		if (args.length > 1) {
 			// grab the output image type from the first image in the sequence
