@@ -17,8 +17,8 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.opengis.filter.FilterFactory;
 
-import eu.ec.estat.geostat.MappingUtils;
-import eu.ec.estat.geostat.StatisticalMap;
+import eu.ec.estat.geostat.core.MappingUtils;
+import eu.ec.estat.geostat.core.StatisticalMap;
 import eu.ec.estat.geostat.io.img.GifSequenceWriter;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.io.EurobaseIO;

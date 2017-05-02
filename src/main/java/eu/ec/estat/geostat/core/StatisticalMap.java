@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat;
+package eu.ec.estat.geostat.core;
 
 import java.awt.Color;
 import java.awt.Font;

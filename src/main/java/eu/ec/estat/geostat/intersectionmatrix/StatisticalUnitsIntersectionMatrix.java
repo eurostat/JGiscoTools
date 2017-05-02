@@ -1,4 +1,4 @@
-package eu.ec.estat.geostat;
+package eu.ec.estat.geostat.intersectionmatrix;
 
 import java.io.IOException;
 import java.util.HashMap;

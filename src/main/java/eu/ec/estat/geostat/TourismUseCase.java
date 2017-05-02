@@ -10,6 +10,8 @@ import java.util.HashMap;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.filter.function.RangedClassifier;
 
+import eu.ec.estat.geostat.core.MappingUtils;
+import eu.ec.estat.geostat.core.StatisticalMap;
 import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
 import eu.ec.estat.geostat.io.ShapeFile;
 import eu.ec.estat.geostat.nuts.NUTSMap;
