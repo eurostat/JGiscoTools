@@ -19,6 +19,9 @@ import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 
 /**
+ * 
+ * Operation to perform geographical disaggregation with dasymetric mapping
+ * 
  * @author Julien Gaffuri
  *
  */
