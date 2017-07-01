@@ -1,6 +1,6 @@
 # EuroGeoStat
 
-[EuroGeoStat](https://github.com/jgaffuri/EuroGeoStat) is a software library for the manipulation of geographical and statistical data, with a focus on European data produced by [Eurostat](http://ec.europa.eu/eurostat).
+[EuroGeoStat](https://github.com/jgaffuri/EuroGeoStat) is a Java software library for the manipulation of geographical and statistical data, with a focus on European data produced by [Eurostat](http://ec.europa.eu/eurostat).
 
 EuroGeoStat library currently allows:
 - Automatic production statistical maps (with a focus on maps based on Eurostat data and NUTS regions).
@@ -23,7 +23,7 @@ EuroGeoStat library currently allows:
 
 (TODO document GeoUtils)
 
-(TODO document dasymetric)
+(TODO document Dasymetric mapping)
 
 (TODO document intersection matrix)
 
