@@ -60,9 +60,9 @@ public class TourismUseCase {
 		System.out.println("Start.");
 
 		//download/update data for tourism
-		EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
+		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
-		//runDasymetricNUTS3();
+		//runDasymetric(0); //NUTS3
 		//computeDensityPopRatio();
 
 		//makeMaps();
@@ -202,7 +202,9 @@ public class TourismUseCase {
 
 
 
-	public static void runDasymetricNUTS3(){
+	//n=0 ->NUTS3
+	//n=1 ->COMMUNES
+	public static void runDasymetric(int n){
 
 		//load tourism data to disaggregate
 		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",

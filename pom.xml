@@ -54,21 +54,19 @@
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
-				<!-- <verbose>true</verbose> -->
-				<!-- <fork>true</fork> -->
-				<!-- <executable>C:\Program Files\Java\jdk1.8.0_71\bin\javac.exe</executable> -->
-				<!-- <compilerVersion>1.7</compilerVersion> -->
+					<!-- <verbose>true</verbose> -->
+					<!-- <fork>true</fork> -->
+					<!-- <executable>C:\Program Files\Java\jdk1.8.0_71\bin\javac.exe</executable> -->
+					<!-- <compilerVersion>1.7</compilerVersion> -->
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</build>
 
