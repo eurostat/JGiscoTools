@@ -23,6 +23,7 @@ import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 import eu.ec.estat.java4eurostat.io.CSV;
+import eu.ec.estat.java4eurostat.io.EurobaseIO;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
@@ -59,9 +60,9 @@ public class TourismUseCase {
 		System.out.println("Start.");
 
 		//download/update data for tourism
-		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
+		EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
-		//runDasymetric();
+		//runDasymetricNUTS3();
 		//computeDensityPopRatio();
 
 		//makeMaps();
@@ -76,12 +77,12 @@ public class TourismUseCase {
 		//runDasymetricGrid();
 		//makeGridMaps();
 
-		
-		runDasymetricFrance();
+
+		//runDasymetricFrance();
 		//makeFranceMaps();
 
-		
-		
+
+
 		System.out.println("End.");
 	}
 
@@ -201,7 +202,7 @@ public class TourismUseCase {
 
 
 
-	public static void runDasymetric(){
+	public static void runDasymetricNUTS3(){
 
 		//load tourism data to disaggregate
 		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
