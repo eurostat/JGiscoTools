@@ -86,7 +86,7 @@ public class TourismUseCase {
 		System.out.println("End.");
 	}
 
-	public static void runDasymetricFrance(){
+	/*public static void runDasymetricFrance(){
 		//load tourism data to disaggregate
 		StatsHypercube hc = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv",
 				new Selection.And(
@@ -113,7 +113,7 @@ public class TourismUseCase {
 		//* try to match tomtom with BPE
 		//* try to map geo with data from FR_registre_hebergements_classes
 
-	}
+	}*/
 
 	public static void runDasymetricGrid(){
 		//load tourism data to disaggregate
