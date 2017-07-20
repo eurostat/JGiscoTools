@@ -63,7 +63,8 @@ public class TourismUseCase {
 		EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
 		runDasymetric(0); //NUTS3
-		//computeDensityPopRatio();
+		computeDensityPopRatio();
+		runDasymetric(1); //COMM
 
 		//makeMaps();
 
