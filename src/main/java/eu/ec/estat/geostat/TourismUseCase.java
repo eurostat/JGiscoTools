@@ -23,7 +23,6 @@ import eu.ec.estat.java4eurostat.base.Stat;
 import eu.ec.estat.java4eurostat.base.StatsHypercube;
 import eu.ec.estat.java4eurostat.base.StatsIndex;
 import eu.ec.estat.java4eurostat.io.CSV;
-import eu.ec.estat.java4eurostat.io.EurobaseIO;
 import eu.ec.estat.java4eurostat.io.EurostatTSV;
 
 /**
@@ -248,11 +247,11 @@ public class TourismUseCase {
 					);
 
 
-			dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats_"+nace+".csv");
+			dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "POI_to_NUTS_2___"+nace+".csv");
 			//dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_2___"+nace+".csv", "value");
 
-			dm.computeGeoStatFinal();   CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats_"+nace+".csv");
-			//dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_3___"+nace+".csv", "value");
+			dm.computeGeoStatFinal();   CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "POI_to_"+(n==0?"NUTS_3":"COMM")+"___"+nace+".csv");
+			//dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/POI_to_"+(n==0?"NUTS_3":"COMM")+"___"+nace+".csv", "value");
 
 
 
