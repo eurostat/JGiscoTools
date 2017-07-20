@@ -62,7 +62,7 @@ public class TourismUseCase {
 		//download/update data for tourism
 		EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
-		//runDasymetric(0); //NUTS3
+		runDasymetric(0); //NUTS3
 		//computeDensityPopRatio();
 
 		//makeMaps();
@@ -242,15 +242,16 @@ public class TourismUseCase {
 					"NUTS_ID",
 					new ShapeFile(POI_TOURISEM_SHP_BASE+nace+".shp").getFeatureSource(),
 					"ID",
-					NUTSShapeFile.getRG(3).getFeatureSource(),
-					"NUTS_ID"
+					n==0? NUTSShapeFile.getRG(3).getFeatureSource() : new ShapeFile("H:/geodata/gisco_stat_units/COMM_01M_2013_SH/COMM_RG_01M_2013_LAEA.shp").getFeatureSource(),
+							n==0? "NUTS_ID" : "COMM_ID"
 					);
 
-			//dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats_"+nace+".csv");
-			dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_2___"+nace+".csv", "value");
 
-			//dm.computeGeoStatFinal();   CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats_"+nace+".csv");
-			dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_3___"+nace+".csv", "value");
+			dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "1_geo_to_ini_stats_"+nace+".csv");
+			//dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_2___"+nace+".csv", "value");
+
+			dm.computeGeoStatFinal();   CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "1_geo_to_fin_stats_"+nace+".csv");
+			//dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_3___"+nace+".csv", "value");
 
 
 
@@ -273,7 +274,7 @@ public class TourismUseCase {
 				out.stats.addAll(dm.finalStatsSimplifiedHC.stats);
 			}
 		}
-		CSV.save(out, "value", "H:/methnet/geostat/out/", "tour_occ_nin2_nuts3.csv");
+		CSV.save(out, "value", "H:/methnet/geostat/out/", "tour_occ_nin2_"+(n==0?"nuts3":"comm")+".csv");
 
 	}
 
