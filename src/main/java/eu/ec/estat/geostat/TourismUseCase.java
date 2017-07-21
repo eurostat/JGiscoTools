@@ -61,8 +61,8 @@ public class TourismUseCase {
 		//download/update data for tourism
 		//EurobaseIO.update("H:/eurobase/", "tour_occ_nim", "tour_occ_nin2", "tour_occ_nin2d", "tour_occ_nin2c", "urb_ctour");
 
-		runDasymetric(0); //NUTS3
-		computeDensityPopRatio();
+		//runDasymetric(0); //NUTS3
+		//computeDensityPopRatio();
 		runDasymetric(1); //COMM
 
 		//makeMaps();
@@ -231,7 +231,8 @@ public class TourismUseCase {
 		StatsHypercube out = new StatsHypercube("geo", "time", "unit", "nace_r2", "indic_to");
 
 		//go through nace codes
-		for(String nace : new String[]{"I551-I553","I551","I552","I553"}){
+		//for(String nace : new String[]{"I551-I553","I551","I552","I553"}){
+		for(String nace : new String[]{"I551-I553","I551"}){
 
 			//create dasymetric analysis object
 			DasymetricMapping dm = new DasymetricMapping(
@@ -247,11 +248,11 @@ public class TourismUseCase {
 					);
 
 
-			dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "POI_to_NUTS_2___"+nace+".csv");
-			//dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_2___"+nace+".csv", "value");
+			//dm.computeGeoStatInitial();   CSV.save(dm.geoStatsInitialHC, "value", "H:/methnet/geostat/out/", "POI_to_NUTS_2___"+nace+".csv");
+			dm.geoStatsInitialHC = CSV.load("H:/methnet/geostat/out/POI_to_NUTS_2___"+nace+".csv", "value");
 
-			dm.computeGeoStatFinal();   CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "POI_to_"+(n==0?"NUTS_3":"COMM")+"___"+nace+".csv");
-			//dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/POI_to_"+(n==0?"NUTS_3":"COMM")+"___"+nace+".csv", "value");
+			//dm.computeGeoStatFinal();   CSV.save(dm.geoStatsFinalHC, "value", "H:/methnet/geostat/out/", "POI_to_"+(n==0?"NUTS_3":"COMM")+"___"+nace+".csv");
+			dm.geoStatsFinalHC = CSV.load("H:/methnet/geostat/out/POI_to_"+(n==0?"NUTS_3":"COMM")+"___"+nace+".csv", "value");
 
 
 
