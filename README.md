@@ -1,6 +1,6 @@
 # EuroGeoStat
 
-[EuroGeoStat](https://github.com/jgaffuri/EuroGeoStat) is a Java software library for the manipulation of geographical and statistical data, with a focus on European data produced by [Eurostat](http://ec.europa.eu/eurostat).
+[EuroGeoStat](https://github.com/eurostat/EuroGeoStat) is a Java software library for the manipulation of geographical and statistical data, with a focus on European data produced by [Eurostat](http://ec.europa.eu/eurostat).
 
 EuroGeoStat library currently allows:
 - Automatic production statistical maps (with a focus on maps based on Eurostat data and NUTS regions).
@@ -11,7 +11,7 @@ EuroGeoStat library currently allows:
 
 (TODO describe)
 
-[EuroGeoStat](https://github.com/jgaffuri/EuroGeoStat) is mainly based on [GeoTools](http://www.geotools.org/) and [java4eurostat](https://github.com/jgaffuri/java4eurostat) libraries.
+[EuroGeoStat](https://github.com/eurostat/EuroGeoStat) is mainly based on [GeoTools](http://www.geotools.org/) and [java4eurostat](https://github.com/eurostat/java4eurostat) libraries.
 
 ## Quickstart
 
@@ -30,4 +30,4 @@ EuroGeoStat library currently allows:
 
 ## Support and contribution
 
-Feel free to [ask support](https://github.com/jgaffuri/EuroGeoStat/issues/new), fork the project or simply star it (it's always a pleasure).
+Feel free to [ask support](https://github.com/eurostat/EuroGeoStat/issues/new), fork the project or simply star it (it's always a pleasure).
