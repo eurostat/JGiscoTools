@@ -39,8 +39,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-		<geotools.version>17.0</geotools.version>
+		<geotools.version>21.2</geotools.version>
 	</properties>
 
 	<build>
@@ -54,8 +53,8 @@
 					<!-- <fork>true</fork> -->
 					<!-- <executable>C:\Program Files\Java\jdk1.8.0_71\bin\javac.exe</executable> -->
 					<!-- <compilerVersion>1.7</compilerVersion> -->
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>

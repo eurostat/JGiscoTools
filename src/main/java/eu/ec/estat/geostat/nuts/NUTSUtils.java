@@ -7,9 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.geotools.feature.FeatureIterator;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 import eu.ec.estat.geostat.io.ShapeFile;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
