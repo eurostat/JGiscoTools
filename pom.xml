@@ -27,15 +27,6 @@
 		<tag>EuroGeoStat-0.1</tag>
 	</scm>
 
-	<distributionManagement>
-		<repository>
-			<id>local_repository</id>
-			<name>local_repository</name>
-			<!-- <url>file:H:/.m2/repository/</url> -->
-			<url>file:~/.m2/repository/</url>
-		</repository>
-	</distributionManagement>
-
 	<developers>
 		<developer>
 			<id>jgaffuri</id>
@@ -133,7 +124,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>eu.ec.eurostat</groupId>
+			<groupId>eu.europa.ec.eurostat</groupId>
 			<artifactId>java4eurostat</artifactId>
 			<version>1.3-SNAPSHOT</version>
 		</dependency>

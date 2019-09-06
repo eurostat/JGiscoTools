@@ -20,8 +20,8 @@ import org.opengis.filter.FilterFactory;
 import eu.ec.estat.geostat.core.MappingUtils;
 import eu.ec.estat.geostat.core.StatisticalMap;
 import eu.ec.estat.geostat.io.img.GifSequenceWriter;
-import eu.ec.estat.java4eurostat.base.StatsHypercube;
-import eu.ec.estat.java4eurostat.io.EurobaseIO;
+import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
+import eu.europa.ec.eurostat.java4eurostat.io.EurobaseIO;
 
 /**
  * 

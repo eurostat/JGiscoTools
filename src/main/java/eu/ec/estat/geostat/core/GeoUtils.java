@@ -6,8 +6,8 @@ package eu.ec.estat.geostat.core;
 import java.util.HashMap;
 import java.util.Set;
 
-import eu.ec.estat.java4eurostat.io.DicUtil;
-import eu.ec.estat.java4eurostat.util.Util;
+import eu.europa.ec.eurostat.java4eurostat.io.DicUtil;
+import eu.europa.ec.eurostat.java4eurostat.util.Util;
 
 /**
  * 

@@ -17,13 +17,13 @@ import eu.ec.estat.geostat.io.ShapeFile;
 import eu.ec.estat.geostat.nuts.NUTSMap;
 import eu.ec.estat.geostat.nuts.NUTSShapeFile;
 import eu.ec.estat.geostat.nuts.NUTSUtils;
-import eu.ec.estat.java4eurostat.analysis.Validation;
-import eu.ec.estat.java4eurostat.base.Selection;
-import eu.ec.estat.java4eurostat.base.Stat;
-import eu.ec.estat.java4eurostat.base.StatsHypercube;
-import eu.ec.estat.java4eurostat.base.StatsIndex;
-import eu.ec.estat.java4eurostat.io.CSV;
-import eu.ec.estat.java4eurostat.io.EurostatTSV;
+import eu.europa.ec.eurostat.java4eurostat.analysis.Validation;
+import eu.europa.ec.eurostat.java4eurostat.base.Selection;
+import eu.europa.ec.eurostat.java4eurostat.base.Stat;
+import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
+import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
 
 /**
  * @author julien Gaffuri

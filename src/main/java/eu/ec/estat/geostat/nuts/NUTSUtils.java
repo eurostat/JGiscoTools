@@ -12,11 +12,11 @@ import org.opengis.feature.simple.SimpleFeature;
 import com.vividsolutions.jts.geom.Geometry;
 
 import eu.ec.estat.geostat.io.ShapeFile;
-import eu.ec.estat.java4eurostat.base.Stat;
-import eu.ec.estat.java4eurostat.base.StatsHypercube;
-import eu.ec.estat.java4eurostat.base.StatsIndex;
-import eu.ec.estat.java4eurostat.io.EurobaseIO;
-import eu.ec.estat.java4eurostat.io.EurostatTSV;
+import eu.europa.ec.eurostat.java4eurostat.base.Stat;
+import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
+import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
+import eu.europa.ec.eurostat.java4eurostat.io.EurobaseIO;
+import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
 
 /**
  * 

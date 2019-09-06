@@ -5,7 +5,7 @@ package eu.ec.estat.geostat;
 
 import eu.ec.estat.geostat.intersectionmatrix.StatisticalUnitsIntersectionMatrix;
 import eu.ec.estat.geostat.io.ShapeFile;
-import eu.ec.estat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 
 /**
  * @author julien Gaffuri

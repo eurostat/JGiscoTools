@@ -36,7 +36,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
 
-import eu.ec.estat.java4eurostat.util.Util;
+import eu.europa.ec.eurostat.java4eurostat.util.Util;
 
 /**
  * 
