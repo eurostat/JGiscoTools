@@ -8,9 +8,9 @@ import java.util.HashSet;
 
 import org.geotools.feature.FeatureIterator;
 import org.locationtech.jts.geom.Geometry;
+import org.opencarto.io.ShapeFile;
 import org.opengis.feature.simple.SimpleFeature;
 
-import eu.europa.ec.eurostat.eurogeostat.io.ShapeFile;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
