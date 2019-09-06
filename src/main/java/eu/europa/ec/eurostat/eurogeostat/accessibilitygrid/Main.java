@@ -3,6 +3,8 @@
  */
 package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 
+import eu.europa.ec.eurostat.eurogeostat.io.ShapeFile;
+
 /**
  * @author julien Gaffuri
  *
@@ -13,6 +15,9 @@ public class Main {
 		
 		//https://krankenhausatlas.statistikportal.de/
 
+		
+		//create xkm grid
+		ShapeFile.
 		
 		
 	}
