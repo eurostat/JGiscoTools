@@ -1,4 +1,4 @@
-package eu.ec.estat.geostat.nuts;
+package eu.europa.ec.eurostat.eurogeostat.nuts;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,7 +10,7 @@ import org.geotools.feature.FeatureIterator;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 
-import eu.ec.estat.geostat.io.ShapeFile;
+import eu.europa.ec.eurostat.eurogeostat.io.ShapeFile;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;

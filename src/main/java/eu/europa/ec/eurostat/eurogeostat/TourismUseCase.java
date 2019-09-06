@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat;
+package eu.europa.ec.eurostat.eurogeostat;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -10,13 +10,13 @@ import java.util.HashMap;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.filter.function.RangedClassifier;
 
-import eu.ec.estat.geostat.core.MappingUtils;
-import eu.ec.estat.geostat.core.StatisticalMap;
-import eu.ec.estat.geostat.dasymetric.DasymetricMapping;
-import eu.ec.estat.geostat.io.ShapeFile;
-import eu.ec.estat.geostat.nuts.NUTSMap;
-import eu.ec.estat.geostat.nuts.NUTSShapeFile;
-import eu.ec.estat.geostat.nuts.NUTSUtils;
+import eu.europa.ec.eurostat.eurogeostat.core.MappingUtils;
+import eu.europa.ec.eurostat.eurogeostat.core.StatisticalMap;
+import eu.europa.ec.eurostat.eurogeostat.dasymetric.DasymetricMapping;
+import eu.europa.ec.eurostat.eurogeostat.io.ShapeFile;
+import eu.europa.ec.eurostat.eurogeostat.nuts.NUTSMap;
+import eu.europa.ec.eurostat.eurogeostat.nuts.NUTSShapeFile;
+import eu.europa.ec.eurostat.eurogeostat.nuts.NUTSUtils;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Validation;
 import eu.europa.ec.eurostat.java4eurostat.base.Selection;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;

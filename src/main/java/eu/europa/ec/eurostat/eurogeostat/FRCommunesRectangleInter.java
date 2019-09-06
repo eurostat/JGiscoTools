@@ -1,10 +1,10 @@
 /**
  * 
  */
-package eu.ec.estat.geostat;
+package eu.europa.ec.eurostat.eurogeostat;
 
-import eu.ec.estat.geostat.intersectionmatrix.StatisticalUnitsIntersectionMatrix;
-import eu.ec.estat.geostat.io.ShapeFile;
+import eu.europa.ec.eurostat.eurogeostat.intersectionmatrix.StatisticalUnitsIntersectionMatrix;
+import eu.europa.ec.eurostat.eurogeostat.io.ShapeFile;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 
 /**

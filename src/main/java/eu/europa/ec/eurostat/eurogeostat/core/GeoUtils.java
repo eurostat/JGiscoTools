@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat.core;
+package eu.europa.ec.eurostat.eurogeostat.core;
 
 import java.util.HashMap;
 import java.util.Set;

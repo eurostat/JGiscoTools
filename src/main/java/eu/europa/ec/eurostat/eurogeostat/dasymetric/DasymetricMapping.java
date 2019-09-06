@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat.dasymetric;
+package eu.europa.ec.eurostat.eurogeostat.dasymetric;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;

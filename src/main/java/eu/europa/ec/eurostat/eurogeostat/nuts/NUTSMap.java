@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat.nuts;
+package eu.europa.ec.eurostat.eurogeostat.nuts;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -17,9 +17,9 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.opengis.filter.FilterFactory;
 
-import eu.ec.estat.geostat.core.MappingUtils;
-import eu.ec.estat.geostat.core.StatisticalMap;
-import eu.ec.estat.geostat.io.img.GifSequenceWriter;
+import eu.europa.ec.eurostat.eurogeostat.core.MappingUtils;
+import eu.europa.ec.eurostat.eurogeostat.core.StatisticalMap;
+import eu.europa.ec.eurostat.eurogeostat.io.img.GifSequenceWriter;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.EurobaseIO;
 

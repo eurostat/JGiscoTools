@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.ec.estat.geostat.io;
+package eu.europa.ec.eurostat.eurogeostat.io;
 
 import java.io.File;
 import java.io.IOException;
