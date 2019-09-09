@@ -28,7 +28,6 @@ public class Main {
 		String outPath = "C:/Users/gaffuju/Desktop";
 
 
-
 		double res = 5000;
 		int epsg = 3035;
 		Collection<Feature> fs = new ArrayList<Feature>();
