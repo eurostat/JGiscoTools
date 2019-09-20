@@ -35,8 +35,8 @@ public class Main {
 			for(double y=0; y<10000000; y+=res) {
 				Feature f = new Feature();
 				f.setGeom( JTSGeomUtil.createPolygon( x,y, x+res,y, x+res,y+res, x,y+res, x,y ) );
-				f.id = "CRS"+Integer.toString((int)epsg)+"RES"+Integer.toString((int)res)+x+y;
-				f.set("cellId", f.id);
+				f.setId( "CRS"+Integer.toString((int)epsg)+"RES"+Integer.toString((int)res)+x+y );
+				f.set("cellId", f.getId());
 				fs.add(f);
 			}
 		System.out.println("Save " + fs.size() + " cells");
