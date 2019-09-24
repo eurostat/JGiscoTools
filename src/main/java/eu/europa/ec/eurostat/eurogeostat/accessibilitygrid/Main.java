@@ -45,7 +45,7 @@ public class Main {
 
 		//create xkm grid
 		String outPath = "C:/Users/gaffuju/Desktop/out/";
-		int size= 5000000;
+		int size= 10000000;
 		double res = 10000;
 		int epsg = 3035;
 
@@ -114,10 +114,6 @@ public class Main {
 
 		String typeName = newDataStore.getTypeNames()[0];
 		SimpleFeatureSource featureSource = newDataStore.getFeatureSource(typeName);
-		SimpleFeatureType shpType = featureSource.getSchema();
-
-		System.out.println(shpType);
-		System.out.println(type);
 
 		if (featureSource instanceof SimpleFeatureStore) {
 			SimpleFeatureStore featureStore = (SimpleFeatureStore) featureSource;
