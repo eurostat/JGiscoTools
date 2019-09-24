@@ -36,13 +36,11 @@ public class Main {
 		logger.info("Make grid");
 		String path = "C:/Users/gaffuju/Desktop/";
 		Geometry mask = SHPUtil.loadSHP(path+"CNTR_RG_LAEA/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
-		gridSHP(new Coordinate(3540000,2890000), new Coordinate(4050000,3430000), 10000, 3035, mask, 10000, path+"out/grid_OC.shp");
+		gridSHP(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 10000, 3035, mask, 10000, path+"out/grid_10km.shp");
+		gridSHP(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 5000, 3035, mask, 10000, path+"out/grid_5km.shp");
 
 		logger.info("End");
 	}
-
-
-
 
 
 

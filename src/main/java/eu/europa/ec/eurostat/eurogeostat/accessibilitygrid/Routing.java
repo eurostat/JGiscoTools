@@ -3,11 +3,14 @@
  */
 package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.feature.FeatureCollection;
@@ -31,11 +34,42 @@ import org.opengis.feature.simple.SimpleFeature;
  *
  */
 public class Routing {
+	private static Logger logger = Logger.getLogger(Routing.class.getName());
+
+
+	public static void main(String[] args) throws Exception {
+		logger.info("Start");
+
+		logger.setLevel(Level.ALL);
+		Routing rt = new Routing(new URL("file:\\E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL.shp"));
+
+		logger.info("End");
+	}
+
 
 	private Graph graph;
 	private EdgeWeighter edgeWeighter;
 
-	public Routing(URL networkFileURL) {
+	public Routing(URL networkFileURL, EdgeWeighter edgeWeighter) throws IOException {
+		if(logger.isDebugEnabled()) logger.debug("Get line features");
+		Map<String, Serializable> map = new HashMap<>();
+		map.put( "url", networkFileURL );
+		DataStore store = DataStoreFinder.getDataStore(map);
+		FeatureCollection<?,?> fc =  store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
+		store.dispose();
+
+		if(logger.isDebugEnabled()) logger.debug("Build graph from "+fc.size()+" lines.");
+		FeatureIterator<?> it = fc.features();
+		FeatureGraphGenerator gGen = new FeatureGraphGenerator(new LineStringGraphGenerator());
+		while(it.hasNext()) gGen.add(it.next());
+		graph = gGen.getGraph();
+		it.close();
+
+		if(logger.isDebugEnabled()) logger.debug("Define weighter");
+		this.edgeWeighter = edgeWeighter;
+	}
+
+	public Routing(URL networkFileURL) throws IOException {
 		this(networkFileURL, new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
 				SimpleFeature f = (SimpleFeature) e.getObject();
@@ -43,26 +77,6 @@ public class Routing {
 				return g.getLength();
 			}
 		});
-	}
-	public Routing(URL networkFileURL, EdgeWeighter edgeWeighter) {
-		try {
-			Map<String, Serializable> map = new HashMap<>();
-			map.put( "url", networkFileURL );
-			DataStore store = DataStoreFinder.getDataStore(map);
-			FeatureCollection<?,?> fc =  store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
-			store.dispose();
-
-			//build graph
-			FeatureIterator<?> it = fc.features();
-			FeatureGraphGenerator gGen = new FeatureGraphGenerator(new LineStringGraphGenerator());
-			while(it.hasNext()) gGen.add(it.next());
-			graph = gGen.getGraph();
-			it.close();
-
-			//define weighter
-			this.edgeWeighter = edgeWeighter;
-		} catch (Exception e) { e.printStackTrace(); }
-
 	}
 
 	//get closest node from a position
@@ -79,6 +93,7 @@ public class Routing {
 		return nMin;
 	}
 
+	//get the position of a graph node
 	private Coordinate getPosition(Node n){
 		if(n==null) return null;
 		Point pt = (Point)n.getObject();
@@ -86,8 +101,11 @@ public class Routing {
 		return pt.getCoordinate();
 	}
 
-	public Path getShortestPathDijkstra(Graph g, Node sN, Node dN, EdgeWeighter weighter){
-		DijkstraShortestPathFinder pf = new DijkstraShortestPathFinder(g, sN, weighter);
+	public Path getShortestPathDijkstra(Graph g, Node oN, Node dN){
+		return getShortestPathDijkstra(g, oN, dN, this.edgeWeighter);
+	}
+	public Path getShortestPathDijkstra(Graph g, Node oN, Node dN, EdgeWeighter edgeWeighter){
+		DijkstraShortestPathFinder pf = new DijkstraShortestPathFinder(g, oN, edgeWeighter);
 		pf.calculate();
 		return pf.getPath(dN);
 	}
