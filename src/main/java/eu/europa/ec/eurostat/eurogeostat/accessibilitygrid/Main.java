@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
-import org.opencarto.algo.base.Union;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.SHPUtil;
 import org.opencarto.util.JTSGeomUtil;
@@ -34,16 +33,10 @@ public class Main {
 
 		logger.info("Start");
 
-
-		//create xkm grid
-		String path = "C:/Users/gaffuju/Desktop/";
-
-		Collection<Geometry> geoms = new ArrayList<Geometry>();
-		for(Feature f : SHPUtil.loadSHP(path+"CNTR_RG_LAEA/CNTR_RG_01M_2016.shp").fs)
-			geoms.add(f.getDefaultGeometry());
-
 		logger.info("Make grid");
-		gridSHP(new Coordinate(3540000,2890000), new Coordinate(4050000,3430000), 10000, 3035, geoms, 10000, path+"out/grid_OC.shp");
+		String path = "C:/Users/gaffuju/Desktop/";
+		Geometry mask = SHPUtil.loadSHP(path+"CNTR_RG_LAEA/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
+		gridSHP(new Coordinate(3540000,2890000), new Coordinate(4050000,3430000), 10000, 3035, mask, 10000, path+"out/grid_OC.shp");
 
 		logger.info("End");
 	}
@@ -53,20 +46,7 @@ public class Main {
 
 
 
-	public static void gridSHP(Coordinate cMin, Coordinate cMax, double res, int epsg, Collection<Geometry> geoms, double bufferDist, String outFile) {
-
-		logger.debug("union");
-		Geometry union = Union.getPolygonUnion(geoms);
-		logger.debug("buffer");
-		union = union.buffer(bufferDist, 4);
-
-		/*
-		logger.debug("index geom buffers");
-		STRtree index = new STRtree();
-		for(Geometry geom : geoms) {
-			geom = geom.buffer(bufferDist, 4);
-			index.insert(geom.getEnvelopeInternal(), geom);
-		}*/
+	public static void gridSHP(Coordinate cMin, Coordinate cMax, double res, int epsg, Geometry mask, double bufferDist, String outFile) {
 
 		logger.debug("create cells");
 		Collection<Feature> cells = new ArrayList<Feature>();
@@ -77,20 +57,8 @@ public class Main {
 				Polygon gridCellGeom = JTSGeomUtil.createPolygon( x,y, x+res,y, x+res,y+res, x,y+res, x,y );
 
 				//check intersection
-				if(!gridCellGeom.getEnvelopeInternal().intersects(union.getEnvelopeInternal())) continue;
-				if(!gridCellGeom.intersects(union)) continue;
-
-				//check if there is any geometry intersecting the grid cell
-				/*boolean inter = false;
-				Envelope env = gridCellGeom.getEnvelopeInternal();
-				for(Object g_ : index.query(env)) {
-					Geometry g = (Geometry) g_;
-					if(!env.intersects(g.getEnvelopeInternal())) continue;
-					if(!gridCellGeom.intersects(g)) continue;
-					inter = true;
-					break;
-				}
-				if(!inter) continue;*/
+				if(!gridCellGeom.getEnvelopeInternal().intersects(mask.getEnvelopeInternal())) continue;
+				if(!gridCellGeom.intersects(mask)) continue;
 
 				//build and keep the cell
 				Feature cell = new Feature();
