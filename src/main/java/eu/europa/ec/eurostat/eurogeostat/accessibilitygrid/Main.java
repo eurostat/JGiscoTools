@@ -50,21 +50,41 @@ public class Main {
 		int size= 1000000;
 		double res = 10000;
 		int epsg = 3035;
-		
-		logger.info("Start 1");
-		gridSHP1(outPath+"grid1.shp", size, res, epsg);
-		logger.info("Start 2");
-		gridSHP2(outPath+"grid2.shp", size, res, epsg);
+
+		logger.info("Start GT");
+		gridSHP_GT(outPath+"grid_GT.shp", size, res, epsg);
+		logger.info("Start OC");
+		gridSHP_OC(outPath+"grid_OC.shp", size, res, epsg);
 
 		logger.info("End");
 	}
 
-	public static void gridSHP2(String outFile, int size, double res, int epsg) throws Exception {
+
+	
+	
+	public static void gridSHP_OC(String outFile, int size, double res, int epsg) {
+		logger.info("Create objects in memory");
+		Collection<Feature> fs = new ArrayList<Feature>();
+		for(double x=0; x<size; x+=res)
+			for(double y=0; y<size; y+=res) {
+				Feature f = new Feature();
+				f.setDefaultGeometry( JTSGeomUtil.createPolygon( x,y, x+res,y, x+res,y+res, x,y+res, x,y ) );
+				f.setID( "CRS"+Integer.toString((int)epsg)+"RES"+Integer.toString((int)res)+x+y );
+				f.setAttribute("cellId", f.getID());
+				fs.add(f);
+			}
+		logger.info("Save " + fs.size() + " cells");
+		SHPUtil.saveSHP(fs, outFile, ProjectionUtil.getCRS(epsg));
+	}
+
+
+
+	public static void gridSHP_GT(String outFile, int size, double res, int epsg) throws Exception {
 
 		logger.info("Create objects in memory");
 
 		SimpleFeatureType type = DataUtilities.createType("Grid","the_geom:Polygon:srid="+epsg+",cellId:String,");
-		logger.info("TYPE:" + type);
+		//logger.info("TYPE:" + type);
 
 		ArrayList<SimpleFeature> fs = new ArrayList<>();
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
@@ -93,8 +113,6 @@ public class Main {
 		ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory.createNewDataStore(params);
 		newDataStore.createSchema(type);
 
-
-
 		Transaction transaction = new DefaultTransaction("create");
 
 		String typeName = newDataStore.getTypeNames()[0];
@@ -114,27 +132,9 @@ public class Main {
 			} finally {
 				transaction.close();
 			}
-			System.exit(0); // success!
 		} else {
-			logger.info(typeName + " does not support read/write access");
-			System.exit(1);
+			logger.warn(typeName + " does not support read/write access");
 		}
-	}
-
-
-	public static void gridSHP1(String outFile, int size, double res, int epsg) {
-		logger.info("Create objects in memory");
-		Collection<Feature> fs = new ArrayList<Feature>();
-		for(double x=0; x<size; x+=res)
-			for(double y=0; y<size; y+=res) {
-				Feature f = new Feature();
-				f.setDefaultGeometry( JTSGeomUtil.createPolygon( x,y, x+res,y, x+res,y+res, x,y+res, x,y ) );
-				f.setID( "CRS"+Integer.toString((int)epsg)+"RES"+Integer.toString((int)res)+x+y );
-				f.setAttribute("cellId", f.getID());
-				fs.add(f);
-			}
-		logger.info("Save " + fs.size() + " cells");
-		SHPUtil.saveSHP(fs, outFile, ProjectionUtil.getCRS(epsg));
 	}
 
 
