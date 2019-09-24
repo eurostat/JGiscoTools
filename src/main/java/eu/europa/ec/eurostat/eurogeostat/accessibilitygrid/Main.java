@@ -21,8 +21,6 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.SHPUtil;
@@ -47,7 +45,7 @@ public class Main {
 
 		//create xkm grid
 		String outPath = "C:/Users/gaffuju/Desktop/out/";
-		int size= 1000000;
+		int size= 5000000;
 		double res = 10000;
 		int epsg = 3035;
 
@@ -60,8 +58,8 @@ public class Main {
 	}
 
 
-	
-	
+
+
 	public static void gridSHP_OC(String outFile, int size, double res, int epsg) {
 		logger.info("Create objects in memory");
 		Collection<Feature> fs = new ArrayList<Feature>();
@@ -87,7 +85,6 @@ public class Main {
 		//logger.info("TYPE:" + type);
 
 		ArrayList<SimpleFeature> fs = new ArrayList<>();
-		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
 		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
 
 		for(double x=0; x<size; x+=res)
@@ -117,7 +114,10 @@ public class Main {
 
 		String typeName = newDataStore.getTypeNames()[0];
 		SimpleFeatureSource featureSource = newDataStore.getFeatureSource(typeName);
-		SimpleFeatureType SHAPE_TYPE = featureSource.getSchema();
+		SimpleFeatureType shpType = featureSource.getSchema();
+
+		System.out.println(shpType);
+		System.out.println(type);
 
 		if (featureSource instanceof SimpleFeatureStore) {
 			SimpleFeatureStore featureStore = (SimpleFeatureStore) featureSource;
