@@ -22,26 +22,22 @@ import org.opencarto.util.JTSGeomUtil;
 public class EuroGridBuilder {
 	static Logger logger = Logger.getLogger(EuroGridBuilder.class.getName());
 
-	public static Collection<Feature> procceed(Coordinate cMin, Coordinate cMax, double res, int epsg, Geometry mask, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
 
-		if(logger.isDebugEnabled()) logger.debug("Build cells...");
-		Collection<Feature> cells = EuroGridBuilder.makeGrid(cMin, cMax, res, epsg, mask);
-		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells built");
-
-		if(logger.isDebugEnabled()) logger.debug("Stamp country...");
-		EuroGridBuilder.addCountryStamp(cells, cntStampAtt, countries, cntBufferDist, cntIdAtt);
-
-		if(logger.isDebugEnabled()) logger.debug("Filtering...");
-		EuroGridBuilder.filterCountryStamp(cells, cntStampAtt);
-		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells left");
-		return cells;
-	}
-
-	public static Collection<Feature> makeGrid(Coordinate cMin, Coordinate cMax, double res, int epsg, Geometry mask) {
-		logger.debug("create cells");
+	/**
+	 * Build grid cells within a given envelope.
+	 * A mask can be specified: Only grid cells intersecting it will be kept.
+	 * 
+	 * @param gridEnvelope
+	 * @param res
+	 * @param epsg
+	 * @param mask
+	 * @return
+	 */
+	public static Collection<Feature> buildGridCells(Envelope gridEnvelope, double res, int epsg, Geometry mask) {
+		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
 		Collection<Feature> cells = new ArrayList<Feature>();
-		for(double x=cMin.x; x<cMax.x; x+=res)
-			for(double y=cMin.y; y<cMax.y; y+=res) {
+		for(double x=gridEnvelope.getMinX(); x<gridEnvelope.getMaxX(); x+=res)
+			for(double y=gridEnvelope.getMinY(); y<gridEnvelope.getMaxY(); y+=res) {
 
 				//build cell geometry
 				Polygon gridCellGeom = JTSGeomUtil.createPolygon( x,y, x+res,y, x+res,y+res, x,y+res, x,y );
@@ -59,12 +55,24 @@ public class EuroGridBuilder {
 				cell.setAttribute("cellId", cell.getID());
 				cells.add(cell);
 			}
+		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells built");
 		return cells;
 	}
 
 
-	//assign grid cells to countries
+	/**
+	 * Assign grid cells to countries.
+	 * If a grid cell intersects the bufferred geometry of a country, then an attribute of the cell is assigned with this country code.
+	 * For cells that are to be assigned to several countries, several country codes are assigned.
+	 * 
+	 * @param cells
+	 * @param cntStampAtt
+	 * @param countries
+	 * @param cntBufferDist
+	 * @param cntIdAtt
+	 */
 	public static void addCountryStamp(Collection<Feature> cells, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
+		if(logger.isDebugEnabled()) logger.debug("Stamp country...");
 
 		//initialise cell country stamp
 		for(Feature cell : cells)
@@ -100,14 +108,22 @@ public class EuroGridBuilder {
 
 	}
 
-	//remove cells which are not assigned to any country
+	/**
+	 * Remove cells which are not assigned to any country,
+	 * that is the ones with attribute 'cntStampAtt' null or set to "".
+	 * 
+	 * @param cells
+	 * @param cntStampAtt
+	 */
 	public static void filterCountryStamp(Collection<Feature> cells, String cntStampAtt) {
+		if(logger.isDebugEnabled()) logger.debug("Filtering...");
 		Collection<Feature> toRemove = new ArrayList<Feature>();
 		for(Feature cell : cells) {
-			String cellCnt = cell.getAttribute(cntStampAtt).toString();
-			if(cellCnt.equals("")) toRemove.add(cell);
+			Object cellCnt = cell.getAttribute(cntStampAtt);
+			if(cellCnt==null || cellCnt.toString().equals("")) toRemove.add(cell);
 		}
 		cells.removeAll(toRemove);
+		if(logger.isDebugEnabled()) logger.debug(toRemove.size() + "cells to remove. " + cells.size() + " cells left");
 	}
 
 
@@ -130,6 +146,15 @@ public class EuroGridBuilder {
 				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
 				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
 				;
+	}
+
+
+	//sequecing
+	public static Collection<Feature> procceed(Envelope gridEnvelope, double res, int epsg, Geometry mask, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
+		Collection<Feature> cells = EuroGridBuilder.buildGridCells(gridEnvelope, res, epsg, mask);
+		EuroGridBuilder.addCountryStamp(cells, cntStampAtt, countries, cntBufferDist, cntIdAtt);
+		EuroGridBuilder.filterCountryStamp(cells, cntStampAtt);
+		return cells;
 	}
 
 }
