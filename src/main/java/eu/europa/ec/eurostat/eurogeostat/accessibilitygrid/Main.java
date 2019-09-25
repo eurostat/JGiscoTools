@@ -31,13 +31,11 @@ public class Main {
 		EuroGridBuilder.logger.setLevel(Level.ALL);
 
 		String path = "C:/Users/gaffuju/Desktop/";
-
-		Collection<Feature> cells;
-
 		Geometry mask = SHPUtil.loadSHP(path+"CNTR_RG_LAEA/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
 		ArrayList<Feature> cnts = SHPUtil.loadSHP(path+"CNTR_RG_LAEA/CNTR_RG_01M_2016.shp").fs;
-
 		Envelope europeEnvelope = new Envelope(500000, 8190000, 140000, 6030000);
+
+		Collection<Feature> cells;
 
 		logger.info("Make 10km grid...");
 		cells = EuroGridBuilder.procceed(europeEnvelope, 10000, 3035, mask, "CNTR_ID", cnts, 1000, "CNTR_ID");

@@ -123,7 +123,7 @@ public class EuroGridBuilder {
 			if(cellCnt==null || cellCnt.toString().equals("")) toRemove.add(cell);
 		}
 		cells.removeAll(toRemove);
-		if(logger.isDebugEnabled()) logger.debug(toRemove.size() + "cells to remove. " + cells.size() + " cells left");
+		if(logger.isDebugEnabled()) logger.debug(toRemove.size() + " cells to remove. " + cells.size() + " cells left");
 	}
 
 
