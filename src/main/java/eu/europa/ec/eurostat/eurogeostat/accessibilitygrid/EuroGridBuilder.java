@@ -15,13 +15,14 @@ import org.locationtech.jts.index.strtree.STRtree;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.util.JTSGeomUtil;
 
+import eu.europa.ec.eurostat.eurogeostat.cntr.CountriesUtil;
+
 /**
  * @author julien Gaffuri
  *
  */
 public class EuroGridBuilder {
 	static Logger logger = Logger.getLogger(EuroGridBuilder.class.getName());
-
 
 	/**
 	 * Build grid cells covering a geometry.
@@ -159,7 +160,23 @@ public class EuroGridBuilder {
 	}
 
 
-	//TODO build grid by country
+	/**
+	 * Build grid covering a single country.
+	 * In EPSG 3035 only.
+	 * 
+	 * @param countryCode
+	 * @param gridResolutionM
+	 * @return
+	 */
+	public static Collection<Feature> buildGridCellsByCountry(String countryCode, double gridResolutionM) {
+		//get country geometry
+		Geometry cntGeom = CountriesUtil.getCountry(countryCode).getDefaultGeometry();
+		//build cells
+		Collection<Feature> cells = buildGridCells(cntGeom, gridResolutionM, 3035);
+		//set cnt code to cells
+		for(Feature cell : cells) cell.setAttribute("CNTR_ID", countryCode);
+		return cells;
+	}
 
 
 	private static Envelope ensureGrid(Envelope env, double res) {
@@ -171,8 +188,9 @@ public class EuroGridBuilder {
 	}
 
 	/*
-	public static void main(String[] args) {
-		System.out.println( ensureGrid(new Envelope(50, 99.9, 50, 100.0), 50.0).toString() );
+	public static void main(String[] args) throws Exception {
+		Collection<Feature> cells = buildGridCellsByCountry("LU", 1000);
+		SHPUtil.saveSHP(cells, "C:/Users/gaffuju/Desktop/lu.shp", CRS.decode("EPSG:3035"));
 	}
 	 */
 
