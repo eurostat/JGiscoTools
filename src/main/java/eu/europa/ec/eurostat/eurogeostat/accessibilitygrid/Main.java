@@ -3,6 +3,7 @@
  */
 package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.log4j.Level;
@@ -25,21 +26,25 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
+
 		logger.setLevel(Level.ALL);
+		EuroGridBuilder.logger.setLevel(Level.ALL);
 
 		String path = "C:/Users/gaffuju/Desktop/";
 
 		Collection<Feature> cells;
 
-		logger.info("Make 10km grid");
 		Geometry mask = SHPUtil.loadSHP(path+"CNTR_RG_LAEA/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
-		cells = EuroGridBuilder.makeGrid(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 10000, 3035, mask);
-		logger.info("Save " + cells.size() + " cells");
+		ArrayList<Feature> cnts = SHPUtil.loadSHP(path+"CNTR_RG_LAEA/CNTR_RG_01M_2016.shp").fs;
+
+		logger.info("Make 10km grid...");
+		cells = EuroGridBuilder.procceed(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 10000, 3035, mask, "CNTR_ID", cnts, 1000, "CNTR_ID");
+		logger.info("Save " + cells.size() + " cells...");
 		SHPUtil.saveSHP(cells, path+"out/grid_10km.shp", ProjectionUtil.getCRS(3035));
 
-		logger.info("Make 5km grid");
-		cells = EuroGridBuilder.makeGrid(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 5000, 3035, mask);
-		logger.info("Save " + cells.size() + " cells");
+		logger.info("Make 5km grid...");
+		cells = EuroGridBuilder.procceed(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 5000, 3035, mask, "CNTR_ID", cnts, 500, "CNTR_ID");
+		logger.info("Save " + cells.size() + " cells...");
 		SHPUtil.saveSHP(cells, path+"out/grid_5km.shp", ProjectionUtil.getCRS(3035));
 
 		logger.info("End");
