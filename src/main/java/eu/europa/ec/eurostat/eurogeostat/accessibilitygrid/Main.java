@@ -23,18 +23,16 @@ import org.opencarto.util.ProjectionUtil;
 public class Main {
 	private static Logger logger = Logger.getLogger(Main.class.getName());
 
+	//example
+	//https://krankenhausatlas.statistikportal.de/
 
 	public static void main(String[] args) throws Exception {
+		logger.info("Start");
 		logger.setLevel(Level.ALL);
 
-		//example
-		//https://krankenhausatlas.statistikportal.de/
-		//resolution: 10 or 5 km?
-
-		logger.info("Start");
+		String path = "C:/Users/gaffuju/Desktop/";
 
 		logger.info("Make grid");
-		String path = "C:/Users/gaffuju/Desktop/";
 		Geometry mask = SHPUtil.loadSHP(path+"CNTR_RG_LAEA/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
 		gridSHP(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 10000, 3035, mask, 10000, path+"out/grid_10km.shp");
 		gridSHP(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 5000, 3035, mask, 10000, path+"out/grid_5km.shp");
@@ -61,8 +59,7 @@ public class Main {
 				//build and keep the cell
 				Feature cell = new Feature();
 				cell.setDefaultGeometry(gridCellGeom);
-				//TODO
-				cell.setID( "CRS"+Integer.toString((int)epsg)+"RES"+Integer.toString((int)res)+x+y );
+				cell.setID( getGridCellId(epsg, res, new Coordinate(x,y)) );
 				cell.setAttribute("cellId", cell.getID());
 				cells.add(cell);
 			}
@@ -71,5 +68,29 @@ public class Main {
 		SHPUtil.saveSHP(cells, outFile, ProjectionUtil.getCRS(epsg));
 	}
 
+	
+	
+
+	
+	/**
+	 * Build a cell code (according to INSPIRE coding system).
+	 * This is valid only for a grids in a cartographic projection.
+	 * Examples:
+	 * - CRS3035RES200mN1453400E1452800
+	 * - CRS3035RES100000mN5400000E1200000
+	 * 
+	 * @param epsg
+	 * @param resolution
+	 * @param lowerLeftCornerPosition
+	 * @return
+	 */
+	public static String getGridCellId(int epsg, double resolution, Coordinate lowerLeftCornerPosition) {
+		return 
+				"CRS"+Integer.toString((int)epsg)
+				+"RES"+Integer.toString((int)resolution)+"m"
+				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
+				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
+				;
+	}
 
 }
