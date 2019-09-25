@@ -11,19 +11,16 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.opencarto.datamodel.Feature;
-import org.opencarto.io.SHPUtil;
 import org.opencarto.util.JTSGeomUtil;
-import org.opencarto.util.ProjectionUtil;
 
 /**
  * @author julien Gaffuri
  *
  */
-public class EuroGridSHPBuilder {
-	private static Logger logger = Logger.getLogger(EuroGridSHPBuilder.class.getName());
+public class EuroGridBuilder {
+	private static Logger logger = Logger.getLogger(EuroGridBuilder.class.getName());
 
-	public static void gridSHP(Coordinate cMin, Coordinate cMax, double res, int epsg, Geometry mask, double bufferDist, String outFile) {
-
+	public static Collection<Feature> makeGrid(Coordinate cMin, Coordinate cMax, double res, int epsg, Geometry mask) {
 		logger.debug("create cells");
 		Collection<Feature> cells = new ArrayList<Feature>();
 		for(double x=cMin.x; x<cMax.x; x+=res)
@@ -43,12 +40,9 @@ public class EuroGridSHPBuilder {
 				cell.setAttribute("cellId", cell.getID());
 				cells.add(cell);
 			}
-
-		logger.info("Save " + cells.size() + " cells");
-		SHPUtil.saveSHP(cells, outFile, ProjectionUtil.getCRS(epsg));
+		return cells;
 	}
 
-	
 	/**
 	 * Build a cell code (according to INSPIRE coding system).
 	 * This is valid only for a grids in a cartographic projection.

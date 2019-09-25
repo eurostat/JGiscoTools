@@ -3,11 +3,15 @@
  */
 package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 
+import java.util.Collection;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.opencarto.datamodel.Feature;
 import org.opencarto.io.SHPUtil;
+import org.opencarto.util.ProjectionUtil;
 
 /**
  * @author julien Gaffuri
@@ -25,10 +29,18 @@ public class Main {
 
 		String path = "C:/Users/gaffuju/Desktop/";
 
-		logger.info("Make grid");
+		Collection<Feature> cells;
+
+		logger.info("Make 10km grid");
 		Geometry mask = SHPUtil.loadSHP(path+"CNTR_RG_LAEA/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
-		EuroGridSHPBuilder.gridSHP(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 10000, 3035, mask, 10000, path+"out/grid_10km.shp");
-		EuroGridSHPBuilder.gridSHP(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 5000, 3035, mask, 10000, path+"out/grid_5km.shp");
+		cells = EuroGridBuilder.makeGrid(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 10000, 3035, mask);
+		logger.info("Save " + cells.size() + " cells");
+		SHPUtil.saveSHP(cells, path+"out/grid_10km.shp", ProjectionUtil.getCRS(3035));
+
+		logger.info("Make 5km grid");
+		cells = EuroGridBuilder.makeGrid(new Coordinate(500000,140000), new Coordinate(8190000,6030000), 5000, 3035, mask);
+		logger.info("Save " + cells.size() + " cells");
+		SHPUtil.saveSHP(cells, path+"out/grid_5km.shp", ProjectionUtil.getCRS(3035));
 
 		logger.info("End");
 	}
