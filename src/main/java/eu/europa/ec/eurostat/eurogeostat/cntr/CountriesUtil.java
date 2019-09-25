@@ -16,6 +16,8 @@ import org.opencarto.io.SHPUtil;
  */
 public class CountriesUtil {
 
+	public static final String[] EuropeanCountryCodes = new String[] {"BE","BG","CZ","DK","DE","EE","IE","EL","ES","FR","HR","IT","CY","LV","LT","LU","HU","MT","NL","AT","PL","PT","RO","SI","SK","FI","SE","UK","IS","LI","NO","CH","ME","MK","AL","RS","TR"};
+
 	public static Feature getCountry(String countryCode) {
 		try {
 			ArrayList<Feature> fs = SHPUtil.loadSHP("./resources/CNTR/2016/1M/LAEA/CNTR_RG_01M_2016.shp", CQL.toFilter("CNTR_ID = '"+countryCode+"'")).fs;

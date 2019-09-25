@@ -49,9 +49,7 @@ public class Routing {
 		Map<String, Serializable> map = new HashMap<>();
 		map.put( "url", new URL(networkFile)  );
 		DataStore store = DataStoreFinder.getDataStore(map);
-		FeatureCollection<?,?> fc =  store.getFeatureSource(store.getTypeNames()[0])
-				//.getFeatures();
-				.getFeatures(CQL.toFilter("ICC = 'LU'"));
+		FeatureCollection<?,?> fc =  store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 		store.dispose();
 
 		System.out.println(fc.size());
