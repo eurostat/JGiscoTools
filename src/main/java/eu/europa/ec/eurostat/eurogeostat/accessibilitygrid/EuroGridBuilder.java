@@ -24,40 +24,41 @@ public class EuroGridBuilder {
 
 
 	/**
-	 * Build grid cells within a given envelope.
-	 * A mask can be specified: Only grid cells intersecting it will be kept.
+	 * Build grid cells covering a geometry.
 	 * 
-	 * @param gridEnvelope
-	 * @param res
-	 * @param epsg
-	 * @param mask
+	 * @param geometryToCover
+	 * @param gridResolutionM
+	 * @param epsgCode
 	 * @return
 	 */
-	public static Collection<Feature> buildGridCells(Envelope gridEnvelope, double res, int epsg, Geometry mask) {
+	public static Collection<Feature> buildGridCells(Geometry geometryToCover, double gridResolutionM, int epsgCode) {
 		if(logger.isDebugEnabled()) logger.debug("Build grid cells...");
+
+		//get grid envelope
+		Envelope env = ensureGrid(geometryToCover.getEnvelopeInternal(), gridResolutionM);
+
 		Collection<Feature> cells = new ArrayList<Feature>();
-		for(double x=gridEnvelope.getMinX(); x<gridEnvelope.getMaxX(); x+=res)
-			for(double y=gridEnvelope.getMinY(); y<gridEnvelope.getMaxY(); y+=res) {
+		for(double x=env.getMinX(); x<env.getMaxX(); x+=gridResolutionM)
+			for(double y=env.getMinY(); y<env.getMaxY(); y+=gridResolutionM) {
 
 				//build cell geometry
-				Polygon gridCellGeom = JTSGeomUtil.createPolygon( x,y, x+res,y, x+res,y+res, x,y+res, x,y );
+				Polygon gridCellGeom = JTSGeomUtil.createPolygon( x,y, x+gridResolutionM,y, x+gridResolutionM,y+gridResolutionM, x,y+gridResolutionM, x,y );
 
-				if(mask != null) {
-					//check intersection with mask
-					if(!gridCellGeom.getEnvelopeInternal().intersects(mask.getEnvelopeInternal())) continue;
-					if(!gridCellGeom.intersects(mask)) continue;
-				}
+				//check intersection with geometryToCover
+				if(!gridCellGeom.getEnvelopeInternal().intersects(geometryToCover.getEnvelopeInternal())) continue;
+				if(!gridCellGeom.intersects(geometryToCover)) continue;
 
 				//build and keep the cell
 				Feature cell = new Feature();
 				cell.setDefaultGeometry(gridCellGeom);
-				cell.setID( getGridCellId(epsg, res, new Coordinate(x,y)) );
+				cell.setID( getGridCellId(epsgCode, gridResolutionM, new Coordinate(x,y)) );
 				cell.setAttribute("cellId", cell.getID());
 				cells.add(cell);
 			}
 		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells built");
 		return cells;
 	}
+
 
 
 	/**
@@ -134,27 +135,45 @@ public class EuroGridBuilder {
 	 * - CRS3035RES200mN1453400E1452800
 	 * - CRS3035RES100000mN5400000E1200000
 	 * 
-	 * @param epsg
-	 * @param resolution
+	 * @param epsgCode
+	 * @param gridResolutionM
 	 * @param lowerLeftCornerPosition
 	 * @return
 	 */
-	public static String getGridCellId(int epsg, double resolution, Coordinate lowerLeftCornerPosition) {
+	public static String getGridCellId(int epsgCode, double gridResolutionM, Coordinate lowerLeftCornerPosition) {
 		return 
-				"CRS"+Integer.toString((int)epsg)
-				+"RES"+Integer.toString((int)resolution)+"m"
+				"CRS"+Integer.toString((int)epsgCode)
+				+"RES"+Integer.toString((int)gridResolutionM)+"m"
 				+"N"+Integer.toString((int)lowerLeftCornerPosition.getX())
 				+"E"+Integer.toString((int)lowerLeftCornerPosition.getY())
 				;
 	}
 
 
-	//sequecing
-	public static Collection<Feature> procceed(Envelope gridEnvelope, double res, int epsg, Geometry mask, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
-		Collection<Feature> cells = EuroGridBuilder.buildGridCells(gridEnvelope, res, epsg, mask);
+	//sequencing
+	public static Collection<Feature> proceed(Geometry geometryToCover, double res, int epsg, String cntStampAtt, Collection<Feature> countries, double cntBufferDist, String cntIdAtt) {
+		Collection<Feature> cells = EuroGridBuilder.buildGridCells(geometryToCover, res, epsg);
 		EuroGridBuilder.addCountryStamp(cells, cntStampAtt, countries, cntBufferDist, cntIdAtt);
 		EuroGridBuilder.filterCountryStamp(cells, cntStampAtt);
 		return cells;
 	}
+
+
+	//TODO build grid by country
+
+
+	private static Envelope ensureGrid(Envelope env, double res) {
+		double xMin = env.getMinX() - env.getMinX()%res;
+		double xMax = (1+(int)(env.getMaxX()/res))*res;
+		double yMin = env.getMinY() - env.getMinY()%res;
+		double yMax = (1+(int)(env.getMaxY()/res))*res;
+		return new Envelope(xMin, xMax, yMin, yMax);
+	}
+
+	/*
+	public static void main(String[] args) {
+		System.out.println( ensureGrid(new Envelope(50, 99.9, 50, 100.0), 50.0).toString() );
+	}
+	 */
 
 }

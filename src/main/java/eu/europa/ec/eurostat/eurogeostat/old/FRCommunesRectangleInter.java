@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.eurogeostat;
+package eu.europa.ec.eurostat.eurogeostat.old;
 
 import org.opencarto.io.ShapeFile;
 

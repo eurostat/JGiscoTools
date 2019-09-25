@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.eurogeostat;
+package eu.europa.ec.eurostat.eurogeostat.old;
 
 import java.awt.Color;
 import java.util.Collection;
