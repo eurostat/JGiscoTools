@@ -18,13 +18,17 @@ public class CountriesUtil {
 
 	public static final String[] EuropeanCountryCodes = new String[] {"BE","BG","CZ","DK","DE","EE","IE","EL","ES","FR","HR","IT","CY","LV","LT","LU","HU","MT","NL","AT","PL","PT","RO","SI","SK","FI","SE","UK","IS","LI","NO","CH","ME","MK","AL","RS","TR"};
 
-	public static Feature getCountry(String countryCode) {
+	public static Feature getCountry(String countryCode, String filePath) {
 		try {
-			ArrayList<Feature> fs = SHPUtil.loadSHP("./resources/CNTR/2016/1M/LAEA/CNTR_RG_01M_2016.shp", CQL.toFilter("CNTR_ID = '"+countryCode+"'")).fs;
+			ArrayList<Feature> fs = SHPUtil.loadSHP(filePath, CQL.toFilter("CNTR_ID = '"+countryCode+"'")).fs;
 			if(fs.size() != 1) throw new Exception("Problem finding country with code: "+countryCode+". nb found="+fs.size());
 			return fs.iterator().next();
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
+	}
+
+	public static Feature getCountry(String countryCode) {
+		return getCountry(countryCode, "./src/main/resources/CNTR/CNTR_RG_01M_2016.shp");
 	}
 
 	public static Geometry getEuropeMask() {
