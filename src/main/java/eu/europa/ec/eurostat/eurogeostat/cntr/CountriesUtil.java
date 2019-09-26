@@ -28,8 +28,9 @@ public class CountriesUtil {
 	}
 
 	public static Feature getCountry(String countryCode) {
-		return getCountry(countryCode, "./src/main/resources/CNTR/CNTR_RG_01M_2016.shp");
+		return getCountry(countryCode, "./resources/CNTR/2016/1M/LAEA/CNTR_RG_01M_2016.shp");
 	}
+
 
 	public static Geometry getEuropeMask() {
 		return SHPUtil.loadSHP("./resources/CNTR/2016/1M/LAEA/Europe_RG_01M_2016_10km.shp").fs.iterator().next().getDefaultGeometry();
