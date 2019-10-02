@@ -40,7 +40,6 @@ import org.opengis.feature.simple.SimpleFeature;
 public class Routing {
 	private static Logger logger = Logger.getLogger(Routing.class.getName());
 
-
 	private Graph graph;
 
 	private EdgeWeighter edgeWeighter;
