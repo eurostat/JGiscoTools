@@ -5,9 +5,13 @@ package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
+import org.geotools.graph.path.DijkstraShortestPathFinder;
+import org.geotools.graph.path.Path;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.index.strtree.ItemBoundable;
+import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.opencarto.datamodel.Feature;
 
@@ -20,7 +24,6 @@ public class AccessibilityGrid {
 	private Collection<Feature> pois;
 	private Collection<Feature> cells;
 	private LocalTransportNetworkBuilder ltnb;
-	private double infDist;
 	private STRtree poiIndex;
 
 
@@ -36,25 +39,45 @@ public class AccessibilityGrid {
 	}
 
 
-	public HashMap<String,Object> getAccessibility(Feature cell) {
+	public HashMap<String,Object> getAccessibility(Feature cell, int poiNb) {
+		//TODO do something special when pois are already within the cell?
 
-		//get cell sourrounding
+		//get cell envelope
 		Envelope env = cell.getDefaultGeometry().getEnvelopeInternal();
-		env.expandBy(infDist);
+
+		//get X pois nearby the cell, with spatial index
+		//List<?> poisCell = poiIndex.query(env);
+		ItemDistance itemDist = new ItemDistance() {
+			@Override
+			public double distance(ItemBoundable cellIB, ItemBoundable poiIB) {
+				Feature cell = (Feature) cellIB.getItem();
+				Feature poi = (Feature) poiIB.getItem();
+				return 0;
+			}
+		};
+		Object[] poisCell = poiIndex.nearestNeighbour(env, cell, itemDist , poiNb);
 
 		//build network around the cell
-		Routing localRouting = ltnb.getRoutingAround(env);
+		Envelope envNetwork = null; //TODO build envelope which includes everyone
+		Routing localRouting = ltnb.getRoutingAround(envNetwork);
 
-		//get interest points nearby, with spatial index
-		List<?> poisCell = poiIndex.query(env);
+		//get representative point within the cell
+		//TODO take another position depending on the network state inside the cell?
+		Coordinate gridC = cell.getDefaultGeometry().getCentroid().getCoordinate();
 
-		//compute routes
+		//get pathfinder for the grid cell
+		DijkstraShortestPathFinder pf = localRouting.getDijkstraShortestPathFinder(gridC);
+
+		//compute routes and store data
+		HashMap<String,Object> data = new HashMap<String,Object>();
 		for(Object poi_ : poisCell) {
-			poi
+			Feature poi = (Feature) poi_;
+
+			//route from grid cell to poi
+			Path p = pf.getPath(localRouting.getNode(poi.getDefaultGeometry().getCentroid().getCoordinate()));
 		}
 
 		//store data
-		HashMap<String,Object> data = new HashMap<String,Object>();
 
 		return data;
 	}
