@@ -6,10 +6,10 @@ package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -26,7 +26,11 @@ import org.geotools.graph.traverse.standard.DijkstraIterator;
 import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.operation.linemerge.LineMerger;
+import org.opencarto.datamodel.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -35,28 +39,6 @@ import org.opengis.feature.simple.SimpleFeature;
  */
 public class Routing {
 	private static Logger logger = Logger.getLogger(Routing.class.getName());
-
-
-	public static void main(String[] args) throws Exception {
-		logger.info("Start");
-
-		logger.setLevel(Level.ALL);
-
-		String networkFile = "file:\\E:/dissemination/shared-data/EGM/EGM_2019_SHP_20190312/DATA/FullEurope/RoadL.shp";
-		//String networkFile = "file:\\E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL.shp";
-
-		Map<String, Serializable> map = new HashMap<>();
-		map.put( "url", new URL(networkFile)  );
-		DataStore store = DataStoreFinder.getDataStore(map);
-		FeatureCollection<?,?> fc =  store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
-		store.dispose();
-
-		System.out.println(fc.size());
-
-		Routing rt = new Routing(fc);
-
-		logger.info("End");
-	}
 
 
 	private Graph graph;
@@ -87,8 +69,6 @@ public class Routing {
 		FeatureCollection<?,?> fc =  store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 		store.dispose();
 
-		System.out.println(fc);
-
 		buildGraph(fc);
 		this.edgeWeighter = edgeWeighter;
 	}
@@ -115,34 +95,63 @@ public class Routing {
 
 
 	//get closest node from a position
+	//TODO use spatial index
 	public Node getNode(Coordinate c){
 		double dMin = Double.MAX_VALUE;
 		Node nMin=null;
 		for(Object o : graph.getNodes()){
 			Node n = (Node)o;
-			double d = getPosition(n).distance(c); //TODO fix that !
-			//double d=Utils.getDistance(getPosition(n), c);
+			Point pt = (Point)n.getObject();
+			double d = pt.getCoordinate().distance(c);
 			if(d==0) return n;
 			if(d<dMin) {dMin=d; nMin=n;}
 		}
 		return nMin;
 	}
 
-	//get the position of a graph node
-	private Coordinate getPosition(Node n){
-		if(n==null) return null;
-		Point pt = (Point)n.getObject();
-		if(pt==null) return null;
-		return pt.getCoordinate();
+
+
+	public DijkstraShortestPathFinder getDijkstraShortestPathFinder(Node oN){
+		DijkstraShortestPathFinder pf = new DijkstraShortestPathFinder(graph, oN, getEdgeWeighter());
+		pf.calculate();
+		return pf;
+	}
+	public DijkstraShortestPathFinder getDijkstraShortestPathFinder(Coordinate oC) {
+		Node oN = getNode(oC);
+		if(oN == null) {
+			logger.error("Could not find node around position " + oC);
+			return null;
+		}
+		return getDijkstraShortestPathFinder(oN);
 	}
 
-	public Path getShortestPathDijkstra(Graph g, Node oN, Node dN){
-		return getShortestPathDijkstra(g, oN, dN, this.edgeWeighter);
+	public Path getShortestPathDijkstra(Coordinate oC, Coordinate dC){
+		Node dN = getNode(dC);
+		if(dN == null) {
+			logger.error("Could not find node around position " + dC);
+			return null;
+		}
+		return getDijkstraShortestPathFinder(oC).getPath(dN);
 	}
-	public Path getShortestPathDijkstra(Graph g, Node oN, Node dN, EdgeWeighter edgeWeighter){
-		DijkstraShortestPathFinder pf = new DijkstraShortestPathFinder(g, oN, edgeWeighter);
-		pf.calculate();
-		return pf.getPath(dN);
+
+	public static Feature toFeature(Path path) {
+
+		//build line geometry
+		LineMerger lm = new LineMerger();
+		for(Object o : path.getEdges()){
+			Edge e = (Edge)o;
+			SimpleFeature f = (SimpleFeature) e.getObject();
+			if(f==null) continue;
+			Geometry mls = (Geometry)f.getDefaultGeometry();
+			lm.add(mls);
+		}
+		Collection<?> lss = lm.getMergedLineStrings();
+		Geometry geom = new GeometryFactory().createMultiLineString( lss.toArray(new LineString[lss.size()]) );
+
+		//build feature
+		Feature f = new Feature();
+		f.setDefaultGeometry(geom);
+		return f;
 	}
 
 }
