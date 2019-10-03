@@ -30,6 +30,7 @@ public class MainRouting {
 
 	//example
 	//https://krankenhausatlas.statistikportal.de/
+	//show where X-border cooperation can improve accessibility
 
 
 
@@ -39,14 +40,17 @@ public class MainRouting {
 		logger.setLevel(Level.ALL);
 
 		//TODO ERM
-		//String networkFile = "file:\\E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL.shp";
-		String networkFile = "file:\\E:/dissemination/shared-data/EGM/EGM_2019_SHP_20190312/DATA/FullEurope/RoadL.shp";
+		String networkFile = "file:\\E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL.shp";
+		//String networkFile = "file:\\E:/dissemination/shared-data/EGM/EGM_2019_SHP_20190312/DATA/FullEurope/RoadL.shp";
 
 		Map<String, Serializable> map = new HashMap<>();
 		map.put( "url", new URL(networkFile)  );
 		DataStore store = DataStoreFinder.getDataStore(map);
 		FeatureCollection<?,?> fc =  store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 		store.dispose();
+
+		fc = SHPUtil.getSimpleFeatures(networkFile);
+
 
 		logger.info("Build routing network");
 		Routing rt = new Routing(fc);
