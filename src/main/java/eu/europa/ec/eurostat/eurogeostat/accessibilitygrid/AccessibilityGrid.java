@@ -75,6 +75,8 @@ public class AccessibilityGrid {
 
 			//route from grid cell to poi
 			Path p = pf.getPath(localRouting.getNode(poi.getDefaultGeometry().getCentroid().getCoordinate()));
+
+			//TODO: start with something simple: the distance/duration
 		}
 
 		//store data
