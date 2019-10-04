@@ -19,7 +19,8 @@ import org.opencarto.io.SHPUtil;
  */
 public class CountriesUtil {
 
-	public static final String[] EuropeanCountryCodes = new String[] {"BE","BG","CZ","DK","DE","EE","IE","EL","ES","FR","HR","IT","CY","LV","LT","LU","HU","MT","NL","AT","PL","PT","RO","SI","SK","FI","SE","UK","IS","LI","NO","CH","ME","MK","AL","RS","TR"};
+	//public static final String[] EuropeanCountryCodes = new String[] {"BE","BG","CZ","DK","DE","EE","IE","EL","ES","FR","HR","IT","CY","LV","LT","LU","HU","MT","NL","AT","PL","PT","RO","SI","SK","FI","SE","UK","IS","LI","NO","CH","ME","MK","AL","RS","TR"};
+	public static final String[] EuropeanCountryCodes = new String[] {"AD","AL","AT","BA","BE","BG","BY","CH","CY","CZ","DE","DK","EE","EL","ES","FI","FO","FR","GG","GI","HR","HU","IE","IM","IS","IT","JE","LI","LT","LU","LV","MC","MD","MK","MT","NL","NO","PL","PT","RO","SE","SI","SK","SM","TR","UA","UK","VA"};
 
 
 	public static ArrayList<Feature> getEuropeanCountries(String filePath) {
