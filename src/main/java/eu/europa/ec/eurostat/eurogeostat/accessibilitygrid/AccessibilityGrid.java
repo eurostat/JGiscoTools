@@ -85,22 +85,9 @@ public class AccessibilityGrid {
 	}
 
 
-
 	public interface LocalTransportNetworkBuilder {
-
 		//build a routing object
 		Routing getRoutingAround(Envelope env);
-
-	}
-
-
-	public static void main(String[] args) {
-
-		//for each grid cell, compute accessibility
-		//for each grid cell, get the list of interestPoints 'nearby' and assess their accessiblity
-		//OR
-		//for each interest point, get cells 'nearby' and assess their accessibility
-
 	}
 
 }
