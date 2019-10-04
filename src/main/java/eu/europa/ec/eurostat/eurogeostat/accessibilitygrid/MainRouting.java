@@ -47,12 +47,13 @@ public class MainRouting {
 		logger.info("Build routing network. Nb="+fc.size());
 		Routing rt = new Routing(fc);
 
+		//reference point: Luxembourg
 		Coordinate oC = new Coordinate(4044373, 2952624);
 		DijkstraShortestPathFinder dpf = rt.getDijkstraShortestPathFinder(oC);
 
 
 		//load grid
-		int resKM = 100;
+		int resKM = 50;
 		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp").fs;
 		System.out.println(cells.size() + " cells");
 
@@ -68,7 +69,6 @@ public class MainRouting {
 				continue;
 			}
 			routes.add( Routing.toFeature(p) );
-
 		}
 
 		logger.info("Save");
