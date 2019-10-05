@@ -76,15 +76,21 @@ public class MainRouting {
 
 			//get cell centroid as origin point
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
+			//TODO: get local routing
+			DijkstraShortestPathFinder dpf = rt.getDijkstraShortestPathFinder(oC);
 
 			//get X nearest pois with straight line
 			//TODO
-			DijkstraShortestPathFinder dpf = rt.getDijkstraShortestPathFinder(oC);
+			Collection<?> pois_ = null;
 			//compute the routes to all pois nearby
-			Coordinate dC = null;
-			Node dN = rt.getNode(dC);
-			Path p = dpf.getPath(dN );
 			//get the shortest/fastest
+			for(Object poi_ : pois) {
+				Feature poi = (Feature) poi_;
+				Coordinate dC = poi.getDefaultGeometry().getCentroid().getCoordinate();
+				Node dN = rt.getNode(dC);
+				Path p = dpf.getPath(dN );
+				//TODO get shortest/fastest
+			}
 			//TODO
 			//store figure
 			//TODO
