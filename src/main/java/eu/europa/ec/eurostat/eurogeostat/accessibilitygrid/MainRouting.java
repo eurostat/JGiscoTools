@@ -61,26 +61,19 @@ public class MainRouting {
 		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
 		//- GST = GF0905: Education not definable by level
 
+		//build routing
+		Routing rt = new Routing(fc);
 
 		Collection<HashMap<String, String>> data = new ArrayList<>();
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
 			logger.info(cellId);
 
+			//get cell centroid as origin point
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
 
-			//compute distance/time to the nearest poi
-			//TODO
 			//get X nearest pois with straight line
 			//TODO
-			//get maximum distance
-			//TODO
-			//build area where to get the network
-			//TODO
-			//get network elements
-			FeatureCollection<?,?> fc_ = null;
-			//build the network
-			Routing rt = new Routing(fc_);
 			DijkstraShortestPathFinder dpf = rt.getDijkstraShortestPathFinder(oC);
 			//compute the routes to all pois nearby
 			Coordinate dC = null;
@@ -90,7 +83,7 @@ public class MainRouting {
 			//TODO
 			//store figure
 			//TODO
-
+			//store route
 		}
 
 		logger.info("Save");
