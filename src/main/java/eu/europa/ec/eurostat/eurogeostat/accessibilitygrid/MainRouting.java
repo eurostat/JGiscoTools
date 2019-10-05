@@ -76,7 +76,7 @@ public class MainRouting {
 
 			//get cell centroid as origin point
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
-			//TODO: get local routing
+			//TODO: get and build local routing only
 			DijkstraShortestPathFinder dpf = rt.getDijkstraShortestPathFinder(oC);
 
 			//get X nearest pois with straight line
