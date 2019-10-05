@@ -14,10 +14,12 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Node;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * @author julien Gaffuri
@@ -39,6 +41,7 @@ public class MainRouting {
 		String basepath = "C:/Users/gaffuju/Desktop/";
 		String path = basepath + "routing_test/";
 		String gridpath = basepath + "grid/";
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 
 		logger.info("Load network data");
@@ -65,6 +68,8 @@ public class MainRouting {
 		Routing rt = new Routing(fc);
 
 		Collection<HashMap<String, String>> data = new ArrayList<>();
+		Collection<Feature> routes = new ArrayList<>();
+
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
 			logger.info(cellId);
@@ -83,11 +88,14 @@ public class MainRouting {
 			//TODO
 			//store figure
 			//TODO
+			//store data
 			//store route
 		}
 
-		logger.info("Save");
+		logger.info("Save data");
 		CSVUtil.save(data, path + "data_DE_10km.csv");
+		logger.info("Save routes");
+		SHPUtil.saveSHP(routes, path + "routes_DE_10km.shp", crs);
 
 		logger.info("End");
 	}
