@@ -16,6 +16,7 @@ import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Node;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.index.strtree.STRtree;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
@@ -67,9 +68,19 @@ public class MainRouting {
 		//build routing
 		Routing rt = new Routing(fc);
 
+		//final data
 		Collection<HashMap<String, String>> data = new ArrayList<>();
 		Collection<Feature> routes = new ArrayList<>();
 
+		//build poi spatial index
+		STRtree poiIndex = new STRtree();
+		for(Feature poi : pois)
+			//TODO envelope of point? Use another type of index? KdTree
+			poiIndex.insert(poi.getDefaultGeometry().getEnvelopeInternal(), poi);
+
+		int nbNearest = 5;
+
+		//go through cells
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
 			logger.info(cellId);
@@ -80,11 +91,11 @@ public class MainRouting {
 			DijkstraShortestPathFinder dpf = rt.getDijkstraShortestPathFinder(oC);
 
 			//get X nearest pois with straight line
-			//TODO
-			Collection<?> pois_ = null;
+			pois_ = poiIndex.nearestNeighbour(cell.getDefaultGeometry().getEnvelopeInternal(), cell, itemDist, nbNearest);
+
 			//compute the routes to all pois nearby
 			//get the shortest/fastest
-			for(Object poi_ : pois) {
+			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
 				Coordinate dC = poi.getDefaultGeometry().getCentroid().getCoordinate();
 				Node dN = rt.getNode(dC);
