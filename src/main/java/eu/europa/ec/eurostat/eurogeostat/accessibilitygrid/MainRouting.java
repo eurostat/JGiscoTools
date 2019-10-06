@@ -16,7 +16,6 @@ import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Node;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.index.strtree.STRtree;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
@@ -72,13 +71,13 @@ public class MainRouting {
 		Collection<HashMap<String, String>> data = new ArrayList<>();
 		Collection<Feature> routes = new ArrayList<>();
 
-		//build poi spatial index
+		/*/build poi spatial index
 		STRtree poiIndex = new STRtree();
 		for(Feature poi : pois)
 			//TODO envelope of point? Use another type of index? KdTree
 			poiIndex.insert(poi.getDefaultGeometry().getEnvelopeInternal(), poi);
 
-		int nbNearest = 5;
+		int nbNearest = 5;*/
 
 		//go through cells
 		for(Feature cell : cells) {
@@ -91,22 +90,26 @@ public class MainRouting {
 			DijkstraShortestPathFinder dpf = rt.getDijkstraShortestPathFinder(oC);
 
 			//get X nearest pois with straight line
-			pois_ = poiIndex.nearestNeighbour(cell.getDefaultGeometry().getEnvelopeInternal(), cell, itemDist, nbNearest);
+			//pois_ = poiIndex.nearestNeighbour(cell.getDefaultGeometry().getEnvelopeInternal(), cell, itemDist, nbNearest);
 
-			//compute the routes to all pois nearby
+			//compute the routes to all pois. TODO select only the ones nearby using spatial index
 			//get the shortest/fastest
-			for(Object poi_ : pois_) {
+			Path pMax = null;
+			for(Object poi_ : pois) {
 				Feature poi = (Feature) poi_;
 				Coordinate dC = poi.getDefaultGeometry().getCentroid().getCoordinate();
 				Node dN = rt.getNode(dC);
 				Path p = dpf.getPath(dN );
-				//TODO get shortest/fastest
+				//get shortest/fastest
+				if(pMax==null) { pMax=p; continue; }
+				//TODO get "value" of p and compare with those of pMax
 			}
-			//TODO
-			//store figure
 			//TODO
 			//store data
 			//store route
+			Feature f = Routing.toFeature(pMax);
+			//TODO f.setAttribute(key, value);
+			routes.add(f);
 		}
 
 		logger.info("Save data");
