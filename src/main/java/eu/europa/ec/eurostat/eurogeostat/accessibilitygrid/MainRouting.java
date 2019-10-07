@@ -147,7 +147,7 @@ public class MainRouting {
 			}
 			if(pMin==null) {
 				logger.warn("Could not handle grid cell " + cellId);
-				continue;
+				costMin = -999;
 			}
 
 			//store data at grid cell level
