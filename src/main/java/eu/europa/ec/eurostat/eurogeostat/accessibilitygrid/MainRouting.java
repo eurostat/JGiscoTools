@@ -13,10 +13,14 @@ import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
+import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Node;
+import org.geotools.graph.traverse.standard.DijkstraIterator;
+import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
@@ -24,6 +28,7 @@ import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
 import org.opencarto.io.SHPUtil.SHPData;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -50,27 +55,42 @@ public class MainRouting {
 
 
 		logger.info("Load network data");
-		//EGM
-		//SHPData net = SHPUtil.loadSHP(path + "RoadL_LAEA.shp"/*, CQL.toFilter("ICC = 'DE'")*/);
-		//ERM
-		SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp");
-		net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp").fs );
-		net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp").fs );
+		//TODO correct networks - snapping
+		SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp");
+		//ERM TODO load other transport networks (ferry, etc?)
+		//SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp");
+		//net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp").fs );
+		//net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp").fs );
 		logger.info(net.fs.size() + " sections loaded.");
-
 
 		logger.info("Index network data");
 		STRtree netIndex = new STRtree();
 		for(Feature f : net.fs)
-			netIndex.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
+			if(f.getDefaultGeometry() != null)
+				netIndex.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
+
+
+		logger.info("Define edge weighter");
+		EdgeWeighter edgeWeighter = new DijkstraIterator.EdgeWeighter() {
+			public double getWeight(Edge e) {
+				SimpleFeature f = (SimpleFeature) e.getObject();
+				double speedMPerMinute = 1000/60 * getEXMSpeedKMPerHour(f);
+				double distanceM = ((Geometry) f.getDefaultGeometry()).getLength();
+				return distanceM/speedMPerMinute;
+			}
+		};
+
+
 
 		logger.info("Load grid data");
-		int resKM = 10;
+		int resKM = 5;
 		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp"/*, CQL.toFilter("CNTR_ID = 'DE'")*/).fs;
 		logger.info(cells.size() + " cells");
 
+
 		logger.info("Load POI data");
-		ArrayList<Feature> pois = SHPUtil.loadSHP(path + "GovservP_LAEA.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'DE'"*/ )).fs;
+		//TODO test others: tomtom, osm
+		ArrayList<Feature> pois = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'DE'"*/ )).fs;
 		logger.info(pois.size() + " pois");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
@@ -94,7 +114,8 @@ public class MainRouting {
 			}
 		};
 
-		//final data
+
+		//prepare final data structure
 		Collection<HashMap<String, String>> cellData = new ArrayList<>();
 		Collection<Feature> routes = new ArrayList<>();
 
@@ -103,7 +124,7 @@ public class MainRouting {
 			String cellId = cell.getAttribute("cellId").toString();
 			logger.info(cellId);
 
-			logger.info("Get " + nbNearest + " nearest pois");
+			//logger.info("Get " + nbNearest + " nearest pois");
 			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
 			Object[] pois_ = poiIndex.nearestNeighbour(netEnv, cell, itemDist, nbNearest);
 
@@ -122,11 +143,13 @@ public class MainRouting {
 			for(Object o : net_) net__.add((Feature) o);
 
 			Routing rt = new Routing(net__, net.ft);
-			//TODO: improve and use AStar ?
+			rt.setEdgeWeighter(edgeWeighter);
+			//TODO use time: define weighter
+			//TODO: improve and use AStar - ask gise ?
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oC);
 
 			//compute the routes to all pois to get the best
-			logger.info("Compute routes to pois. Nb="+pois_.length);
+			//logger.info("Compute routes to pois. Nb="+pois_.length);
 			Path pMin = null; double costMin = Double.MAX_VALUE;
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
@@ -134,6 +157,7 @@ public class MainRouting {
 				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
 				//pf.calculate();
 				Path p = null; double cost;
+				//TODO include POI in path?
 				try {
 					//p = pf.getPath();
 					Node dN = rt.getNode(dC);
@@ -160,6 +184,8 @@ public class MainRouting {
 			d.put("cost", ""+costMin);
 			cellData.add(d);
 
+			if(pMin==null) continue;
+
 			//store route
 			Feature f = Routing.toFeature(pMin);
 			f.setAttribute("cost", costMin);
@@ -172,6 +198,14 @@ public class MainRouting {
 		SHPUtil.saveSHP(routes, path + "routes_"+resKM+"km.shp", crs);
 
 		logger.info("End");
+	}
+
+
+
+	//estimate speed of a transport section of ERM/EGM based on attributes
+	private static double getEXMSpeedKMPerHour(SimpleFeature f) {
+		//TODO
+		return 90;
 	}
 
 }

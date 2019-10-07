@@ -104,7 +104,7 @@ public class Routing {
 
 
 
-	//index of nodes
+	//spatial index of nodes
 	private STRtree nodesIndex = null;
 	public STRtree getNodesIndex() {
 		if(nodesIndex == null) {
