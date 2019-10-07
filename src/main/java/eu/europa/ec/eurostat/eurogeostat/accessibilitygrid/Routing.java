@@ -17,11 +17,14 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.graph.build.feature.FeatureGraphGenerator;
 import org.geotools.graph.build.line.LineStringGraphGenerator;
+import org.geotools.graph.path.AStarShortestPathFinder;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Graph;
 import org.geotools.graph.structure.Node;
+import org.geotools.graph.traverse.standard.AStarIterator.AStarFunctions;
+import org.geotools.graph.traverse.standard.AStarIterator.AStarNode;
 import org.geotools.graph.traverse.standard.DijkstraIterator;
 import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.locationtech.jts.geom.Coordinate;
@@ -109,7 +112,44 @@ public class Routing {
 	}
 
 
-	//TODO propose as well: AStarShortestPathFinder
+
+
+
+	public AStarShortestPathFinder getAStarShortestPathFinder(Node oN, Node dN){
+		AStarFunctions afun = null;
+		afun = new AStarFunctions(dN) {
+			@Override
+			public double cost(AStarNode ns0, AStarNode ns1) {
+				Edge e = ns0.getNode().getEdge(ns1.getNode());
+				return getEdgeWeighter().getWeight(e);
+			}
+			@Override
+			public double h(Node n) {
+				Point dP = (Point) dN.getObject();
+				Point p = (Point) n.getObject();
+				return p.distance(dP);
+			}
+
+		};
+		AStarShortestPathFinder pf = new AStarShortestPathFinder(graph, oN, dN, afun);
+		pf.calculate();
+		return pf;
+	}
+	public AStarShortestPathFinder getAStarShortestPathFinder(Coordinate oC, Coordinate dC){
+		Node oN = getNode(oC);
+		if(oN == null) {
+			logger.error("Could not find node around position " + oC);
+			return null;
+		}
+		Node dN = getNode(dC);
+		if(dN == null) {
+			logger.error("Could not find node around position " + dC);
+			return null;
+		}
+		return getAStarShortestPathFinder(oN, dN);
+	}
+
+
 
 	public DijkstraShortestPathFinder getDijkstraShortestPathFinder(Node oN){
 		DijkstraShortestPathFinder pf = new DijkstraShortestPathFinder(graph, oN, getEdgeWeighter());
