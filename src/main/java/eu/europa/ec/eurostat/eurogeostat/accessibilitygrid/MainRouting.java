@@ -50,10 +50,14 @@ public class MainRouting {
 
 
 		logger.info("Load network data");
-		//String networkFile = "E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp";
-		String networkFile = path + "RoadL_LAEA.shp";
-		//FeatureCollection<?,?> fc = SHPUtil.getSimpleFeatures(networkFile, CQL.toFilter("ICC = 'DE'"));
-		SHPData net = SHPUtil.loadSHP(networkFile/*, CQL.toFilter("ICC = 'DE'")*/);
+		//EGM
+		//SHPData net = SHPUtil.loadSHP(path + "RoadL_LAEA.shp"/*, CQL.toFilter("ICC = 'DE'")*/);
+		//ERM
+		SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp");
+		net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp").fs );
+		net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp").fs );
+		logger.info(net.fs.size() + " sections loaded.");
+
 
 		logger.info("Index network data");
 		STRtree netIndex = new STRtree();
