@@ -92,12 +92,6 @@ public class MainRouting {
 		//TODO test others: tomtom, osm
 		ArrayList<Feature> pois = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'DE'"*/ )).fs;
 		logger.info(pois.size() + " pois");
-		//- GST = GF0306: Rescue service
-		//- GST = GF0703: Hospital service
-		//- GST = GF090102: Primary education (ISCED-97 Level 1): Primary schools
-		//- GST = GF0902: Secondary education (ISCED-97 Level 2, 3): Secondary schools
-		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
-		//- GST = GF0905: Education not definable by level
 
 		//build poi spatial index, to quickly retrieve the X nearest (with euclidian distance) pois from cell center
 		logger.info("Index POIs");
@@ -144,7 +138,7 @@ public class MainRouting {
 
 			Routing rt = new Routing(net__, net.ft);
 			rt.setEdgeWeighter(edgeWeighter);
-			//TODO: improve and use AStar - ask GIS_SE ?
+			//TODO: improve and use AStar - ask GIS_SE ? 
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oC);
 
 			//compute the routes to all pois to get the best
@@ -154,7 +148,7 @@ public class MainRouting {
 				Feature poi = (Feature) poi_;
 				Coordinate dC = poi.getDefaultGeometry().getCentroid().getCoordinate();
 				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
-				//pf.calculate();
+				//pf.calculate(); //TODO maybe this step is not necessary?
 				Path p = null; double cost;
 				//TODO include POI in path?
 				try {
