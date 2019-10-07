@@ -29,10 +29,14 @@ import org.geotools.graph.traverse.standard.AStarIterator.AStarNode;
 import org.geotools.graph.traverse.standard.DijkstraIterator;
 import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.index.strtree.ItemBoundable;
+import org.locationtech.jts.index.strtree.ItemDistance;
+import org.locationtech.jts.index.strtree.STRtree;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.SimpleFeatureUtil;
@@ -49,6 +53,7 @@ public class Routing {
 	private Graph graph;
 
 	private EdgeWeighter edgeWeighter;
+	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
 	public EdgeWeighter getEdgeWeighter() {
 		if(edgeWeighter == null) {
 			edgeWeighter = new DijkstraIterator.EdgeWeighter() {
@@ -99,25 +104,33 @@ public class Routing {
 
 
 
-
-
-
+	//index of nodes
+	private STRtree nodesIndex = null;
+	public STRtree getNodesIndex() {
+		if(nodesIndex == null) {
+			nodesIndex = new STRtree();
+			for(Object o : graph.getNodes())
+				nodesIndex.insert(((Point)((Node)o).getObject()).getEnvelopeInternal(), o);
+		}
+		return nodesIndex;
+	}
 
 
 	//get closest node from a position
-	//TODO use spatial index
-	public Node getNode(Coordinate c){
-		double dMin = Double.MAX_VALUE;
-		Node nMin=null;
-		for(Object o : graph.getNodes()){
-			Node n = (Node)o;
-			Point pt = (Point)n.getObject();
-			double d = pt.getCoordinate().distance(c);
-			if(d==0) return n;
-			if(d<dMin) {dMin=d; nMin=n;}
-		}
-		return nMin;
+	public Node getNode(Coordinate c) {
+		Envelope env = new Envelope(); env.expandToInclude(c);
+		Object o = getNodesIndex().nearestNeighbour(env, c, idist);
+		Node n = (Node)o;
+		return n;
 	}
+	private static ItemDistance idist = new ItemDistance() {
+		@Override
+		public double distance(ItemBoundable i1, ItemBoundable i2) {
+			Node n = (Node) i1.getItem();
+			Coordinate c = (Coordinate) i2.getItem();
+			return c.distance( ((Point)n.getObject()).getCoordinate() );
+		}
+	};
 
 
 
