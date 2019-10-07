@@ -11,8 +11,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.text.cql2.CQL;
-import org.geotools.graph.path.AStarShortestPathFinder;
+import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
+import org.geotools.graph.structure.Node;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -78,7 +79,7 @@ public class MainRouting {
 		STRtree poiIndex = new STRtree();
 		for(Feature poi : pois)
 			poiIndex.insert(poi.getDefaultGeometry().getEnvelopeInternal(), poi);
-		int nbNearest = 5;
+		int nbNearest = 3;
 		ItemDistance itemDist = new ItemDistance() {
 			@Override
 			public double distance(ItemBoundable item1, ItemBoundable item2) {
@@ -97,43 +98,48 @@ public class MainRouting {
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
 			//TODO: get and build local routing only
 			//TODO: try AStar
-			//logger.info("Build DijkstraShortestPathFinder");
-			//DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oC);
+			logger.info("Build DijkstraShortestPathFinder");
+			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oC);
 
 			logger.info("Get " + nbNearest + " nearest pois");
 			Envelope env = cell.getDefaultGeometry().getEnvelopeInternal(); env.expandBy(1000);
 			Object[] pois_ = poiIndex.nearestNeighbour(env, cell, itemDist, nbNearest);
 
-			//compute the routes to all pois to get the shortest/fastest
+			//compute the routes to all pois to get the best
 			logger.info("Compute routes to pois. Nb="+pois_.length);
-			Path pMax = null;
+			Path pMin = null; double costMin = Double.MAX_VALUE;
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
 				Coordinate dC = poi.getDefaultGeometry().getCentroid().getCoordinate();
-				AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
-				pf.calculate();
-				Path p = null;
-				try { p = pf.getPath();
+				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
+				//pf.calculate();
+				Path p = null; double cost;
+				try {
+					//p = pf.getPath();
+					Node dN = rt.getNode(dC);
+					p = pf.getPath(dN);
+					cost = pf.getCost(dN);
 				} catch (Exception e) {
 					logger.warn("Could not compute path. " + e.getMessage());
 					continue;
 				}
-				//Path p = pf.getPath( rt.getNode(dC) );
 				if(p==null) continue;
-				//get shortest/fastest
-				if(pMax==null) { pMax=p; continue; }
-				//TODO get "value" of p and compare with those of pMax
-				//routes.add( Routing.toFeature(p) );
+				//get best path
+				if(pMin==null || cost<costMin) {
+					pMin=p; costMin=cost;
+				}
 			}
-			if(pMax==null) {
+			if(pMin==null) {
 				logger.warn("Could not handle grid cell " + cellId);
 				continue;
 			}
 			//store data at grid cell level
-			//TODO
+			HashMap<String, String> d = new HashMap<String, String>();
+			d.put("cennId", cellId);
+			d.put("cost", ""+costMin);
 			//store route
-			Feature f = Routing.toFeature(pMax);
-			//TODO f.setAttribute(key, value);
+			Feature f = Routing.toFeature(pMin);
+			f.setAttribute("cost", costMin);
 			routes.add(f);
 		}
 
