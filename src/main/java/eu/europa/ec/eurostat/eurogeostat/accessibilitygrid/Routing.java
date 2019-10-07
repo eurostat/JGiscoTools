@@ -109,6 +109,7 @@ public class Routing {
 	}
 
 
+	//TODO propose as well: AStarShortestPathFinder
 
 	public DijkstraShortestPathFinder getDijkstraShortestPathFinder(Node oN){
 		DijkstraShortestPathFinder pf = new DijkstraShortestPathFinder(graph, oN, getEdgeWeighter());

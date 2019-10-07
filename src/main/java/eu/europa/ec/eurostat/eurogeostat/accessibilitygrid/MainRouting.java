@@ -14,10 +14,12 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Node;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * @author julien Gaffuri
@@ -39,6 +41,7 @@ public class MainRouting {
 		String basepath = "C:/Users/gaffuju/Desktop/";
 		String path = basepath + "routing_test/";
 		String gridpath = basepath + "grid/";
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 
 		logger.info("Load network data");
@@ -61,40 +64,58 @@ public class MainRouting {
 		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
 		//- GST = GF0905: Education not definable by level
 
+		//build routing
+		Routing rt = new Routing(fc);
 
+		//final data
 		Collection<HashMap<String, String>> data = new ArrayList<>();
+		Collection<Feature> routes = new ArrayList<>();
+
+		/*/build poi spatial index
+		STRtree poiIndex = new STRtree();
+		for(Feature poi : pois)
+			//TODO envelope of point? Use another type of index? KdTree
+			poiIndex.insert(poi.getDefaultGeometry().getEnvelopeInternal(), poi);
+
+		int nbNearest = 5;*/
+
+		//go through cells
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
 			logger.info(cellId);
 
+			//get cell centroid as origin point
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
-
-			//compute distance/time to the nearest poi
-			//TODO
-			//get X nearest pois with straight line
-			//TODO
-			//get maximum distance
-			//TODO
-			//build area where to get the network
-			//TODO
-			//get network elements
-			FeatureCollection<?,?> fc_ = null;
-			//build the network
-			Routing rt = new Routing(fc_);
+			//TODO: get and build local routing only
 			DijkstraShortestPathFinder dpf = rt.getDijkstraShortestPathFinder(oC);
-			//compute the routes to all pois nearby
-			Coordinate dC = null;
-			Node dN = rt.getNode(dC);
-			Path p = dpf.getPath(dN );
-			//get the shortest/fastest
-			//TODO
-			//store figure
-			//TODO
 
+			//get X nearest pois with straight line
+			//pois_ = poiIndex.nearestNeighbour(cell.getDefaultGeometry().getEnvelopeInternal(), cell, itemDist, nbNearest);
+
+			//compute the routes to all pois. TODO select only the ones nearby using spatial index
+			//get the shortest/fastest
+			Path pMax = null;
+			for(Object poi_ : pois) {
+				Feature poi = (Feature) poi_;
+				Coordinate dC = poi.getDefaultGeometry().getCentroid().getCoordinate();
+				Node dN = rt.getNode(dC);
+				Path p = dpf.getPath(dN );
+				//get shortest/fastest
+				if(pMax==null) { pMax=p; continue; }
+				//TODO get "value" of p and compare with those of pMax
+			}
+			//TODO
+			//store data
+			//store route
+			Feature f = Routing.toFeature(pMax);
+			//TODO f.setAttribute(key, value);
+			routes.add(f);
 		}
 
-		logger.info("Save");
+		logger.info("Save data");
 		CSVUtil.save(data, path + "data_DE_10km.csv");
+		logger.info("Save routes");
+		SHPUtil.saveSHP(routes, path + "routes_DE_10km.shp", crs);
 
 		logger.info("End");
 	}
