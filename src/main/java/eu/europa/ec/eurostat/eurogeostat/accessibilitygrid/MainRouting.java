@@ -144,8 +144,7 @@ public class MainRouting {
 
 			Routing rt = new Routing(net__, net.ft);
 			rt.setEdgeWeighter(edgeWeighter);
-			//TODO use time: define weighter
-			//TODO: improve and use AStar - ask gise ?
+			//TODO: improve and use AStar - ask GIS_SE ?
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oC);
 
 			//compute the routes to all pois to get the best
@@ -163,6 +162,7 @@ public class MainRouting {
 					Node dN = rt.getNode(dC);
 					p = pf.getPath(dN);
 					cost = pf.getCost(dN);
+					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 				} catch (Exception e) {
 					logger.warn("Could not compute path. " + e.getMessage());
 					continue;
