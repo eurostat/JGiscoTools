@@ -6,10 +6,10 @@ package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
@@ -23,6 +23,7 @@ import org.locationtech.jts.index.strtree.STRtree;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
+import org.opencarto.io.SHPUtil.SHPData;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -51,15 +52,21 @@ public class MainRouting {
 		logger.info("Load network data");
 		//String networkFile = "E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp";
 		String networkFile = path + "RoadL_LAEA.shp";
-		FeatureCollection<?,?> fc = SHPUtil.getSimpleFeatures(networkFile, CQL.toFilter("ICC = 'DE'"));
+		//FeatureCollection<?,?> fc = SHPUtil.getSimpleFeatures(networkFile, CQL.toFilter("ICC = 'DE'"));
+		SHPData net = SHPUtil.loadSHP(networkFile/*, CQL.toFilter("ICC = 'DE'")*/);
+
+		logger.info("Index network data");
+		STRtree netIndex = new STRtree();
+		for(Feature f : net.fs)
+			netIndex.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
 
 		logger.info("Load grid data");
-		int resKM = 50;
-		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp", CQL.toFilter("CNTR_ID = 'DE'")).fs;
+		int resKM = 10;
+		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp"/*, CQL.toFilter("CNTR_ID = 'DE'")*/).fs;
 		logger.info(cells.size() + " cells");
 
 		logger.info("Load POI data");
-		ArrayList<Feature> pois = SHPUtil.loadSHP(path + "GovservP_LAEA.shp", CQL.toFilter("GST = 'GF0703' AND ICC = 'DE'")).fs;
+		ArrayList<Feature> pois = SHPUtil.loadSHP(path + "GovservP_LAEA.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'DE'"*/ )).fs;
 		logger.info(pois.size() + " pois");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
@@ -68,18 +75,12 @@ public class MainRouting {
 		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
 		//- GST = GF0905: Education not definable by level
 
-		logger.info("Build routing");
-		Routing rt = new Routing(fc);
-
-		//final data
-		Collection<HashMap<String, String>> cellData = new ArrayList<>();
-		Collection<Feature> routes = new ArrayList<>();
-
 		//build poi spatial index, to quickly retrieve the X nearest (with euclidian distance) pois from cell center
+		logger.info("Index POIs");
 		STRtree poiIndex = new STRtree();
 		for(Feature poi : pois)
 			poiIndex.insert(poi.getDefaultGeometry().getEnvelopeInternal(), poi);
-		int nbNearest = 3;
+		int nbNearest = 5;
 		ItemDistance itemDist = new ItemDistance() {
 			@Override
 			public double distance(ItemBoundable item1, ItemBoundable item2) {
@@ -89,21 +90,36 @@ public class MainRouting {
 			}
 		};
 
+		//final data
+		Collection<HashMap<String, String>> cellData = new ArrayList<>();
+		Collection<Feature> routes = new ArrayList<>();
+
 		//go through cells
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
 			logger.info(cellId);
 
+			logger.info("Get " + nbNearest + " nearest pois");
+			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
+			Object[] pois_ = poiIndex.nearestNeighbour(netEnv, cell, itemDist, nbNearest);
+
 			//get cell centroid as origin point
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
-			//TODO: get and build local routing only
-			//TODO: try AStar
-			logger.info("Build DijkstraShortestPathFinder");
-			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oC);
 
-			logger.info("Get " + nbNearest + " nearest pois");
-			Envelope env = cell.getDefaultGeometry().getEnvelopeInternal(); env.expandBy(1000);
-			Object[] pois_ = poiIndex.nearestNeighbour(env, cell, itemDist, nbNearest);
+			//get envelope to build network in
+			netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
+			for(Object poi_ : pois_)
+				netEnv.expandToInclude(((Feature)poi_).getDefaultGeometry().getEnvelopeInternal());
+			netEnv.expandBy(10000);
+
+			//get network elements
+			List<?> net_ = netIndex.query(netEnv);
+			ArrayList<Feature> net__ = new ArrayList<Feature>();
+			for(Object o : net_) net__.add((Feature) o);
+
+			Routing rt = new Routing(net__, net.ft);
+			//TODO: improve and use AStar ?
+			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oC);
 
 			//compute the routes to all pois to get the best
 			logger.info("Compute routes to pois. Nb="+pois_.length);
@@ -133,10 +149,13 @@ public class MainRouting {
 				logger.warn("Could not handle grid cell " + cellId);
 				continue;
 			}
+
 			//store data at grid cell level
 			HashMap<String, String> d = new HashMap<String, String>();
-			d.put("cennId", cellId);
+			d.put("cellId", cellId);
 			d.put("cost", ""+costMin);
+			cellData.add(d);
+
 			//store route
 			Feature f = Routing.toFeature(pMin);
 			f.setAttribute("cost", costMin);
@@ -144,9 +163,9 @@ public class MainRouting {
 		}
 
 		logger.info("Save data");
-		CSVUtil.save(cellData, path + "cell_data_DE_"+resKM+"km.csv");
+		CSVUtil.save(cellData, path + "cell_data_"+resKM+"km.csv");
 		logger.info("Save routes. Nb="+routes.size());
-		SHPUtil.saveSHP(routes, path + "routes_DE_"+resKM+"km.shp", crs);
+		SHPUtil.saveSHP(routes, path + "routes_"+resKM+"km.shp", crs);
 
 		logger.info("End");
 	}

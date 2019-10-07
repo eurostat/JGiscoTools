@@ -6,6 +6,7 @@ package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,9 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opencarto.datamodel.Feature;
+import org.opencarto.io.SimpleFeatureUtil;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  * @author julien Gaffuri
@@ -91,6 +94,11 @@ public class Routing {
 
 	public Routing(URL networkFileURL) throws IOException { this(networkFileURL, null); }
 	public Routing(FeatureCollection<?,?> fc) throws IOException { this(fc, null); }
+	public Routing(ArrayList<Feature> fs, SimpleFeatureType ft) throws IOException { this(SimpleFeatureUtil.get(fs, ft)); }
+
+
+
+
 
 
 
