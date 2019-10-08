@@ -36,14 +36,62 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author julien Gaffuri
  *
  */
-public class MainRouting {
-	private static Logger logger = Logger.getLogger(MainRouting.class.getName());
+public class AccessibilityGrid {
+	private static Logger logger = Logger.getLogger(AccessibilityGrid.class.getName());
 
 	//example
 	//https://krankenhausatlas.statistikportal.de/
 	//show where X-border cooperation can improve accessibility
+	//kernsmoothing
 
 
+	//the grid cells
+	Collection<Feature> cells = null;
+	//the points of interest to measure the accessibility of
+	Collection<Feature> pois = null;
+	//the linear features compising the network
+	Collection<Feature> networkSections = null;
+
+	//the transport duration by grid cell
+	Collection<HashMap<String, String>> cellData = new ArrayList<>();
+	//the fastest route to one of the POIs for each grid cell
+	Collection<Feature> routes = new ArrayList<>();
+
+	public AccessibilityGrid(Collection<Feature> cells, Collection<Feature> pois, Collection<Feature> networkSections) {
+		this.cells = cells;
+		this.pois = pois;
+		this.networkSections = networkSections;
+	}
+
+	
+	private STRtree networkSectionsInd = null;
+	private STRtree getNetworkSectionsInd() {
+		if(networkSectionsInd == null) {
+			logger.info("Index network sections");
+			networkSectionsInd = new STRtree();
+			for(Feature f : networkSections)
+				if(f.getDefaultGeometry() != null)
+					networkSectionsInd.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
+		}
+		return networkSectionsInd;
+	}
+
+	
+	
+	
+	public void compute() {
+		
+	}
+
+
+
+	
+	
+	
+	
+	
+	
+	
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
@@ -243,6 +291,8 @@ public class MainRouting {
 			}
 		}
 
+
+		
 		logger.info("Save data");
 		CSVUtil.save(cellData, path + "cell_data_"+resKM+"km.csv");
 		logger.info("Save routes. Nb="+routes.size());
