@@ -161,6 +161,7 @@ public class MainRouting {
 			rt.setEdgeWeighter(edgeWeighter);
 
 			//get cell centroid as origin point
+			//TODO take another position depending on the network state inside the cell? Cell is supposed to be small enough?
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
 			Node oN = rt.getNode(oC);
 			if(oN == null) {

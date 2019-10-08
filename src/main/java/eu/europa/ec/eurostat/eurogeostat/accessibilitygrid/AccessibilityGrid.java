@@ -62,7 +62,6 @@ public class AccessibilityGrid {
 		Routing localRouting = ltnb.getRoutingAround(envNetwork);
 
 		//get representative point within the cell
-		//TODO take another position depending on the network state inside the cell? Cell is supposed to be small enough?
 		Coordinate gridC = cell.getDefaultGeometry().getCentroid().getCoordinate();
 
 		//get pathfinder for the grid cell
