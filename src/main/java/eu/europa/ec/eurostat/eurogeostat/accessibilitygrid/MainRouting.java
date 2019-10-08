@@ -60,11 +60,11 @@ public class MainRouting {
 		logger.info("Load network data");
 		Filter fil = CQL.toFilter("EXS=28 AND RST=1");
 		//EGM
-		SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
-		//TODO use ERM
-		//SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp", fil);
-		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp", fil).fs );
-		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp", fil).fs );
+		//SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
+		//use ERM
+		SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp", fil);
+		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp", fil).fs );
+		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp", fil).fs );
 		logger.info(net.fs.size() + " sections loaded.");
 
 		logger.info("Index network data");
@@ -126,7 +126,6 @@ public class MainRouting {
 		//go through cells
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
-			logger.info(cellId);
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
 			//case when cell contains at least one POI

@@ -29,7 +29,6 @@ import org.geotools.graph.traverse.standard.AStarIterator.AStarNode;
 import org.geotools.graph.traverse.standard.DijkstraIterator;
 import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
@@ -131,12 +130,11 @@ public class Routing {
 	//get closest node from a position
 	//TODO use spatial index
 	public Node getNode(Coordinate c){
-		double dMin = Double.MAX_VALUE;
-		Node nMin=null;
+		double d, dMin = Double.MAX_VALUE;
+		Node n, nMin=null;
 		for(Object o : graph.getNodes()){
-			Node n = (Node)o;
-			Point pt = (Point)n.getObject();
-			double d = pt.getCoordinate().distance(c);
+			n = (Node)o;
+			d = ((Point)n.getObject()).getCoordinate().distance(c);
 			if(d==0) return n;
 			if(d<dMin) {dMin=d; nMin=n;}
 		}
