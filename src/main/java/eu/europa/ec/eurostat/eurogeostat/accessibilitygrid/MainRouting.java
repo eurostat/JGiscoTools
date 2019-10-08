@@ -58,7 +58,7 @@ public class MainRouting {
 		//TODO correct networks - snapping
 		//TODO load other transport networks (ferry, etc?)
 		logger.info("Load network sections");
-		Filter fil = CQL.toFilter("EXS=28 AND RST=1");
+		Filter fil = CQL.toFilter("EXS=28 AND RST=1" + " AND ICC = 'FR'");
 		//EGM
 		//SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
 		//use ERM
@@ -88,14 +88,14 @@ public class MainRouting {
 
 		logger.info("Load grid cells");
 		int resKM = 5;
-		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp"/*, CQL.toFilter("CNTR_ID = 'DE'")*/).fs;
+		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp", CQL.toFilter("CNTR_ID = 'FR'")).fs;
 		logger.info(cells.size() + " cells");
 
 
 		logger.info("Load POIs");
 		//TODO test others: tomtom, osm
-		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'DE'"*/ )).fs;
-		logger.info(pois.size() + " pois");
+		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" + " AND ICC = 'FR'" )).fs;
+		logger.info(pois.size() + " POIs");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
 		//- GST = GF090102: Primary education (ISCED-97 Level 1): Primary schools
@@ -103,7 +103,7 @@ public class MainRouting {
 		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
 		//- GST = GF0905: Education not definable by level
 
-		//build poi spatial index, to quickly retrieve the X nearest (with euclidian distance) pois from cell center
+		//build POI spatial index, to quickly retrieve the X nearest (with euclidian distance) POIs from cell center
 		logger.info("Index POIs");
 		STRtree poiIndex = new STRtree();
 		for(Feature poi : pois)
@@ -128,6 +128,7 @@ public class MainRouting {
 		//go through cells
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
+			//logger.info(cellId);
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
 			//when cell contains at least one POI, set the duration to 0
@@ -135,22 +136,22 @@ public class MainRouting {
 				if(logger.isDebugEnabled()) logger.debug("POI in cell " + cellId);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("durationMin", "0");
+				d.put("durMin", "0");
 				cellData.add(d);
 				continue;
 			}
 
-			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearest + " nearest pois");
+			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearest + " nearest POIs");
 			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
 			Object[] pois_ = poiIndex.nearestNeighbour(netEnv, cell, itemDist, nbNearest);
 
-			//get an envelope around the cell and surrounding pois
+			//get an envelope around the cell and surrounding POIs
 			netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
 			for(Object poi_ : pois_)
 				netEnv.expandToInclude(((Feature)poi_).getDefaultGeometry().getEnvelopeInternal());
 			netEnv.expandBy(10000);
 
-			//get network sections in the envelope around the cell and surrounding pois
+			//get network sections in the envelope around the cell and surrounding POIs
 			List<?> net_ = netIndex.query(netEnv);
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
 			for(Object o : net_) net__.add((Feature)o);
@@ -166,7 +167,7 @@ public class MainRouting {
 				logger.error("Could not find graph node around cell center: " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("durationMin", "-10");
+				d.put("durMin", "-10");
 				cellData.add(d);
 				continue;
 			}
@@ -174,7 +175,7 @@ public class MainRouting {
 				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("durationMin", "-20");
+				d.put("durMin", "-20");
 				cellData.add(d);
 				continue;
 			}
@@ -182,8 +183,8 @@ public class MainRouting {
 			//TODO: improve and use AStar - ask GIS_SE ?
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
-			//compute the routes to all pois to get the best
-			if(logger.isDebugEnabled()) logger.debug("Compute routes to pois. Nb="+pois_.length);
+			//compute the routes to all POIs to get the best
+			if(logger.isDebugEnabled()) logger.debug("Compute routes to POIs. Nb=" + pois_.length);
 			Path pMin = null; double costMin = Double.MAX_VALUE;
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
@@ -218,10 +219,10 @@ public class MainRouting {
 			}
 
 			if(costMin > 0 && pMin == null) {
-				if(logger.isDebugEnabled()) logger.debug("Could not find path to poi for cell " + cellId + " around " + oC);
+				if(logger.isDebugEnabled()) logger.debug("Could not find path to POI for cell " + cellId + " around " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("durationMin", "-30");
+				d.put("durMin", "-30");
 				cellData.add(d);
 				continue;
 			}
@@ -229,13 +230,13 @@ public class MainRouting {
 			//store data at grid cell level
 			HashMap<String, String> d = new HashMap<String, String>();
 			d.put("cellId", cellId);
-			d.put("durationMin", ""+costMin);
+			d.put("durMin", ""+costMin);
 			cellData.add(d);
 
 			if(pMin != null) {
 				//store route
 				Feature f = Routing.toFeature(pMin);
-				f.setAttribute("durationMin", costMin);
+				f.setAttribute("durMin", costMin);
 				f.setAttribute("cellId", cellId);
 				routes.add(f);
 			}
