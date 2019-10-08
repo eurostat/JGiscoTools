@@ -118,12 +118,17 @@ public class Routing {
 
 	//get closest node from a position
 	public Node getNode(Coordinate c) {
-		Envelope env = new Envelope(); env.expandToInclude(c);
-		Object o = getNodesIndex().nearestNeighbour(env, c, idist);
-		Node n = (Node)o;
-		return n;
+		try {
+			Envelope env = new Envelope(); env.expandToInclude(c);
+			Object o = getNodesIndex().nearestNeighbour(env, c, idist);
+			Node n = (Node)o;
+			return n;
+		} catch (Exception e) {
+			logger.warn("Could not find graph node around position "+c);
+			return null;
+		}
 	}
-	private static ItemDistance idist = new ItemDistance() {
+	private static final ItemDistance idist = new ItemDistance() {
 		@Override
 		public double distance(ItemBoundable i1, ItemBoundable i2) {
 			Node n = (Node) i1.getItem();
@@ -131,9 +136,6 @@ public class Routing {
 			return c.distance( ((Point)n.getObject()).getCoordinate() );
 		}
 	};
-
-
-
 
 
 	public AStarShortestPathFinder getAStarShortestPathFinder(Node oN, Node dN){
