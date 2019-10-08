@@ -51,6 +51,7 @@ public class MainRouting {
 		String basepath = "C:/Users/gaffuju/Desktop/";
 		String path = basepath + "routing_test/";
 		String gridpath = basepath + "grid/";
+		String egpath = "E:/dissemination/shared-data/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 		//TODO correct networks - snapping
@@ -58,11 +59,11 @@ public class MainRouting {
 		logger.info("Load network data");
 		Filter fil = CQL.toFilter("EXS=28 AND RST=1");
 		//EGM
-		SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
-		//ERM
-		//SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp", fil);
-		//net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp", fil).fs );
-		//net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp", fil).fs );
+		SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
+		//TODO use ERM
+		//SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp", fil);
+		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp", fil).fs );
+		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp", fil).fs );
 		logger.info(net.fs.size() + " sections loaded.");
 
 		logger.info("Index network data");
@@ -166,7 +167,7 @@ public class MainRouting {
 					cost = pf.getCost(dN);
 					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 				} catch (Exception e) {
-					logger.warn("Could not compute path. " + e.getMessage());
+					logger.warn("Could not compute path: " + e.getMessage());
 					continue;
 				}
 				if(p==null) continue;
