@@ -195,8 +195,9 @@ public class MainRouting {
 					Node dN = rt.getNode(dC);
 
 					if(dN == oN) {
-						//TODO better handle such case
-						continue;
+						costMin = 0;
+						pMin = null;
+						break;
 					}
 
 					p = pf.getPath(dN);
@@ -210,13 +211,15 @@ public class MainRouting {
 				//get best path
 				if(pMin==null || cost<costMin) {
 					pMin=p; costMin=cost;
+					if(costMin == 0) break;
 				}
 			}
-			if(pMin==null) {
+
+			if(costMin > 0 && pMin == null) {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to poi for cell " + cellId + " around " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("cost", "-999");
+				d.put("cost", "-30");
 				cellData.add(d);
 				continue;
 			}
@@ -227,11 +230,13 @@ public class MainRouting {
 			d.put("cost", ""+costMin);
 			cellData.add(d);
 
-			//store route
-			Feature f = Routing.toFeature(pMin);
-			f.setAttribute("cost", costMin);
-			f.setAttribute("cellId", cellId);
-			routes.add(f);
+			if(pMin != null) {
+				//store route
+				Feature f = Routing.toFeature(pMin);
+				f.setAttribute("cost", costMin);
+				f.setAttribute("cellId", cellId);
+				routes.add(f);
+			}
 		}
 
 		logger.info("Save data");

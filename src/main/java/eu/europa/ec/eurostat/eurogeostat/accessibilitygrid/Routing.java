@@ -116,7 +116,7 @@ public class Routing {
 	}
 
 
-	//get closest node from a position
+	/*/get closest node from a position
 	public Node getNode(Coordinate c) {
 		try {
 			Envelope env = new Envelope(); env.expandToInclude(c);
@@ -127,7 +127,23 @@ public class Routing {
 			//logger.warn("Could not find graph node around position "+c);
 			return null;
 		}
+	}*/
+	//get closest node from a position
+	//TODO use spatial index
+	public Node getNode(Coordinate c){
+		double dMin = Double.MAX_VALUE;
+		Node nMin=null;
+		for(Object o : graph.getNodes()){
+			Node n = (Node)o;
+			Point pt = (Point)n.getObject();
+			double d = pt.getCoordinate().distance(c);
+			if(d==0) return n;
+			if(d<dMin) {dMin=d; nMin=n;}
+		}
+		return nMin;
 	}
+
+
 	private static final ItemDistance idist = new ItemDistance() {
 		@Override
 		public double distance(ItemBoundable i1, ItemBoundable i2) {
