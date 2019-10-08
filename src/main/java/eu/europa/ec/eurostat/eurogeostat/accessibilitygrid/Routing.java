@@ -33,9 +33,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.index.strtree.ItemBoundable;
-import org.locationtech.jts.index.strtree.ItemDistance;
-import org.locationtech.jts.index.strtree.STRtree;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.SimpleFeatureUtil;
@@ -104,7 +101,7 @@ public class Routing {
 
 
 
-	//spatial index of nodes
+	/*/spatial index of nodes
 	private STRtree nodesIndex = null;
 	public STRtree getNodesIndex() {
 		if(nodesIndex == null) {
@@ -115,8 +112,7 @@ public class Routing {
 		return nodesIndex;
 	}
 
-
-	/*/get closest node from a position
+	//get closest node from a position
 	public Node getNode(Coordinate c) {
 		try {
 			Envelope env = new Envelope(); env.expandToInclude(c);
@@ -127,7 +123,17 @@ public class Routing {
 			//logger.warn("Could not find graph node around position "+c);
 			return null;
 		}
-	}*/
+	}
+	private static final ItemDistance idist = new ItemDistance() {
+		@Override
+		public double distance(ItemBoundable i1, ItemBoundable i2) {
+			Node n = (Node) i1.getItem();
+			Coordinate c = (Coordinate) i2.getItem();
+			return c.distance( ((Point)n.getObject()).getCoordinate() );
+		}
+	};
+*/
+
 	//get closest node from a position
 	//TODO use spatial index
 	public Node getNode(Coordinate c){
@@ -143,14 +149,6 @@ public class Routing {
 	}
 
 
-	private static final ItemDistance idist = new ItemDistance() {
-		@Override
-		public double distance(ItemBoundable i1, ItemBoundable i2) {
-			Node n = (Node) i1.getItem();
-			Coordinate c = (Coordinate) i2.getItem();
-			return c.distance( ((Point)n.getObject()).getCoordinate() );
-		}
-	};
 
 
 	public AStarShortestPathFinder getAStarShortestPathFinder(Node oN, Node dN){
