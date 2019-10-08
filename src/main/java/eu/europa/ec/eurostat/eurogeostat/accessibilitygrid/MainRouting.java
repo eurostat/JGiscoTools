@@ -20,6 +20,7 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
@@ -127,12 +128,19 @@ public class MainRouting {
 			String cellId = cell.getAttribute("cellId").toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
+			//check if cell contains poi
+			if(poiIndex.query(cell.getDefaultGeometry().getEnvelopeInternal()).size()>0) {
+				logger.info("POI in cell " + cellId);
+				HashMap<String, String> d = new HashMap<String, String>();
+				d.put("cellId", cellId);
+				d.put("cost", "0");
+				cellData.add(d);
+				continue;
+			}
+
 			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearest + " nearest pois");
 			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
 			Object[] pois_ = poiIndex.nearestNeighbour(netEnv, cell, itemDist, nbNearest);
-
-			//get cell centroid as origin point
-			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
 
 			//get envelope to build network in
 			netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
@@ -147,8 +155,29 @@ public class MainRouting {
 
 			Routing rt = new Routing(net__, net.ft);
 			rt.setEdgeWeighter(edgeWeighter);
+
+			//get cell centroid as origin point
+			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
+			Node oN = rt.getNode(oC);
+			if(oN == null) {
+				logger.error("Could not find graph node around cell center: " + oC);
+				HashMap<String, String> d = new HashMap<String, String>();
+				d.put("cellId", cellId);
+				d.put("cost", "-888");
+				cellData.add(d);
+				continue;
+			}
+			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resKM*1000 ) {
+				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
+				HashMap<String, String> d = new HashMap<String, String>();
+				d.put("cellId", cellId);
+				d.put("cost", "-777");
+				cellData.add(d);
+				continue;
+			}
+
 			//TODO: improve and use AStar - ask GIS_SE ?
-			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oC);
+			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
 			//compute the routes to all pois to get the best
 			if(logger.isDebugEnabled()) logger.debug("Compute routes to pois. Nb="+pois_.length);
@@ -167,7 +196,7 @@ public class MainRouting {
 					cost = pf.getCost(dN);
 					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 				} catch (Exception e) {
-					logger.warn("Could not compute path: " + e.getMessage());
+					logger.warn("Could not compute path for cell " + cellId + ": " + e.getMessage());
 					continue;
 				}
 				if(p==null) continue;
@@ -177,8 +206,12 @@ public class MainRouting {
 				}
 			}
 			if(pMin==null) {
-				logger.warn("Could not handle grid cell " + cellId);
-				costMin = -999;
+				if(logger.isDebugEnabled()) logger.debug("Could not find path to poi for cell " + cellId + " around " + oC);
+				HashMap<String, String> d = new HashMap<String, String>();
+				d.put("cellId", cellId);
+				d.put("cost", "-999");
+				cellData.add(d);
+				continue;
 			}
 
 			//store data at grid cell level
@@ -187,11 +220,10 @@ public class MainRouting {
 			d.put("cost", ""+costMin);
 			cellData.add(d);
 
-			if(pMin==null) continue;
-
 			//store route
 			Feature f = Routing.toFeature(pMin);
 			f.setAttribute("cost", costMin);
+			f.setAttribute("cellId", cellId);
 			routes.add(f);
 		}
 
