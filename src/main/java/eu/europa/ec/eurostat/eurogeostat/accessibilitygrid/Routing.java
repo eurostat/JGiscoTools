@@ -124,7 +124,7 @@ public class Routing {
 			Node n = (Node)o;
 			return n;
 		} catch (Exception e) {
-			logger.warn("Could not find graph node around position "+c);
+			//logger.warn("Could not find graph node around position "+c);
 			return null;
 		}
 	}

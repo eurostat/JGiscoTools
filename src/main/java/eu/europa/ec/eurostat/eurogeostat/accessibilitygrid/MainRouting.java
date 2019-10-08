@@ -126,11 +126,12 @@ public class MainRouting {
 		//go through cells
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
+			logger.info(cellId);
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
-			//check if cell contains poi
+			//case when cell contains at least one POI
 			if(poiIndex.query(cell.getDefaultGeometry().getEnvelopeInternal()).size()>0) {
-				logger.info("POI in cell " + cellId);
+				if(logger.isDebugEnabled()) logger.debug("POI in cell " + cellId);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
 				d.put("cost", "0");
@@ -163,7 +164,7 @@ public class MainRouting {
 				logger.error("Could not find graph node around cell center: " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("cost", "-888");
+				d.put("cost", "-10");
 				cellData.add(d);
 				continue;
 			}
@@ -171,7 +172,7 @@ public class MainRouting {
 				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("cost", "-777");
+				d.put("cost", "-20");
 				cellData.add(d);
 				continue;
 			}
@@ -192,11 +193,17 @@ public class MainRouting {
 				try {
 					//p = pf.getPath();
 					Node dN = rt.getNode(dC);
+
+					if(dN == oN) {
+						//TODO better handle such case
+						continue;
+					}
+
 					p = pf.getPath(dN);
 					cost = pf.getCost(dN);
 					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 				} catch (Exception e) {
-					logger.warn("Could not compute path for cell " + cellId + ": " + e.getMessage());
+					//logger.warn("Could not compute path for cell " + cellId + ": " + e.getMessage());
 					continue;
 				}
 				if(p==null) continue;
