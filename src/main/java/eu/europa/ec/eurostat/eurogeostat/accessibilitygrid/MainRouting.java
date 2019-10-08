@@ -57,27 +57,26 @@ public class MainRouting {
 
 		//TODO correct networks - snapping
 		//TODO load other transport networks (ferry, etc?)
-		logger.info("Load network data");
+		logger.info("Load network sections");
 		Filter fil = CQL.toFilter("EXS=28 AND RST=1");
 		//EGM
 		//SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
 		//use ERM
-		SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp", fil);
+		SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
+		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
+		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
 		logger.info(net.fs.size() + " sections loaded.");
-		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp", fil).fs );
-		//logger.info(net.fs.size() + " sections loaded.");
-		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp", fil).fs );
-		//logger.info(net.fs.size() + " sections loaded.");
 
-		logger.info("Index network data");
+		logger.info("Index network sections");
 		STRtree netIndex = new STRtree();
 		for(Feature f : net.fs)
 			if(f.getDefaultGeometry() != null)
 				netIndex.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
 
-		logger.info("Define edge weighter");
+		logger.info("Define network weighter");
 		EdgeWeighter edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
+				//weight is the transport duration in minutes
 				SimpleFeature f = (SimpleFeature) e.getObject();
 				double speedMPerMinute = 1000/60 * getEXMSpeedKMPerHour(f);
 				double distanceM = ((Geometry) f.getDefaultGeometry()).getLength();
@@ -87,15 +86,15 @@ public class MainRouting {
 
 
 
-		logger.info("Load grid data");
+		logger.info("Load grid cells");
 		int resKM = 5;
 		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp"/*, CQL.toFilter("CNTR_ID = 'DE'")*/).fs;
 		logger.info(cells.size() + " cells");
 
 
-		logger.info("Load POI data");
+		logger.info("Load POIs");
 		//TODO test others: tomtom, osm
-		ArrayList<Feature> pois = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'DE'"*/ )).fs;
+		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'DE'"*/ )).fs;
 		logger.info(pois.size() + " pois");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
@@ -120,8 +119,10 @@ public class MainRouting {
 		};
 
 
-		//prepare final data structure
+		//prepare final data structures
+		//the transport duration by grid cell
 		Collection<HashMap<String, String>> cellData = new ArrayList<>();
+		//the fastest route to one of the POIs for each grid cell
 		Collection<Feature> routes = new ArrayList<>();
 
 		//go through cells
@@ -129,12 +130,12 @@ public class MainRouting {
 			String cellId = cell.getAttribute("cellId").toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
-			//case when cell contains at least one POI
+			//when cell contains at least one POI, set the duration to 0
 			if(poiIndex.query(cell.getDefaultGeometry().getEnvelopeInternal()).size()>0) {
 				if(logger.isDebugEnabled()) logger.debug("POI in cell " + cellId);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("cost", "0");
+				d.put("durationMin", "0");
 				cellData.add(d);
 				continue;
 			}
@@ -142,7 +143,6 @@ public class MainRouting {
 			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearest + " nearest pois");
 			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
 			Object[] pois_ = poiIndex.nearestNeighbour(netEnv, cell, itemDist, nbNearest);
-			System.out.println(" pois= "+pois_.length);
 
 			//get an envelope around the cell and surrounding pois
 			netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
@@ -151,16 +151,9 @@ public class MainRouting {
 			netEnv.expandBy(10000);
 
 			//get network sections in the envelope around the cell and surrounding pois
-			System.out.println(netEnv);
-			System.out.println(netEnv.getArea());
-			System.out.println(netIndex.size());
 			List<?> net_ = netIndex.query(netEnv);
-			System.out.println(net_.size());
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
-			System.out.println(net__.size());
 			for(Object o : net_) net__.add((Feature)o);
-
-			System.out.println(net__.size());
 
 			//build the surrounding network
 			Routing rt = new Routing(net__, net.ft);
@@ -173,7 +166,7 @@ public class MainRouting {
 				logger.error("Could not find graph node around cell center: " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("cost", "-10");
+				d.put("durationMin", "-10");
 				cellData.add(d);
 				continue;
 			}
@@ -181,7 +174,7 @@ public class MainRouting {
 				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("cost", "-20");
+				d.put("durationMin", "-20");
 				cellData.add(d);
 				continue;
 			}
@@ -228,7 +221,7 @@ public class MainRouting {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to poi for cell " + cellId + " around " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
-				d.put("cost", "-30");
+				d.put("durationMin", "-30");
 				cellData.add(d);
 				continue;
 			}
@@ -236,13 +229,13 @@ public class MainRouting {
 			//store data at grid cell level
 			HashMap<String, String> d = new HashMap<String, String>();
 			d.put("cellId", cellId);
-			d.put("cost", ""+costMin);
+			d.put("durationMin", ""+costMin);
 			cellData.add(d);
 
 			if(pMin != null) {
 				//store route
 				Feature f = Routing.toFeature(pMin);
-				f.setAttribute("cost", costMin);
+				f.setAttribute("durationMin", costMin);
 				f.setAttribute("cellId", cellId);
 				routes.add(f);
 			}
