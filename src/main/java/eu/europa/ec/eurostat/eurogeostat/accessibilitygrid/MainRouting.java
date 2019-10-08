@@ -63,16 +63,17 @@ public class MainRouting {
 		//SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
 		//use ERM
 		SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp", fil);
-		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp", fil).fs );
-		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp", fil).fs );
 		logger.info(net.fs.size() + " sections loaded.");
+		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp", fil).fs );
+		//logger.info(net.fs.size() + " sections loaded.");
+		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp", fil).fs );
+		//logger.info(net.fs.size() + " sections loaded.");
 
 		logger.info("Index network data");
 		STRtree netIndex = new STRtree();
 		for(Feature f : net.fs)
 			if(f.getDefaultGeometry() != null)
 				netIndex.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
-
 
 		logger.info("Define edge weighter");
 		EdgeWeighter edgeWeighter = new DijkstraIterator.EdgeWeighter() {
@@ -141,18 +142,27 @@ public class MainRouting {
 			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearest + " nearest pois");
 			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
 			Object[] pois_ = poiIndex.nearestNeighbour(netEnv, cell, itemDist, nbNearest);
+			System.out.println(" pois= "+pois_.length);
 
-			//get envelope to build network in
+			//get an envelope around the cell and surrounding pois
 			netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
 			for(Object poi_ : pois_)
 				netEnv.expandToInclude(((Feature)poi_).getDefaultGeometry().getEnvelopeInternal());
 			netEnv.expandBy(10000);
 
-			//get network elements
+			//get network sections in the envelope around the cell and surrounding pois
+			System.out.println(netEnv);
+			System.out.println(netEnv.getArea());
+			System.out.println(netIndex.size());
 			List<?> net_ = netIndex.query(netEnv);
+			System.out.println(net_.size());
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
-			for(Object o : net_) net__.add((Feature) o);
+			System.out.println(net__.size());
+			for(Object o : net_) net__.add((Feature)o);
 
+			System.out.println(net__.size());
+
+			//build the surrounding network
 			Routing rt = new Routing(net__, net.ft);
 			rt.setEdgeWeighter(edgeWeighter);
 

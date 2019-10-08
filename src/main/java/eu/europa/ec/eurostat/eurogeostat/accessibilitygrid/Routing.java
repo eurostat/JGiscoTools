@@ -50,6 +50,7 @@ public class Routing {
 	private static Logger logger = Logger.getLogger(Routing.class.getName());
 
 	private Graph graph;
+	public Graph getGraph() { return graph; }
 
 	private EdgeWeighter edgeWeighter;
 	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
