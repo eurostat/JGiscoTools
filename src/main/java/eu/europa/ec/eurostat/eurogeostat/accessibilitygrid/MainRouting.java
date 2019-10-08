@@ -29,6 +29,7 @@ import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
 import org.opencarto.io.SHPUtil.SHPData;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -53,14 +54,16 @@ public class MainRouting {
 		String gridpath = basepath + "grid/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
-
-		logger.info("Load network data");
 		//TODO correct networks - snapping
-		SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp");
-		//ERM TODO load other transport networks (ferry, etc?)
-		//SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp");
-		//net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp").fs );
-		//net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp").fs );
+		//TODO load other transport networks (ferry, etc?)
+		logger.info("Load network data");
+		Filter fil = CQL.toFilter("EXS=28 AND RST=1");
+		//EGM
+		SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
+		//ERM
+		//SHPData net = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_14_15_16.shp", fil);
+		//net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_984.shp", fil).fs );
+		//net.fs.addAll( SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp/Data/RoadL_RTT_0.shp", fil).fs );
 		logger.info(net.fs.size() + " sections loaded.");
 
 		logger.info("Index network data");
@@ -204,6 +207,20 @@ public class MainRouting {
 
 	//estimate speed of a transport section of ERM/EGM based on attributes
 	private static double getEXMSpeedKMPerHour(SimpleFeature f) {
+		/*
+TODO: define speed based on:
+		COR - Category of Road
+0 Unknown
+1 Motorway
+2 Road inside built-up area
+999 Other road (outside built-up area)
+		RTT - Route Intended Use
+0 Unknown
+16 National motorway
+14 Primary route
+15 Secondary route
+984 Local route
+		*/
 		//TODO
 		return 90;
 	}
