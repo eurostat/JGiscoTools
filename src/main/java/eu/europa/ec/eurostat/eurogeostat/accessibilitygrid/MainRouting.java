@@ -125,7 +125,7 @@ public class MainRouting {
 		//the fastest route to one of the POIs for each grid cell
 		Collection<Feature> routes = new ArrayList<>();
 
-		//go through cells
+		logger.info("Compute cell figure");
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
 			//logger.info(cellId);
