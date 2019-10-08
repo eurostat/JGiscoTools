@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
@@ -47,7 +46,7 @@ public class MainRouting {
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
-		logger.setLevel(Level.ALL);
+		//logger.setLevel(Level.ALL);
 
 		String basepath = "C:/Users/gaffuju/Desktop/";
 		String path = basepath + "routing_test/";
@@ -125,9 +124,9 @@ public class MainRouting {
 		//go through cells
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
-			logger.info(cellId);
+			if(logger.isDebugEnabled()) logger.debug(cellId);
 
-			//logger.info("Get " + nbNearest + " nearest pois");
+			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearest + " nearest pois");
 			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
 			Object[] pois_ = poiIndex.nearestNeighbour(netEnv, cell, itemDist, nbNearest);
 
@@ -151,7 +150,7 @@ public class MainRouting {
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oC);
 
 			//compute the routes to all pois to get the best
-			//logger.info("Compute routes to pois. Nb="+pois_.length);
+			if(logger.isDebugEnabled()) logger.debug("Compute routes to pois. Nb="+pois_.length);
 			Path pMin = null; double costMin = Double.MAX_VALUE;
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
@@ -204,25 +203,24 @@ public class MainRouting {
 	}
 
 
-
 	//estimate speed of a transport section of ERM/EGM based on attributes
+	//COR - Category of Road - 0 Unknown - 1 Motorway - 2 Road inside built-up area - 999 Other road (outside built-up area)
+	//RTT - Route Intended Use - 0 Unknown - 16 National motorway - 14 Primary route - 15 Secondary route - 984 Local route
 	private static double getEXMSpeedKMPerHour(SimpleFeature f) {
-		/*
-TODO: define speed based on:
-		COR - Category of Road
-0 Unknown
-1 Motorway
-2 Road inside built-up area
-999 Other road (outside built-up area)
-		RTT - Route Intended Use
-0 Unknown
-16 National motorway
-14 Primary route
-15 Secondary route
-984 Local route
-		*/
-		//TODO
-		return 90;
+		String cor = f.getAttribute("COR").toString();
+		if(cor==null) { logger.warn("No COR attribute for feature "+f.getID()); return 0; };
+		String rtt = f.getAttribute("RTT").toString();
+		if(rtt==null) { logger.warn("No RTT attribute for feature "+f.getID()); return 0; };
+
+		//motorways
+		if("1".equals(cor) || "16".equals(rtt)) return 110.0;
+		//city roads
+		if("2".equals(cor)) return 50.0;
+		//fast roads
+		if("14".equals(rtt) || "15".equals(rtt)) return 80.0;
+		//local road
+		if("984".equals(rtt)) return 80.0;
+		return 50.0;
 	}
 
 }
