@@ -121,7 +121,7 @@ public class AccessibilityGrid {
 	}
 
 	//used to get nearest POIs from a location
-	private int nbNearestPOIs = 5;
+	public static int nbNearestPOIs = 4;
 	private static ItemDistance itemDist = new ItemDistance() {
 		@Override
 		public double distance(ItemBoundable item1, ItemBoundable item2) {
