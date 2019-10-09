@@ -11,15 +11,19 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
+import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Node;
+import org.geotools.graph.traverse.standard.DijkstraIterator;
 import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.opencarto.datamodel.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
@@ -40,6 +44,22 @@ public class AccessibilityGrid {
 	private SimpleFeatureType ft = null; //TODO useless - replace and remove it
 
 	private EdgeWeighter edgeWeighter = null;
+	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
+
+	interface SpeedCalculator { double getSpeedKMPerHour(SimpleFeature sf); }
+	public void setEdgeWeighter(SpeedCalculator sc) {
+		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
+			public double getWeight(Edge e) {
+				//weight is the transport duration, in minutes
+				SimpleFeature sf = (SimpleFeature) e.getObject();
+				double speedMPerMinute = 1000/60 * sc.getSpeedKMPerHour(sf);
+				double distanceM = ((Geometry) sf.getDefaultGeometry()).getLength();
+				return distanceM/speedMPerMinute;
+			}
+		};
+
+	}
+
 
 	//the transport duration by grid cell
 	private Collection<HashMap<String, String>> cellData = null;
@@ -236,7 +256,7 @@ public class AccessibilityGrid {
 	 * @param durMin
 	 * @return
 	 */
-	double getPopulationAccessibilityIndicator(double population, double durMin) {
+	private double getPopulationAccessibilityIndicator(double population, double durMin) {
 		//the higher the duration, the worst.
 		//the higher the population, the worst
 		//TODO test others ? To give more weight to low population cells, increase p
@@ -246,5 +266,6 @@ public class AccessibilityGrid {
 	}
 
 	//TODO function which produce indicator for all cells, based on previous function, cell data and cell population data
+
 
 }
