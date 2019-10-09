@@ -12,9 +12,7 @@ import org.geotools.referencing.CRS;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
-import org.opencarto.io.SHPUtil.SHPData;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -69,23 +67,19 @@ public class EurostatHospitalAccessibility {
 		logger.info("Load network sections");
 		Filter fil = CQL.toFilter("EXS=28 AND RST=1" /*+ " AND ICC = 'BE'"*/);
 		//EGM
-		//SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
+		//Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil).fs;
 		//ERM
-		SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
-		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
-		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
+		Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil).fs;
+		networkSections.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
+		networkSections.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
 
-		Collection<Feature> networkSections = net.fs;
-		SimpleFeatureType ft = net.ft;
-		net = null;
 		logger.info(networkSections.size() + " sections loaded.");
 
 
 
 
-
 		logger.info("Build accessibility");
-		AccessibilityGrid ag = new AccessibilityGrid(cells, resKM*1000, pois, networkSections, ft);
+		AccessibilityGrid ag = new AccessibilityGrid(cells, resKM*1000, pois, networkSections);
 		ag.setEdgeWeighter(new SpeedCalculator() {
 			@Override
 			public double getSpeedKMPerHour(SimpleFeature sf) {

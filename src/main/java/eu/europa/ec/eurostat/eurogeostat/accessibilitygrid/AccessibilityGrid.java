@@ -23,6 +23,7 @@ import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.opencarto.datamodel.Feature;
+import org.opencarto.io.SimpleFeatureUtil;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -41,7 +42,6 @@ public class AccessibilityGrid {
 	private Collection<Feature> pois = null;
 	//the linear features compising the network
 	private Collection<Feature> networkSections = null;
-	private SimpleFeatureType ft = null; //TODO useless - replace and remove it
 
 	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;
@@ -85,12 +85,11 @@ public class AccessibilityGrid {
 
 
 
-	public AccessibilityGrid(Collection<Feature> cells, double resM, Collection<Feature> pois, Collection<Feature> networkSections, SimpleFeatureType ft) {
+	public AccessibilityGrid(Collection<Feature> cells, double resM, Collection<Feature> pois, Collection<Feature> networkSections) {
 		this.cells = cells;
 		this.resM = resM;
 		this.pois = pois;
 		this.networkSections = networkSections;
-		this.ft = ft; //TODO useless - replace and remove it
 	}
 
 
@@ -144,6 +143,9 @@ public class AccessibilityGrid {
 		//compute spatial indexes
 		getPoisInd();
 		getNetworkSectionsInd();
+
+		//make network sections feat
+		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections.iterator().next(), null);
 
 		logger.info("Compute cell figure");
 		for(Feature cell : cells) {
