@@ -240,6 +240,7 @@ public class AccessibilityGrid {
 		//the higher the duration, the worst.
 		//the higher the population, the worst
 		//TODO test others ? To give more weight to low population cells, increase p
+		//TODO use population density instead, with an average to average density?
 		double p = 1;
 		return durMin*Math.pow(population, 1/p);
 	}
