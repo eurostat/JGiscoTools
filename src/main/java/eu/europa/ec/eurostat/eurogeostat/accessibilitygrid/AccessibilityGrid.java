@@ -228,9 +228,20 @@ public class AccessibilityGrid {
 
 
 
-	//TODO compute indicator with population and duration
+
+	/**
+	 * An indicator measuring how bad a cell is considered, based on its accessibility AND population.
+	 * 
+	 * @param population
+	 * @param durMin
+	 * @return
+	 */
 	double getPopulationAccessibilityIndicator(double population, double durMin) {
-		return 0;
+		//the higher the duration, the worst.
+		//the higher the population, the worst
+		//TODO test others ? To give more weight to low population cells, increase p
+		double p = 1;
+		return durMin*Math.pow(population, 1/p);
 	}
 
 	//TODO function which produce indicator for all cells, based on previous function, cell data and cell population data
