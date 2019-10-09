@@ -93,9 +93,23 @@ public class EurostatHospitalAccessibility {
 		ag.setEdgeWeighter(new SpeedCalculator() {
 			@Override
 			public double getSpeedKMPerHour(SimpleFeature sf) {
-				// TODO Auto-generated method stub
-				***
-				return 0;
+				//estimate speed of a transport section of ERM/EGM based on attributes
+				//COR - Category of Road - 0 Unknown - 1 Motorway - 2 Road inside built-up area - 999 Other road (outside built-up area)
+				//RTT - Route Intended Use - 0 Unknown - 16 National motorway - 14 Primary route - 15 Secondary route - 984 Local route
+					String cor = sf.getAttribute("COR").toString();
+					if(cor==null) { logger.warn("No COR attribute for feature "+sf.getID()); return 0; };
+					String rtt = sf.getAttribute("RTT").toString();
+					if(rtt==null) { logger.warn("No RTT attribute for feature "+sf.getID()); return 0; };
+
+					//motorways
+					if("1".equals(cor) || "16".equals(rtt)) return 110.0;
+					//city roads
+					if("2".equals(cor)) return 50.0;
+					//fast roads
+					if("14".equals(rtt) || "15".equals(rtt)) return 80.0;
+					//local road
+					if("984".equals(rtt)) return 80.0;
+					return 50.0;
 			}});
 		ag.compute();
 
@@ -107,31 +121,6 @@ public class EurostatHospitalAccessibility {
 		SHPUtil.saveSHP(ag.getRoutes(), path + "routes_"+resKM+"km.shp", crs);
 
 		logger.info("End");
-	}
-
-
-
-
-
-
-	//estimate speed of a transport section of ERM/EGM based on attributes
-	//COR - Category of Road - 0 Unknown - 1 Motorway - 2 Road inside built-up area - 999 Other road (outside built-up area)
-	//RTT - Route Intended Use - 0 Unknown - 16 National motorway - 14 Primary route - 15 Secondary route - 984 Local route
-	private static double getEXMSpeedKMPerHour(SimpleFeature f) {
-		String cor = f.getAttribute("COR").toString();
-		if(cor==null) { logger.warn("No COR attribute for feature "+f.getID()); return 0; };
-		String rtt = f.getAttribute("RTT").toString();
-		if(rtt==null) { logger.warn("No RTT attribute for feature "+f.getID()); return 0; };
-
-		//motorways
-		if("1".equals(cor) || "16".equals(rtt)) return 110.0;
-		//city roads
-		if("2".equals(cor)) return 50.0;
-		//fast roads
-		if("14".equals(rtt) || "15".equals(rtt)) return 80.0;
-		//local road
-		if("984".equals(rtt)) return 80.0;
-		return 50.0;
 	}
 
 }
