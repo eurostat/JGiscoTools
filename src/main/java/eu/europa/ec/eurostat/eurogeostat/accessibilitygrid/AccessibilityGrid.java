@@ -46,7 +46,7 @@ public class AccessibilityGrid {
 	private EdgeWeighter edgeWeighter = null;
 	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
 
-	interface SpeedCalculator { double getSpeedKMPerHour(SimpleFeature sf); }
+	public interface SpeedCalculator { double getSpeedKMPerHour(SimpleFeature sf); }
 	public void setEdgeWeighter(SpeedCalculator sc) {
 		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
@@ -70,13 +70,12 @@ public class AccessibilityGrid {
 	public Collection<Feature> getRoutes() { return routes; }
 
 
-	public AccessibilityGrid(Collection<Feature> cells, double resM, Collection<Feature> pois, Collection<Feature> networkSections, SimpleFeatureType ft, EdgeWeighter edgeWeighter) {
+	public AccessibilityGrid(Collection<Feature> cells, double resM, Collection<Feature> pois, Collection<Feature> networkSections, SimpleFeatureType ft) {
 		this.cells = cells;
 		this.resM = resM;
 		this.pois = pois;
 		this.networkSections = networkSections;
 		this.ft = ft; //TODO useless - replace and remove it
-		this.edgeWeighter = edgeWeighter;
 	}
 
 

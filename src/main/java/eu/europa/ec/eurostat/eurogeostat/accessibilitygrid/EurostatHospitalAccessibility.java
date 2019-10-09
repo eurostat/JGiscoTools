@@ -22,6 +22,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.eurogeostat.accessibilitygrid.AccessibilityGrid.SpeedCalculator;
+
 /**
  * @author julien Gaffuri
  *
@@ -83,24 +85,18 @@ public class EurostatHospitalAccessibility {
 		logger.info(networkSections.size() + " sections loaded.");
 
 
-		//TODO include in accessibity grid with new interface "speed calculator"
-		logger.info("Define network weighter");
-		EdgeWeighter edgeWeighter = new DijkstraIterator.EdgeWeighter() {
-			public double getWeight(Edge e) {
-				//weight is the transport duration in minutes
-				SimpleFeature f = (SimpleFeature) e.getObject();
-				double speedMPerMinute = 1000/60 * getEXMSpeedKMPerHour(f);
-				double distanceM = ((Geometry) f.getDefaultGeometry()).getLength();
-				return distanceM/speedMPerMinute;
-			}
-		};
-
-
 
 
 
 		logger.info("Build and compute accessibility");
-		AccessibilityGrid ag = new AccessibilityGrid(cells, resKM*1000, pois, networkSections, ft, edgeWeighter);
+		AccessibilityGrid ag = new AccessibilityGrid(cells, resKM*1000, pois, networkSections, ft);
+		ag.setEdgeWeighter(new SpeedCalculator() {
+			@Override
+			public double getSpeedKMPerHour(SimpleFeature sf) {
+				// TODO Auto-generated method stub
+				***
+				return 0;
+			}});
 		ag.compute();
 
 
