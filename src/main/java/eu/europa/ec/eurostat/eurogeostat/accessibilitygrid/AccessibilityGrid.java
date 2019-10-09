@@ -175,7 +175,7 @@ public class AccessibilityGrid {
 				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
 				//pf.calculate();
 				Path p = null; double cost;
-				//TODO include POI in path?
+				//TODO include POI in path? Cell is supposed to be small enough?
 				try {
 					//p = pf.getPath();
 					Node dN = rt.getNode(dC);

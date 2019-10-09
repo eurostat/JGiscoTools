@@ -30,6 +30,7 @@ public class EurostatHospitalAccessibility {
 	private static Logger logger = Logger.getLogger(EurostatHospitalAccessibility.class.getName());
 
 
+	//use: -Xms2G -Xmx8G
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
@@ -46,7 +47,7 @@ public class EurostatHospitalAccessibility {
 		//TODO correct networks - snapping
 		//TODO load other transport networks (ferry, etc?)
 		logger.info("Load network sections");
-		Filter fil = CQL.toFilter("EXS=28 AND RST=1" + " AND ICC = 'FR'");
+		Filter fil = CQL.toFilter("EXS=28 AND RST=1" + " AND ICC = 'UK'");
 		//EGM
 		//SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
 		//ERM
@@ -75,13 +76,13 @@ public class EurostatHospitalAccessibility {
 
 		logger.info("Load grid cells");
 		int resKM = 5;
-		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp" /*,CQL.toFilter("CNTR_ID = 'FR'")*/).fs;
+		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp" ,CQL.toFilter("CNTR_ID = 'UK'")).fs;
 		logger.info(cells.size() + " cells");
 
 
 		logger.info("Load POIs");
 		//TODO test others POI sources and types: tomtom, osm
-		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp" /*,CQL.toFilter("GST = 'GF0703'" + " AND ICC = 'FR'")*/ ).fs;
+		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" + " AND ICC = 'UK'") ).fs;
 		logger.info(pois.size() + " POIs");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
