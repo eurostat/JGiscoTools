@@ -49,17 +49,16 @@ public class EurostatHospitalAccessibility {
 		logger.info("Load network sections");
 		Filter fil = CQL.toFilter("EXS=28 AND RST=1" + " AND ICC = 'UK'");
 		//EGM
-		//SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
+		SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
 		//ERM
-		SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
-		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
-		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
-		logger.info(net.fs.size() + " sections loaded.");
+		//SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
+		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
+		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
 
 		Collection<Feature> networkSections = net.fs;
 		SimpleFeatureType ft = net.ft;
 		net = null;
-
+		logger.info(networkSections.size() + " sections loaded.");
 
 		logger.info("Define network weighter");
 		EdgeWeighter edgeWeighter = new DijkstraIterator.EdgeWeighter() {
