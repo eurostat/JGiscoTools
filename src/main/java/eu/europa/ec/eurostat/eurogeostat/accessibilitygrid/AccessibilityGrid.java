@@ -141,6 +141,10 @@ public class AccessibilityGrid {
 		cellData = new ArrayList<>();
 		routes = new ArrayList<>();
 
+		//compute spatial indexes
+		getPoisInd();
+		getNetworkSectionsInd();
+
 		logger.info("Compute cell figure");
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute("cellId").toString();
