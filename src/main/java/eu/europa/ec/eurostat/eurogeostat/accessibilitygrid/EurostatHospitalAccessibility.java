@@ -27,6 +27,7 @@ public class EurostatHospitalAccessibility {
 
 	//https://krankenhausatlas.statistikportal.de/
 	//show where X-border cooperation can improve accessibility
+	//kernel smoothing
 
 	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Exception {
@@ -105,7 +106,9 @@ public class EurostatHospitalAccessibility {
 		logger.info("Compute accessibility");
 		ag.compute();
 
-
+		//logger.info("Compute accessibility indicator, with population");
+		//HashMap<String, Double> popData = null; //TODO compute and load that
+		//ag.computePopulationAccessibilityIndicator(popData);
 
 
 		logger.info("Save data");

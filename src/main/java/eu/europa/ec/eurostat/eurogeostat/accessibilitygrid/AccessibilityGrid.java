@@ -259,8 +259,9 @@ public class AccessibilityGrid {
 			if(pMin != null) {
 				//store route
 				Feature f = Routing.toFeature(pMin);
-				f.setAttribute("durMin", costMin);
+				f.setID(cellId);
 				f.setAttribute("cellId", cellId);
+				f.setAttribute("durMin", costMin);
 				routes.add(f);
 			}
 		}
@@ -276,7 +277,7 @@ public class AccessibilityGrid {
 	 * @param durMin
 	 * @return
 	 */
-	private double getPopulationAccessibilityIndicator(double population, double durMin) {
+	private static double getPopulationAccessibilityIndicator(double population, double durMin) {
 		//the higher the duration, the worst.
 		//the higher the population, the worst
 		//TODO test others ? To give more weight to low population cells, increase p
@@ -285,7 +286,23 @@ public class AccessibilityGrid {
 		return durMin*Math.pow(population, 1/p);
 	}
 
-	//TODO function which produce indicator for all cells, based on previous function, cell data and cell population data
+	//computes indicator for all cells, based on previous function, cell data and cell population data
+	public void computePopulationAccessibilityIndicator(HashMap<String, Double> cellPopulation) {
+
+		for(HashMap<String, String> cellData : getCellData()) {
+			//get input data
+			String cellId = cellData.get("cellId");
+			double durMin = Double.parseDouble( cellData.get("durMin") );
+			double population = cellPopulation.get(cellId);
+
+			//compute indicator
+			double indic = getPopulationAccessibilityIndicator(population, durMin);
+
+			//store indicator
+			cellData.put("population", ""+population);
+			cellData.put("pop_indicator", ""+indic);
+		}
+	}
 
 
 }
