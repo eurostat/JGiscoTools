@@ -47,13 +47,13 @@ public class EurostatHospitalAccessibility {
 		//TODO correct networks - snapping
 		//TODO load other transport networks (ferry, etc?)
 		logger.info("Load network sections");
-		Filter fil = CQL.toFilter("EXS=28 AND RST=1" + " AND ICC = 'UK'");
+		Filter fil = CQL.toFilter("EXS=28 AND RST=1" /*+ " AND ICC = 'BE'"*/);
 		//EGM
-		SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
+		//SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
 		//ERM
-		//SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
-		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
-		//net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
+		SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
+		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
+		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
 
 		Collection<Feature> networkSections = net.fs;
 		SimpleFeatureType ft = net.ft;
@@ -75,13 +75,13 @@ public class EurostatHospitalAccessibility {
 
 		logger.info("Load grid cells");
 		int resKM = 5;
-		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp" ,CQL.toFilter("CNTR_ID = 'UK'")).fs;
+		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp" /*,CQL.toFilter("CNTR_ID = 'BE'")*/).fs;
 		logger.info(cells.size() + " cells");
 
 
 		logger.info("Load POIs");
 		//TODO test others POI sources and types: tomtom, osm
-		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" + " AND ICC = 'UK'") ).fs;
+		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ )).fs;
 		logger.info(pois.size() + " POIs");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
