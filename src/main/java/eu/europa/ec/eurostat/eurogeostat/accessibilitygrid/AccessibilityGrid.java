@@ -9,28 +9,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.geotools.filter.text.cql2.CQL;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
-import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Node;
-import org.geotools.graph.traverse.standard.DijkstraIterator;
 import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
-import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.opencarto.datamodel.Feature;
-import org.opencarto.io.CSVUtil;
-import org.opencarto.io.SHPUtil;
-import org.opencarto.io.SHPUtil.SHPData;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.Filter;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  * @author julien Gaffuri
@@ -39,31 +29,38 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class AccessibilityGrid {
 	private static Logger logger = Logger.getLogger(AccessibilityGrid.class.getName());
 
-	//example
-	//https://krankenhausatlas.statistikportal.de/
-	//show where X-border cooperation can improve accessibility
-	//kernsmoothing
-
-
 	//the grid cells
-	Collection<Feature> cells = null;
+	private Collection<Feature> cells = null;
+	//the grid resolution in m
+	private double resM = -1;
 	//the points of interest to measure the accessibility of
-	Collection<Feature> pois = null;
+	private Collection<Feature> pois = null;
 	//the linear features compising the network
-	Collection<Feature> networkSections = null;
+	private Collection<Feature> networkSections = null;
+	private SimpleFeatureType ft = null; //TODO useless - remove it
+
+	private EdgeWeighter edgeWeighter = null;
 
 	//the transport duration by grid cell
-	Collection<HashMap<String, String>> cellData = new ArrayList<>();
-	//the fastest route to one of the POIs for each grid cell
-	Collection<Feature> routes = new ArrayList<>();
+	private Collection<HashMap<String, String>> cellData = null;
+	public Collection<HashMap<String, String>> getCellData() { return cellData; }
 
-	public AccessibilityGrid(Collection<Feature> cells, Collection<Feature> pois, Collection<Feature> networkSections) {
+	//the fastest route to one of the POIs for each grid cell
+	private Collection<Feature> routes = null;
+	public Collection<Feature> getRoutes() { return routes; }
+
+
+	public AccessibilityGrid(Collection<Feature> cells, double resM, Collection<Feature> pois, Collection<Feature> networkSections, SimpleFeatureType ft, EdgeWeighter edgeWeighter) {
 		this.cells = cells;
+		this.resM = resM;
 		this.pois = pois;
 		this.networkSections = networkSections;
+		this.ft = ft;
+		this.edgeWeighter = edgeWeighter;
 	}
 
-	
+
+	//a spatial index for network sections
 	private STRtree networkSectionsInd = null;
 	private STRtree getNetworkSectionsInd() {
 		if(networkSectionsInd == null) {
@@ -76,102 +73,39 @@ public class AccessibilityGrid {
 		return networkSectionsInd;
 	}
 
-	
-	
-	
-	public void compute() {
-		
+
+	//a spatial index for POIs
+	private STRtree poisInd = null;
+	private STRtree getPoisInd() {
+		if(poisInd == null) {
+			logger.info("Index POIs");
+			poisInd = new STRtree();
+			for(Feature f : pois)
+				poisInd.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
+		}
+		return poisInd;
 	}
 
-
-
-	
-	
-	
-	
-	
-	
-	
-	public static void main(String[] args) throws Exception {
-		logger.info("Start");
-
-		//logger.setLevel(Level.ALL);
-
-		String basepath = "C:/Users/gaffuju/Desktop/";
-		String path = basepath + "routing_test/";
-		String gridpath = basepath + "grid/";
-		String egpath = "E:/dissemination/shared-data/";
-		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
-
-		//TODO correct networks - snapping
-		//TODO load other transport networks (ferry, etc?)
-		logger.info("Load network sections");
-		Filter fil = CQL.toFilter("EXS=28 AND RST=1" /*+ " AND ICC = 'FR'"*/);
-		//EGM
-		//SHPData net = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil);
-		//ERM
-		SHPData net = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
-		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
-		net.fs.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
-		logger.info(net.fs.size() + " sections loaded.");
-
-		logger.info("Index network sections");
-		STRtree netIndex = new STRtree();
-		for(Feature f : net.fs)
-			if(f.getDefaultGeometry() != null)
-				netIndex.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
-
-		logger.info("Define network weighter");
-		EdgeWeighter edgeWeighter = new DijkstraIterator.EdgeWeighter() {
-			public double getWeight(Edge e) {
-				//weight is the transport duration in minutes
-				SimpleFeature f = (SimpleFeature) e.getObject();
-				double speedMPerMinute = 1000/60 * getEXMSpeedKMPerHour(f);
-				double distanceM = ((Geometry) f.getDefaultGeometry()).getLength();
-				return distanceM/speedMPerMinute;
-			}
-		};
+	//used to get nearest POIs from a location
+	private int nbNearestPOIs = 5;
+	private static ItemDistance itemDist = new ItemDistance() {
+		@Override
+		public double distance(ItemBoundable item1, ItemBoundable item2) {
+			Feature f1 = (Feature) item1.getItem();
+			Feature f2 = (Feature) item2.getItem();
+			return f1.getDefaultGeometry().distance(f2.getDefaultGeometry());
+		}
+	};
 
 
 
-		logger.info("Load grid cells");
-		int resKM = 5;
-		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp" /*,CQL.toFilter("CNTR_ID = 'FR'")*/).fs;
-		logger.info(cells.size() + " cells");
 
 
-		logger.info("Load POIs");
-		//TODO test others POI sources and types: tomtom, osm
-		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp" /*,CQL.toFilter("GST = 'GF0703'" + " AND ICC = 'FR'")*/ ).fs;
-		logger.info(pois.size() + " POIs");
-		//- GST = GF0306: Rescue service
-		//- GST = GF0703: Hospital service
-		//- GST = GF090102: Primary education (ISCED-97 Level 1): Primary schools
-		//- GST = GF0902: Secondary education (ISCED-97 Level 2, 3): Secondary schools
-		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
-		//- GST = GF0905: Education not definable by level
-
-		//build POI spatial index, to quickly retrieve the X nearest (with euclidian distance) POIs from cell center
-		logger.info("Index POIs");
-		STRtree poiIndex = new STRtree();
-		for(Feature poi : pois)
-			poiIndex.insert(poi.getDefaultGeometry().getEnvelopeInternal(), poi);
-		int nbNearest = 5;
-		ItemDistance itemDist = new ItemDistance() {
-			@Override
-			public double distance(ItemBoundable item1, ItemBoundable item2) {
-				Feature f1 = (Feature) item1.getItem();
-				Feature f2 = (Feature) item2.getItem();
-				return f1.getDefaultGeometry().distance(f2.getDefaultGeometry());
-			}
-		};
-
-
-		//prepare final data structures
-		//the transport duration by grid cell
-		Collection<HashMap<String, String>> cellData = new ArrayList<>();
-		//the fastest route to one of the POIs for each grid cell
-		Collection<Feature> routes = new ArrayList<>();
+	//compute the accessibility data
+	public void compute() throws Exception {
+		//create output data structures
+		cellData = new ArrayList<>();
+		routes = new ArrayList<>();
 
 		logger.info("Compute cell figure");
 		for(Feature cell : cells) {
@@ -180,7 +114,7 @@ public class AccessibilityGrid {
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
 			//when cell contains at least one POI, set the duration to 0
-			if(poiIndex.query(cell.getDefaultGeometry().getEnvelopeInternal()).size()>0) {
+			if(getPoisInd().query(cell.getDefaultGeometry().getEnvelopeInternal()).size()>0) {
 				if(logger.isDebugEnabled()) logger.debug("POI in cell " + cellId);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
@@ -189,9 +123,9 @@ public class AccessibilityGrid {
 				continue;
 			}
 
-			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearest + " nearest POIs");
+			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearestPOIs + " nearest POIs");
 			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
-			Object[] pois_ = poiIndex.nearestNeighbour(netEnv, cell, itemDist, nbNearest);
+			Object[] pois_ = getPoisInd().nearestNeighbour(netEnv, cell, itemDist, nbNearestPOIs);
 
 			//get an envelope around the cell and surrounding POIs
 			netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
@@ -200,12 +134,12 @@ public class AccessibilityGrid {
 			netEnv.expandBy(10000);
 
 			//get network sections in the envelope around the cell and surrounding POIs
-			List<?> net_ = netIndex.query(netEnv);
+			List<?> net_ = getNetworkSectionsInd().query(netEnv);
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
 			for(Object o : net_) net__.add((Feature)o);
 
 			//build the surrounding network
-			Routing rt = new Routing(net__, net.ft);
+			Routing rt = new Routing(net__, ft);
 			rt.setEdgeWeighter(edgeWeighter);
 
 			//get cell centroid as origin point
@@ -220,7 +154,7 @@ public class AccessibilityGrid {
 				cellData.add(d);
 				continue;
 			}
-			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resKM*1000 ) {
+			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
 				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("cellId", cellId);
@@ -290,36 +224,6 @@ public class AccessibilityGrid {
 				routes.add(f);
 			}
 		}
-
-
-		
-		logger.info("Save data");
-		CSVUtil.save(cellData, path + "cell_data_"+resKM+"km.csv");
-		logger.info("Save routes. Nb="+routes.size());
-		SHPUtil.saveSHP(routes, path + "routes_"+resKM+"km.shp", crs);
-
-		logger.info("End");
-	}
-
-
-	//estimate speed of a transport section of ERM/EGM based on attributes
-	//COR - Category of Road - 0 Unknown - 1 Motorway - 2 Road inside built-up area - 999 Other road (outside built-up area)
-	//RTT - Route Intended Use - 0 Unknown - 16 National motorway - 14 Primary route - 15 Secondary route - 984 Local route
-	private static double getEXMSpeedKMPerHour(SimpleFeature f) {
-		String cor = f.getAttribute("COR").toString();
-		if(cor==null) { logger.warn("No COR attribute for feature "+f.getID()); return 0; };
-		String rtt = f.getAttribute("RTT").toString();
-		if(rtt==null) { logger.warn("No RTT attribute for feature "+f.getID()); return 0; };
-
-		//motorways
-		if("1".equals(cor) || "16".equals(rtt)) return 110.0;
-		//city roads
-		if("2".equals(cor)) return 50.0;
-		//fast roads
-		if("14".equals(rtt) || "15".equals(rtt)) return 80.0;
-		//local road
-		if("984".equals(rtt)) return 80.0;
-		return 50.0;
 	}
 
 }
