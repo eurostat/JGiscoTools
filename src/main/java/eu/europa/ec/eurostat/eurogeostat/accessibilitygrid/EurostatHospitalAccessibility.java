@@ -8,11 +8,7 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
-import org.geotools.graph.structure.Edge;
-import org.geotools.graph.traverse.standard.DijkstraIterator;
-import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.geotools.referencing.CRS;
-import org.locationtech.jts.geom.Geometry;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
@@ -65,7 +61,7 @@ public class EurostatHospitalAccessibility {
 		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
 		//- GST = GF0905: Education not definable by level
 
-		
+
 
 		//TODO show map of transport network (EGM/ERM) based on speed
 		//TODO correct networks - snapping
@@ -88,7 +84,7 @@ public class EurostatHospitalAccessibility {
 
 
 
-		logger.info("Build and compute accessibility");
+		logger.info("Build accessibility");
 		AccessibilityGrid ag = new AccessibilityGrid(cells, resKM*1000, pois, networkSections, ft);
 		ag.setEdgeWeighter(new SpeedCalculator() {
 			@Override
@@ -96,22 +92,25 @@ public class EurostatHospitalAccessibility {
 				//estimate speed of a transport section of ERM/EGM based on attributes
 				//COR - Category of Road - 0 Unknown - 1 Motorway - 2 Road inside built-up area - 999 Other road (outside built-up area)
 				//RTT - Route Intended Use - 0 Unknown - 16 National motorway - 14 Primary route - 15 Secondary route - 984 Local route
-					String cor = sf.getAttribute("COR").toString();
-					if(cor==null) { logger.warn("No COR attribute for feature "+sf.getID()); return 0; };
-					String rtt = sf.getAttribute("RTT").toString();
-					if(rtt==null) { logger.warn("No RTT attribute for feature "+sf.getID()); return 0; };
+				String cor = sf.getAttribute("COR").toString();
+				if(cor==null) { logger.warn("No COR attribute for feature "+sf.getID()); return 0; };
+				String rtt = sf.getAttribute("RTT").toString();
+				if(rtt==null) { logger.warn("No RTT attribute for feature "+sf.getID()); return 0; };
 
-					//motorways
-					if("1".equals(cor) || "16".equals(rtt)) return 110.0;
-					//city roads
-					if("2".equals(cor)) return 50.0;
-					//fast roads
-					if("14".equals(rtt) || "15".equals(rtt)) return 80.0;
-					//local road
-					if("984".equals(rtt)) return 80.0;
-					return 50.0;
+				//motorways
+				if("1".equals(cor) || "16".equals(rtt)) return 110.0;
+				//city roads
+				if("2".equals(cor)) return 50.0;
+				//fast roads
+				if("14".equals(rtt) || "15".equals(rtt)) return 80.0;
+				//local road
+				if("984".equals(rtt)) return 80.0;
+				return 50.0;
 			}});
+
+		logger.info("Compute accessibility");
 		ag.compute();
+
 
 
 

@@ -43,6 +43,7 @@ public class AccessibilityGrid {
 	private Collection<Feature> networkSections = null;
 	private SimpleFeatureType ft = null; //TODO useless - replace and remove it
 
+	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;
 	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
 
@@ -57,8 +58,20 @@ public class AccessibilityGrid {
 				return distanceM/speedMPerMinute;
 			}
 		};
-
 	}
+
+	public EdgeWeighter getEdgeWeighter() {
+		if(this.edgeWeighter == null) {
+			//set default weighter: All sections are walked at the same speed, 70km/h
+			setEdgeWeighter(new SpeedCalculator() {
+				@Override
+				public double getSpeedKMPerHour(SimpleFeature sf) { return 70.0; }
+			});
+		}
+		return this.edgeWeighter;
+	}
+
+
 
 
 	//the transport duration by grid cell
@@ -68,6 +81,8 @@ public class AccessibilityGrid {
 	//the fastest route to one of the POIs for each grid cell
 	private Collection<Feature> routes = null;
 	public Collection<Feature> getRoutes() { return routes; }
+
+
 
 
 	public AccessibilityGrid(Collection<Feature> cells, double resM, Collection<Feature> pois, Collection<Feature> networkSections, SimpleFeatureType ft) {
@@ -159,7 +174,7 @@ public class AccessibilityGrid {
 
 			//build the surrounding network
 			Routing rt = new Routing(net__, ft);
-			rt.setEdgeWeighter(edgeWeighter);
+			rt.setEdgeWeighter(getEdgeWeighter());
 
 			//get cell centroid as origin point
 			//take another position depending on the network state inside the cell? Cell is supposed to be small enough?
