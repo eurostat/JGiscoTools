@@ -37,7 +37,7 @@ public class AccessibilityGrid {
 	private Collection<Feature> pois = null;
 	//the linear features compising the network
 	private Collection<Feature> networkSections = null;
-	private SimpleFeatureType ft = null; //TODO useless - remove it
+	private SimpleFeatureType ft = null; //TODO useless - replace and remove it
 
 	private EdgeWeighter edgeWeighter = null;
 
@@ -55,7 +55,7 @@ public class AccessibilityGrid {
 		this.resM = resM;
 		this.pois = pois;
 		this.networkSections = networkSections;
-		this.ft = ft;
+		this.ft = ft; //TODO useless - replace and remove it
 		this.edgeWeighter = edgeWeighter;
 	}
 
@@ -143,7 +143,7 @@ public class AccessibilityGrid {
 			rt.setEdgeWeighter(edgeWeighter);
 
 			//get cell centroid as origin point
-			//TODO take another position depending on the network state inside the cell? Cell is supposed to be small enough?
+			//take another position depending on the network state inside the cell? Cell is supposed to be small enough?
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
 			Node oN = rt.getNode(oC);
 			if(oN == null) {
@@ -175,7 +175,7 @@ public class AccessibilityGrid {
 				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
 				//pf.calculate();
 				Path p = null; double cost;
-				//TODO include POI in path? Cell is supposed to be small enough?
+				//include POI in path? Cell is supposed to be small enough?
 				try {
 					//p = pf.getPath();
 					Node dN = rt.getNode(dC);
@@ -225,5 +225,14 @@ public class AccessibilityGrid {
 			}
 		}
 	}
+
+
+
+	//TODO compute indicator with population and duration
+	double getPopulationAccessibilityIndicator(double population, double durMin) {
+		return 0;
+	}
+
+	//TODO function which produce indicator for all cells, based on previous function, cell data and cell population data
 
 }

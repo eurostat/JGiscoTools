@@ -29,8 +29,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class EurostatHospitalAccessibility {
 	private static Logger logger = Logger.getLogger(EurostatHospitalAccessibility.class.getName());
 
+	//https://krankenhausatlas.statistikportal.de/
+	//show where X-border cooperation can improve accessibility
 
-	//use: -Xms2G -Xmx8G
+	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
@@ -43,6 +45,25 @@ public class EurostatHospitalAccessibility {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 
+		logger.info("Load grid cells");
+		int resKM = 5;
+		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp" /*,CQL.toFilter("CNTR_ID = 'BE'")*/).fs;
+		logger.info(cells.size() + " cells");
+
+
+
+		logger.info("Load POIs");
+		//TODO test others POI sources and types: tomtom, osm
+		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ )).fs;
+		logger.info(pois.size() + " POIs");
+		//- GST = GF0306: Rescue service
+		//- GST = GF0703: Hospital service
+		//- GST = GF090102: Primary education (ISCED-97 Level 1): Primary schools
+		//- GST = GF0902: Secondary education (ISCED-97 Level 2, 3): Secondary schools
+		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
+		//- GST = GF0905: Education not definable by level
+
+		
 
 		//TODO show map of transport network (EGM/ERM) based on speed
 		//TODO correct networks - snapping
@@ -61,6 +82,8 @@ public class EurostatHospitalAccessibility {
 		net = null;
 		logger.info(networkSections.size() + " sections loaded.");
 
+
+		//TODO include in accessibity grid with new interface "speed calculator"
 		logger.info("Define network weighter");
 		EdgeWeighter edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
@@ -74,26 +97,9 @@ public class EurostatHospitalAccessibility {
 
 
 
-		logger.info("Load grid cells");
-		int resKM = 5;
-		ArrayList<Feature> cells = SHPUtil.loadSHP(gridpath + resKM+"km/grid_"+resKM+"km.shp" /*,CQL.toFilter("CNTR_ID = 'BE'")*/).fs;
-		logger.info(cells.size() + " cells");
 
 
-		logger.info("Load POIs");
-		//TODO test others POI sources and types: tomtom, osm
-		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ )).fs;
-		logger.info(pois.size() + " POIs");
-		//- GST = GF0306: Rescue service
-		//- GST = GF0703: Hospital service
-		//- GST = GF090102: Primary education (ISCED-97 Level 1): Primary schools
-		//- GST = GF0902: Secondary education (ISCED-97 Level 2, 3): Secondary schools
-		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
-		//- GST = GF0905: Education not definable by level
-
-
-
-		//build accessibility
+		logger.info("Build and compute accessibility");
 		AccessibilityGrid ag = new AccessibilityGrid(cells, resKM*1000, pois, networkSections, ft, edgeWeighter);
 		ag.compute();
 
