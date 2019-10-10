@@ -287,13 +287,13 @@ public class AccessibilityGrid {
 	}
 
 	//computes indicator for all cells, based on previous function, cell data and cell population data
-	public void computePopulationAccessibilityIndicator(HashMap<String, Double> cellPopulation) {
+	public void computePopulationAccessibilityIndicator(HashMap<String, String> cellPopulation) {
 
 		for(HashMap<String, String> cellData : getCellData()) {
 			//get input data
 			String cellId = cellData.get("cellId");
 			double durMin = Double.parseDouble( cellData.get("durMin") );
-			double population = cellPopulation.get(cellId);
+			double population = Double.parseDouble(cellPopulation.get(cellId));
 
 			//compute indicator
 			double indic = getPopulationAccessibilityIndicator(population, durMin);

@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
@@ -12,6 +13,7 @@ import org.geotools.referencing.CRS;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
+import org.opencarto.util.Util;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -107,7 +109,8 @@ public class EurostatHospitalAccessibility {
 		ag.compute();
 
 		//logger.info("Compute accessibility indicator, with population");
-		//HashMap<String, Double> popData = null; //TODO compute and load that
+		//ArrayList<HashMap<String, String>> pop = CSVUtil.load("population.csv");
+		//HashMap<String, String> popData = Util.index(pop, "cellId", "value");
 		//ag.computePopulationAccessibilityIndicator(popData);
 
 
