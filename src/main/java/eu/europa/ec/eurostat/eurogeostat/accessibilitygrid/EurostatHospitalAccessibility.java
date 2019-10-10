@@ -5,7 +5,6 @@ package eu.europa.ec.eurostat.eurogeostat.accessibilitygrid;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
@@ -13,7 +12,6 @@ import org.geotools.referencing.CRS;
 import org.opencarto.datamodel.Feature;
 import org.opencarto.io.CSVUtil;
 import org.opencarto.io.SHPUtil;
-import org.opencarto.util.Util;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
