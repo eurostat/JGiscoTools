@@ -9,11 +9,11 @@ import java.util.HashMap;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.filter.function.RangedClassifier;
-import org.opencarto.io.ShapeFile;
 
-import eu.europa.ec.eurostat.eurogeostat.core.MappingUtils;
-import eu.europa.ec.eurostat.eurogeostat.core.StatisticalMap;
+import eu.europa.ec.eurostat.eurogeostat.MappingUtils;
+import eu.europa.ec.eurostat.eurogeostat.StatisticalMap;
 import eu.europa.ec.eurostat.eurogeostat.dasymetric.DasymetricMapping;
+import eu.europa.ec.eurostat.eurogeostat.io.ShapeFile;
 import eu.europa.ec.eurostat.eurogeostat.nuts.NUTSMap;
 import eu.europa.ec.eurostat.eurogeostat.nuts.NUTSShapeFile;
 import eu.europa.ec.eurostat.eurogeostat.nuts.NUTSUtils;

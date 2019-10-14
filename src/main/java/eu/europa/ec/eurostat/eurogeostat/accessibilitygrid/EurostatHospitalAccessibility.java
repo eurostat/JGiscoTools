@@ -9,14 +9,14 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
-import org.opencarto.datamodel.Feature;
-import org.opencarto.io.CSVUtil;
-import org.opencarto.io.SHPUtil;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.eurogeostat.accessibilitygrid.AccessibilityGrid.SpeedCalculator;
+import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
+import eu.europa.ec.eurostat.eurogeostat.io.CSVUtil;
+import eu.europa.ec.eurostat.eurogeostat.io.SHPUtil;
 
 /**
  * @author julien Gaffuri

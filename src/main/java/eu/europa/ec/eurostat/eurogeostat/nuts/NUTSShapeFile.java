@@ -7,8 +7,9 @@ import java.util.HashMap;
 
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
-import org.opencarto.io.ShapeFile;
 import org.opengis.filter.Filter;
+
+import eu.europa.ec.eurostat.eurogeostat.io.ShapeFile;
 
 /**
  * @author julien Gaffuri

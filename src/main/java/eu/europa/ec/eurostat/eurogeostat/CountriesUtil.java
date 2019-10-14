@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.eurogeostat.cntr;
+package eu.europa.ec.eurostat.eurogeostat;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,8 +10,9 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
-import org.opencarto.datamodel.Feature;
-import org.opencarto.io.SHPUtil;
+
+import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
+import eu.europa.ec.eurostat.eurogeostat.io.SHPUtil;
 
 /**
  * @author julien Gaffuri

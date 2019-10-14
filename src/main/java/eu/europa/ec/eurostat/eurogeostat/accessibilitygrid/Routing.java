@@ -34,10 +34,11 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.operation.linemerge.LineMerger;
-import org.opencarto.datamodel.Feature;
-import org.opencarto.io.SimpleFeatureUtil;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+
+import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
+import eu.europa.ec.eurostat.eurogeostat.io.SimpleFeatureUtil;
 
 /**
  * @author julien Gaffuri

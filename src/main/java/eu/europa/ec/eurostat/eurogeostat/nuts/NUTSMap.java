@@ -15,11 +15,11 @@ import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
-import org.opencarto.io.img.GifSequenceWriter;
 import org.opengis.filter.FilterFactory;
 
-import eu.europa.ec.eurostat.eurogeostat.core.MappingUtils;
-import eu.europa.ec.eurostat.eurogeostat.core.StatisticalMap;
+import eu.europa.ec.eurostat.eurogeostat.MappingUtils;
+import eu.europa.ec.eurostat.eurogeostat.StatisticalMap;
+import eu.europa.ec.eurostat.eurogeostat.io.img.GifSequenceWriter;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.EurobaseIO;
 

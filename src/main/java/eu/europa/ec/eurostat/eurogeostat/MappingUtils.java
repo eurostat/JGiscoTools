@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.eurogeostat.core;
+package eu.europa.ec.eurostat.eurogeostat;
 
 import java.awt.Color;
 import java.awt.Font;

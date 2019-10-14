@@ -3,9 +3,8 @@
  */
 package eu.europa.ec.eurostat.eurogeostat.old;
 
-import org.opencarto.io.ShapeFile;
-
 import eu.europa.ec.eurostat.eurogeostat.intersectionmatrix.StatisticalUnitsIntersectionMatrix;
+import eu.europa.ec.eurostat.eurogeostat.io.ShapeFile;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 
 /**
