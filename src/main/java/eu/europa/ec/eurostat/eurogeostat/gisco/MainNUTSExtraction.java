@@ -14,10 +14,10 @@ import org.geotools.map.MapContent;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.locationtech.jts.geom.Envelope;
-import org.opencarto.mapping.MappingUtils.TitleDisplayParameters;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.eurogeostat.MappingUtils;
+import eu.europa.ec.eurostat.eurogeostat.MappingUtils.TitleDisplayParameters;
 import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
 import eu.europa.ec.eurostat.eurogeostat.io.CompressUtil;
 import eu.europa.ec.eurostat.eurogeostat.io.SHPUtil;

@@ -6,14 +6,20 @@ package eu.europa.ec.eurostat.eurogeostat;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import org.geotools.brewer.color.StyleGenerator;
+import org.geotools.brewer.styling.builder.FillBuilder;
+import org.geotools.brewer.styling.builder.FontBuilder;
+import org.geotools.brewer.styling.builder.HaloBuilder;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -22,21 +28,27 @@ import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.filter.function.Classifier;
 import org.geotools.filter.function.RangedClassifier;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.MapContent;
+import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
+import org.geotools.styling.Halo;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
+import org.geotools.styling.TextSymbolizer;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
 
-import eu.europa.ec.eurostat.java4eurostat.util.Util;
+import eu.europa.ec.eurostat.eurogeostat.util.ProjectionUtil;
+import eu.europa.ec.eurostat.eurogeostat.util.Util;
 
 /**
  * 
@@ -46,6 +58,9 @@ import eu.europa.ec.eurostat.java4eurostat.util.Util;
  *
  */
 public class MappingUtils {
+	//See: http://docs.geotools.org/stable/userguide/library/referencing/order.html
+	//TODO: System.setProperty("org.geotools.referencing.forceXY", "true");
+
 	//TODO gif animation on time
 	//TODO small multiple
 
@@ -108,7 +123,7 @@ public class MappingUtils {
 			gr.fillRect(offsetX+padding, offsetY+padding+slot*heightPerClass, colorRampWidth, heightPerClass);
 			gr.setColor(Color.BLACK);
 			int fontSize = heightPerClass-4;
-			gr.setFont(new Font("Arial", Font.BOLD, fontSize));
+			gr.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, fontSize));
 			double val = Util.round((Double)classifier.getMax(slot), decimalNB); //TODO make it nice
 			if(slot!=nb-1) gr.drawString(""+val, offsetX+padding+colorRampWidth+padding, (int)(offsetY+padding+(slot+1)*heightPerClass+fontSize*0.5));
 		}
@@ -161,6 +176,19 @@ public class MappingUtils {
 		return s;
 	}
 
+
+	public static Stroke getStroke(Color strokeCol, double strokeWidth) {
+		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
+		return styleFactory.createStroke( filterFactory.literal(strokeCol), filterFactory.literal(strokeWidth));
+	}
+
+
+	public static Style getPolygonStyle(Color fillCol, Color strokeCol, double strokeWidth){
+		return getPolygonStyle(fillCol, strokeWidth>0?getStroke(strokeCol,strokeWidth):null);
+	}
+
+
 	public static Style getPolygonStyle(Color fillCol, Stroke stroke){
 		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
@@ -173,6 +201,105 @@ public class MappingUtils {
 		Style s = styleFactory.createStyle();
 		s.featureTypeStyles().add(fts);
 		return s;
+	}
+
+
+
+	//http://docs.geoserver.org/latest/en/user/styling/sld/cookbook/polygons.html
+	//test TextSymbolizerBuilder
+	public static Style getTextStyle(String propName, Color fontColor, int fontSize, String fontFamilyName, double haloRadius, Color haloColor) {
+		StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+		FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
+
+		TextSymbolizer txtSymb = styleFactory.createTextSymbolizer();
+		txtSymb.setLabel( filterFactory.property(propName) );
+		txtSymb.setFill(new FillBuilder().color(fontColor).build());
+		//txtSymb.setFont(new Font("Arial",java.awt.Font.BOLD,fontSize)); //use FontBuilder
+		txtSymb.setFont(new FontBuilder().familyName(fontFamilyName)/*.weightName("BOLD")*/.size(fontSize).build());
+
+		if(haloRadius>0) {
+			Halo halo = new HaloBuilder().radius(haloRadius).build();
+			halo.setFill(new FillBuilder().color(haloColor).build());
+			txtSymb.setHalo(halo);
+		}
+
+		/*TextSymbolizer txtSymb = new TextSymbolizerBuilder()
+				.labelText(propName)
+				.build();*/
+
+		Rule rule = styleFactory.createRule();
+		rule.symbolizers().add(txtSymb);
+		FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
+		Style s = styleFactory.createStyle();
+		s.featureTypeStyles().add(fts);
+		return s;
+	}
+
+
+
+
+
+
+	public static class TitleDisplayParameters{
+		public int fontSize = 32;
+		public Color fontColor = Color.BLACK;
+		public String fontFamily = "Arial";
+		public int fontStrength = Font.BOLD;
+	}
+
+	public static void saveAsImage(MapContent map, double scaleDenom, Color imgBckgrdColor, int marginPixNb, TitleDisplayParameters titleParams, String outFolder, String outFileName) {
+		BufferedImage image = getImage(map, scaleDenom, imgBckgrdColor, marginPixNb, titleParams);
+		try { ImageIO.write(image, "png", new File(outFolder+outFileName)); }
+		catch (IOException e) { e.printStackTrace(); }
+	}
+
+	public static BufferedImage getImage(MapContent map, double scaleDenom, Color imgBckgrdColor, int marginPixNb, TitleDisplayParameters titleParams) {
+		try {
+			double marginM = marginPixNb*ProjectionUtil.METERS_PER_PIXEL*scaleDenom;
+			ReferencedEnvelope mapBounds = map.getViewport().getBounds();
+			mapBounds.expandBy(marginM, marginM);
+			Rectangle imageBounds = MappingUtils.getImageBounds(mapBounds, scaleDenom, marginPixNb);
+			BufferedImage image = new BufferedImage(imageBounds.width, imageBounds.height, BufferedImage.TYPE_INT_RGB);
+			Graphics2D gr = image.createGraphics();
+			gr.setPaint(imgBckgrdColor);
+			gr.fill(imageBounds);
+			MappingUtils.getRenderer(map).paint(gr, imageBounds, mapBounds);
+			if(titleParams != null && map.getTitle()!=null) {
+				gr.setColor(titleParams.fontColor);
+				gr.setFont(new Font(titleParams.fontFamily, titleParams.fontStrength, titleParams.fontSize));
+				gr.drawString(map.getTitle(), 10, titleParams.fontSize+5);
+			}
+			return image;
+		} catch (Exception e) { e.printStackTrace(); return null; }
+	}
+
+
+
+
+	public static Rectangle getImageBounds(ReferencedEnvelope mapBounds, double scaleDenom, int marginPixNb) {
+		int imageWidth = (int) (mapBounds.getWidth() / scaleDenom / ProjectionUtil.METERS_PER_PIXEL +1) + 2*marginPixNb;
+		int imageHeight = (int) (mapBounds.getHeight() / scaleDenom / ProjectionUtil.METERS_PER_PIXEL +1) + 2*marginPixNb;
+		/*int imageWidth = 1000;
+		int imageHeight = (int) Math.round(imageWidth * mapBounds.getSpan(1) / mapBounds.getSpan(0));*/
+		return new Rectangle(0, 0, imageWidth, imageHeight);
+	}
+
+
+
+	public static StreamingRenderer getRenderer() {
+		StreamingRenderer renderer = new StreamingRenderer();
+		renderer.setGeneralizationDistance(-1);
+		renderer.setJava2DHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON ));
+		Map<Object,Object> renderingHints = new HashMap<Object,Object>();
+		renderingHints.put("optimizedDataLoadingEnabled", Boolean.TRUE);
+		renderingHints.put(StreamingRenderer.TEXT_RENDERING_KEY, StreamingRenderer.TEXT_RENDERING_STRING);
+		renderer.setRendererHints( renderingHints );
+		return renderer;
+	}
+	public static StreamingRenderer getRenderer(MapContent map) {
+		StreamingRenderer renderer = getRenderer();
+		renderer.setMapContent(map);
+		return renderer;
 	}
 
 }
