@@ -9,10 +9,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Edge;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Face;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Graph;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Face;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
 
 /**
  * @author julien Gaffuri

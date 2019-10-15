@@ -9,11 +9,11 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.base.Union;
-import eu.europa.ec.eurostat.eurogeostat.algo.line.DouglasPeuckerRamerFilter;
 import eu.europa.ec.eurostat.eurogeostat.algo.resolutionise.Resolutionise;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Graph;
-import eu.europa.ec.eurostat.eurogeostat.util.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
+import eu.europa.ec.eurostat.jgiscotools.algo.line.DouglasPeuckerRamerFilter;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * Some functions to simplify linear meshes.

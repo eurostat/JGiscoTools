@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import eu.europa.ec.eurostat.eurogeostat.algo.distances.Distance;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Edge;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Graph;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
 
 /**
  * @author Julien Gaffuri

@@ -6,10 +6,10 @@ package eu.europa.ec.eurostat.eurogeostat.algo.graph;
 import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.base.AffineTransformUtil;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Edge;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Face;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.AffineTransformUtil;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Face;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
 
 /**
  * @author julien Gaffuri

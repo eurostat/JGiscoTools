@@ -3,10 +3,10 @@ package eu.europa.ec.eurostat.eurogeostat.algo.graph;
 import java.util.Collection;
 import java.util.HashSet;
 
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Edge;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Graph;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Node;
-import eu.europa.ec.eurostat.eurogeostat.util.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
 
 /**
  * @author julien Gaffuri

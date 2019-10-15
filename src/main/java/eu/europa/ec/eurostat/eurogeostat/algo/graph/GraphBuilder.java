@@ -27,13 +27,13 @@ import org.locationtech.jts.operation.union.UnaryUnionOp;
 
 import eu.europa.ec.eurostat.eurogeostat.algo.graph.NodeReduction.NodeReductionCriteria;
 import eu.europa.ec.eurostat.eurogeostat.algo.noding.NodingUtil;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Edge;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Graph;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.GraphToFeature;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Node;
-import eu.europa.ec.eurostat.eurogeostat.util.FeatureUtil;
-import eu.europa.ec.eurostat.eurogeostat.util.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.GraphToFeature;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * @author julien Gaffuri

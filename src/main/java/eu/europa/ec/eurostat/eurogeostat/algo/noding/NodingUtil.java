@@ -25,9 +25,9 @@ import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.locationtech.jts.index.strtree.STRtree;
 
-import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
-import eu.europa.ec.eurostat.eurogeostat.util.FeatureUtil;
-import eu.europa.ec.eurostat.eurogeostat.util.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * @author julien Gaffuri

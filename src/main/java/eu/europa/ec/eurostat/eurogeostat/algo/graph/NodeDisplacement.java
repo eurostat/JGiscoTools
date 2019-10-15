@@ -5,8 +5,8 @@ package eu.europa.ec.eurostat.eurogeostat.algo.graph;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Face;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Face;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
 
 /**
  * @author julien Gaffuri

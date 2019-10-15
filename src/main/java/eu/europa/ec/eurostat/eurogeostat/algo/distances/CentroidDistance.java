@@ -5,7 +5,7 @@ package eu.europa.ec.eurostat.eurogeostat.algo.distances;
 
 import org.locationtech.jts.geom.Geometry;
 
-import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 
 /**
  * @author julien Gaffuri

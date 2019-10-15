@@ -17,8 +17,8 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.base.Union;
-import eu.europa.ec.eurostat.eurogeostat.util.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
+import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * @author julien Gaffuri

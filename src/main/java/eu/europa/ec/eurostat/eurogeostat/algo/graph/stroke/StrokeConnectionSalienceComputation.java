@@ -8,10 +8,10 @@ import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.eurogeostat.algo.distances.SemanticDistance;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Edge;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.graph.Node;
-import eu.europa.ec.eurostat.eurogeostat.util.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
 
 /**
  * @author julien Gaffuri
