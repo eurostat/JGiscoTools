@@ -43,6 +43,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.eurogeostat.algo.base.Union;
 import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
 import eu.europa.ec.eurostat.eurogeostat.util.FeatureUtil;
 import eu.europa.ec.eurostat.eurogeostat.util.FileUtil;
@@ -269,11 +270,12 @@ public class SHPUtil {
 				}
 				geoms.add(geom);
 			}
-			Geometry union = new CascadedPolygonUnion(geoms).union();
+			//Geometry union = new CascadedPolygonUnion(geoms).union();
+			Geometry union = Union.polygonsUnionAll(geoms);
 
 			if(bufferDistance != 0)
 				union = union.buffer(bufferDistance);
-			
+
 			//build feature
 			SimpleFeatureBuilder fb = new SimpleFeatureBuilder(DataUtilities.createType("ep", "the_geom:"+union.getGeometryType()));
 			fb.add(union);
