@@ -134,8 +134,6 @@ public class Union {
 
 
 
-
-
 	public static Geometry polygonsUnionAll(Collection<Geometry> polys) {
 		Geometry union = null;
 		try {
