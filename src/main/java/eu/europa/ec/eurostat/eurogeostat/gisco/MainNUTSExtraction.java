@@ -1,30 +1,7 @@
 package eu.europa.ec.eurostat.eurogeostat.gisco;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-
-import org.geotools.brewer.color.ColorBrewer;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.filter.function.ExplicitClassifier;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.FeatureLayer;
-import org.geotools.map.MapContent;
-import org.geotools.styling.Stroke;
-import org.geotools.styling.Style;
-import org.locationtech.jts.geom.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import eu.europa.ec.eurostat.eurogeostat.MappingUtils;
-import eu.europa.ec.eurostat.eurogeostat.MappingUtils.TitleDisplayParameters;
-import eu.europa.ec.eurostat.eurogeostat.datamodel.Feature;
-import eu.europa.ec.eurostat.eurogeostat.io.CompressUtil;
-import eu.europa.ec.eurostat.eurogeostat.io.SHPUtil;
-import eu.europa.ec.eurostat.eurogeostat.util.ProjectionUtil;
-
 public class MainNUTSExtraction {
-
+/*
 	public static void main(String[] args) {
 		System.setProperty("org.geotools.referencing.forceXY", "true");
 
@@ -132,5 +109,5 @@ public class MainNUTSExtraction {
 		//JMapFrame.showMap(map);
 		map.dispose();
 	}
-
+*/
 }
