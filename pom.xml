@@ -4,7 +4,7 @@
 	<groupId>eu.ec.eurostat</groupId>
 	<artifactId>JGiscoTools</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>JGiscoTools</name>
 	<url>https://github.com/eurostat/JGiscoTools</url>
 
