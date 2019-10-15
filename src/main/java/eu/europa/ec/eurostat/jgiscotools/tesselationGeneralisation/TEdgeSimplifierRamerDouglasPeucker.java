@@ -7,8 +7,8 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.graph.GraphUtils;
-import eu.europa.ec.eurostat.eurogeostat.algo.graph.TopologyAnalysis;
+import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphUtils;
+import eu.europa.ec.eurostat.jgiscotools.algo.graph.TopologyAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 

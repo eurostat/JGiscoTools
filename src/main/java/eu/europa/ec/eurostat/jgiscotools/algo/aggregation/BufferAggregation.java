@@ -12,10 +12,10 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.buffer.BufferParameters;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.polygon.HolesDeletion;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Closure;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.algo.line.DouglasPeuckerRamerFilter;
+import eu.europa.ec.eurostat.jgiscotools.algo.polygon.HolesDeletion;
 
 /**
  * 

@@ -6,7 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco.rail;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.edgematching.NetworkEdgeMatching;
+import eu.europa.ec.eurostat.jgiscotools.algo.edgematching.NetworkEdgeMatching;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.GraphToFeature;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;

@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.noding.NodingUtil;
-import eu.europa.ec.eurostat.eurogeostat.algo.noding.NodingUtil.NodingIssueType;
+import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
+import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.partitionning.Partition;

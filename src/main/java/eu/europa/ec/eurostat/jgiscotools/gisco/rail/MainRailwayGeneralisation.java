@@ -10,10 +10,10 @@ import org.geotools.filter.text.cql2.CQL;
 import org.locationtech.jts.geom.LineString;
 import org.opengis.filter.Filter;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.graph.EdgeCollapse;
-import eu.europa.ec.eurostat.eurogeostat.algo.graph.GraphBuilder;
-import eu.europa.ec.eurostat.eurogeostat.algo.graph.stroke.Stroke;
-import eu.europa.ec.eurostat.eurogeostat.algo.graph.stroke.StrokeAnalysis;
+import eu.europa.ec.eurostat.jgiscotools.algo.graph.EdgeCollapse;
+import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
+import eu.europa.ec.eurostat.jgiscotools.algo.graph.stroke.Stroke;
+import eu.europa.ec.eurostat.jgiscotools.algo.graph.stroke.StrokeAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.GraphToFeature;

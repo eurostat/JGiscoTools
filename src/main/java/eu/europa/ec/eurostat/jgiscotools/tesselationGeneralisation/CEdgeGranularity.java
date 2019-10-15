@@ -6,8 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.measure.Granularity;
-import eu.europa.ec.eurostat.eurogeostat.algo.measure.Granularity.GranularityMeasurement;
+import eu.europa.ec.eurostat.jgiscotools.algo.measure.Granularity;
+import eu.europa.ec.eurostat.jgiscotools.algo.measure.Granularity.GranularityMeasurement;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Transformation;
 

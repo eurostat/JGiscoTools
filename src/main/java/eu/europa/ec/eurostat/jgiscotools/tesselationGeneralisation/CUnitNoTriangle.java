@@ -5,7 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
 import org.locationtech.jts.geom.MultiPolygon;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.polygon.Triangle;
+import eu.europa.ec.eurostat.jgiscotools.algo.polygon.Triangle;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
 
 /**

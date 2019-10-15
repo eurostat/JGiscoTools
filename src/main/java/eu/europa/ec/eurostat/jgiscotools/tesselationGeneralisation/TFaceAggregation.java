@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.graph.FaceAggregation;
+import eu.europa.ec.eurostat.jgiscotools.algo.graph.FaceAggregation;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Face;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.TransformationNonCancellable;

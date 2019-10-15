@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import eu.europa.ec.eurostat.eurogeostat.algo.graph.TopologyAnalysis;
+import eu.europa.ec.eurostat.jgiscotools.algo.graph.TopologyAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Face;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AFace;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AUnit;
