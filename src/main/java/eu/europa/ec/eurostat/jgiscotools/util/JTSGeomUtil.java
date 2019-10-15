@@ -72,11 +72,13 @@ public class JTSGeomUtil {
 
 
 	//build geometry from envelope
-	public static Polygon getGeometry(Envelope env) {
+	public static Polygon getGeometry(Envelope env, GeometryFactory gf) {
 		Coordinate[] cs = new Coordinate[]{new Coordinate(env.getMinX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMinY()), new Coordinate(env.getMaxX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMaxY()), new Coordinate(env.getMinX(),env.getMinY())};
-		return new GeometryFactory().createPolygon(cs);
+		return gf.createPolygon(cs);
 	}
-	public static LineString getBoundary(Envelope env) { return getGeometry(env).getExteriorRing(); }
+	public static Geometry getGeometry(Envelope env) { return getGeometry(env, new GeometryFactory()); }
+	public static LineString getBoundary(Envelope env, GeometryFactory gf) { return getGeometry(env, gf).getExteriorRing(); }
+	public static LineString getBoundary(Envelope env) { return getBoundary(env, new GeometryFactory()); }
 
 	public static Collection<Point> getPointsFromCoordinates(Collection<Coordinate> cs) {
 		Collection<Point> out = new ArrayList<Point>();
