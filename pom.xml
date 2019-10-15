@@ -2,14 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.ec.eurostat</groupId>
-	<artifactId>EuroGeoStat</artifactId>
+	<artifactId>JGiscoTools</artifactId>
 	<packaging>jar</packaging>
 	<version>0.1-SNAPSHOT</version>
-	<name>EuroGeoStat</name>
-	<url>https://github.com/jgaffuri/EuroGeoStat</url>
+	<name>JGiscoTools</name>
+	<url>https://github.com/eurostat/JGiscoTools</url>
 
 	<issueManagement>
-		<url>https://github.com/jgaffuri/EuroGeoStat/issues</url>
+		<url>https://github.com/eurostat/JGiscoTools/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
 
@@ -21,10 +21,10 @@
 	</licenses>
 
 	<scm>
-		<url>https://github.com/jgaffuri/EuroGeoStat</url>
-		<connection>scm:git:git://github.com/jgaffuri/EuroGeoStat.git</connection>
-		<developerConnection>scm:git:git@github.com:jgaffuri/EuroGeoStat.git</developerConnection>
-		<tag>EuroGeoStat-0.1</tag>
+		<url>https://github.com/eurostat/JGiscoTools</url>
+		<connection>scm:git:git://github.com/eurostat/JGiscoTools.git</connection>
+		<developerConnection>scm:git:git@github.com:eurostat/JGiscoTools.git</developerConnection>
+		<tag>JGiscoTools-0.1</tag>
 	</scm>
 
 	<developers>
