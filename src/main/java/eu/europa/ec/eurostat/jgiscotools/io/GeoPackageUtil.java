@@ -6,22 +6,31 @@ package eu.europa.ec.eurostat.jgiscotools.io;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
+import java.util.Collection;
 
 import org.geotools.data.DefaultTransaction;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureReader;
 import org.geotools.geopkg.FeatureEntry;
 import org.geotools.geopkg.GeoPackage;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.util.FileUtil;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 
 /**
  * @author julien Gaffuri
  *
  */
 public class GeoPackageUtil {
+	//See: https://docs.geotools.org/stable/userguide/library/data/geopackage.html
+
+
+	//read
 
 	public static SimpleFeatureType getSchema(String file){
 		try {
@@ -31,6 +40,12 @@ public class GeoPackageUtil {
 			return fr.getFeatureType();
 		} catch (IOException e) { e.printStackTrace(); }
 		return null;
+	}
+	public static CoordinateReferenceSystem getCRS(String file){
+		return getSchema(file).getCoordinateReferenceSystem();
+	}
+	public static CRSType getCRSType(String file) {
+		return ProjectionUtil.getCRSType(getCRS(file));
 	}
 
 	public static SimpleFeatureReader getSimpleFeatureReader(String file){
@@ -59,39 +74,20 @@ public class GeoPackageUtil {
 
 
 
-	//testing based on https://docs.geotools.org/stable/userguide/library/data/geopackage.html
-	public static void main(String[] args) throws Exception {
+	//write
 
-		/*
-		Map<String,String> params = new HashMap<>();
-		params.put("dbtype", "geopkg");
-		params.put("database", "C:/Users/gaffuju/Desktop/test.gpkg");
+	public static void save(SimpleFeatureCollection sfc, String file){
+		try {
+			File fi = FileUtil.getFile(file, true, true);
+			GeoPackage gp = new GeoPackage(fi);
+			gp.init();
+			gp.add(new FeatureEntry(), sfc);
+		} catch (IOException e) { e.printStackTrace(); }
+	}
 
-		JDBCDataStore ds = (JDBCDataStore)DataStoreFinder.getDataStore(params);
-		System.out.println(ds.getSchema("test"));
-		JDBCFeatureReader fr = (JDBCFeatureReader) ds.getFeatureReader(new Query("test"), new DefaultTransaction());
-		while(fr.hasNext()) {
-			SimpleFeature sf = fr.next();
-			Feature f = SimpleFeatureUtil.get(sf);
-			System.out.println(f.getAttribute("CNTR_ID") + " - " + f.getDefaultGeometry().getArea());
-		}
-		 */
-/*
-		GeoPackage gp = new GeoPackage(new File("C:/Users/gaffuju/Desktop/test.gpkg"));
-		FeatureEntry fe = gp.features().get(0);
-		SimpleFeatureReader fr = gp.reader(fe, null, new DefaultTransaction());
-		SimpleFeatureType sc = fr.getFeatureType();
-		System.out.println(sc);
-		while(fr.hasNext()) {
-			SimpleFeature sf = fr.next();
-			Feature f = SimpleFeatureUtil.get(sf);
-			System.out.println(f.getAttribute("CNTR_ID") + " - " + f.getDefaultGeometry().getArea());
-		}
-*/
-		//BasicDataSource ds = (BasicDataSource)gp.getDataSource();
-		//System.out.println(ds);
-
-		System.out.println("End");
+	public static <T extends Feature> void save(Collection<T> fs, CoordinateReferenceSystem crs, String file){
+		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, crs);
+		save(sfc, file);
 	}
 
 }
