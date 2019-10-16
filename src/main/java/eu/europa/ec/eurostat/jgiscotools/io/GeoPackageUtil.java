@@ -37,7 +37,10 @@ public class GeoPackageUtil {
 			GeoPackage gp = new GeoPackage(new File(file));
 			FeatureEntry fe = gp.features().get(0);
 			SimpleFeatureReader fr = gp.reader(fe, null, new DefaultTransaction());
-			return fr.getFeatureType();
+			SimpleFeatureType ft = fr.getFeatureType();
+			fr.close();
+			gp.close();
+			return ft;
 		} catch (IOException e) { e.printStackTrace(); }
 		return null;
 	}
@@ -48,25 +51,20 @@ public class GeoPackageUtil {
 		return ProjectionUtil.getCRSType(getCRS(file));
 	}
 
-	public static SimpleFeatureReader getSimpleFeatureReader(String file){
-		GeoPackage gp;
-		try {
-			gp = new GeoPackage(new File("C:/Users/gaffuju/Desktop/test.gpkg"));
-			FeatureEntry fe = gp.features().get(0);
-			return gp.reader(fe, null, new DefaultTransaction());
-		} catch (IOException e) { e.printStackTrace(); }
-		return null;
-	}
-
 	public static ArrayList<Feature> getFeatures(String file){
 		try {
+			GeoPackage gp = new GeoPackage(new File(file));
+			FeatureEntry fe = gp.features().get(0);
+			SimpleFeatureReader fr = gp.reader(fe, null, new DefaultTransaction());
+
 			ArrayList<Feature> fs = new ArrayList<Feature>();
-			SimpleFeatureReader fr = getSimpleFeatureReader(file);
 			while(fr.hasNext()) {
 				SimpleFeature sf = fr.next();
 				Feature f = SimpleFeatureUtil.get(sf);
 				fs.add(f);
 			}
+			fr.close();
+			gp.close();
 			return fs;
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
@@ -82,10 +80,11 @@ public class GeoPackageUtil {
 			GeoPackage gp = new GeoPackage(fi);
 			gp.init();
 			gp.add(new FeatureEntry(), sfc);
+			gp.close();
 		} catch (IOException e) { e.printStackTrace(); }
 	}
 
-	public static <T extends Feature> void save(Collection<T> fs, CoordinateReferenceSystem crs, String file){
+	public static <T extends Feature> void save(Collection<T> fs, String file, CoordinateReferenceSystem crs){
 		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, crs);
 		save(sfc, file);
 	}
