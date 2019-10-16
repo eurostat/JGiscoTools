@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -28,18 +29,27 @@ import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
  *
  */
 public class SimpleFeatureUtil {
-	//private final static Logger LOGGER = Logger.getLogger(SimpleFeatureUtil.class);
+	private final static Logger LOGGER = Logger.getLogger(SimpleFeatureUtil.class);
 
 	//SimpleFeature to feature
 	public static Feature get(SimpleFeature sf, String[] attNames){
 		Feature f = new Feature();
-		//geom
-		//f.setGeom(JTSGeomUtil.clean( (Geometry)sf.getProperty("the_geom").getValue() ));
-		Property pg = sf.getProperty("the_geom");
+
+		//set id
+		String id = sf.getID();
+		if(id != null && !"".equals(id)) f.setID(id);
+
+		//set geometry
+		Property pg = sf.getProperty( sf.getFeatureType().getGeometryDescriptor().getName() );
+		if(pg==null) pg = sf.getProperty("the_geom");
 		if(pg==null) pg = sf.getProperty("geometry");
+		if(pg==null) pg = sf.getProperty("geom");
+		if(pg==null) LOGGER.warn("Could not find geometry attribute for simple feature " + sf.getFeatureType());
 		f.setDefaultGeometry( (Geometry)pg.getValue() );
-		//attributes
+
+		//set attributes
 		for(String attName : attNames) f.setAttribute(attName, sf.getProperty(attName).getValue());
+
 		return f;
 	}
 	public static Feature get(SimpleFeature sf){ return get(sf, getAttributeNames(sf.getFeatureType())); }
