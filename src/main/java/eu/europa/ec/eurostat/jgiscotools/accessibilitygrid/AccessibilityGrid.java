@@ -29,6 +29,8 @@ import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.SimpleFeatureUtil;
 
 /**
+ * Class to compute an accessibility grid to a set of points of interest, using a transport network.
+ * 
  * @author julien Gaffuri
  *
  */
