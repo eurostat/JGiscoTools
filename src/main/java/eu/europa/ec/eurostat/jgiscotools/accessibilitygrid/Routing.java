@@ -41,15 +41,24 @@ import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.SimpleFeatureUtil;
 
 /**
+ * A class to compute 'shortest' pathes from a network composed of linear features.
+ * 
  * @author julien Gaffuri
  *
  */
 public class Routing {
 	private static Logger logger = Logger.getLogger(Routing.class.getName());
 
+	/**
+	 * The graph structure used to compute routes.
+	 */
 	private Graph graph;
 	public Graph getGraph() { return graph; }
 
+	/**
+	 * The weighter used to determine the cost of traveling along a section.
+	 * By default, the weight is set as the length of the section.
+	 */
 	private EdgeWeighter edgeWeighter;
 	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
 	public EdgeWeighter getEdgeWeighter() {
@@ -85,6 +94,11 @@ public class Routing {
 		this.edgeWeighter = edgeWeighter;
 	}
 
+	/**
+	 * Build the graph from the input linear features.
+	 * 
+	 * @param fc
+	 */
 	private void buildGraph(FeatureCollection<?,?> fc) {
 		if(logger.isDebugEnabled()) logger.debug("Build graph from "+fc.size()+" lines.");
 		this.graph = null;
@@ -133,11 +147,16 @@ public class Routing {
 			return c.distance( ((Point)n.getObject()).getCoordinate() );
 		}
 	};
-*/
+	 */
 
-	//get closest node from a position
-	//TODO use spatial index
+	/**
+	 * Get closest node from a position.
+	 * 
+	 * @param c A position.
+	 * @return The closest node from the position.
+	 */
 	public Node getNode(Coordinate c){
+		//TODO use spatial index
 		double d, dMin = Double.MAX_VALUE;
 		Node n, nMin=null;
 		for(Object o : graph.getNodes()){
@@ -153,37 +172,57 @@ public class Routing {
 
 
 	public AStarShortestPathFinder getAStarShortestPathFinder(Node oN, Node dN){
+		//define default A* functions
 		AStarFunctions afun = null;
 		afun = new AStarFunctions(dN) {
 			@Override
 			public double cost(AStarNode ns0, AStarNode ns1) {
+				//return the edge weighter value
 				Edge e = ns0.getNode().getEdge(ns1.getNode());
 				return getEdgeWeighter().getWeight(e);
 			}
 			@Override
 			public double h(Node n) {
+				//return the point to point 'cost' TODO !!!
 				Point dP = (Point) dN.getObject();
 				Point p = (Point) n.getObject();
 				return p.distance(dP);
 			}
-
 		};
 		AStarShortestPathFinder pf = new AStarShortestPathFinder(graph, oN, dN, afun);
 		pf.calculate();
 		return pf;
 	}
-	public AStarShortestPathFinder getAStarShortestPathFinder(Coordinate oC, Coordinate dC){
+
+
+	/**
+	 * Get the shortest path from a origin to a destination position using A* algorithm.
+	 * 
+	 * @param oC
+	 * @param dC
+	 * @return
+	 */
+	public Path getAStarShortestPathFinder(Coordinate oC, Coordinate dC){
+
+		//get origin node
 		Node oN = getNode(oC);
 		if(oN == null) {
 			logger.error("Could not find node around position " + oC);
 			return null;
 		}
+
+		//get destination node
 		Node dN = getNode(dC);
 		if(dN == null) {
 			logger.error("Could not find node around position " + dC);
 			return null;
 		}
-		return getAStarShortestPathFinder(oN, dN);
+
+		//compute shortest path
+		Path path = null;
+		try { path = getAStarShortestPathFinder(oN, dN).getPath();
+		} catch (Exception e) { e.printStackTrace(); }
+		return path;
 	}
 
 
@@ -202,6 +241,13 @@ public class Routing {
 		return getDijkstraShortestPathFinder(oN);
 	}
 
+	/**
+	 * Get the shortest path from a origin to a destination position using Dijkstra algorithm.
+	 * 
+	 * @param oC
+	 * @param dC
+	 * @return
+	 */
 	public Path getShortestPathDijkstra(Coordinate oC, Coordinate dC){
 		Node dN = getNode(dC);
 		if(dN == null) {
@@ -211,9 +257,16 @@ public class Routing {
 		return getDijkstraShortestPathFinder(oC).getPath(dN);
 	}
 
+
+	/**
+	 * Transorm a path into a feature.
+	 * 
+	 * @param path
+	 * @return
+	 */
 	public static Feature toFeature(Path path) {
 
-		//build line geometry
+		//build line geometry as a merge of the path edges.
 		LineMerger lm = new LineMerger();
 		for(Object o : path.getEdges()){
 			Edge e = (Edge)o;
@@ -228,6 +281,7 @@ public class Routing {
 		//build feature
 		Feature f = new Feature();
 		f.setDefaultGeometry(geom);
+
 		return f;
 	}
 
