@@ -155,7 +155,7 @@ public class SimpleFeatureUtil {
 			st = "the_geom:"+geomType;
 			if(epsgCode>0) st += ":srid="+epsgCode;
 			if(data!=null) st += ","+data;
-			return DataUtilities.createType("ep", st);
+			return DataUtilities.createType("type", st);
 		} catch (SchemaException e) {
 			e.printStackTrace();
 			return null;
