@@ -60,11 +60,11 @@ public class SHPUtil {
 
 	//get basic info on shp file
 
-	public static SimpleFeatureType getSchema(String shpFilePath){
+	public static SimpleFeatureType getSchema(String file){
 		try {
-			File file = new File(shpFilePath);
-			if(!file.exists()) throw new IOException("File "+shpFilePath+" does not exist.");
-			return FileDataStoreFinder.getDataStore(file).getSchema();
+			File f = new File(file);
+			if(!f.exists()) throw new IOException("File "+file+" does not exist.");
+			return FileDataStoreFinder.getDataStore(f).getSchema();
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
