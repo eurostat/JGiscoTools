@@ -10,8 +10,7 @@ JGiscoTools library currently allows:
 - Some experiments on the combined use of geographical and statistical data such as
   - Statistical data disaggregation based on [dasymetric mapping](https://en.wikipedia.org/wiki/Dasymetric_map).
   - The computation of the intersection matrix between two statistical units datasets.
-
-(TODO describe)
+- ...
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) is mainly based on [GeoTools](http://www.geotools.org/), [JTS Topology Suite](https://locationtech.github.io/jts/) and [java4eurostat](https://github.com/eurostat/java4eurostat) libraries.
 
