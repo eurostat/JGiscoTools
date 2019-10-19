@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.accessibilitygrid;
+package eu.europa.ec.eurostat.jgiscotools.gisco;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,10 +13,11 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.jgiscotools.accessibilitygrid.AccessibilityGrid.SpeedCalculator;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
+import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculator;
 
 /**
  * @author julien Gaffuri

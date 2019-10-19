@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.accessibilitygrid;
+package eu.europa.ec.eurostat.jgiscotools.routing;
 
 import java.util.ArrayList;
 import java.util.Collection;
