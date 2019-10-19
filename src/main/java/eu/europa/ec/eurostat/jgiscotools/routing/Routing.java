@@ -248,7 +248,7 @@ public class Routing {
 	 * @param dC
 	 * @return
 	 */
-	public Path getShortestPathDijkstra(Coordinate oC, Coordinate dC){
+	public Path getDijkstraShortestPath(Coordinate oC, Coordinate dC){
 		Node dN = getNode(dC);
 		if(dN == null) {
 			logger.error("Could not find node around position " + dC);
