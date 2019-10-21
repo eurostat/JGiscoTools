@@ -100,7 +100,7 @@ public class ShapeFile {
 	 * @param recreateOnExists
 	 */
 	public ShapeFile(String geomType, int epsgCode, String attributes, String folderPath, String fileName, boolean withSpatialIndex, boolean withMemoryMappedBuffer, boolean recreateOnExists){
-		this(getFeatureType(geomType, epsgCode, attributes), folderPath, fileName, withSpatialIndex, withMemoryMappedBuffer, recreateOnExists);
+		this(getSchema(geomType, epsgCode, attributes), folderPath, fileName, withSpatialIndex, withMemoryMappedBuffer, recreateOnExists);
 	}
 
 
@@ -303,21 +303,21 @@ public class ShapeFile {
 	}
 
 
-	public static SimpleFeatureType getFeatureType(String geomType) {
-		return getFeatureType(geomType, -1);
+	public static SimpleFeatureType getSchema(String geomType) {
+		return getSchema(geomType, -1);
 	}
-	public static SimpleFeatureType getFeatureType(String geomType, int epsgCode) {
-		return getFeatureType(geomType, epsgCode, new String[]{});
+	public static SimpleFeatureType getSchema(String geomType, int epsgCode) {
+		return getSchema(geomType, epsgCode, new String[]{});
 	}
-	public static SimpleFeatureType getFeatureType(String geomType, int epsgCode, Collection<String> data) {
-		return getFeatureType(geomType, epsgCode, data.toArray(new String[data.size()]));
+	public static SimpleFeatureType getSchema(String geomType, int epsgCode, Collection<String> data) {
+		return getSchema(geomType, epsgCode, data.toArray(new String[data.size()]));
 	}
-	public static SimpleFeatureType getFeatureType(String geomType, int epsgCode, String[] data) {
+	public static SimpleFeatureType getSchema(String geomType, int epsgCode, String[] data) {
 		String datast = "";
 		if(data!=null) for(String data_ : data) datast += ","+data_;
-		return getFeatureType(geomType, epsgCode, datast.substring(1, datast.length()));
+		return getSchema(geomType, epsgCode, datast.substring(1, datast.length()));
 	}
-	public static SimpleFeatureType getFeatureType(String geomType, int epsgCode, String data) {
+	public static SimpleFeatureType getSchema(String geomType, int epsgCode, String data) {
 		try {
 			String st = "";
 			st = "the_geom:"+geomType;
@@ -490,8 +490,8 @@ public class ShapeFile {
 
 
 
-	public static void main(String[] args) throws Exception {
-		System.out.println("Start");
+	//public static void main(String[] args) throws Exception {
+	//	System.out.println("Start");
 
 		/*
 		ShapeFile n = NUTSShapeFile.get();
@@ -555,7 +555,7 @@ public class ShapeFile {
 		//Object dbfReader = shp.dataStore.openDbfReader();
 		//DbaseFileHeader dbfHeader = dbfReader.getHeader();
 
-		System.out.println("end");
-	}
+		//System.out.println("end");
+	//}
 
 }
