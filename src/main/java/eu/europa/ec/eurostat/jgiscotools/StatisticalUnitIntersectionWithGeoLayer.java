@@ -10,12 +10,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 
-import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.TopologyException;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.FilterFactory2;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
@@ -53,7 +51,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			ShapeFile statShp = new ShapeFile(statUnitsSHPFile).dispose();
 			int nbStats = statShp.count();
 			ShapeFile geoShp = new ShapeFile(geoSHPFile);
-			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+			//FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//go through statistical units
 			FeatureIterator<SimpleFeature> itStat = statShp.getFeatures();
@@ -65,7 +63,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 
 				//get all geo features intersecting the stat unit (with spatial index)
 				Geometry StatUnitGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
-				FeatureIterator<SimpleFeature> itGeo = geoShp.getFeatures(statUnit.getBounds(), "the_geom", ff);
+				FeatureIterator<SimpleFeature> itGeo = geoShp.getFeatures(statUnit.getBounds(), "the_geom");
 
 				//compute stat on geo features: total area/volume, number, building size distribution
 				int nbGeo=0; double totalArea=0, totalLength=0;
@@ -131,7 +129,6 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			ShapeFile geoShp = new ShapeFile(geoSHPFile).dispose();
 			int nbGeo = geoShp.count();
 			ShapeFile statShp = new ShapeFile(statUnitsSHPFile);
-			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//load stat unit values
 			HashMap<String, String> statUnitValue = DicUtil.load(statUnitValuesPath, ",");
@@ -157,7 +154,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 				Geometry geoGeom = (Geometry) geoUnit.getDefaultGeometryProperty().getValue();
 
 				//get all stat units intersecting the geo (with spatial index)
-				FeatureIterator<SimpleFeature> itStat = statShp.getFeatures(geoUnit.getBounds(), "the_geom", ff);
+				FeatureIterator<SimpleFeature> itStat = statShp.getFeatures(geoUnit.getBounds(), "the_geom");
 
 				int nbStat = 0;
 				double geoStatValue = 0;
@@ -220,7 +217,6 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			ShapeFile statShp = new ShapeFile(statUnitsSHPFile).dispose();
 			int nbStats = statShp.count();
 			ShapeFile geoShp = new ShapeFile(geoSHPFile);
-			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//load geo values
 			HashMap<String, String> geoValues = DicUtil.load(geoValuesPath, ",");
@@ -236,7 +232,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 				Geometry statGeom = (Geometry) statUnit.getDefaultGeometryProperty().getValue();
 
 				//get all geos intersecting the stat unit (with spatial index)
-				FeatureIterator<SimpleFeature> itGeo = geoShp.getFeatures(statUnit.getBounds(), "the_geom", ff);
+				FeatureIterator<SimpleFeature> itGeo = geoShp.getFeatures(statUnit.getBounds(), "the_geom");
 
 				int nbGeos = 0;
 				double statValue = 0;

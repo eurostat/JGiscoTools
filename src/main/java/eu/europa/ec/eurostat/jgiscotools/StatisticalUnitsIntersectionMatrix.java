@@ -8,11 +8,9 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 
 import org.geotools.data.shapefile.shp.ShapefileException;
-import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.FilterFactory2;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
@@ -43,7 +41,7 @@ public class StatisticalUnitsIntersectionMatrix {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public static void compute(String datasetName1, String shpFilePath1, String idField1, String datasetName2, String shpFilePath2, String idField2, String outFolder) throws ShapefileException, MalformedURLException, IOException{
+	public static void compute(String datasetName1, String shpFilePath1, String idField1, String datasetName2, String shpFilePath, String idField2, String outFolder) throws ShapefileException, MalformedURLException, IOException{
 		//create out files
 		BufferedWriter bw1from2 = createFile(outFolder+"matrix_"+datasetName1+"_from_"+datasetName2+".csv", true);
 		bw1from2.write(datasetName1+","+datasetName2+",ratio,intersection_area"); bw1from2.newLine();
@@ -56,8 +54,7 @@ public class StatisticalUnitsIntersectionMatrix {
 		FeatureIterator<SimpleFeature> itSu1 = shpFile1.dispose().getFeatures();
 
 		//(pre)load shapefile 2
-		ShapeFile shpFile = new ShapeFile(shpFilePath2);
-		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
+		ShapeFile shpFile = new ShapeFile(shpFilePath);
 
 		//go through shapefile 1
 		int counter = 1;
@@ -71,7 +68,7 @@ public class StatisticalUnitsIntersectionMatrix {
 			double a1 = geom1.getArea();
 
 			//get all su2 intersecting the su1 (with spatial index)
-			FeatureIterator<SimpleFeature> itSu2 = shpFile.getFeatures(f1.getBounds(), "the_geom", ff);
+			FeatureIterator<SimpleFeature> itSu2 = shpFile.getFeatures(f1.getBounds(), "the_geom");
 
 			while (itSu2.hasNext()) {
 				SimpleFeature f2 = itSu2.next();

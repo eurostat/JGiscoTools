@@ -139,6 +139,8 @@ public class ShapeFile {
 	}
 
 
+
+
 	public FeatureIterator<SimpleFeature> getFeatures() { return getFeatures(fil); }
 	public FeatureIterator<SimpleFeature> getFeatures(BoundingBox intersectionBB, String geometryAttribute) {
 		//Filter filter = ff.intersects(ff.property(geometryAttribute), ff.literal(StatUnitGeom));
