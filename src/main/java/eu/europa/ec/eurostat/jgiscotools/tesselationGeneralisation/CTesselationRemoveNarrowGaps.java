@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.polygon.MorphologicalAnalysis;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.ConstraintOneShot;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.TransformationNonCancellable;
 

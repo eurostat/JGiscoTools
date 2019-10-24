@@ -9,7 +9,7 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Point;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisation;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;

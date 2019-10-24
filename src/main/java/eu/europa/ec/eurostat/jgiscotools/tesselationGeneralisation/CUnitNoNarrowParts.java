@@ -14,7 +14,7 @@ import org.locationtech.jts.geom.Polygon;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.algo.polygon.MorphologicalAnalysis;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Transformation;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;

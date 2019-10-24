@@ -7,7 +7,7 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.SpatialIndex;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 public class FeatureClusteringIndex implements ClusteringIndex<Feature>{
 	private SpatialIndex index;

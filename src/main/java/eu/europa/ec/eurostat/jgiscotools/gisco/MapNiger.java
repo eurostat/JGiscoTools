@@ -12,10 +12,10 @@ import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.matching.LevenshteinMatching;
 import eu.europa.ec.eurostat.jgiscotools.algo.matching.LevenshteinMatching.Match;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
 
 public class MapNiger {
 	private final static Logger LOGGER = Logger.getLogger(MapNiger.class.getName());

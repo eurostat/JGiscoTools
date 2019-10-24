@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.edgematching.NetworkEdgeMatching;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.GraphToFeature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**

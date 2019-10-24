@@ -37,8 +37,8 @@ import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.SimpleFeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 
 /**
  * A class to compute 'shortest' pathes from a network composed of linear features.

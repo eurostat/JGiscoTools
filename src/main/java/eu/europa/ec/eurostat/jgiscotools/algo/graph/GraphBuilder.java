@@ -27,12 +27,12 @@ import org.locationtech.jts.operation.union.UnaryUnionOp;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.NodeReduction.NodeReductionCriteria;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.GraphToFeature;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
-import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**

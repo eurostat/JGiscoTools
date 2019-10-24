@@ -2,7 +2,7 @@ package eu.europa.ec.eurostat.jgiscotools.algo.distances;
 
 import org.locationtech.jts.geom.Geometry;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 /**

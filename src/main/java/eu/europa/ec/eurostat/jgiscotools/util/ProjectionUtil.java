@@ -16,7 +16,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 /**
  * Basic conversion functions for mercator projection.

@@ -16,7 +16,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Agent;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 

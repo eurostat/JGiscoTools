@@ -5,9 +5,9 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
 
 public class MainCheckIdentifier {
 	private final static Logger LOGGER = Logger.getLogger(MainCheckIdentifier.class.getName());

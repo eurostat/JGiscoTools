@@ -14,9 +14,9 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**

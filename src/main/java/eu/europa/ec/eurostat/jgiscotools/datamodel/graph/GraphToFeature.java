@@ -15,7 +15,7 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.TopologyAnalysis;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 /**
  * 

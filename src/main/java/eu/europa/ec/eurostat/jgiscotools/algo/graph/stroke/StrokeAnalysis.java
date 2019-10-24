@@ -15,10 +15,10 @@ import org.apache.log4j.Logger;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.ConnexComponents;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphUtils;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 /**
  * @author julien Gaffuri

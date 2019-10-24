@@ -6,7 +6,7 @@ import java.util.HashSet;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
-import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 
 /**
  * @author julien Gaffuri

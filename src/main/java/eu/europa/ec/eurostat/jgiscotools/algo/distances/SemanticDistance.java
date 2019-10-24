@@ -5,8 +5,8 @@ package eu.europa.ec.eurostat.jgiscotools.algo.distances;
 
 import java.util.Set;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
-import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 
 /**
  * Compare the attribute existance and their values (if they exist) of the two features. Count the number of differences.

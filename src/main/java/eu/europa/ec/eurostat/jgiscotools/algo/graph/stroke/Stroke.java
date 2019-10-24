@@ -10,8 +10,8 @@ import java.util.List;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 /**
  * @author julien Gaffuri

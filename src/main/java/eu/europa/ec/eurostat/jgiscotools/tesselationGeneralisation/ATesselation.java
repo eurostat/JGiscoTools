@@ -18,11 +18,11 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.strtree.STRtree;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Face;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
 import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.GraphToFeature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Agent;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 

@@ -12,10 +12,10 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.TopologyException;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.aggregation.BufferAggregation;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.partitionning.Partition;
 import eu.europa.ec.eurostat.jgiscotools.partitionning.Partition.PartitionedOperation;
-import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**

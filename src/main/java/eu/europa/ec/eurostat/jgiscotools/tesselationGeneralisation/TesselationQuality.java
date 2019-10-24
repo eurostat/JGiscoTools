@@ -17,12 +17,12 @@ import org.locationtech.jts.index.quadtree.Quadtree;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.partitionning.Partition;
 import eu.europa.ec.eurostat.jgiscotools.partitionning.Partition.PartitionedOperation;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Engine;
-import eu.europa.ec.eurostat.jgiscotools.util.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
