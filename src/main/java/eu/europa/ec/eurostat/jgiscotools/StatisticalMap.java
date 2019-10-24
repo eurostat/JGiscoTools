@@ -190,7 +190,7 @@ public class StatisticalMap {
 			renderer.setMapContent(this.map);
 			renderer.setJava2DHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON ));
 			Map<Object,Object> rendererParams = new HashMap<Object,Object>();
-			rendererParams.put("optimizedDataLoadingEnabled", new Boolean(false) );
+			rendererParams.put("optimizedDataLoadingEnabled", Boolean.FALSE );
 			renderer.setRendererHints( rendererParams );
 			renderer.paint(gr, imageBounds, mapBounds);
 
