@@ -19,7 +19,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.FileUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 

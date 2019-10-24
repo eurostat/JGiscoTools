@@ -7,8 +7,8 @@ import java.util.Collection;
 
 import org.locationtech.jts.geom.Point;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.Face;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Agent;
 
 /**

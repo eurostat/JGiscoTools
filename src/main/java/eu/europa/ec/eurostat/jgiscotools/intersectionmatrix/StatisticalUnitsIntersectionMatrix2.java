@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools;
+package eu.europa.ec.eurostat.jgiscotools.intersectionmatrix;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,7 +22,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
  * @author julien Gaffuri
  *
  */
-public class StatisticalUnitsIntersectionMatrix {
+public class StatisticalUnitsIntersectionMatrix2 {
 
 	/**
 	 * Compute the intersection matrix between two statistical unit datasets of a same area of interest.

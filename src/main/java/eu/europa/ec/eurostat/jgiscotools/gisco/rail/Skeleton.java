@@ -6,7 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco.rail;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Polygon;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.Graph;
 
 /**
  * @author julien Gaffuri

@@ -1,6 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.algo.graph;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.Graph;
 
 
 /**

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.io;
+package eu.europa.ec.eurostat.jgiscotools.io.web;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,7 +27,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.HTTPUtil;
 
 /**
  * @author julien Gaffuri

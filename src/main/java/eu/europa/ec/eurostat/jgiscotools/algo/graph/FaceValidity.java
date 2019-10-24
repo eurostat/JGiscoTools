@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
 
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.Face;
 
 /**
  * @author julien Gaffuri

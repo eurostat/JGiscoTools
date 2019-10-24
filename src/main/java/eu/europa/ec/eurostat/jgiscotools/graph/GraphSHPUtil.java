@@ -1,12 +1,9 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.io;
+package eu.europa.ec.eurostat.jgiscotools.graph;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.GraphToFeature;
 
 /**
  * @author julien Gaffuri

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools;
+package eu.europa.ec.eurostat.jgiscotools.intersectionmatrix;
 
 import java.io.BufferedWriter;
 import java.io.File;

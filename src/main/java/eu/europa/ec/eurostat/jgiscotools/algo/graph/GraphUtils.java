@@ -12,10 +12,10 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Face;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.Node;
 
 /**
  * 

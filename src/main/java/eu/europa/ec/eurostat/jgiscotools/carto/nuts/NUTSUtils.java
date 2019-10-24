@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.nuts;
+package eu.europa.ec.eurostat.jgiscotools.carto.nuts;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

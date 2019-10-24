@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.datamodel.graph;
+package eu.europa.ec.eurostat.jgiscotools.graph;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.datamodel.graph;
+package eu.europa.ec.eurostat.jgiscotools.graph;
 
 /**
  * Generic class for graph elements: Node, Edge, Face

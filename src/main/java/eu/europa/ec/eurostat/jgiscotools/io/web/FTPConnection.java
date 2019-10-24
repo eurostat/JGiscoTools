@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.util;
+package eu.europa.ec.eurostat.jgiscotools.io.web;
 
 import java.io.File;
 import java.io.FileInputStream;

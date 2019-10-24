@@ -22,11 +22,11 @@ import eu.europa.ec.eurostat.jgiscotools.algo.graph.ConnexComponents;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.ConnexComponents.EdgeFilter;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Graph;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Node;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.Node;
 
 /**
  * Compute edgematching of network data collected on different regions.

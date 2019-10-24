@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.nuts;
+package eu.europa.ec.eurostat.jgiscotools.carto.nuts;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -19,8 +19,8 @@ import org.opengis.filter.FilterFactory;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.EurobaseIO;
-import eu.europa.ec.eurostat.jgiscotools.MappingUtils;
-import eu.europa.ec.eurostat.jgiscotools.StatisticalMap;
+import eu.europa.ec.eurostat.jgiscotools.carto.MappingUtils;
+import eu.europa.ec.eurostat.jgiscotools.carto.StatisticalMap;
 import eu.europa.ec.eurostat.jgiscotools.io.img.GifSequenceWriter;
 
 /**

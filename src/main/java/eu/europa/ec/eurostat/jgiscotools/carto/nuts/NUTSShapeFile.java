@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.nuts;
+package eu.europa.ec.eurostat.jgiscotools.carto.nuts;
 
 import java.util.HashMap;
 

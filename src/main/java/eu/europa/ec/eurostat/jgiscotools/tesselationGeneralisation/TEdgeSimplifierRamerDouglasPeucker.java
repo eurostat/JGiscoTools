@@ -9,7 +9,7 @@ import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.TopologyAnalysis;
-import eu.europa.ec.eurostat.jgiscotools.datamodel.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.Edge;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**

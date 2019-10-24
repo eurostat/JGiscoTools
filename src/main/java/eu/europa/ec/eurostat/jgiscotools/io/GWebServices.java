@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.util;
+package eu.europa.ec.eurostat.jgiscotools.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;

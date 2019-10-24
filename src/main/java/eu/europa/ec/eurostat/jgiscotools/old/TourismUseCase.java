@@ -17,13 +17,13 @@ import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
-import eu.europa.ec.eurostat.jgiscotools.MappingUtils;
-import eu.europa.ec.eurostat.jgiscotools.StatisticalMap;
+import eu.europa.ec.eurostat.jgiscotools.carto.MappingUtils;
+import eu.europa.ec.eurostat.jgiscotools.carto.StatisticalMap;
+import eu.europa.ec.eurostat.jgiscotools.carto.nuts.NUTSMap;
+import eu.europa.ec.eurostat.jgiscotools.carto.nuts.NUTSShapeFile;
+import eu.europa.ec.eurostat.jgiscotools.carto.nuts.NUTSUtils;
 import eu.europa.ec.eurostat.jgiscotools.dasymetric.DasymetricMapping;
 import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
-import eu.europa.ec.eurostat.jgiscotools.nuts.NUTSMap;
-import eu.europa.ec.eurostat.jgiscotools.nuts.NUTSShapeFile;
-import eu.europa.ec.eurostat.jgiscotools.nuts.NUTSUtils;
 
 /**
  * @author julien Gaffuri
