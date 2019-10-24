@@ -113,7 +113,7 @@ public class HeatMapBuilder {
 				for(int j=0; j<h; j++){
 					int v = ((int[])getRaster().getDataElements(i+rad, j+rad, null))[0];
 					if(v==0) continue;
-					vals.add(new Integer(v));
+					vals.add(v);
 				}
 			}
 		}
