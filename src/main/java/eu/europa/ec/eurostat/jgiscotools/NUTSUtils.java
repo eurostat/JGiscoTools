@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.carto.nuts;
+package eu.europa.ec.eurostat.jgiscotools;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -24,11 +24,11 @@ import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
  */
 public class NUTSUtils {
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		//for(int time=1985; time<=2020; time++) System.out.println(getNUTSPopulation("FR", time));
 		//for(int time=1985; time<=2020; time++) System.out.println(getNUTSPopulation("FR", time) / getNUTSArea("FR", time));
 		//EurostatTSV.load("stat_cache/demo_r_d3area.tsv").selectDimValueEqualTo("unit","KM2","geo","FR").printInfo();
-	}
+	}*/
 
 
 	//compute figures divided by nuts area (in km2)

@@ -4,7 +4,7 @@
 package eu.europa.ec.eurostat.jgiscotools.old;
 
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.jgiscotools.intersectionmatrix.StatisticalUnitsIntersectionMatrix;
+import eu.europa.ec.eurostat.jgiscotools.geostat.StatisticalUnitsIntersectionMatrix;
 import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
 
 /**

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.carto.nuts;
+package eu.europa.ec.eurostat.jgiscotools.geostat.statmap;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -19,8 +19,7 @@ import org.opengis.filter.FilterFactory;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.EurobaseIO;
-import eu.europa.ec.eurostat.jgiscotools.carto.MappingUtils;
-import eu.europa.ec.eurostat.jgiscotools.carto.StatisticalMap;
+import eu.europa.ec.eurostat.jgiscotools.NUTSShapeFile;
 import eu.europa.ec.eurostat.jgiscotools.io.img.GifSequenceWriter;
 
 /**
@@ -131,6 +130,7 @@ public class NUTSMap extends StatisticalMap {
 		this.cntrBNColor = Color.BLACK;
 		return this;
 	}
+
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start.");

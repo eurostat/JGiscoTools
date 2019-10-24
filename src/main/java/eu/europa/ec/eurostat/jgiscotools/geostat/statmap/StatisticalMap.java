@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.carto;
+package eu.europa.ec.eurostat.jgiscotools.geostat.statmap;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -32,6 +32,8 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import eu.europa.ec.eurostat.jgiscotools.NUTSShapeFile;
 
 /**
  * @author Julien Gaffuri

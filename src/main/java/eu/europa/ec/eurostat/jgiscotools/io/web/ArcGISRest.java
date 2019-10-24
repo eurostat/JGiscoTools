@@ -27,6 +27,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**
  * @author julien Gaffuri
