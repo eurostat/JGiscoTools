@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.old;
+package eu.europa.ec.eurostat.jgiscotools.zzz;
 
 import java.awt.Color;
 import java.util.Collection;

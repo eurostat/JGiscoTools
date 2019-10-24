@@ -16,9 +16,9 @@ import eu.europa.ec.eurostat.jgiscotools.algo.graph.ConnexComponents;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.graph.Edge;
-import eu.europa.ec.eurostat.jgiscotools.graph.Graph;
-import eu.europa.ec.eurostat.jgiscotools.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
 
 /**
  * @author julien Gaffuri

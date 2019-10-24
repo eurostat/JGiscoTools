@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.mains;
+package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.main;
 
 import java.io.File;
 import java.nio.file.Paths;

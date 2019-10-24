@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.routing;
+package eu.europa.ec.eurostat.jgiscotools.gridstat.routing;
 
 import java.util.ArrayList;
 import java.util.Collection;

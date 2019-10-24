@@ -3,9 +3,9 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.algo.graph;
 
-import eu.europa.ec.eurostat.jgiscotools.graph.Edge;
-import eu.europa.ec.eurostat.jgiscotools.graph.Face;
-import eu.europa.ec.eurostat.jgiscotools.graph.Node;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
 
 /**
  * @author julien Gaffuri

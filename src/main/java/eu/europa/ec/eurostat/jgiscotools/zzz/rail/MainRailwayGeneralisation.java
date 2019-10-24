@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco.rail;
+package eu.europa.ec.eurostat.jgiscotools.zzz.rail;
 
 import java.util.Collection;
 
@@ -16,8 +16,8 @@ import eu.europa.ec.eurostat.jgiscotools.algo.graph.stroke.Stroke;
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.stroke.StrokeAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.graph.Graph;
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphToFeature;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**

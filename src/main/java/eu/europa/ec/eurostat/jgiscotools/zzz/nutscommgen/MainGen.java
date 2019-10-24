@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco.nutscommgen;
+package eu.europa.ec.eurostat.jgiscotools.zzz.nutscommgen;
 
 import java.util.Collection;
 

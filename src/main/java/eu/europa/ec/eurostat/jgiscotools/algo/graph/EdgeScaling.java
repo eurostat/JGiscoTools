@@ -7,9 +7,9 @@ import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.AffineTransformUtil;
-import eu.europa.ec.eurostat.jgiscotools.graph.Edge;
-import eu.europa.ec.eurostat.jgiscotools.graph.Face;
-import eu.europa.ec.eurostat.jgiscotools.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
 
 /**
  * @author julien Gaffuri

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.partitionning;
+package eu.europa.ec.eurostat.jgiscotools.algo;
 
 import java.util.ArrayList;
 import java.util.Collection;

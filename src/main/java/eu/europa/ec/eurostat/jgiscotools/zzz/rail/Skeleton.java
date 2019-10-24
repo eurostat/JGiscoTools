@@ -1,12 +1,12 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco.rail;
+package eu.europa.ec.eurostat.jgiscotools.zzz.rail;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Polygon;
 
-import eu.europa.ec.eurostat.jgiscotools.graph.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
 
 /**
  * @author julien Gaffuri

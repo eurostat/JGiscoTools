@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.test;
+package eu.europa.ec.eurostat.jgiscotools.zzz.test;
 
 import java.util.Collection;
 import java.util.HashMap;

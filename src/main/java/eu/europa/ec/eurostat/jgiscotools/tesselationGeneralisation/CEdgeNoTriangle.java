@@ -4,7 +4,7 @@
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.polygon.Triangle;
-import eu.europa.ec.eurostat.jgiscotools.graph.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
 
 /**

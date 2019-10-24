@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco.rail;
+package eu.europa.ec.eurostat.jgiscotools.zzz.rail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,11 +11,11 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.TopologyException;
 
+import eu.europa.ec.eurostat.jgiscotools.algo.Partition;
+import eu.europa.ec.eurostat.jgiscotools.algo.Partition.PartitionedOperation;
 import eu.europa.ec.eurostat.jgiscotools.algo.aggregation.BufferAggregation;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.partitionning.Partition;
-import eu.europa.ec.eurostat.jgiscotools.partitionning.Partition.PartitionedOperation;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**

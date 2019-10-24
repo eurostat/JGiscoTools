@@ -1,14 +1,14 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco.nutscommgen;
+package eu.europa.ec.eurostat.jgiscotools.zzz.nutscommgen;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.graph.TopologyAnalysis;
-import eu.europa.ec.eurostat.jgiscotools.graph.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AFace;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AUnit;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TFaceAggregation;

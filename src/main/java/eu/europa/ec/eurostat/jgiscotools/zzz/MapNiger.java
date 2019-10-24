@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco;
+package eu.europa.ec.eurostat.jgiscotools.zzz;
 
 import java.util.ArrayList;
 import java.util.Collection;

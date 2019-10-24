@@ -5,7 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
 import org.apache.log4j.Logger;
 
-import eu.europa.ec.eurostat.jgiscotools.graph.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
 
 /**

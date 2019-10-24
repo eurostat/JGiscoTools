@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco.rail;
+package eu.europa.ec.eurostat.jgiscotools.zzz.rail;
 
 import java.util.Collection;
 
