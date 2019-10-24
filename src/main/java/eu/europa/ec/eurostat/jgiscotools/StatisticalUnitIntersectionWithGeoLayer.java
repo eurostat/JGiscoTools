@@ -22,7 +22,6 @@ import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.java4eurostat.io.DicUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
-import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile2;
 
 /**
  * @author julien Gaffuri
@@ -53,7 +52,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			//open statistical units and geo shapefiles
 			ShapeFile statShp = new ShapeFile(statUnitsSHPFile).dispose();
 			int nbStats = statShp.count();
-			ShapeFile2 geoShp = new ShapeFile2(geoSHPFile);
+			ShapeFile geoShp = new ShapeFile(geoSHPFile);
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//go through statistical units
@@ -131,7 +130,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			//open geo and statistical units shapefiles
 			ShapeFile geoShp = new ShapeFile(geoSHPFile).dispose();
 			int nbGeo = geoShp.count();
-			ShapeFile2 statShp = new ShapeFile2(statUnitsSHPFile);
+			ShapeFile statShp = new ShapeFile(statUnitsSHPFile);
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//load stat unit values
@@ -220,7 +219,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			//open statistical units and geo shapefiles
 			ShapeFile statShp = new ShapeFile(statUnitsSHPFile).dispose();
 			int nbStats = statShp.count();
-			ShapeFile2 geoShp = new ShapeFile2(geoSHPFile);
+			ShapeFile geoShp = new ShapeFile(geoSHPFile);
 			FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 			//load geo values

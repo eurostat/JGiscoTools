@@ -19,7 +19,6 @@ import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.java4eurostat.io.DicUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
-import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile2;
 
 /**
  * @author julien Gaffuri
@@ -57,7 +56,7 @@ public class StatisticalUnitsIntersectionMatrix {
 		FeatureIterator<SimpleFeature> itSu1 = shpFile1.dispose().getFeatures();
 
 		//(pre)load shapefile 2
-		ShapeFile2 shpFile2 = new ShapeFile2(shpFilePath2);
+		ShapeFile shpFile = new ShapeFile(shpFilePath2);
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
 		//go through shapefile 1
@@ -72,7 +71,7 @@ public class StatisticalUnitsIntersectionMatrix {
 			double a1 = geom1.getArea();
 
 			//get all su2 intersecting the su1 (with spatial index)
-			FeatureIterator<SimpleFeature> itSu2 = shpFile2.getFeatures(f1.getBounds(), "the_geom", ff);
+			FeatureIterator<SimpleFeature> itSu2 = shpFile.getFeatures(f1.getBounds(), "the_geom", ff);
 
 			while (itSu2.hasNext()) {
 				SimpleFeature f2 = itSu2.next();
