@@ -139,7 +139,7 @@ public class ShortEdgesDeletion {
 	 * @return
 	 */
 	public static Geometry get(Polygon poly, double tol) {
-		Polygon p_ = (Polygon) poly.clone();
+		Polygon p_ = (Polygon) poly.copy();
 		ArrayList<PolyEdge> shSegs = getShort(p_, tol);
 
 		while(shSegs.size()>0) {
@@ -173,11 +173,11 @@ public class ShortEdgesDeletion {
 		LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
 		if(seg.ringId == -1) {
 			shell = (LinearRing) r;
-			for(int i=0; i<p.getNumInteriorRing(); i++) holes[i] = (LinearRing) p.getInteriorRingN(i).clone();
+			for(int i=0; i<p.getNumInteriorRing(); i++) holes[i] = (LinearRing) p.getInteriorRingN(i).copy();
 		}
 		else {
 			shell = (LinearRing) p.getExteriorRing();
-			for(int i=0; i<p.getNumInteriorRing(); i++) holes[i] = (LinearRing) p.getInteriorRingN(i).clone();
+			for(int i=0; i<p.getNumInteriorRing(); i++) holes[i] = (LinearRing) p.getInteriorRingN(i).copy();
 			holes[seg.ringId] = (LinearRing) r;
 		}
 		Polygon p_ = new GeometryFactory().createPolygon(shell, holes);

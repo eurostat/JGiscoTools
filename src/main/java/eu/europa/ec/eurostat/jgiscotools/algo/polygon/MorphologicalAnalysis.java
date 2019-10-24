@@ -99,9 +99,10 @@ public class MorphologicalAnalysis {
 				}
 
 				//get units intersecting and correct their geometries
-				Collection<Feature> uis = index.query( ng.getEnvelopeInternal() );
+				Collection<?> uis = index.query( ng.getEnvelopeInternal() );
 				//uis = getTrue(uis, ng.getEnvelopeInternal());
-				for(Feature ui : uis) {
+				for(Object ui_ : uis) {
+					Feature ui = (Feature)ui_;
 					if(ui == unit) continue;
 					if(!ui.getDefaultGeometry().getEnvelopeInternal().intersects(ng.getEnvelopeInternal())) continue;
 

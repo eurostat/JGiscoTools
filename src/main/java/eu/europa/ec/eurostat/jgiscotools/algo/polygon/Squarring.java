@@ -21,7 +21,7 @@ public class Squarring {
 	}
 
 	public static Polygon get(Polygon poly, double angleToleranceDeg, int pointActivationLimitNb, double res) {
-		Polygon poly2 = (Polygon) poly.clone();
+		Polygon poly2 = (Polygon) poly.copy();
 		HashSet<GPoint> ps = new HashSet<GPoint>();
 		HashSet<GSegment> segs = new HashSet<GSegment>();
 		Decomposers.decomposeLimit(poly2, res, ps, segs, false, null);
