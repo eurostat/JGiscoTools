@@ -166,10 +166,10 @@ public class ArcGISRest {
 				Geometry g = getGeometry(geomType, geom);
 				SimpleFeature f = sfb.buildFeature(""+i, new Object[]{g});
 				for(Object obj : att.entrySet()){
-					String k = (String)((Entry)obj).getKey();
+					String k = (String)((Entry<?,?>)obj).getKey();
 					if("Shape".equals(k)) continue;
 					if("OBJECTID".equals(k)) continue;
-					f.setAttribute(k, ((Entry)obj).getValue());
+					f.setAttribute(k, ((Entry<?,?>)obj).getValue());
 				}
 				fs.add(f);
 			}
@@ -208,7 +208,7 @@ public class ArcGISRest {
 					String attSt = "";
 					boolean first = true;
 					for(Object obj : att.entrySet()){
-						String k = (String)((Entry)obj).getKey();
+						String k = ((Entry<?,?>)obj).getKey().toString();
 						if("Shape".equals(k)) continue;
 						if("OBJECTID".equals(k)) continue;
 						if(first) first=false; else attSt+=",";
@@ -228,10 +228,10 @@ public class ArcGISRest {
 				Geometry g = getGeometry(geomType, geom);
 				SimpleFeature f = sfb.buildFeature(""+(id++), new Object[]{g});
 				for(Object obj : att.entrySet()){
-					String k = (String)((Entry)obj).getKey();
+					String k = (String)((Entry<?,?>)obj).getKey();
 					if("Shape".equals(k)) continue;
 					if("OBJECTID".equals(k)) continue;
-					f.setAttribute(k, ((Entry)obj).getValue());
+					f.setAttribute(k, ((Entry<?,?>)obj).getValue());
 				}
 
 				if(fs == null) fs = new DefaultFeatureCollection(null, ft);
@@ -258,10 +258,10 @@ public class ArcGISRest {
 				JSONArray pt = (JSONArray)pts.get(i);
 				cs[i] = new Coordinate(((Number)pt.get(0)).doubleValue(), ((Number)pt.get(1)).doubleValue());
 			}
-			return new GeometryFactory().createMultiPoint(cs);
+			return new GeometryFactory().createMultiPointFromCoords(cs);
 		} else if("Polygon".equals(geomType)){
 			//System.out.println(geom.keySet());
-			JSONArray rings = (JSONArray) geom.get("rings");
+			//JSONArray rings = (JSONArray) geom.get("rings");
 			LinearRing[] holes = null;
 			LinearRing shell = null;
 			//System.out.println(rings.size());
