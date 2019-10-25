@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.algo.graph.stroke;
+package eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke;
 
 import java.util.ArrayList;
 import java.util.Collection;

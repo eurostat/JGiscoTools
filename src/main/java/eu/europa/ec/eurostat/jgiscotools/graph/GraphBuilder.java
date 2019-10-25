@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.algo.graph;
+package eu.europa.ec.eurostat.jgiscotools.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,11 +25,11 @@ import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.locationtech.jts.operation.polygonize.Polygonizer;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.NodeReduction.NodeReductionCriteria;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphToFeature;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.NodeReduction;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.NodeReduction.NodeReductionCriteria;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;

@@ -8,9 +8,9 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 import org.opengis.filter.Filter;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**

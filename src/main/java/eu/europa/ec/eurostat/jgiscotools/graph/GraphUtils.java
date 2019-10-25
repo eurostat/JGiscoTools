@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.algo.graph;
+package eu.europa.ec.eurostat.jgiscotools.graph;
 
 import java.util.Collection;
 import java.util.HashSet;

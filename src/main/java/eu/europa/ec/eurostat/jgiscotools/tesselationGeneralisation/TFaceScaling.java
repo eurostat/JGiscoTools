@@ -1,6 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.FaceScaling;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.FaceScaling;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.TransformationCancellable;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 

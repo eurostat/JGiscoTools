@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.algo.graph.stroke;
+package eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke;
 
 import org.apache.log4j.Logger;
 import org.locationtech.jts.algorithm.Angle;

@@ -17,8 +17,8 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.strtree.STRtree;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphToFeature;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;

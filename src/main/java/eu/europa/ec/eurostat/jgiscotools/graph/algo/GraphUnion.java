@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.graph;
+package eu.europa.ec.eurostat.jgiscotools.graph.algo;
 
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
 

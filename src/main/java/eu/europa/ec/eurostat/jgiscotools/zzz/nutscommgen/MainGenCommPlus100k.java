@@ -8,8 +8,8 @@ import java.util.Collection;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AEdge;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AFace;

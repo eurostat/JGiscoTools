@@ -1,9 +1,10 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.graph;
+package eu.europa.ec.eurostat.jgiscotools.graph.algo;
 
 import java.util.Collection;
 import java.util.HashSet;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;

@@ -3,7 +3,7 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.EdgeScaling;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.EdgeScaling;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.TransformationCancellable;
 
 /**

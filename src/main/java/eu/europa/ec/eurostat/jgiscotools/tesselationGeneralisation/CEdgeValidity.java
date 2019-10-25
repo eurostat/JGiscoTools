@@ -3,8 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.EdgeValidity;
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.FaceValidity;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.EdgeValidity;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.FaceValidity;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
 

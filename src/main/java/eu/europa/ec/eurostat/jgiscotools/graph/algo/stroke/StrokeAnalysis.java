@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.algo.graph.stroke;
+package eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,10 +12,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.ConnexComponents;
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
+import eu.europa.ec.eurostat.jgiscotools.graph.GraphUtils;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.ConnexComponents;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;

@@ -18,12 +18,12 @@ import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.ConnexComponents;
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphBuilder;
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.GraphUtils;
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.ConnexComponents.EdgeFilter;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
+import eu.europa.ec.eurostat.jgiscotools.graph.GraphUtils;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.ConnexComponents;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.ConnexComponents.EdgeFilter;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;

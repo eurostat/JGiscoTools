@@ -9,7 +9,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.graph.TopologyAnalysis;
+import eu.europa.ec.eurostat.jgiscotools.graph.TopologyAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Transformation;
