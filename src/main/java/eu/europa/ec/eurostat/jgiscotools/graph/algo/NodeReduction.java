@@ -23,7 +23,7 @@ public class NodeReduction {
 
 
 	//specify when a node can be reduced or not
-	interface NodeReductionCriteria {
+	public interface NodeReductionCriteria {
 		public boolean isReducable(Node n);
 	}
 
