@@ -151,6 +151,11 @@ public class FeatureUtil {
 		for(Feature f : fs) gs.add(f.getDefaultGeometry());
 		return gs ;
 	}
+	public static <T extends Feature> Collection<Geometry> getGeometriesSimple(Collection<T> fs) {
+		Collection<Geometry> gs = new ArrayList<Geometry>();
+		for(Feature f : fs) gs.addAll( JTSGeomUtil.getGeometries(f.getDefaultGeometry()) );
+		return gs ;
+	}
 	public static <T extends Feature> Collection<MultiLineString> getGeometriesMLS(ArrayList<T> fs) {
 		Collection<MultiLineString> gs = new ArrayList<MultiLineString>();
 		for(Feature f : fs) gs.add((MultiLineString) f.getDefaultGeometry());
