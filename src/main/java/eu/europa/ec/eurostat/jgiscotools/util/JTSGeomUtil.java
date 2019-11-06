@@ -16,6 +16,7 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 
 public class JTSGeomUtil {
@@ -280,6 +281,22 @@ public class JTSGeomUtil {
 		for(Geometry g : gs)
 			env.expandToInclude(g.getEnvelopeInternal());
 		return env;
+	}
+
+	//check intersection between a single geometry and a collection of geometry.
+	//returns true as soon as one geometry of the collection intersects the other geometry
+	public static boolean intersects(Collection<Geometry> gs, Geometry g) {
+		for(Geometry g_ : gs)
+			if(g_.intersects(g)) return true;
+		return false;
+	}
+
+	public static boolean intersects(SpatialIndex gs, Geometry g) {
+		for(Object g__ : gs.query(g.getEnvelopeInternal())) {
+			Geometry g_ = (Geometry)g__;
+			if(g_.intersects(g)) return true;
+		}
+		return false;
 	}
 
 }
