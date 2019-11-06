@@ -274,4 +274,12 @@ public class JTSGeomUtil {
 		return g.getFactory().createMultiPolygon(mps.toArray(new Polygon[mps.size()]));
 	}
 
+	//returns the envelope of a set of geometries
+	public static Envelope getEnvelopeInternal(Collection<Geometry> gs) {
+		Envelope env = new Envelope();
+		for(Geometry g : gs)
+			env.expandToInclude(g.getEnvelopeInternal());
+		return env;
+	}
+
 }
