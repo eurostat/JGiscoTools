@@ -30,6 +30,11 @@
 
 	<developers>
 		<developer>
+			<id>kimberlycl</id>
+			<name>Kimberly Clemons</name>
+			<url>https://github.com/kimberlycl</url>
+		</developer>
+		<developer>
 			<id>jgaffuri</id>
 			<name>Julien Gaffuri</name>
 			<url>https://github.com/jgaffuri</url>
