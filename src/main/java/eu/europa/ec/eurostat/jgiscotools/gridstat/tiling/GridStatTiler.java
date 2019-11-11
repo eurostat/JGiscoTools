@@ -158,6 +158,8 @@ public class GridStatTiler {
 			}
 
 			//save as csv file
+			//TODO be sure order is x,y,val
+			//TODO remove ".0" in values
 			CSV.save(sht, "val", folderPath + "/" +t.z+ "/" +t.x+ "/" +t.y+ ".csv");
 		}
 	}
