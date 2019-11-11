@@ -34,7 +34,7 @@ public class EurostatGridsProduction {
 	//https://esdac.jrc.ec.europa.eu/content/european-reference-grids
 
 	//the different resolutions, in KM
-	static int[] resKMs = new int[] {100,50,20,10,5,2,1};
+	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
 
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");

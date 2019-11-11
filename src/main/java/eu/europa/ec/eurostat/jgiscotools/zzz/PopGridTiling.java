@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.gridstat.tiling.GridStatTiler;
+import eu.europa.ec.eurostat.jgiscotools.zzz.grid.EurostatGridsProduction;
 
 public class PopGridTiling {
 	private static Logger logger = Logger.getLogger(PopGridTiling.class.getName());
@@ -14,18 +15,23 @@ public class PopGridTiling {
 
 		String basePath = "E:/gridstat/data/";
 
-		logger.info("Load data...");
-		StatsHypercube sh = CSV.load(basePath+"pop_grid/pop_grid_2006_1km.csv", "TOT_P");
-		logger.info(sh.stats.size() + " values loaded");
+		for(int year : new int[] {2011, 2006}) {
+			for(int resKM : EurostatGridsProduction.resKMs) {
+				logger.info("*** year="+year+" resKM="+resKM);
 
-		logger.info("Build tiles...");
-		GridStatTiler gst = new GridStatTiler(sh);
-		gst.createTiles();
-		logger.info(gst.getTiles().size() + " tiles created");
+				logger.info("Load data...");
+				StatsHypercube sh = CSV.load(basePath+"pop_grid/pop_grid_"+year+"_"+resKM+"km.csv", "TOT_P");
+				logger.info(sh.stats.size() + " values loaded");
 
-		logger.info("Save tiles...");
-		gst.save(basePath+"pop_grid/pop_grid_2006_1km_tiled/");
+				logger.info("Build tiles...");
+				GridStatTiler gst = new GridStatTiler(sh);
+				gst.createTiles();
+				logger.info(gst.getTiles().size() + " tiles created");
 
+				logger.info("Save tiles...");
+				gst.save(basePath+"pop_grid_tiled/pop_grid_"+year+"_"+resKM+"km/");
+			}
+		}
 		logger.info("End");
 	}
 

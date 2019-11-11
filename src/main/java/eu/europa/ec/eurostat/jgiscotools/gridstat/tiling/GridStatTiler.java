@@ -134,29 +134,26 @@ public class GridStatTiler {
 
 				//get cell position
 				GridCell cell = new GridCell( s.dims.get(gridIdAtt) );
-				int x = cell.getLowerLeftCornerPositionX();
-				int y = cell.getLowerLeftCornerPositionY();
+				double x = cell.getLowerLeftCornerPositionX();
+				double y = cell.getLowerLeftCornerPositionY();
 
 				//compute cell position in tile space
 				int tileSize = tileSizeCellNb * cell.getResolution();
-				x = (int) ((1.0*cell.getLowerLeftCornerPositionX())/(1.0*tileSize)) - t.x;
-				y = (int) ((1.0*cell.getLowerLeftCornerPositionY())/(1.0*tileSize)) - t.y;
+				x = tileSizeCellNb * ((1.0*cell.getLowerLeftCornerPositionX())/(1.0*tileSize) - t.x);
+				y = tileSizeCellNb * ((1.0*cell.getLowerLeftCornerPositionY())/(1.0*tileSize) - t.y);
 
-				System.out.println(x);
-				System.out.println(y);
-
-				//check x,y values. Should be within [0,tileSizeCellNb-1]
-				//if(x==0) System.out.println("x=0 found");
-				//if(y==0) System.out.println("y=0 found");
-				if(x<0) System.err.println("Too low value: "+x);;
-				if(y<0) System.err.println("Too low value: "+y);;
-				//if(x==tileSizeCellNb-1) System.out.println("x=tileSizeCellNb-1 found");
-				//if(y==tileSizeCellNb-1) System.out.println("y=tileSizeCellNb-1 found");
-				if(x>tileSizeCellNb-1) System.err.println("Too high value: "+x);;
-				if(y>tileSizeCellNb-1) System.err.println("Too high value: "+y);;
+				/*/check x,y values. Should be within [0,tileSizeCellNb-1]
+				if(x==0) System.out.println("x=0 found");
+				if(y==0) System.out.println("y=0 found");
+				if(x<0) System.err.println("Too low value: "+x);
+				if(y<0) System.err.println("Too low value: "+y);
+				if(x==tileSizeCellNb-1) System.out.println("x=tileSizeCellNb-1 found");
+				if(y==tileSizeCellNb-1) System.out.println("y=tileSizeCellNb-1 found");
+				if(x>tileSizeCellNb-1) System.err.println("Too high value: "+x);
+				if(y>tileSizeCellNb-1) System.err.println("Too high value: "+y);*/
 
 				//store value
-				Stat s_ = new Stat(s.value, "x", ""+x, "y", ""+y);
+				Stat s_ = new Stat(s.value, "x", ""+(int)x, "y", ""+(int)y);
 				sht.stats.add(s_);
 			}
 
