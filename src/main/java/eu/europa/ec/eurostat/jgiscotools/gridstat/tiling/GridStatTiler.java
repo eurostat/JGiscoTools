@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.Coordinate;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 
 /**
  * 
@@ -50,9 +51,9 @@ public class GridStatTiler {
 	 */
 	private Collection<GridStatTile> tiles;
 	private class GridStatTile {
-		public String code;
+		public String id;
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
-		GridStatTile(String code) { this.code=code; }
+		GridStatTile(String id) { this.id=id; }
 	}
 
 
@@ -76,25 +77,27 @@ public class GridStatTiler {
 
 			for(int zoomLevel = minZoomLevel; zoomLevel<=maxZoomLevel; zoomLevel++) {
 				//get id of the tile it should belong to
-				String tileCode = getTileCode(zoomLevel, gridId);
+				String tileId = getTileId(zoomLevel, gridId);
 
 				//create tile if it does not exists and add stat to it
-				GridStatTile tile = tiles_.get(tileCode);
+				GridStatTile tile = tiles_.get(tileId);
 				if(tile == null) {
-					tile = new GridStatTile(tileCode);
-					tiles_.put(tileCode, tile);
+					tile = new GridStatTile(tileId);
+					tiles_.put(tileId, tile);
 				}
 				tile.stats.add(s);
 			}
-
 		}
 		tiles = tiles_.values();
 	}
 
 
-	private String getTileCode(int zoomLevel, String gridId) {
+	private String getTileId(int zoomLevel, String gridId) {
+		GridCell cell = new GridCell(gridId);
+		int tileCellSize = (int) (256 * Math.pow(2, -zoomLevel));
+
 		//TODO
-		
+
 		return null;
 	}
 
