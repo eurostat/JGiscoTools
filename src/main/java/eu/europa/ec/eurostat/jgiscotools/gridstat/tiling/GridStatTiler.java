@@ -24,6 +24,19 @@ import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
  */
 public class GridStatTiler {
 
+	//Notes on zoom levels:
+	//zoom level 0: level where tiles are composed of 256*256 grid cells
+	//zoom level 4: level where tiles are composed of 16*16 grid cells
+	//tile dimension is equal to 2^(8-z) in cell nb, where z is the zoom level
+	//tiling should be restricted to zoom levels from 0 to 4.
+	//better visualisation scale for zoom level 0 is the one where 1 pixel screen corresponds to one grid cell
+
+	//return the tile size in cell nb
+	private static int getTileSizeCellNb(int zoomLevel) {
+		return (int)Math.pow(2, 8-zoomLevel);
+	}
+
+
 	/**
 	 * The statistical figures.
 	 */
@@ -36,9 +49,9 @@ public class GridStatTiler {
 
 	/**
 	 * The position of origin of the grid to take into account to defining the tiling frame.
-	 * Tiling numbering goes from left to right, and from top to bottom.
-	 * It should be the top left corner of the tiling frame.
-	 * For LAEA, take (0,6000000).
+	 * It should be the bottom left corner of the tiling frame.
+	 * Tiling numbering goes from left to right, and from bottom to top.
+	 * For LAEA, take (0,0).
 	 */
 	private Coordinate originPoint = new Coordinate(0,0);
 
@@ -47,6 +60,8 @@ public class GridStatTiler {
 	 * All tiles are 256*256.
 	 */
 	private Collection<GridStatTile> tiles;
+	public Collection<GridStatTile> getTiles() { return tiles; }
+
 	private class GridStatTile {
 		public int x,y,z;
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
@@ -62,6 +77,8 @@ public class GridStatTiler {
 		this( CSV.load(csvFilePath, statAttr) );
 	}
 
+
+	public void createTiles() { createTiles(0,4); }
 	public void createTiles(int minZoomLevel, int maxZoomLevel) {
 		//create tile dictionnary tileId -> tile
 		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
@@ -75,16 +92,15 @@ public class GridStatTiler {
 			double y = cell.getLowerLeftCornerPositionY();
 			int resolution = cell.getResolution();
 
-			for(int z = minZoomLevel; z<=maxZoomLevel; z++) {
+			for(int z=minZoomLevel; z<=maxZoomLevel; z++) {
 				//get id of the tile the cell should belong to
 
 				//compute tile information
-				int tileCellSize = (int) (256 * Math.pow(2, -z));
+				int tileCellSize = getTileSizeCellNb(z);
 				int tileSize = tileCellSize * resolution;
 
 				//find tile position
 				int xt = (int)( (x-originPoint.x)/tileSize );
-				//TODO revert
 				int yt = (int)( (y-originPoint.y)/tileSize );
 				String tileId = z+"_"+xt+"_"+yt;
 
@@ -104,20 +120,48 @@ public class GridStatTiler {
 	public void save(String folderPath) {
 		//go through tiles
 		for(GridStatTile t : tiles) {
-			System.out.println( "/" +t.z+ "/" +t.x+ "/" +t.y+ ".csv" );
-			StatsHypercube sth = new StatsHypercube(sh.getDimLabels());
-			for(Stat s : sth.stats) {
-				String gridId = s.dims.get(gridIdAtt);
-				GridCell cell = new GridCell(gridId);
-				//TODO change x,y into tile coordinates
+			//compute tile information
+			int tileSizeCellNb = getTileSizeCellNb(t.z);
+
+			//build sh for the tile
+			StatsHypercube sht = new StatsHypercube(sh.getDimLabels());
+			sht.dimLabels.add("x");
+			sht.dimLabels.add("y");
+			sht.dimLabels.remove(gridIdAtt);
+
+			//prepare tile stats for export
+			for(Stat s : t.stats) {
+
+				//get cell position
+				GridCell cell = new GridCell( s.dims.get(gridIdAtt) );
 				int x = cell.getLowerLeftCornerPositionX();
 				int y = cell.getLowerLeftCornerPositionY();
-				s.dims.put("x", ""+(int)x);
-				s.dims.put("y", ""+(int)y);
-				Stat s_ = new Stat(s.value,"x",""+x,"y",""+y);
-				sth.stats.add(s_);
+
+				//compute cell position in tile space
+				int tileSize = tileSizeCellNb * cell.getResolution();
+				x = (int) ((1.0*cell.getLowerLeftCornerPositionX())/(1.0*tileSize)) - t.x;
+				y = (int) ((1.0*cell.getLowerLeftCornerPositionY())/(1.0*tileSize)) - t.y;
+
+				System.out.println(x);
+				System.out.println(y);
+
+				//check x,y values. Should be within [0,tileSizeCellNb-1]
+				//if(x==0) System.out.println("x=0 found");
+				//if(y==0) System.out.println("y=0 found");
+				if(x<0) System.err.println("Too low value: "+x);;
+				if(y<0) System.err.println("Too low value: "+y);;
+				//if(x==tileSizeCellNb-1) System.out.println("x=tileSizeCellNb-1 found");
+				//if(y==tileSizeCellNb-1) System.out.println("y=tileSizeCellNb-1 found");
+				if(x>tileSizeCellNb-1) System.err.println("Too high value: "+x);;
+				if(y>tileSizeCellNb-1) System.err.println("Too high value: "+y);;
+
+				//store value
+				Stat s_ = new Stat(s.value, "x", ""+x, "y", ""+y);
+				sht.stats.add(s_);
 			}
-			CSV.save(sth, "val", folderPath + "/" +t.z+ "/" +t.x+ "/" +t.y+ ".csv");
+
+			//save as csv file
+			CSV.save(sht, "val", folderPath + "/" +t.z+ "/" +t.x+ "/" +t.y+ ".csv");
 		}
 	}
 

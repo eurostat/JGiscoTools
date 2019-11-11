@@ -14,15 +14,16 @@ public class PopGridTiling {
 
 		String basePath = "E:/gridstat/data/";
 
-		logger.info("Load data");
+		logger.info("Load data...");
 		StatsHypercube sh = CSV.load(basePath+"pop_grid/pop_grid_2006_1km.csv", "TOT_P");
-		logger.info(sh.stats.size());
+		logger.info(sh.stats.size() + " values loaded");
 
-		logger.info("Build tiles");
+		logger.info("Build tiles...");
 		GridStatTiler gst = new GridStatTiler(sh);
-		gst.createTiles(-1, 1);
+		gst.createTiles();
+		logger.info(gst.getTiles().size() + " tiles created");
 
-		logger.info("Save tiles");
+		logger.info("Save tiles...");
 		gst.save(basePath+"pop_grid/pop_grid_2006_1km_tiled/");
 
 		logger.info("End");
