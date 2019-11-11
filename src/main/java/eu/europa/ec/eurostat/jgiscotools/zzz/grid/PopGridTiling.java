@@ -1,11 +1,11 @@
-package eu.europa.ec.eurostat.jgiscotools.zzz;
+package eu.europa.ec.eurostat.jgiscotools.zzz.grid;
 
 import org.apache.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.gridstat.tiling.GridStatTiler;
-import eu.europa.ec.eurostat.jgiscotools.zzz.grid.EurostatGridsProduction;
+import eu.europa.ec.eurostat.jgiscotools.zzz.grid.geomprod.EurostatGridsProduction;
 
 public class PopGridTiling {
 	private static Logger logger = Logger.getLogger(PopGridTiling.class.getName());
@@ -15,8 +15,8 @@ public class PopGridTiling {
 
 		String basePath = "E:/gridstat/data/";
 
-		for(int year : new int[] {2011, 2006}) {
-			for(int resKM : EurostatGridsProduction.resKMs) {
+		for(int resKM : EurostatGridsProduction.resKMs) {
+			for(int year : new int[] {2011, 2006}) {
 				logger.info("*** year="+year+" resKM="+resKM);
 
 				logger.info("Load data...");

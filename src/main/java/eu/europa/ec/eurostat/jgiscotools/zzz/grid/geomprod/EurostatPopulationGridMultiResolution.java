@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.zzz.grid;
+package eu.europa.ec.eurostat.jgiscotools.zzz.grid.geomprod;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
