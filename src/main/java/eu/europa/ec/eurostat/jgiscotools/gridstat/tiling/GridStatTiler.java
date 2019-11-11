@@ -4,6 +4,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gridstat.tiling;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -11,8 +12,6 @@ import org.locationtech.jts.geom.Coordinate;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
-import eu.europa.ec.eurostat.jgiscotools.grid.GridUtil;
 
 /**
  * 
@@ -49,9 +48,11 @@ public class GridStatTiler {
 	 * The computed tiles.
 	 * All tiles are 256*256.
 	 */
-	private HashMap<String,GridStatTile> tiles;
+	private Collection<GridStatTile> tiles;
 	private class GridStatTile {
+		public String code;
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
+		GridStatTile(String code) { this.code=code; }
 	}
 
 
@@ -64,9 +65,9 @@ public class GridStatTiler {
 		this( CSV.load(csvFilePath, statAttr), resolution );
 	}
 
-	public void computeTiles(int minZoomLevel, int maxZoomLevel) {
+	public void createTiles(int minZoomLevel, int maxZoomLevel) {
 		//create tile dictionnary
-		tiles = new HashMap<String,GridStatTile>();
+		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
 
 		//go through stats and assign it to tile
 		for(Stat s : sh.stats) {
@@ -75,28 +76,32 @@ public class GridStatTiler {
 
 			for(int zoomLevel = minZoomLevel; zoomLevel<=maxZoomLevel; zoomLevel++) {
 				//get id of the tile it should belong to
-				String tileId = getTileId(zoomLevel, gridId);
+				String tileCode = getTileCode(zoomLevel, gridId);
 
 				//create tile if it does not exists and add stat to it
-				GridStatTile tile = tiles.get(tileId);
+				GridStatTile tile = tiles_.get(tileCode);
 				if(tile == null) {
-					tile = new GridStatTile();
-					tiles.put(tileId, tile);
+					tile = new GridStatTile(tileCode);
+					tiles_.put(tileCode, tile);
 				}
 				tile.stats.add(s);
 			}
 
 		}
+		tiles = tiles_.values();
 	}
 
 
-	private static String getTileId(int zoomLevel, String gridId) {
+	private String getTileCode(int zoomLevel, String gridId) {
 		//TODO
+		
 		return null;
 	}
 
 	public void save(String folderPath) {
-		//TODO
+		for(GridStatTile tile : tiles) {
+			//TODO
+		}
 	}
 
 }
