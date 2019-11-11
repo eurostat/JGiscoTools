@@ -30,11 +30,6 @@ public class GridStatTiler {
 	private StatsHypercube sh;
 
 	/**
-	 * The input grid resolution
-	 */
-	private double resolution;
-
-	/**
 	 * The label of the attribute which contains the grid id
 	 */
 	private String gridIdAtt = "GRD_ID";
@@ -42,6 +37,7 @@ public class GridStatTiler {
 	/**
 	 * The position of origin of the grid CRS to take into account to defining the tiling frame.
 	 * All tiles are 256*256.
+	 * TODO For LAEA, take (0,6000000).
 	 */
 	private Coordinate cRSOriginPoint = new Coordinate(0,0);
 
@@ -57,13 +53,12 @@ public class GridStatTiler {
 	}
 
 
-	public GridStatTiler(StatsHypercube sh, double resolution) {
+	public GridStatTiler(StatsHypercube sh) {
 		this.sh = sh;
-		this.resolution = resolution;
 	}
 
-	public GridStatTiler(String csvFilePath, String statAttr, double resolution) {
-		this( CSV.load(csvFilePath, statAttr), resolution );
+	public GridStatTiler(String csvFilePath, String statAttr) {
+		this( CSV.load(csvFilePath, statAttr) );
 	}
 
 	public void createTiles(int minZoomLevel, int maxZoomLevel) {
@@ -94,6 +89,7 @@ public class GridStatTiler {
 
 	private String getTileId(int zoomLevel, String gridId) {
 		GridCell cell = new GridCell(gridId);
+		//cell.
 		int tileCellSize = (int) (256 * Math.pow(2, -zoomLevel));
 
 		//TODO
