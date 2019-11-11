@@ -104,9 +104,19 @@ public class GridStatTiler {
 	public void save(String folderPath) {
 		//go through tiles
 		for(GridStatTile t : tiles) {
+			System.out.println( "/" +t.z+ "/" +t.x+ "/" +t.y+ ".csv" );
 			StatsHypercube sth = new StatsHypercube(sh.getDimLabels());
-			sth.stats.addAll( t.stats );
-			//TODO keep it small: add x and y and remove grid id
+			for(Stat s : sth.stats) {
+				String gridId = s.dims.get(gridIdAtt);
+				GridCell cell = new GridCell(gridId);
+				//TODO change x,y into tile coordinates
+				int x = cell.getLowerLeftCornerPositionX();
+				int y = cell.getLowerLeftCornerPositionY();
+				s.dims.put("x", ""+(int)x);
+				s.dims.put("y", ""+(int)y);
+				Stat s_ = new Stat(s.value,"x",""+x,"y",""+y);
+				sth.stats.add(s_);
+			}
 			CSV.save(sth, "val", folderPath + "/" +t.z+ "/" +t.x+ "/" +t.y+ ".csv");
 		}
 	}
