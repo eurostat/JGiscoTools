@@ -35,11 +35,12 @@ public class GridStatTiler {
 	private String gridIdAtt = "GRD_ID";
 
 	/**
-	 * The position of origin of the grid CRS to take into account to defining the tiling frame.
-	 * All tiles are 256*256.
-	 * TODO For LAEA, take (0,6000000).
+	 * The position of origin of the grid to take into account to defining the tiling frame.
+	 * Tiling numbering goes from left to right, and from top to bottom.
+	 * It should be the top left corner of the tiling frame.
+	 * For LAEA, take (0,6000000).
 	 */
-	private Coordinate cRSOriginPoint = new Coordinate(0,0);
+	private Coordinate originPoint = new Coordinate(0,0);
 
 	/**
 	 * The computed tiles.
@@ -47,9 +48,9 @@ public class GridStatTiler {
 	 */
 	private Collection<GridStatTile> tiles;
 	private class GridStatTile {
-		public String id;
+		public int x,y,z;
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
-		GridStatTile(String id) { this.id=id; }
+		GridStatTile(int x, int y, int z) { this.x=x; this.y=y; this.z=z; }
 	}
 
 
@@ -62,22 +63,35 @@ public class GridStatTiler {
 	}
 
 	public void createTiles(int minZoomLevel, int maxZoomLevel) {
-		//create tile dictionnary
+		//create tile dictionnary tileId -> tile
 		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
 
-		//go through stats and assign it to tile
+		//go through cell stats and assign it to a tile
 		for(Stat s : sh.stats) {
-			//get grid tile
+			//get cell information
 			String gridId = s.dims.get(gridIdAtt);
+			GridCell cell = new GridCell(gridId);
+			double x = cell.getLowerLeftCornerPositionX();
+			double y = cell.getLowerLeftCornerPositionY();
+			int resolution = cell.getResolution();
 
-			for(int zoomLevel = minZoomLevel; zoomLevel<=maxZoomLevel; zoomLevel++) {
-				//get id of the tile it should belong to
-				String tileId = getTileId(zoomLevel, gridId);
+			for(int z = minZoomLevel; z<=maxZoomLevel; z++) {
+				//get id of the tile the cell should belong to
+
+				//compute tile information
+				int tileCellSize = (int) (256 * Math.pow(2, -z));
+				int tileSize = tileCellSize * resolution;
+
+				//find tile position
+				int xt = (int)( (x-originPoint.x)/tileSize );
+				//TODO revert
+				int yt = (int)( (y-originPoint.y)/tileSize );
+				String tileId = z+"_"+xt+"_"+yt;
 
 				//create tile if it does not exists and add stat to it
 				GridStatTile tile = tiles_.get(tileId);
 				if(tile == null) {
-					tile = new GridStatTile(tileId);
+					tile = new GridStatTile(xt, yt, z);
 					tiles_.put(tileId, tile);
 				}
 				tile.stats.add(s);
@@ -87,19 +101,13 @@ public class GridStatTiler {
 	}
 
 
-	private String getTileId(int zoomLevel, String gridId) {
-		GridCell cell = new GridCell(gridId);
-		//cell.
-		int tileCellSize = (int) (256 * Math.pow(2, -zoomLevel));
-
-		//TODO
-
-		return null;
-	}
-
 	public void save(String folderPath) {
-		for(GridStatTile tile : tiles) {
-			//TODO
+		//go through tiles
+		for(GridStatTile t : tiles) {
+			StatsHypercube sth = new StatsHypercube(sh.getDimLabels());
+			sth.stats.addAll( t.stats );
+			//TODO keep it small: add x and y and remove grid id
+			CSV.save(sth, "val", folderPath + "/" +t.z+ "/" +t.x+ "/" +t.y+ ".csv");
 		}
 	}
 
