@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gridstat.tiling;
+package eu.europa.ec.eurostat.jgiscotools.grid;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,8 +12,6 @@ import org.locationtech.jts.geom.Coordinate;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.java4eurostat.io.JSONStat;
-import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 
 /**
  * 
@@ -29,7 +27,7 @@ import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
  * @author Julien Gaffuri
  *
  */
-public class GridStatTiler {
+public class GriddedStatsTiler {
 
 	/**
 	 * @param zoomLevel
@@ -71,11 +69,11 @@ public class GridStatTiler {
 	}
 
 
-	public GridStatTiler(String csvFilePath, String statAttr) {
+	public GriddedStatsTiler(String csvFilePath, String statAttr) {
 		this( CSV.load(csvFilePath, statAttr) );
 	}
 
-	public GridStatTiler(StatsHypercube sh) {
+	public GriddedStatsTiler(StatsHypercube sh) {
 		this.sh = sh;
 	}
 

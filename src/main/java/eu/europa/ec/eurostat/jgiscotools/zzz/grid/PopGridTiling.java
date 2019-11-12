@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.jgiscotools.gridstat.tiling.GridStatTiler;
+import eu.europa.ec.eurostat.jgiscotools.grid.GriddedStatsTiler;
 import eu.europa.ec.eurostat.jgiscotools.zzz.grid.geomprod.EurostatGridsProduction;
 
 public class PopGridTiling {
@@ -24,7 +24,7 @@ public class PopGridTiling {
 				logger.info(sh.stats.size() + " values loaded");
 
 				logger.info("Build tiles...");
-				GridStatTiler gst = new GridStatTiler(sh);
+				GriddedStatsTiler gst = new GriddedStatsTiler(sh);
 				gst.createTiles();
 				logger.info(gst.getTiles().size() + " tiles created");
 

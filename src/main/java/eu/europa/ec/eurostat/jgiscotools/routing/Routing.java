@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gridstat.routing;
+package eu.europa.ec.eurostat.jgiscotools.routing;
 
 import java.io.IOException;
 import java.io.Serializable;

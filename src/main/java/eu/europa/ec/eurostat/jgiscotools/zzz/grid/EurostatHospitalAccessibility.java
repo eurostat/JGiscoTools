@@ -14,11 +14,11 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.gridstat.routing.AccessibilityGrid;
-import eu.europa.ec.eurostat.jgiscotools.gridstat.routing.AccessibilityGrid.SpeedCalculator;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
+import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculator;
 
 /**
  * @author julien Gaffuri
