@@ -105,22 +105,21 @@ public class GriddedStatsTiler {
 			for(int z=minZoomLevel; z<=maxZoomLevel; z++) {
 				//get id of the tile the cell should belong to
 
-				//compute tile information
-				int tileCellSize = getTileSizeCellNb(z);
-				int tileSize = tileCellSize * resolution;
+				//compute tile size
+				int tileSize = resolution * getTileSizeCellNb(z);
 
 				//find tile position
 				int xt = (int)( (x-originPoint.x)/tileSize );
 				int yt = (int)( (y-originPoint.y)/tileSize );
-				String tileId = z+"_"+xt+"_"+yt;
 
 				//get tile. If it does not exists, create it.
+				String tileId = z+"_"+xt+"_"+yt;
 				GridStatTile tile = tiles_.get(tileId);
 				if(tile == null) {
 					tile = new GridStatTile(xt, yt, z);
 					tiles_.put(tileId, tile);
 				}
-				
+
 				//add cell to tile
 				tile.stats.add(s);
 			}
@@ -135,10 +134,10 @@ public class GriddedStatsTiler {
 	 * @param folderPath
 	 */
 	public void saveCSV(String folderPath) {
-		//go through tiles
+
 		for(GridStatTile t : tiles) {
-			//compute tile information
-			int tileSizeCellNb = getTileSizeCellNb(t.z);
+			//compute tile size
+			int ts = getTileSizeCellNb(t.z);
 
 			//build sh for the tile
 			StatsHypercube sht = new StatsHypercube(sh.getDimLabels());
@@ -151,13 +150,13 @@ public class GriddedStatsTiler {
 
 				//get cell position
 				GridCell cell = new GridCell( s.dims.get(gridIdAtt) );
-				double x = cell.getLowerLeftCornerPositionX();
-				double y = cell.getLowerLeftCornerPositionY();
+				double x = cell.getLowerLeftCornerPositionX() - originPoint.x;
+				double y = cell.getLowerLeftCornerPositionY() - originPoint.y;
+				double r = cell.getResolution();
 
 				//compute cell position in tile space
-				int tileSize = tileSizeCellNb * cell.getResolution();
-				x = tileSizeCellNb * ((1.0*cell.getLowerLeftCornerPositionX())/(1.0*tileSize) - t.x);
-				y = tileSizeCellNb * ((1.0*cell.getLowerLeftCornerPositionY())/(1.0*tileSize) - t.y);
+				x = x/r - ts*t.x;
+				y = y/r - ts*t.y;
 
 				/*/check x,y values. Should be within [0,tileSizeCellNb-1]
 				if(x==0) System.out.println("x=0 found");
