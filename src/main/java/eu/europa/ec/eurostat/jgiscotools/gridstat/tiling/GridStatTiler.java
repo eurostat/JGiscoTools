@@ -12,38 +12,41 @@ import org.locationtech.jts.geom.Coordinate;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.java4eurostat.io.JSONStat;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 
 /**
  * 
  * Utility to create tiles of grided statistics.
- * Tile dimension is 256*256.
+ * 
+ * Notes on zoom levels:
+ * - Tiling should be restricted to zoom levels from 0 to 4.
+ * - Zoom level 0: level where tiles are composed of 256*256 grid cells
+ * - Zoom level 4: level where tiles are composed of 16*16 grid cells
+ * - Tile dimension is equal to 2^(8-z) in cell nb, where z is the zoom level
+ * - Better visualisation scale for zoom level 0 is the one where 1 pixel screen corresponds to one grid cell
  * 
  * @author Julien Gaffuri
  *
  */
 public class GridStatTiler {
 
-	//Notes on zoom levels:
-	//zoom level 0: level where tiles are composed of 256*256 grid cells
-	//zoom level 4: level where tiles are composed of 16*16 grid cells
-	//tile dimension is equal to 2^(8-z) in cell nb, where z is the zoom level
-	//tiling should be restricted to zoom levels from 0 to 4.
-	//better visualisation scale for zoom level 0 is the one where 1 pixel screen corresponds to one grid cell
-
-	//return the tile size in cell nb
+	/**
+	 * @param zoomLevel
+	 * @return The tile size at this zoomLevel, in number of pixels.
+	 */
 	private static int getTileSizeCellNb(int zoomLevel) {
-		return (int)Math.pow(2, 8-zoomLevel);
+		return (int) Math.pow(2, 8-zoomLevel);
 	}
 
 
 	/**
-	 * The statistical figures.
+	 * The statistical figures to tile
 	 */
 	private StatsHypercube sh;
 
 	/**
-	 * The label of the attribute which contains the grid id
+	 * The name of the attribute which contains the grid id
 	 */
 	private String gridIdAtt = "GRD_ID";
 
@@ -57,7 +60,6 @@ public class GridStatTiler {
 
 	/**
 	 * The computed tiles.
-	 * All tiles are 256*256.
 	 */
 	private Collection<GridStatTile> tiles;
 	public Collection<GridStatTile> getTiles() { return tiles; }
@@ -69,16 +71,26 @@ public class GridStatTiler {
 	}
 
 
-	public GridStatTiler(StatsHypercube sh) {
-		this.sh = sh;
-	}
-
 	public GridStatTiler(String csvFilePath, String statAttr) {
 		this( CSV.load(csvFilePath, statAttr) );
 	}
 
+	public GridStatTiler(StatsHypercube sh) {
+		this.sh = sh;
+	}
 
+
+	/**
+	 * Build the tiles for zoom levels 0 to 4.
+	 */
 	public void createTiles() { createTiles(0,4); }
+
+	/**
+	 * Build the tiles for several zoom levels.
+	 * 
+	 * @param minZoomLevel
+	 * @param maxZoomLevel
+	 */
 	public void createTiles(int minZoomLevel, int maxZoomLevel) {
 		//create tile dictionnary tileId -> tile
 		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
@@ -104,12 +116,14 @@ public class GridStatTiler {
 				int yt = (int)( (y-originPoint.y)/tileSize );
 				String tileId = z+"_"+xt+"_"+yt;
 
-				//create tile if it does not exists and add stat to it
+				//get tile. If it does not exists, create it.
 				GridStatTile tile = tiles_.get(tileId);
 				if(tile == null) {
 					tile = new GridStatTile(xt, yt, z);
 					tiles_.put(tileId, tile);
 				}
+				
+				//add cell to tile
 				tile.stats.add(s);
 			}
 		}
@@ -117,7 +131,12 @@ public class GridStatTiler {
 	}
 
 
-	public void save(String folderPath) {
+	/**
+	 * Save the tile pyramid as CSV.
+	 * 
+	 * @param folderPath
+	 */
+	public void saveCSV(String folderPath) {
 		//go through tiles
 		for(GridStatTile t : tiles) {
 			//compute tile information
@@ -159,7 +178,7 @@ public class GridStatTiler {
 
 			//save as csv file
 			//TODO be sure order is x,y,val
-			//TODO remove ".0" in values
+			//TODO handle case of more columns, when using multidimensional stats
 			CSV.save(sht, "val", folderPath + "/" +t.z+ "/" +t.x+ "/" +t.y+ ".csv");
 		}
 	}

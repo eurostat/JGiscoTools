@@ -29,7 +29,7 @@ public class PopGridTiling {
 				logger.info(gst.getTiles().size() + " tiles created");
 
 				logger.info("Save tiles...");
-				gst.save(basePath+"pop_grid_tiled/pop_grid_"+year+"_"+resKM+"km/");
+				gst.saveCSV(basePath+"pop_grid_tiled/pop_grid_"+year+"_"+resKM+"km/");
 			}
 		}
 		logger.info("End");
