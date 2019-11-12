@@ -37,9 +37,9 @@ public class EurostatHospitalAccessibility {
 
 		//logger.setLevel(Level.ALL);
 
-		String basepath = "C:/Users/gaffuju/Desktop/";
-		String path = basepath + "routing_test/";
-		String gridpath = basepath + "grid/";
+		String basePath = "E:/workspace/gridstat/";
+		String path = basePath + "routing_test/";
+		String gridpath = basePath + "data/grid/";
 		String egpath = "E:/dissemination/shared-data/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 

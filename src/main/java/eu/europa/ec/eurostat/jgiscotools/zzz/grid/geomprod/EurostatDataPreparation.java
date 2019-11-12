@@ -24,7 +24,7 @@ public class EurostatDataPreparation {
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
-		String path = "E:/gridstat/data/CNTR_100k/";
+		String path = "E:/workspace/gridstat/data/CNTR_100k/";
 
 		logger.info("Produce country geometry as the union of different versions");
 		produceCountriesUnionVersions(path);

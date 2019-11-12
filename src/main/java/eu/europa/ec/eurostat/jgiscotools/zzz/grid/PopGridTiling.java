@@ -13,7 +13,7 @@ public class PopGridTiling {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		String basePath = "E:/gridstat/data/";
+		String basePath = "E:/workspace/gridstat/data/";
 
 		for(int resKM : EurostatGridsProduction.resKMs) {
 			for(int year : new int[] {2011, 2006}) {
