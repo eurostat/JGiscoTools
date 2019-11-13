@@ -16,7 +16,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculator;
 
@@ -116,7 +115,7 @@ public class EurostatHospitalAccessibility {
 		logger.info("Save data");
 		CSVUtil.save(ag.getCellData(), outPath + "cell_data_"+resKM+"km.csv");
 		logger.info("Save routes. Nb=" + ag.getRoutes().size());
-		SHPUtil.saveSHP(ag.getRoutes(), outPath + "routes_"+resKM+"km.shp", crs);
+		GeoPackageUtil.save(ag.getRoutes(), outPath + "routes_"+resKM+"km.shp", crs);
 
 		logger.info("End");
 	}
