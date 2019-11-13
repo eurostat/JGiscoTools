@@ -2,7 +2,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
