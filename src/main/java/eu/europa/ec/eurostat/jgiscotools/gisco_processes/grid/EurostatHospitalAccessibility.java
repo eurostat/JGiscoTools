@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
@@ -19,6 +20,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculator;
+import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**
  * @author julien Gaffuri
@@ -45,13 +47,13 @@ public class EurostatHospitalAccessibility {
 
 
 		logger.info("Load grid cells");
-		int resKM = 100;
+		int resKM = 50;
+		String cellIdAtt = "GRD_ID";
 		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" /*,CQL.toFilter("CNTR_ID = 'BE'")*/);
 		logger.info(cells.size() + " cells");
 
 
 		logger.info("Load POIs");
-		//TODO test others POI sources and types: tomtom, osm
 		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ )).fs;
 		logger.info(pois.size() + " POIs");
 		//- GST = GF0306: Rescue service
@@ -79,9 +81,8 @@ public class EurostatHospitalAccessibility {
 
 
 
-
 		logger.info("Build accessibility");
-		AccessibilityGrid ag = new AccessibilityGrid(cells, "GRD_ID", resKM*1000, pois, networkSections);
+		AccessibilityGrid ag = new AccessibilityGrid(cells, cellIdAtt, resKM*1000, pois, networkSections);
 		ag.setEdgeWeighter(new SpeedCalculator() {
 			@Override
 			public double getSpeedKMPerHour(SimpleFeature sf) {
@@ -107,11 +108,14 @@ public class EurostatHospitalAccessibility {
 		logger.info("Compute accessibility");
 		ag.compute();
 
-		//logger.info("Compute accessibility indicator, with population");
-		//ArrayList<HashMap<String, String>> pop = CSVUtil.load("population.csv");
-		//HashMap<String, String> popData = Util.index(pop, "cellId", "value");
-		//ag.computePopulationAccessibilityIndicator(popData);
+		{
+			logger.info("Load population data");
+			ArrayList<HashMap<String, String>> pop = CSVUtil.load(basePath + "data/pop_grid/pop_grid_2011_"+resKM+"km.csv");
 
+			logger.info("Compute accessibility indicator, with population");
+			HashMap<String, String> popData = Util.index(pop, cellIdAtt, "TOT_P");
+			ag.computePopulationAccessibilityIndicator(popData);
+		}
 
 		logger.info("Save data");
 		CSVUtil.save(ag.getCellData(), outPath + "cell_data_"+resKM+"km.csv");

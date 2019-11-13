@@ -158,7 +158,7 @@ public class AccessibilityGrid {
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
-			//when cell contains at least one POI, set the duration to 0
+			/*/when cell contains at least one POI, set the duration to 0
 			if(getPoisInd().query(cell.getDefaultGeometry().getEnvelopeInternal()).size()>0) {
 				if(logger.isDebugEnabled()) logger.debug("POI in cell " + cellId);
 				HashMap<String, String> d = new HashMap<String, String>();
@@ -166,7 +166,7 @@ public class AccessibilityGrid {
 				d.put("durMin", "0");
 				cellData.add(d);
 				continue;
-			}
+			}*/
 
 			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearestPOIs + " nearest POIs");
 			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
@@ -276,7 +276,8 @@ public class AccessibilityGrid {
 
 
 	/**
-	 * An indicator measuring how bad a cell is considered, based on its accessibility AND population.
+	 * An indicator combining accessibility and population.
+	 * 0 to 1 (well accessible)
 	 * 
 	 * @param population
 	 * @param durMin
@@ -287,27 +288,49 @@ public class AccessibilityGrid {
 		//the higher the population, the worst
 		//TODO test others ? To give more weight to low population cells, increase p
 		//TODO use population density instead, with an average to average density?
+		
+		//TODO
+		//if(durMin < 10) return 1;
+		//double dur = 10+30/(population-100);
+		//if(durMin > dur) return 0;
+
 		double p = 1;
-		return durMin*Math.pow(population, 1/p);
+		return 1 / (durMin*Math.pow(population, 1/p));
 	}
 
 	//computes indicator for all cells, based on previous function, cell data and cell population data
 	public void computePopulationAccessibilityIndicator(HashMap<String, String> cellPopulation) {
 
 		for(HashMap<String, String> cellData : getCellData()) {
-			//get input data
 			String cellId = cellData.get(cellIdAtt);
-			double durMin = Double.parseDouble( cellData.get("durMin") );
-			double population = Double.parseDouble(cellPopulation.get(cellId));
+
+			//get pop data
+			String popData = cellPopulation.get(cellId);
+			if(popData == null) {
+				cellData.put("pop", "0");
+				cellData.put("pop_indicator", "ND");
+				continue;
+			}
+			double population = Double.parseDouble(popData);
+			cellData.put("population", ""+population);
 
 			//compute indicator
+			String durMin_ = cellData.get("durMin");
+			if(durMin_ == null) {
+				cellData.put("pop_indicator", "ND");
+				continue;
+			}
+			double durMin = Double.parseDouble(durMin_);
+			if(durMin < 0) {
+				cellData.put("pop_indicator", "ND");
+				continue;
+			}
+
 			double indic = getPopulationAccessibilityIndicator(population, durMin);
 
 			//store indicator
-			cellData.put("population", ""+population);
 			cellData.put("pop_indicator", ""+indic);
 		}
 	}
-
 
 }
