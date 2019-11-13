@@ -308,7 +308,7 @@ public class AccessibilityGrid {
 			String popData = cellPopulation.get(cellId);
 			if(popData == null) {
 				cellData.put("pop", "0");
-				cellData.put("pop_indicator", "ND");
+				cellData.put("pop_indicator", "-999");
 				continue;
 			}
 			double population = Double.parseDouble(popData);
@@ -317,12 +317,12 @@ public class AccessibilityGrid {
 			//compute indicator
 			String durMin_ = cellData.get("durMin");
 			if(durMin_ == null) {
-				cellData.put("pop_indicator", "ND");
+				cellData.put("pop_indicator", "-888");
 				continue;
 			}
 			double durMin = Double.parseDouble(durMin_);
 			if(durMin < 0) {
-				cellData.put("pop_indicator", "ND");
+				cellData.put("pop_indicator", "-777");
 				continue;
 			}
 
