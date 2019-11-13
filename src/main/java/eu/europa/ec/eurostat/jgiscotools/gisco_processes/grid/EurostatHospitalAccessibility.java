@@ -45,7 +45,7 @@ public class EurostatHospitalAccessibility {
 
 
 		logger.info("Load grid cells");
-		int resKM = 5;
+		int resKM = 100;
 		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" /*,CQL.toFilter("CNTR_ID = 'BE'")*/);
 		logger.info(cells.size() + " cells");
 
