@@ -38,7 +38,7 @@ public class EurostatHospitalAccessibility {
 		//logger.setLevel(Level.ALL);
 
 		String basePath = "E:/workspace/gridstat/";
-		String path = basePath + "routing_test/";
+		String outPath = basePath + "hospital_accessibility_output/";
 		String gridpath = basePath + "data/grid/";
 		String egpath = "E:/dissemination/shared-data/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
@@ -114,9 +114,9 @@ public class EurostatHospitalAccessibility {
 
 
 		logger.info("Save data");
-		CSVUtil.save(ag.getCellData(), path + "cell_data_"+resKM+"km.csv");
+		CSVUtil.save(ag.getCellData(), outPath + "cell_data_"+resKM+"km.csv");
 		logger.info("Save routes. Nb=" + ag.getRoutes().size());
-		SHPUtil.saveSHP(ag.getRoutes(), path + "routes_"+resKM+"km.shp", crs);
+		SHPUtil.saveSHP(ag.getRoutes(), outPath + "routes_"+resKM+"km.shp", crs);
 
 		logger.info("End");
 	}
