@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.zzz.grid.geomprod;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod;
 
 import java.util.ArrayList;
 import java.util.Collection;

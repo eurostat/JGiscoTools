@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.zzz.nutscommgen;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.nutscommgen;
 
 import java.util.Collection;
 import java.util.HashMap;

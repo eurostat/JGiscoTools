@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.zzz;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 public class MainNUTSExtraction {
 /*

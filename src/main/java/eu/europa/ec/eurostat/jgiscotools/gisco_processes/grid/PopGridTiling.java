@@ -1,11 +1,11 @@
-package eu.europa.ec.eurostat.jgiscotools.zzz.grid;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid;
 
 import org.apache.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod.EurostatGridsProduction;
 import eu.europa.ec.eurostat.jgiscotools.grid.GriddedStatsTiler;
-import eu.europa.ec.eurostat.jgiscotools.zzz.grid.geomprod.EurostatGridsProduction;
 
 public class PopGridTiling {
 	private static Logger logger = Logger.getLogger(PopGridTiling.class.getName());

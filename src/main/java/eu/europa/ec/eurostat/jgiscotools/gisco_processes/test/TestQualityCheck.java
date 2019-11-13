@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.zzz.test;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.test;
 
 import java.util.Collection;
 
