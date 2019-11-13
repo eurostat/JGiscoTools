@@ -39,6 +39,8 @@ public class AccessibilityGrid {
 
 	//the grid cells
 	private Collection<Feature> cells = null;
+	//the grid cells
+	private String cellIdAtt = "GRD_ID";
 	//the grid resolution in m
 	private double resM = -1;
 	//the points of interest to measure the accessibility of
@@ -88,8 +90,9 @@ public class AccessibilityGrid {
 
 
 
-	public AccessibilityGrid(Collection<Feature> cells, double resM, Collection<Feature> pois, Collection<Feature> networkSections) {
+	public AccessibilityGrid(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, Collection<Feature> networkSections) {
 		this.cells = cells;
+		this.cellIdAtt = cellIdAtt;
 		this.resM = resM;
 		this.pois = pois;
 		this.networkSections = networkSections;
@@ -152,15 +155,14 @@ public class AccessibilityGrid {
 
 		logger.info("Compute cell figure");
 		for(Feature cell : cells) {
-			String cellId = cell.getAttribute("cellId").toString();
-			//logger.info(cellId);
+			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
 			//when cell contains at least one POI, set the duration to 0
 			if(getPoisInd().query(cell.getDefaultGeometry().getEnvelopeInternal()).size()>0) {
 				if(logger.isDebugEnabled()) logger.debug("POI in cell " + cellId);
 				HashMap<String, String> d = new HashMap<String, String>();
-				d.put("cellId", cellId);
+				d.put(cellIdAtt, cellId);
 				d.put("durMin", "0");
 				cellData.add(d);
 				continue;
@@ -192,7 +194,7 @@ public class AccessibilityGrid {
 			if(oN == null) {
 				logger.error("Could not find graph node around cell center: " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
-				d.put("cellId", cellId);
+				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-10");
 				cellData.add(d);
 				continue;
@@ -200,7 +202,7 @@ public class AccessibilityGrid {
 			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
 				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
 				HashMap<String, String> d = new HashMap<String, String>();
-				d.put("cellId", cellId);
+				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-20");
 				cellData.add(d);
 				continue;
@@ -247,7 +249,7 @@ public class AccessibilityGrid {
 			if(costMin > 0 && pMin == null) {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to POI for cell " + cellId + " around " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
-				d.put("cellId", cellId);
+				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-30");
 				cellData.add(d);
 				continue;
@@ -255,7 +257,7 @@ public class AccessibilityGrid {
 
 			//store data at grid cell level
 			HashMap<String, String> d = new HashMap<String, String>();
-			d.put("cellId", cellId);
+			d.put(cellIdAtt, cellId);
 			d.put("durMin", ""+costMin);
 			cellData.add(d);
 
@@ -263,7 +265,7 @@ public class AccessibilityGrid {
 				//store route
 				Feature f = Routing.toFeature(pMin);
 				f.setID(cellId);
-				f.setAttribute("cellId", cellId);
+				f.setAttribute(cellIdAtt, cellId);
 				f.setAttribute("durMin", costMin);
 				routes.add(f);
 			}
@@ -294,7 +296,7 @@ public class AccessibilityGrid {
 
 		for(HashMap<String, String> cellData : getCellData()) {
 			//get input data
-			String cellId = cellData.get("cellId");
+			String cellId = cellData.get(cellIdAtt);
 			double durMin = Double.parseDouble( cellData.get("durMin") );
 			double population = Double.parseDouble(cellPopulation.get(cellId));
 

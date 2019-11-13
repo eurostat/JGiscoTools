@@ -81,7 +81,7 @@ public class EurostatHospitalAccessibility {
 
 
 		logger.info("Build accessibility");
-		AccessibilityGrid ag = new AccessibilityGrid(cells, resKM*1000, pois, networkSections);
+		AccessibilityGrid ag = new AccessibilityGrid(cells, "GRD_ID", resKM*1000, pois, networkSections);
 		ag.setEdgeWeighter(new SpeedCalculator() {
 			@Override
 			public double getSpeedKMPerHour(SimpleFeature sf) {

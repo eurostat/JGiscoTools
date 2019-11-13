@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
-import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -38,7 +37,7 @@ public class Test {
 		logger.debug(out.size() + " kept");
 
 		logger.info("Save as gpkg file");
-		GeoPackageUtil.save(out, "C:\\Users\\clemoki\\Desktop\\hospi_lux.gpkg", CRS.decode("EPSG:3035"));
+		GeoPackageUtil.save(out, "C:\\Users\\clemoki\\Desktop\\hospi_lux.gpkg", crs);
 
 		logger.info("End");
 	}
