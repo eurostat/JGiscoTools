@@ -297,6 +297,7 @@ public class AccessibilityGrid {
 				f.setID(cellId);
 				f.setAttribute(cellIdAtt, cellId);
 				f.setAttribute("durMin", costMin);
+				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getDefaultGeometry().getLength()/costMin, 2));
 				routes.add(f);
 			}
 		}
