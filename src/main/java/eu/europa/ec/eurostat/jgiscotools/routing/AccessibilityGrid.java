@@ -200,7 +200,7 @@ public class AccessibilityGrid {
 			Integer population = null;
 			if(populationGridI != null) {
 				String s = populationGridI.get(cellId);
-				population = s==null? 0 : Integer.parseInt(s);
+				population = s==null? 0 : (int)Double.parseDouble(s);
 			}
 
 			//get cell centroid as origin point
@@ -318,13 +318,14 @@ public class AccessibilityGrid {
 		//the higher the population, the worst
 		//TODO test others ? To give more weight to low population cells, increase p
 		//TODO use population density instead, with an average to average density?
-
+		/*
 		//TODO
-		//if(durMin < 10) return 1;
-		//double dur = 10+30/(population-100);
-		//if(durMin > dur) return 0;
-
-		return 4000 / (durMin*population);
+		if(durMin < 10) return 1;
+		double dur = 10+30/(population-100);
+		if(durMin > dur) return 0;
+		 */
+		//return 4000 / (durMin*population);
+		return durMin*population;
 	}
 
 }
