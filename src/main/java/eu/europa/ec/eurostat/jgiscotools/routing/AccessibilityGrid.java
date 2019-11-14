@@ -27,6 +27,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**
  * Class to compute an accessibility grid to a set of points of interest, using a transport network.
@@ -45,8 +46,11 @@ public class AccessibilityGrid {
 	private double resM = -1;
 	//the points of interest to measure the accessibility of
 	private Collection<Feature> pois = null;
-	//the linear features compising the network
+	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
+	//population figures by grid cell
+	private HashMap<String, String> populationGridI = null;
+	private String populationValueAttribute = null;
 
 	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;
@@ -90,12 +94,17 @@ public class AccessibilityGrid {
 
 
 
-	public AccessibilityGrid(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, Collection<Feature> networkSections) {
+	public AccessibilityGrid(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, Collection<Feature> networkSections, ArrayList<HashMap<String, String>> populationGrid, String populationValueAttribute) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.resM = resM;
 		this.pois = pois;
 		this.networkSections = networkSections;
+		this.populationValueAttribute = populationValueAttribute;
+
+		if(populationGrid != null)
+			//index population figures
+			this.populationGridI = Util.index(populationGrid, cellIdAtt, populationValueAttribute);
 	}
 
 
@@ -187,6 +196,13 @@ public class AccessibilityGrid {
 			Routing rt = new Routing(net__, ft);
 			rt.setEdgeWeighter(getEdgeWeighter());
 
+			//get population data, if provided
+			Integer population = null;
+			if(populationGridI != null) {
+				String s = populationGridI.get(cellId);
+				population = s==null? 0 : Integer.parseInt(s);
+			}
+
 			//get cell centroid as origin point
 			//take another position depending on the network state inside the cell? Cell is supposed to be small enough?
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
@@ -196,6 +212,10 @@ public class AccessibilityGrid {
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-10");
+				if(populationGridI != null) {
+					d.put(this.populationValueAttribute, population.toString());
+					d.put("pop_indicator", "-10");
+				}
 				cellData.add(d);
 				continue;
 			}
@@ -204,6 +224,10 @@ public class AccessibilityGrid {
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-20");
+				if(populationGridI != null) {
+					d.put(this.populationValueAttribute, population.toString());
+					d.put("pop_indicator", "-20");
+				}
 				cellData.add(d);
 				continue;
 			}
@@ -251,6 +275,10 @@ public class AccessibilityGrid {
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-30");
+				if(populationGridI != null) {
+					d.put(this.populationValueAttribute, population.toString());
+					d.put("pop_indicator", "-30");
+				}
 				cellData.add(d);
 				continue;
 			}
@@ -259,6 +287,8 @@ public class AccessibilityGrid {
 			HashMap<String, String> d = new HashMap<String, String>();
 			d.put(cellIdAtt, cellId);
 			d.put("durMin", ""+costMin);
+			d.put(this.populationValueAttribute, population.toString());
+			d.put("pop_indicator", "" + getPopulationAccessibilityIndicator(population, costMin));
 			cellData.add(d);
 
 			if(pMin != null) {
@@ -288,49 +318,13 @@ public class AccessibilityGrid {
 		//the higher the population, the worst
 		//TODO test others ? To give more weight to low population cells, increase p
 		//TODO use population density instead, with an average to average density?
-		
+
 		//TODO
 		//if(durMin < 10) return 1;
 		//double dur = 10+30/(population-100);
 		//if(durMin > dur) return 0;
 
-		double p = 1;
-		return 1 / (durMin*Math.pow(population, 1/p));
-	}
-
-	//computes indicator for all cells, based on previous function, cell data and cell population data
-	public void computePopulationAccessibilityIndicator(HashMap<String, String> cellPopulation) {
-
-		for(HashMap<String, String> cellData : getCellData()) {
-			String cellId = cellData.get(cellIdAtt);
-
-			//get pop data
-			String popData = cellPopulation.get(cellId);
-			if(popData == null) {
-				cellData.put("pop", "0");
-				cellData.put("pop_indicator", "-999");
-				continue;
-			}
-			double population = Double.parseDouble(popData);
-			cellData.put("population", ""+population);
-
-			//compute indicator
-			String durMin_ = cellData.get("durMin");
-			if(durMin_ == null) {
-				cellData.put("pop_indicator", "-888");
-				continue;
-			}
-			double durMin = Double.parseDouble(durMin_);
-			if(durMin < 0) {
-				cellData.put("pop_indicator", "-777");
-				continue;
-			}
-
-			double indic = getPopulationAccessibilityIndicator(population, durMin);
-
-			//store indicator
-			cellData.put("pop_indicator", ""+indic);
-		}
+		return 4000 / (durMin*population);
 	}
 
 }

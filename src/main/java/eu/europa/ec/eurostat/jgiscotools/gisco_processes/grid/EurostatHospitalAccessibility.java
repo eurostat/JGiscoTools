@@ -20,7 +20,6 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculator;
-import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**
  * @author julien Gaffuri
@@ -46,14 +45,14 @@ public class EurostatHospitalAccessibility {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 
-		logger.info("Load grid cells");
+		logger.info("Load grid cells...");
 		int resKM = 50;
 		String cellIdAtt = "GRD_ID";
 		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" /*,CQL.toFilter("CNTR_ID = 'BE'")*/);
 		logger.info(cells.size() + " cells");
 
 
-		logger.info("Load POIs");
+		logger.info("Load POIs...");
 		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ )).fs;
 		logger.info(pois.size() + " POIs");
 		//- GST = GF0306: Rescue service
@@ -68,7 +67,7 @@ public class EurostatHospitalAccessibility {
 		//TODO show map of transport network (EGM/ERM) based on speed
 		//TODO correct networks - snapping
 		//TODO load other transport networks (ferry, etc?)
-		logger.info("Load network sections");
+		logger.info("Load network sections...");
 		Filter fil = CQL.toFilter("EXS=28 AND RST=1" /*+ " AND ICC = 'BE'"*/);
 		//EGM
 		//Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil).fs;
@@ -80,9 +79,13 @@ public class EurostatHospitalAccessibility {
 		logger.info(networkSections.size() + " sections loaded.");
 
 
+		logger.info("Load population grid...");
+		ArrayList<HashMap<String, String>> populationGrid = CSVUtil.load(basePath + "data/pop_grid/pop_grid_2011_"+resKM+"km.csv");
+		logger.info(populationGrid.size() + " populated grid cells.");
 
-		logger.info("Build accessibility");
-		AccessibilityGrid ag = new AccessibilityGrid(cells, cellIdAtt, resKM*1000, pois, networkSections);
+
+		logger.info("Build accessibility...");
+		AccessibilityGrid ag = new AccessibilityGrid(cells, cellIdAtt, resKM*1000, pois, networkSections, populationGrid, "TOT_P");
 		ag.setEdgeWeighter(new SpeedCalculator() {
 			@Override
 			public double getSpeedKMPerHour(SimpleFeature sf) {
@@ -105,21 +108,12 @@ public class EurostatHospitalAccessibility {
 				return 50.0;
 			}});
 
-		logger.info("Compute accessibility");
+		logger.info("Compute accessibility...");
 		ag.compute();
 
-		{
-			logger.info("Load population data");
-			ArrayList<HashMap<String, String>> pop = CSVUtil.load(basePath + "data/pop_grid/pop_grid_2011_"+resKM+"km.csv");
-
-			logger.info("Compute accessibility indicator, with population");
-			HashMap<String, String> popData = Util.index(pop, cellIdAtt, "TOT_P");
-			ag.computePopulationAccessibilityIndicator(popData);
-		}
-
-		logger.info("Save data");
+		logger.info("Save data...");
 		CSVUtil.save(ag.getCellData(), outPath + "cell_data_"+resKM+"km.csv");
-		logger.info("Save routes. Nb=" + ag.getRoutes().size());
+		logger.info("Save routes... Nb=" + ag.getRoutes().size());
 		GeoPackageUtil.save(ag.getRoutes(), outPath + "routes_"+resKM+"km.shp", crs);
 
 		logger.info("End");
