@@ -28,9 +28,7 @@ import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculat
 public class EurostatHospitalAccessibility {
 	private static Logger logger = Logger.getLogger(EurostatHospitalAccessibility.class.getName());
 
-	//https://krankenhausatlas.statistikportal.de/
 	//show where X-border cooperation can improve accessibility
-	//kernel smoothing
 
 	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Exception {
