@@ -13,6 +13,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureReader;
 import org.geotools.geopkg.FeatureEntry;
 import org.geotools.geopkg.GeoPackage;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -90,6 +91,10 @@ public class GeoPackageUtil {
 	public static <T extends Feature> void save(Collection<T> fs, String file, CoordinateReferenceSystem crs){
 		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, crs);
 		save(sfc, file);
+	}
+
+	public static <T extends Geometry> void saveGeoms(Collection<T> geoms, String outFile, CoordinateReferenceSystem crs) {
+		save(SimpleFeatureUtil.getFeaturesFromGeometries(geoms), outFile, crs);
 	}
 
 }
