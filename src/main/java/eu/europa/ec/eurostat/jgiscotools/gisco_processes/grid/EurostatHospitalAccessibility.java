@@ -44,14 +44,14 @@ public class EurostatHospitalAccessibility {
 
 
 		logger.info("Load grid cells...");
-		int resKM = 5;
+		int resKM = 1;
 		String cellIdAtt = "GRD_ID";
-		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" /*,CQL.toFilter("CNTR_ID = 'BE'")*/);
+		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" , CQL.toFilter("CNTR_ID = 'BE'"));
 		logger.info(cells.size() + " cells");
 
 
 		logger.info("Load POIs...");
-		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ )).fs;
+		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" + " AND ICC = 'BE'" )).fs;
 		logger.info(pois.size() + " POIs");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
@@ -66,7 +66,7 @@ public class EurostatHospitalAccessibility {
 		//TODO correct networks - snapping
 		//TODO load other transport networks (ferry, etc?)
 		logger.info("Load network sections...");
-		Filter fil = CQL.toFilter("EXS=28 AND RST=1" /*+ " AND ICC = 'BE'"*/);
+		Filter fil = CQL.toFilter("EXS=28 AND RST=1" + " AND ICC = 'BE'");
 		//EGM
 		//Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil).fs;
 		//ERM
