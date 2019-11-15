@@ -15,6 +15,7 @@ import org.geotools.geopkg.FeatureEntry;
 import org.geotools.geopkg.GeoPackage;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -51,11 +52,13 @@ public class GeoPackageUtil {
 		return ProjectionUtil.getCRSType(getCRS(file));
 	}
 
-	public static ArrayList<Feature> getFeatures(String file){
+
+	public static ArrayList<Feature> getFeatures(String file) { return getFeatures(file, null); }
+	public static ArrayList<Feature> getFeatures(String file, Filter filter){
 		try {
 			GeoPackage gp = new GeoPackage(new File(file));
 			FeatureEntry fe = gp.features().get(0);
-			SimpleFeatureReader fr = gp.reader(fe, null, new DefaultTransaction());
+			SimpleFeatureReader fr = gp.reader(fe, filter, new DefaultTransaction());
 
 			ArrayList<Feature> fs = new ArrayList<Feature>();
 			while(fr.hasNext()) {
