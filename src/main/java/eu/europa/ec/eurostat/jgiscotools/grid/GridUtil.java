@@ -6,11 +6,13 @@ package eu.europa.ec.eurostat.jgiscotools.grid;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
 
+import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
@@ -21,6 +23,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
  *
  */
 public class GridUtil {
+	static Logger logger = Logger.getLogger(GridUtil.class.getName());
 
 	/**
 	 * Assign region codes to grid cells. These regions could be countries or NUTS regions.
@@ -101,10 +104,12 @@ public class GridUtil {
 	 * @param decimalNB The number of decimal places to keep for the percentage
 	 */
 	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, SpatialIndex landGeometries, int decimalNB) {
+
 		//compute cell area once
 		double cellArea = cells.iterator().next().getDefaultGeometry().getArea();
 
 		for(Feature cell : cells) {
+			logger.debug(cell.getAttribute("GRD_ID"));
 
 			//compute land part
 			Geometry landCellGeom = getLandCellGeometry(cell, landGeometries);
@@ -117,7 +122,7 @@ public class GridUtil {
 
 	}
 
-	
+
 	/**
 	 * Compute land geometry of a grid cell
 	 * 
@@ -126,14 +131,29 @@ public class GridUtil {
 	 * @return
 	 */
 	public static Geometry getLandCellGeometry(Feature cell, SpatialIndex landGeometries) {
+
+		//get cell geometry
 		Geometry cellGeom = cell.getDefaultGeometry();
-		Geometry landCellGeom = cellGeom.getFactory().createPolygon();
+
+		//list of land patches
+		Collection<Geometry> landCellGeoms = new ArrayList<>();
+
 		for(Object g_ : landGeometries.query(cellGeom.getEnvelopeInternal())) {
 			Geometry g = (Geometry) g_;
+
+			//compute intersection on cell geometry with land geometry
 			if(!g.intersects(cellGeom)) continue;
 			Geometry inter = g.intersection(cellGeom);
-			landCellGeom = landCellGeom.union(inter);
+			if(inter == null || inter.isEmpty()) continue;
+
+			//add intersection to cell land geometry
+			landCellGeoms.add(inter);
 		}
+
+		//compute union
+		Geometry landCellGeom = Union.polygonsUnionAll(landCellGeoms);
+
+		if(landCellGeom == null) return cellGeom.getFactory().createPolygon();
 		return landCellGeom;
 	}
 

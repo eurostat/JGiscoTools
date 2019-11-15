@@ -137,19 +137,19 @@ public class Union {
 	public static Geometry polygonsUnionAll(Collection<Geometry> polys) {
 		Geometry union = null;
 		try {
-			LOGGER.info("Try union with CascadedPolygonUnion");
+			if(LOGGER.isTraceEnabled()) LOGGER.trace("Try union with CascadedPolygonUnion");
 			union = CascadedPolygonUnion.union(polys);
 		} catch (Exception e) {
 			try {
-				LOGGER.info("Try union with PolygonUnion");
+				if(LOGGER.isTraceEnabled()) LOGGER.trace("Try union with PolygonUnion");
 				union = Union.getPolygonUnion(polys);
 			} catch (Exception e1) {
 				try {
-					LOGGER.info("Try buffer(0)");
+					if(LOGGER.isTraceEnabled()) LOGGER.trace("Try buffer(0)");
 					GeometryCollection gc = new GeometryFactory().createGeometryCollection(polys.toArray(new Geometry[polys.size()]));
 					union = gc.buffer(0);
 				} catch (Exception e2) {
-					LOGGER.info("Try iterative union");
+					if(LOGGER.isTraceEnabled()) LOGGER.trace("Try iterative union");
 					for(Geometry poly : polys)
 						union = union==null? poly : union.union(poly);
 				}
