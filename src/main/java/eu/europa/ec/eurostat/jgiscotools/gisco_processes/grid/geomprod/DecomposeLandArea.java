@@ -19,8 +19,8 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
  * @author julien Gaffuri
  *
  */
-public class DecomposeLand {
-	static Logger logger = Logger.getLogger(DecomposeLand.class.getName());
+public class DecomposeLandArea {
+	static Logger logger = Logger.getLogger(DecomposeLandArea.class.getName());
 
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");

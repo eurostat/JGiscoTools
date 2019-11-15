@@ -9,6 +9,9 @@ import java.util.Collection;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.index.SpatialIndex;
+import org.locationtech.jts.index.strtree.STRtree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -48,16 +51,15 @@ public class EurostatGridsProduction {
 		int bufferDistance = 1500;
 
 		logger.info("Get European countries (buffer) ...");
-		ArrayList<Feature> cntsBuff = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.shp").fs;
+		ArrayList<Feature> cntsBuff = GeoPackageUtil.getFeatures(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.gpkg");
 
-		/*
 		logger.info("Get land area...");
-		Collection<Geometry> landGeometries = FeatureUtil.getGeometriesSimple( SHPUtil.loadSHP(path+"CNTR_RG_100K_union_LAEA.shp").fs );
-		//TODO tile land areas
+		Collection<Geometry> landGeometries = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"land_areas.gpkg") );
+
+		logger.info("Index land area...");
 		SpatialIndex landGeometriesIndex = new STRtree();
 		for(Geometry g : landGeometries) landGeometriesIndex.insert(g.getEnvelopeInternal(), g);
 		landGeometries = null;
-		 */
 
 		//build pan-European grids
 		for(int resKM : resKMs) {
@@ -80,9 +82,8 @@ public class EurostatGridsProduction {
 
 			//TODO assign also nuts code? for each level?
 
-			//TODO too slow - tile that
-			//logger.info("Assign land proportion...");
-			//GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, 2);
+			logger.info("Assign land proportion...");
+			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, 2);
 
 			//save as GPKG
 			logger.info("Save " + cells.size() + " cells as GPKG...");
