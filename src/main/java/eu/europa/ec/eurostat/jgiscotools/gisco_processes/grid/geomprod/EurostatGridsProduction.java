@@ -45,7 +45,7 @@ public class EurostatGridsProduction {
 		logger.setLevel(Level.ALL);
 		Grid.logger.setLevel(Level.ALL);
 
-		String outpath = "E:/workspace/gridstat/data/out/";
+		String outpath = "E:/workspace/gridstat/data/grid/";
 		String path = "E:/workspace/gridstat/data/CNTR_100k/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 		int bufferDistance = 1500;
