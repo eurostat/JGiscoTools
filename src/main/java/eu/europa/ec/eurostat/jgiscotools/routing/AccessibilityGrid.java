@@ -150,6 +150,9 @@ public class AccessibilityGrid {
 
 
 	//compute the accessibility data
+	//-10: no transport node found for grid cell center
+	//-20: no transport node found close enough from grid cell center
+	//-30: no shortest path found to an hospital
 	public void compute() throws Exception {
 		//create output data structures
 		cellData = new ArrayList<>();
@@ -202,6 +205,7 @@ public class AccessibilityGrid {
 				String s = populationGridI.get(cellId);
 				population = s==null? 0 : (int)Double.parseDouble(s);
 			}
+
 
 			//get cell centroid as origin point
 			//take another position depending on the network state inside the cell? Cell is supposed to be small enough?
@@ -270,6 +274,7 @@ public class AccessibilityGrid {
 				}
 			}
 
+			
 			if(costMin > 0 && pMin == null) {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to POI for cell " + cellId + " around " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
