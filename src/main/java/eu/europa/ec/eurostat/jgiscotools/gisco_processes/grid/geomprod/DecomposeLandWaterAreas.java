@@ -33,6 +33,9 @@ public class DecomposeLandWaterAreas {
 		Collection<Feature> fs = GeoPackageUtil.getFeatures(path+"LAKE_EURO_PL_100K.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
 		logger.info(fs.size());
 
+		logger.info("Buffer 0...");
+		for(Feature f : fs) f.setDefaultGeometry( f.getDefaultGeometry().buffer(0) );
+
 		logger.info("Run decomposition...");
 		Collection<Geometry> landGeometries = Decomposer.decompose(fs, 1000, 1000, GeomType.ONLY_AREAS, 0);
 		logger.info(landGeometries.size());
