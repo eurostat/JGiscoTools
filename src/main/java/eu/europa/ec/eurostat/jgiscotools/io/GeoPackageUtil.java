@@ -7,18 +7,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureReader;
 import org.geotools.geopkg.FeatureEntry;
 import org.geotools.geopkg.GeoPackage;
-import org.geotools.geopkg.GeoPkgDataStoreFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -66,7 +61,7 @@ public class GeoPackageUtil {
 	public static ArrayList<Feature> getFeatures(String file) { return getFeatures(file, null); }
 	public static ArrayList<Feature> getFeatures(String file, Filter filter){
 		try {
-			/*GeoPackage gp = new GeoPackage(new File(file));
+			GeoPackage gp = new GeoPackage(new File(file));
 			FeatureEntry fe = gp.features().get(0);
 			SimpleFeatureReader fr = gp.reader(fe, filter, new DefaultTransaction());
 
@@ -78,8 +73,9 @@ public class GeoPackageUtil {
 			}
 			fr.close();
 			gp.close();
-			return fs;*/
+			return fs;
 
+			/*
 			HashMap<String, Object> map = new HashMap<>();
 			map.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
 			map.put(GeoPkgDataStoreFactory.DATABASE.key, file);
@@ -90,17 +86,19 @@ public class GeoPackageUtil {
 			for (String name : names) {
 				LOGGER.debug(name);
 
-				SimpleFeatureCollection features = store.getFeatureSource(name).getFeatures(filter);
+				SimpleFeatureSource sfs = store.getFeatureSource(name);
+				SimpleFeatureCollection features = sfs.getFeatures(filter);
 				//SimpleFeatureCollection features = reader.getFeatures(name);
-				SimpleFeatureIterator itr = features.features();
 
+				SimpleFeatureIterator itr = features.features();
 				while (itr.hasNext()) {
 					SimpleFeature sf = itr.next();
 					Feature f = SimpleFeatureUtil.get(sf);
 					fs.add(f);
 				}
+				itr.close();
 			}
-
+			 */
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
