@@ -121,9 +121,9 @@ public class SHPUtil {
 
 	//save
 
-	//public static void saveSHP(Collection<Feature> fs, String outFile) { saveSHP(fs, outFile, null); }
 	public static void saveSHP(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs) { saveSHP(fs,outFile,crs,null); }
-	public static void saveSHP(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, List<String> atts) { saveSHP(SimpleFeatureUtil.get(fs, crs, atts), outFile); }
+	public static void saveSHP(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, List<String> atts) { saveSHP(fs, outFile, SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts)); }
+	public static void saveSHP(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft) { saveSHP(SimpleFeatureUtil.get(fs, ft), outFile); }
 	public static void saveSHP(SimpleFeatureCollection sfs, String outFile) {
 		try {
 			if(sfs.size() == 0){
