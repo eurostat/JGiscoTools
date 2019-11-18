@@ -73,7 +73,7 @@ public class GeoPackageUtil {
 			String[] names = store.getTypeNames();
 			for (String name : names) {
 				LOGGER.debug(name);
-				SimpleFeatureCollection features = store.getFeatureSource(name).getFeatures();
+				SimpleFeatureCollection features = store.getFeatureSource(name).getFeatures(filter);
 				fs.addAll( SimpleFeatureUtil.get(features) );
 			}
 			return fs;

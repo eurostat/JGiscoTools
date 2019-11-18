@@ -103,7 +103,7 @@ public class GridUtil {
 	 * @param landGeometry
 	 * @param decimalNB The number of decimal places to keep for the percentage
 	 */
-	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, SpatialIndex landGeometries, int decimalNB) {
+	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, SpatialIndex landGeometries, SpatialIndex inlandWaterGeometriesIndex, int decimalNB) {
 
 		//compute cell area once
 		double cellArea = cells.iterator().next().getDefaultGeometry().getArea();
@@ -112,7 +112,7 @@ public class GridUtil {
 			logger.debug(cell.getAttribute("GRD_ID"));
 
 			//compute land part
-			Geometry landCellGeom = getLandCellGeometry(cell, landGeometries);
+			Geometry landCellGeom = getLandCellGeometry(cell, landGeometries, inlandWaterGeometriesIndex);
 
 			//compute land proportion
 			double prop = 100.0 * landCellGeom.getArea() / cellArea;
@@ -130,13 +130,13 @@ public class GridUtil {
 	 * @param landGeometries
 	 * @return
 	 */
-	public static Geometry getLandCellGeometry(Feature cell, SpatialIndex landGeometries) {
+	public static Geometry getLandCellGeometry(Feature cell, SpatialIndex landGeometries, SpatialIndex inlandWaterGeometriesIndex) {
 
 		//get cell geometry
 		Geometry cellGeom = cell.getDefaultGeometry();
 
 		//list of land patches
-		Collection<Geometry> landCellGeoms = new ArrayList<>();
+		Collection<Geometry> patches = new ArrayList<>();
 
 		for(Object g_ : landGeometries.query(cellGeom.getEnvelopeInternal())) {
 			Geometry g = (Geometry) g_;
@@ -147,11 +147,34 @@ public class GridUtil {
 			if(inter == null || inter.isEmpty()) continue;
 
 			//add intersection to cell land geometry
-			landCellGeoms.add(inter);
+			patches.add(inter);
 		}
 
 		//compute union
-		Geometry landCellGeom = Union.polygonsUnionAll(landCellGeoms);
+		Geometry landCellGeom = Union.polygonsUnionAll(patches);
+
+		if(landCellGeom == null)
+			return cellGeom.getFactory().createPolygon();
+		if(landCellGeom.isEmpty())
+			return landCellGeom;
+
+
+		//remove inland water
+
+		//get inland water areas intersecting land geometry
+		patches.clear();
+		for(Object g_ : inlandWaterGeometriesIndex.query(landCellGeom.getEnvelopeInternal())) {
+			Geometry g = (Geometry) g_;
+			if( ! g.getEnvelopeInternal().intersects(landCellGeom.getEnvelopeInternal()) ) continue;
+			patches.add(g);
+		}
+		if( patches.size() > 0 ) {
+			//compute inland water as union
+			Geometry inlandWater = Union.polygonsUnionAll(patches);
+			//compute geom difference
+			landCellGeom = landCellGeom.difference( inlandWater );
+		}
+
 
 		if(landCellGeom == null) return cellGeom.getFactory().createPolygon();
 		return landCellGeom;

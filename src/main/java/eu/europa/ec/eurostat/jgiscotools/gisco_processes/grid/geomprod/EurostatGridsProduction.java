@@ -61,6 +61,14 @@ public class EurostatGridsProduction {
 		for(Geometry g : landGeometries) landGeometriesIndex.insert(g.getEnvelopeInternal(), g);
 		landGeometries = null;
 
+		logger.info("Get inland water area...");
+		Collection<Geometry> inlandWaterGeometries = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"inland_water_areas.gpkg") );
+
+		logger.info("Index inland water area...");
+		SpatialIndex inlandWaterGeometriesIndex = new STRtree();
+		for(Geometry g : inlandWaterGeometries) inlandWaterGeometriesIndex.insert(g.getEnvelopeInternal(), g);
+		inlandWaterGeometries = null;
+
 		//build pan-European grids
 		for(int resKM : resKMs) {
 			logger.info("Make " + resKM + "km grid...");
@@ -83,7 +91,7 @@ public class EurostatGridsProduction {
 			//TODO assign also nuts code? for each level?
 
 			logger.info("Assign land proportion...");
-			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, 2);
+			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);
 
 			//save as GPKG
 			logger.info("Save " + cells.size() + " cells as GPKG...");
