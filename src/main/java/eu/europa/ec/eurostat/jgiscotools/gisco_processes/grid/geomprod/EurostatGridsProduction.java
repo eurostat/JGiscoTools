@@ -12,6 +12,7 @@ import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -102,7 +103,9 @@ public class EurostatGridsProduction {
 			if(resKM>3) {
 				logger.info("Save " + cells.size() + " cells as SHP...");
 				//TODO use feature type to ensure attribute type are not all String
-				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", crs);
+				//GRD_ID:String - CNTR_ID:String - LAND_PC:double - x:int - y:int
+				SimpleFeatureType ft = null; //TODO
+				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", ft);
 			}
 		}
 
