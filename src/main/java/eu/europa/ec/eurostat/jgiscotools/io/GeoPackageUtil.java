@@ -74,7 +74,6 @@ public class GeoPackageUtil {
 			fr.close();
 			gp.close();
 			return fs;
-
 			/*
 			HashMap<String, Object> map = new HashMap<>();
 			map.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
@@ -88,15 +87,8 @@ public class GeoPackageUtil {
 
 				SimpleFeatureSource sfs = store.getFeatureSource(name);
 				SimpleFeatureCollection features = sfs.getFeatures(filter);
-				//SimpleFeatureCollection features = reader.getFeatures(name);
 
-				SimpleFeatureIterator itr = features.features();
-				while (itr.hasNext()) {
-					SimpleFeature sf = itr.next();
-					Feature f = SimpleFeatureUtil.get(sf);
-					fs.add(f);
-				}
-				itr.close();
+				fs.addAll( SimpleFeatureUtil.get(features) );
 			}
 			 */
 		} catch (Exception e) { e.printStackTrace(); }
