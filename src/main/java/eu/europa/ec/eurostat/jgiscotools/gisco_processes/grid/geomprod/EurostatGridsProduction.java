@@ -95,11 +95,13 @@ public class EurostatGridsProduction {
 
 			//save as GPKG
 			logger.info("Save " + cells.size() + " cells as GPKG...");
+			//TODO use feature type to ensure attribute type are not all String
 			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km.gpkg", crs);
 
 			//save as SHP
 			if(resKM>3) {
 				logger.info("Save " + cells.size() + " cells as SHP...");
+				//TODO use feature type to ensure attribute type are not all String
 				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", crs);
 			}
 		}
