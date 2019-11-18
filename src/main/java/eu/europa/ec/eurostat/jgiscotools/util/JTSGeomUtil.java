@@ -130,7 +130,7 @@ public class JTSGeomUtil {
 
 	//return list of geometries that are not GeometryCollection
 	public static Collection<Geometry> getGeometries(Geometry geom){
-		Collection<Geometry> out = new HashSet<Geometry>();
+		Collection<Geometry> out = new ArrayList<Geometry>();
 		int nb = geom.getNumGeometries();
 		if(nb == 0)
 			return out;
@@ -143,7 +143,7 @@ public class JTSGeomUtil {
 	}
 	//return list of geometries that are not GeometryCollection
 	public static <T extends Geometry> Collection<Geometry> getGeometries(Collection<T> geoms){
-		Collection<Geometry> out = new HashSet<Geometry>();
+		Collection<Geometry> out = new ArrayList<Geometry>();
 		for(T geom : geoms) out.addAll(getGeometries(geom));
 		return out;
 	}

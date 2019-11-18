@@ -30,14 +30,14 @@ public class DecomposeLandWaterAreas {
 
 		logger.info("Load data...");
 		//Collection<Feature> fs = GeoPackageUtil.getFeatures(path+"CNTR_RG_100K_union_LAEA.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
-		Collection<Feature> fs = GeoPackageUtil.getFeatures(path+"LAKE_EURO_PL_100K.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
+		Collection<Feature> fs = GeoPackageUtil.getFeatures(path+"LAKE_EURO_PL_100K_2019.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
 		logger.info(fs.size());
 
 		logger.info("Buffer 0...");
 		for(Feature f : fs) f.setDefaultGeometry( f.getDefaultGeometry().buffer(0) );
 
 		logger.info("Run decomposition...");
-		Collection<Geometry> landGeometries = Decomposer.decompose(fs, 1000, 1000, GeomType.ONLY_AREAS, 0);
+		Collection<Geometry> landGeometries = Decomposer.decompose(fs, 1000, 500, GeomType.ONLY_AREAS, 0);
 		logger.info(landGeometries.size());
 
 		logger.info("Save...");

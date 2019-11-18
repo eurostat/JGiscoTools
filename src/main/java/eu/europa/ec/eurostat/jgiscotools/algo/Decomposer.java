@@ -24,7 +24,6 @@ import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 public class Decomposer {
 	public static Logger logger = Logger.getLogger(Decomposer.class.getName());
 
-
 	/**
 	 * @param fs the input features
 	 * @param maxCoordinatesNumber
