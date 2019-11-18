@@ -7,15 +7,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureReader;
 import org.geotools.geopkg.FeatureEntry;
 import org.geotools.geopkg.GeoPackage;
+import org.geotools.geopkg.GeoPkgDataStoreFactory;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -61,20 +64,6 @@ public class GeoPackageUtil {
 	public static ArrayList<Feature> getFeatures(String file) { return getFeatures(file, null); }
 	public static ArrayList<Feature> getFeatures(String file, Filter filter){
 		try {
-			GeoPackage gp = new GeoPackage(new File(file));
-			FeatureEntry fe = gp.features().get(0);
-			SimpleFeatureReader fr = gp.reader(fe, filter, new DefaultTransaction());
-
-			ArrayList<Feature> fs = new ArrayList<Feature>();
-			while(fr.hasNext()) {
-				SimpleFeature sf = fr.next();
-				Feature f = SimpleFeatureUtil.get(sf);
-				fs.add(f);
-			}
-			fr.close();
-			gp.close();
-			return fs;
-			/*
 			HashMap<String, Object> map = new HashMap<>();
 			map.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
 			map.put(GeoPkgDataStoreFactory.DATABASE.key, file);
@@ -84,13 +73,11 @@ public class GeoPackageUtil {
 			ArrayList<Feature> fs = new ArrayList<Feature>();
 			for (String name : names) {
 				LOGGER.debug(name);
-
-				SimpleFeatureSource sfs = store.getFeatureSource(name);
-				SimpleFeatureCollection features = sfs.getFeatures(filter);
-
+				SimpleFeatureCollection features = store.getFeatureSource(name).getFeatures();
 				fs.addAll( SimpleFeatureUtil.get(features) );
 			}
-			 */
+			return fs;
+
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
