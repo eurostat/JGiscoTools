@@ -68,9 +68,9 @@ public class GeoPackageUtil {
 			map.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
 			map.put(GeoPkgDataStoreFactory.DATABASE.key, file);
 			DataStore store = DataStoreFinder.getDataStore(map);
-			String[] names = store.getTypeNames();
 
 			ArrayList<Feature> fs = new ArrayList<Feature>();
+			String[] names = store.getTypeNames();
 			for (String name : names) {
 				LOGGER.debug(name);
 				SimpleFeatureCollection features = store.getFeatureSource(name).getFeatures();
