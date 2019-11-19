@@ -48,9 +48,8 @@ public class AccessibilityGrid {
 	private Collection<Feature> pois = null;
 	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
-	//population figures by grid cell
-	private HashMap<String, String> populationGridI = null;
-	private String populationValueAttribute = null;
+	//population attribute
+	private String populationAtt = null;
 
 	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;
@@ -94,17 +93,13 @@ public class AccessibilityGrid {
 
 
 
-	public AccessibilityGrid(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, Collection<Feature> networkSections, ArrayList<HashMap<String, String>> populationGrid, String populationValueAttribute) {
+	public AccessibilityGrid(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, Collection<Feature> networkSections, String populationAtt) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.resM = resM;
 		this.pois = pois;
 		this.networkSections = networkSections;
-		this.populationValueAttribute = populationValueAttribute;
-
-		if(populationGrid != null)
-			//index population figures
-			this.populationGridI = Util.index(populationGrid, cellIdAtt, populationValueAttribute);
+		this.populationAtt = populationAtt;
 	}
 
 
@@ -201,9 +196,9 @@ public class AccessibilityGrid {
 
 			//get population data, if provided
 			Integer population = null;
-			if(populationGridI != null) {
-				String s = populationGridI.get(cellId);
-				population = s==null? 0 : (int)Double.parseDouble(s);
+			if(populationAtt != null) {
+				Object pop = cell.getAttribute(populationAtt);
+				population = pop==null? 0 : (int)Double.parseDouble(pop.toString());
 			}
 
 
@@ -216,8 +211,8 @@ public class AccessibilityGrid {
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-10");
-				if(populationGridI != null) {
-					d.put(this.populationValueAttribute, population.toString());
+				if(populationAtt != null) {
+					d.put(this.populationAtt, population.toString());
 					d.put("pop_indicator", "-10");
 				}
 				cellData.add(d);
@@ -228,8 +223,8 @@ public class AccessibilityGrid {
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-20");
-				if(populationGridI != null) {
-					d.put(this.populationValueAttribute, population.toString());
+				if(populationAtt != null) {
+					d.put(this.populationAtt, population.toString());
 					d.put("pop_indicator", "-20");
 				}
 				cellData.add(d);
@@ -274,14 +269,14 @@ public class AccessibilityGrid {
 				}
 			}
 
-			
+
 			if(costMin > 0 && pMin == null) {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to POI for cell " + cellId + " around " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-30");
-				if(populationGridI != null) {
-					d.put(this.populationValueAttribute, population.toString());
+				if(populationAtt != null) {
+					d.put(this.populationAtt, population.toString());
 					d.put("pop_indicator", "-30");
 				}
 				cellData.add(d);
@@ -292,7 +287,7 @@ public class AccessibilityGrid {
 			HashMap<String, String> d = new HashMap<String, String>();
 			d.put(cellIdAtt, cellId);
 			d.put("durMin", ""+costMin);
-			d.put(this.populationValueAttribute, population.toString());
+			d.put(this.populationAtt, population.toString());
 			d.put("pop_indicator", "" + getPopulationAccessibilityIndicator(population, costMin));
 			cellData.add(d);
 
@@ -314,24 +309,41 @@ public class AccessibilityGrid {
 	/**
 	 * An indicator combining accessibility and population.
 	 * 0 to 1 (well accessible)
+	 * -999 is returned when the population is null
 	 * 
 	 * @param population
 	 * @param durMin
 	 * @return
 	 */
 	private static double getPopulationAccessibilityIndicator(double population, double durMin) {
+
+		if(population == 0) return -999;
+
+		//the indicator is the product of two components: a duration and a population indicator, both within [0,1].
 		//the higher the duration, the worst.
 		//the higher the population, the worst
-		//TODO test others ? To give more weight to low population cells, increase p
-		//TODO use population density instead, with an average to average density?
-		/*
-		//TODO
-		if(durMin < 10) return 1;
-		double dur = 10+30/(population-100);
-		if(durMin > dur) return 0;
-		 */
-		//return 4000 / (durMin*population);
-		return durMin*population;
+
+		// ___
+		//    \
+		//     \___
+		//
+		double dur1 = 10;
+		double dur2 = 40;
+		double durIndicator = 0;
+		if(durMin < dur1) durIndicator = 1.0;
+		else if (durMin > dur2) durIndicator = 0.0;
+		else durIndicator = (durMin-dur2)/(dur1-dur2);
+
+		//
+		// \
+		//  \___
+		//
+		double popT = 200;
+		double popIndicator = 0;
+		if(population>popT) popIndicator = 0;
+		else popIndicator = 1 - population / popT;
+
+		return durIndicator * popIndicator;
 	}
 
 }
