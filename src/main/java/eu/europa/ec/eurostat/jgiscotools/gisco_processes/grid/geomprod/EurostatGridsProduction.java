@@ -9,7 +9,9 @@ import java.util.Collection;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -17,6 +19,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
@@ -70,6 +73,10 @@ public class EurostatGridsProduction {
 		for(Geometry g : inlandWaterGeometries) inlandWaterGeometriesIndex.insert(g.getEnvelopeInternal(), g);
 		inlandWaterGeometries = null;
 
+		logger.info("Define output feature type...");
+		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X:int,Y:int");
+		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X:int,Y:int");
+
 		//build pan-European grids
 		for(int resKM : resKMs) {
 			logger.info("Make " + resKM + "km grid...");
@@ -91,22 +98,30 @@ public class EurostatGridsProduction {
 
 			//TODO assign also nuts code? for each level?
 
-			logger.info("Assign land proportion...");
+			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);
 
-			//save as GPKG
-			logger.info("Save " + cells.size() + " cells as GPKG...");
-			//TODO use feature type to ensure attribute type are not all String
-			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km.gpkg", crs);
+			logger.info("Save cells as GPKG...");
+			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km.gpkg", ftPolygon);
 
-			//save as SHP
 			if(resKM>3) {
-				logger.info("Save " + cells.size() + " cells as SHP...");
-				//TODO use feature type to ensure attribute type are not all String
-				//GRD_ID:String - CNTR_ID:String - LAND_PC:double - x:int - y:int
-				SimpleFeatureType ft = null; //TODO
-				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", ft);
+				logger.info("Save cells as SHP...");
+				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", ftPolygon);
 			}
+
+			logger.info("Set cell geometries as points...");
+			GeometryFactory gf = cells.iterator().next().getDefaultGeometry().getFactory();
+			for(Feature cell : cells)
+				cell.setDefaultGeometry( gf.createPoint(new Coordinate((Integer)cell.getAttribute("X")+resKM*500, (Integer)cell.getAttribute("Y")+resKM*500)) );
+
+			logger.info("Save cells (point) as GPKG...");
+			GeoPackageUtil.save(cells, outpath+"grid_point_"+resKM+"km.gpkg", ftPoint);
+
+			if(resKM>3) {
+				logger.info("Save cells (point) as SHP...");
+				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_point_"+resKM+"km.shp", ftPoint);
+			}
+
 		}
 
 
