@@ -15,6 +15,10 @@ import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.opengis.feature.simple.SimpleFeatureType;
 
+import eu.europa.ec.eurostat.java4eurostat.base.Stat;
+import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
+import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
@@ -47,8 +51,9 @@ public class EurostatGridsProduction {
 		logger.setLevel(Level.ALL);
 		Grid.logger.setLevel(Level.ALL);
 
-		String outpath = "E:/workspace/gridstat/data/grid/";
-		String path = "E:/workspace/gridstat/data/CNTR_100k/";
+		String basePath = "E:/workspace/gridstat/data/";
+		String outpath = basePath + "grid/";
+		String path = basePath + "CNTR_100k/";
 		int bufferDistance = 1500;
 
 		logger.info("Get European countries (buffer) ...");
@@ -71,8 +76,9 @@ public class EurostatGridsProduction {
 		inlandWaterGeometries = null;
 
 		logger.info("Define output feature type...");
-		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int");
-		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int");
+		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int");
+		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int");
+
 
 		//build pan-European grids
 		for(int resKM : resKMs) {
@@ -94,10 +100,26 @@ public class EurostatGridsProduction {
 			logger.info(cells.size() + " cells left");
 
 			//TODO assign also nuts code, for each level
-			//TODO add distance to border/coast
 
 			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);
+
+			{
+				logger.info("Load 2006 population data...");
+				StatsIndex pop2006 = getPopulationData(basePath+"pop_grid/pop_grid_2006_"+resKM+"km.csv");
+
+				logger.info("Load 2011 population data...");
+				StatsIndex pop2011 = getPopulationData(basePath+"pop_grid/pop_grid_2011_"+resKM+"km.csv");
+
+				logger.info("Assign population figures...");
+				Stat pop;
+				for(Feature cell : cells) {
+					pop = pop2006.getSingleStat("2006");
+					cell.setAttribute("TOT_P_2006", pop==null? 0 : pop.value);
+					pop = pop2011.getSingleStat("2011");
+					cell.setAttribute("TOT_P_2011", pop==null? 0 : pop.value);
+				}
+			}
 
 			logger.info("Save cells as GPKG...");
 			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km.gpkg", ftPolygon);
@@ -153,6 +175,13 @@ public class EurostatGridsProduction {
 		 */
 
 		logger.info("End");
+	}
+
+
+
+	private static StatsIndex getPopulationData(String file) {
+		StatsHypercube sh = CSV.load(file, "TOT_P");
+		return new StatsIndex(sh, "GRD_ID");
 	}
 
 }
