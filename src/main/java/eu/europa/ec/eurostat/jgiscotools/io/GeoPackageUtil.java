@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
@@ -86,6 +87,9 @@ public class GeoPackageUtil {
 
 	//write
 
+	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs) { save(fs,outFile,crs,null); }
+	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, List<String> atts) { save(fs, outFile, SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts)); }
+	public static void save(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft) { save(SimpleFeatureUtil.get(fs, ft), outFile); }
 	public static void save(SimpleFeatureCollection sfc, String file){
 		try {
 			File fi = FileUtil.getFile(file, true, true);
@@ -94,11 +98,6 @@ public class GeoPackageUtil {
 			gp.add(new FeatureEntry(), sfc);
 			gp.close();
 		} catch (IOException e) { e.printStackTrace(); }
-	}
-
-	public static <T extends Feature> void save(Collection<T> fs, String file, CoordinateReferenceSystem crs){
-		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, crs);
-		save(sfc, file);
 	}
 
 	public static <T extends Geometry> void saveGeoms(Collection<T> geoms, String outFile, CoordinateReferenceSystem crs) {
