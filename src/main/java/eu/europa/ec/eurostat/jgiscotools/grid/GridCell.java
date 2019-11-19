@@ -161,8 +161,8 @@ public class GridCell {
 		f.setDefaultGeometry(this.getGeometry());
 		f.setID(this.getId());
 		f.setAttribute("GRD_ID", this.getId());
-		f.setAttribute("X", this.getLowerLeftCornerPositionX());
-		f.setAttribute("Y", this.getLowerLeftCornerPositionY());
+		f.setAttribute("X_LLC", this.getLowerLeftCornerPositionX());
+		f.setAttribute("Y_LLC", this.getLowerLeftCornerPositionY());
 		return f;
 	}
 

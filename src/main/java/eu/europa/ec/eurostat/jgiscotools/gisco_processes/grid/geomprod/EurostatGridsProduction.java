@@ -8,14 +8,12 @@ import java.util.Collection;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
@@ -51,7 +49,6 @@ public class EurostatGridsProduction {
 
 		String outpath = "E:/workspace/gridstat/data/grid/";
 		String path = "E:/workspace/gridstat/data/CNTR_100k/";
-		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 		int bufferDistance = 1500;
 
 		logger.info("Get European countries (buffer) ...");
@@ -74,8 +71,8 @@ public class EurostatGridsProduction {
 		inlandWaterGeometries = null;
 
 		logger.info("Define output feature type...");
-		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X:int,Y:int");
-		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X:int,Y:int");
+		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int");
+		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int");
 
 		//build pan-European grids
 		for(int resKM : resKMs) {

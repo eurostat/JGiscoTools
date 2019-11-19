@@ -147,6 +147,8 @@ public class SimpleFeatureUtil {
 		for(String data_ : data) datast += ","+data_;
 		return getFeatureType(geomType, epsgCode, datast==""? "" : datast.substring(1, datast.length()));
 	}
+
+	//SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X:int,Y:int");
 	public static SimpleFeatureType getFeatureType(String geomType, int epsgCode, String data) {
 		try {
 			String st = "";
