@@ -64,7 +64,7 @@ public class EurostatHospitalAccessibility {
 
 		//TODO show map of transport network (EGM/ERM) based on speed
 		//TODO correct networks - snapping
-		//TODO load other transport networks (ferry, etc?)
+		//TODO add other transport networks (ferry, etc?)
 		logger.info("Load network sections...");
 		Filter fil = CQL.toFilter("EXS=28 AND RST=1" /*+ " AND ICC = 'BE'"*/);
 		//EGM
