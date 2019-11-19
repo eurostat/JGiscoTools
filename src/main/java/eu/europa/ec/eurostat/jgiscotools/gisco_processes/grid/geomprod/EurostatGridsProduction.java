@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -60,6 +61,13 @@ public class EurostatGridsProduction {
 		logger.info("Get European countries (buffer) ...");
 		ArrayList<Feature> cntsBuff = GeoPackageUtil.getFeatures(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.gpkg");
 
+		logger.info("Sort countries by id...");
+		Comparator<Feature> cntComp = new Comparator<Feature>(){
+			@Override
+			public int compare(Feature f1, Feature f2) { return f1.getAttribute("CNTR_ID").toString().compareTo(f2.getAttribute("CNTR_ID").toString()); }
+		};
+		cntsBuff.sort(cntComp);
+
 		logger.info("Get land area...");
 		Collection<Geometry> landGeometries = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"land_areas.gpkg") );
 
@@ -82,6 +90,16 @@ public class EurostatGridsProduction {
 		ArrayList<Feature> nuts2 = GeoPackageUtil.getFeatures(path+"NUTS_RG_100K_2016.gpkg", CQL.toFilter("STAT_LEVL_ = '2'"));
 		ArrayList<Feature> nuts3 = GeoPackageUtil.getFeatures(path+"NUTS_RG_100K_2016.gpkg", CQL.toFilter("STAT_LEVL_ = '3'"));
 
+		logger.info("Sort nuts regions by id...");
+		Comparator<Feature> nutsComp = new Comparator<Feature>(){
+			@Override
+			public int compare(Feature f1, Feature f2) { return f1.getAttribute("NUTS_ID").toString().compareTo(f2.getAttribute("NUTS_ID").toString()); }
+		};
+		nuts0.sort(nutsComp);
+		nuts1.sort(nutsComp);
+		nuts2.sort(nutsComp);
+		nuts3.sort(nutsComp);
+
 		logger.info("Define output feature type...");
 		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String");
 		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String");
@@ -91,7 +109,7 @@ public class EurostatGridsProduction {
 		for(int resKM : resKMs) {
 			logger.info("Make " + resKM + "km grid...");
 
-			//build grid
+			//build grid cells
 			Grid grid = new Grid()
 					.setResolution(resKM*1000)
 					.setEPSGCode("3035")
@@ -106,13 +124,12 @@ public class EurostatGridsProduction {
 			GridUtil.filterCellsWithoutRegion(cells, "CNTR_ID");
 			logger.info(cells.size() + " cells left");
 
-			//NUTS codes
-			logger.info("Assign NUTS 0 codes...");
+
+			logger.info("Assign NUTS codes...");
 			GridUtil.assignRegionCode(cells, "NUTS_0_ID", nuts0, 0, "NUTS_ID");
 			GridUtil.assignRegionCode(cells, "NUTS_1_ID", nuts1, 0, "NUTS_ID");
 			GridUtil.assignRegionCode(cells, "NUTS_2_ID", nuts2, 0, "NUTS_ID");
 			GridUtil.assignRegionCode(cells, "NUTS_3_ID", nuts3, 0, "NUTS_ID");
-
 
 			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);

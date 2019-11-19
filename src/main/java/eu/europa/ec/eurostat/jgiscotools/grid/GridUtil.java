@@ -47,6 +47,7 @@ public class GridUtil {
 		for(Feature cell : cells)
 			index.insert(cell.getDefaultGeometry().getEnvelopeInternal(), cell);
 
+		//get codes
 		for(Feature reg : regions) {
 
 			//get region cover and code
