@@ -109,7 +109,7 @@ public class EurostatGridsProduction {
 			logger.info("Set cell geometries as points...");
 			GeometryFactory gf = cells.iterator().next().getDefaultGeometry().getFactory();
 			for(Feature cell : cells)
-				cell.setDefaultGeometry( gf.createPoint(new Coordinate((Integer)cell.getAttribute("X")+resKM*500, (Integer)cell.getAttribute("Y")+resKM*500)) );
+				cell.setDefaultGeometry( gf.createPoint(new Coordinate((Integer)cell.getAttribute("X_LLC")+resKM*500, (Integer)cell.getAttribute("Y_LLC")+resKM*500)) );
 
 			logger.info("Save cells (point) as GPKG...");
 			GeoPackageUtil.save(cells, outpath+"grid_point_"+resKM+"km.gpkg", ftPoint);
