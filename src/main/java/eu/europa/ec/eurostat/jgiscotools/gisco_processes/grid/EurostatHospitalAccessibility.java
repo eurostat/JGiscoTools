@@ -5,7 +5,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
@@ -77,13 +76,8 @@ public class EurostatHospitalAccessibility {
 		logger.info(networkSections.size() + " sections loaded.");
 
 
-		logger.info("Load population grid...");
-		ArrayList<HashMap<String, String>> populationGrid = CSVUtil.load(basePath + "data/pop_grid/pop_grid_2011_"+resKM+"km.csv");
-		logger.info(populationGrid.size() + " populated grid cells.");
-
-
 		logger.info("Build accessibility...");
-		AccessibilityGrid ag = new AccessibilityGrid(cells, cellIdAtt, resKM*1000, pois, networkSections, populationGrid, "TOT_P");
+		AccessibilityGrid ag = new AccessibilityGrid(cells, cellIdAtt, resKM*1000, pois, networkSections, "TOT_P_2011");
 		ag.setEdgeWeighter(new SpeedCalculator() {
 			@Override
 			public double getSpeedKMPerHour(SimpleFeature sf) {
