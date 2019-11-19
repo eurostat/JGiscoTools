@@ -93,7 +93,8 @@ public class EurostatGridsProduction {
 			GridUtil.filterCellsWithoutRegion(cells, "CNTR_ID");
 			logger.info(cells.size() + " cells left");
 
-			//TODO assign also nuts code? for each level?
+			//TODO assign also nuts code, for each level
+			//TODO add distance to border/coast
 
 			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);
