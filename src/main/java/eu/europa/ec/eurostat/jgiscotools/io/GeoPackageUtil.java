@@ -77,6 +77,7 @@ public class GeoPackageUtil {
 				SimpleFeatureCollection features = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
 				fs.addAll( SimpleFeatureUtil.get(features) );
 			}
+			store.dispose();
 			return fs;
 
 		} catch (Exception e) { e.printStackTrace(); }
