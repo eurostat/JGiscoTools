@@ -36,8 +36,8 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
  * @author julien Gaffuri
  *
  */
-public class EurostatGridsProduction {
-	static Logger logger = Logger.getLogger(EurostatGridsProduction.class.getName());
+public class GridsProduction {
+	static Logger logger = Logger.getLogger(GridsProduction.class.getName());
 
 	//see also:
 	//https://www.eea.europa.eu/data-and-maps/data/eea-reference-grids-2

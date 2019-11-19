@@ -17,8 +17,8 @@ import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
-public class EurostatDataPreparation {
-	static Logger logger = Logger.getLogger(EurostatDataPreparation.class.getName());
+public class DataPreparation {
+	static Logger logger = Logger.getLogger(DataPreparation.class.getName());
 
 	//use: -Xms2G -Xmx6G
 	public static void main(String[] args) throws Exception {

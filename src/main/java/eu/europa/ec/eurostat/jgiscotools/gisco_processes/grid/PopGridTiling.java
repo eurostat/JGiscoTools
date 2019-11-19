@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod.EurostatGridsProduction;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod.GridsProduction;
 import eu.europa.ec.eurostat.jgiscotools.grid.GriddedStatsTiler;
 
 public class PopGridTiling {
@@ -15,7 +15,7 @@ public class PopGridTiling {
 
 		String basePath = "E:/workspace/gridstat/data/";
 
-		for(int resKM : EurostatGridsProduction.resKMs) {
+		for(int resKM : GridsProduction.resKMs) {
 			for(int year : new int[] {2011, 2006}) {
 				logger.info("*** year="+year+" resKM="+resKM);
 

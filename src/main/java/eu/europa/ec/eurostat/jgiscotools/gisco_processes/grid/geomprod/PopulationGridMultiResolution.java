@@ -21,8 +21,8 @@ import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
  * @author julien Gaffuri
  *
  */
-public class EurostatPopulationGridMultiResolution {
-	static Logger logger = Logger.getLogger(EurostatPopulationGridMultiResolution.class.getName());
+public class PopulationGridMultiResolution {
+	static Logger logger = Logger.getLogger(PopulationGridMultiResolution.class.getName());
 
 	static String basePath = "E:/workspace/gridstat/data/";
 
@@ -50,7 +50,7 @@ public class EurostatPopulationGridMultiResolution {
 			popData.delete("DATA_SRC");
 			if(year==2011) popData.delete("TOT_P_CON_DT");
 
-			for(int resKM : EurostatGridsProduction.resKMs) {
+			for(int resKM : GridsProduction.resKMs) {
 				logger.info(resKM);
 
 				//output data, as dictionnary
