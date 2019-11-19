@@ -112,11 +112,11 @@ public class EurostatGridsProduction {
 				cell.setDefaultGeometry( gf.createPoint(new Coordinate((Integer)cell.getAttribute("X_LLC")+resKM*500, (Integer)cell.getAttribute("Y_LLC")+resKM*500)) );
 
 			logger.info("Save cells (point) as GPKG...");
-			GeoPackageUtil.save(cells, outpath+"grid_point_"+resKM+"km.gpkg", ftPoint);
+			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km_point.gpkg", ftPoint);
 
 			if(resKM>3) {
 				logger.info("Save cells (point) as SHP...");
-				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_point_"+resKM+"km.shp", ftPoint);
+				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_point_shp" + "/grid_"+resKM+"km_point.shp", ftPoint);
 			}
 
 		}
