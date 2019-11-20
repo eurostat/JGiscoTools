@@ -236,7 +236,7 @@ public class AccessibilityGrid {
 
 			//compute the routes to all POIs to get the best
 			if(logger.isDebugEnabled()) logger.debug("Compute routes to POIs. Nb=" + pois_.length);
-			Path pMin = null; double costMin = Double.MAX_VALUE;
+			Path pMin = null; double durMin = Double.MAX_VALUE;
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
 				Coordinate dC = poi.getDefaultGeometry().getCentroid().getCoordinate();
@@ -249,7 +249,7 @@ public class AccessibilityGrid {
 					Node dN = rt.getNode(dC);
 
 					if(dN == oN) {
-						costMin = 0;
+						durMin = 0;
 						pMin = null;
 						break;
 					}
@@ -263,14 +263,14 @@ public class AccessibilityGrid {
 				}
 				if(p==null) continue;
 				//get best path
-				if(pMin==null || cost<costMin) {
-					pMin=p; costMin=cost;
-					if(costMin == 0) break;
+				if(pMin==null || cost<durMin) {
+					pMin=p; durMin=cost;
+					if(durMin == 0) break;
 				}
 			}
 
 
-			if(costMin > 0 && pMin == null) {
+			if(durMin > 0 && pMin == null) {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to POI for cell " + cellId + " around " + oC);
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
@@ -286,18 +286,25 @@ public class AccessibilityGrid {
 			//store data at grid cell level
 			HashMap<String, String> d = new HashMap<String, String>();
 			d.put(cellIdAtt, cellId);
-			d.put("durMin", ""+costMin);
+			d.put("durMin", ""+durMin);
 			d.put(this.populationAtt, population.toString());
-			d.put("pop_indicator", "" + getPopulationAccessibilityIndicator(population, costMin));
+
+			double popI = getPopulationIndicator(population, 100);
+			double durI = getAccessibilityIndicator(durMin, 10, 40);
+			d.put("pop_ind", "" + Util.round(popI, 3));
+			d.put("dur_ind", "" + Util.round(durI, 3));
+			d.put("acc_ind", "" + Util.round(popI*durI, 3));
+
 			cellData.add(d);
+
 
 			if(pMin != null) {
 				//store route
 				Feature f = Routing.toFeature(pMin);
 				f.setID(cellId);
 				f.setAttribute(cellIdAtt, cellId);
-				f.setAttribute("durMin", costMin);
-				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getDefaultGeometry().getLength()/costMin, 2));
+				f.setAttribute("durMin", durMin);
+				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getDefaultGeometry().getLength()/durMin, 2));
 				routes.add(f);
 			}
 		}
@@ -310,40 +317,62 @@ public class AccessibilityGrid {
 	 * An indicator combining accessibility and population.
 	 * 0 to 1 (well accessible)
 	 * -999 is returned when the population is null
+	 * This is the product of two indicators on accessibility and population
 	 * 
 	 * @param population
 	 * @param durMin
 	 * @return
 	 */
-	private static double getPopulationAccessibilityIndicator(double population, double durMin) {
-
+	public static double getPopulationAccessibilityIndicator(double durMin, double durT1, double durT2, double population, double popT) {
 		if(population == 0) return -999;
-
-		//the indicator is the product of two components: a duration and a population indicator, both within [0,1].
-		//the higher the duration, the worst.
-		//the higher the population, the worst
-
-		// ___
-		//    \
-		//     \___
-		//
-		double dur1 = 10;
-		double dur2 = 40;
-		double durIndicator = 0;
-		if(durMin < dur1) durIndicator = 1.0;
-		else if (durMin > dur2) durIndicator = 0.0;
-		else durIndicator = (durMin-dur2)/(dur1-dur2);
-
-		//
-		// \
-		//  \___
-		//
-		double popT = 200;
-		double popIndicator = 0;
-		if(population>popT) popIndicator = 0;
-		else popIndicator = 1 - population / popT;
-
-		return durIndicator * popIndicator;
+		return getAccessibilityIndicator(durMin, durT1, durT2) * getPopulationIndicator(population, popT);
 	}
+
+	/**
+	 * An indicator on accessibility, within [0,1].
+	 * 0 is bad (long time), 1 is good (short time)
+	 * The higher the duration, the worst:
+	 * ___
+	 *    \
+	 *     \___
+	 * 
+	 * @param durMin
+	 * @param durT1
+	 * @param durT2
+	 * @return
+	 */
+	public static double getAccessibilityIndicator(double durMin, double durT1, double durT2) {
+		if(durMin < durT1)
+			return 1.0;
+		else if (durMin > durT2)
+			return 0.0;
+		else
+			return (durMin-durT2)/(durT1-durT2);
+	}
+
+
+	/**
+	 * An indicator on population for accessibility, within [0,1].
+	 * 0 is bad (high population), 1 is good (low population)
+	 * The higher the population, the worst:
+	 * 
+	 * \
+	 *  \___
+	 * 
+	 * -999 is returned when the population is null
+	 * 
+	 * @param population
+	 * @param popT
+	 * @return
+	 */
+	public static double getPopulationIndicator(double population, double popT) {
+		if(population == 0)
+			return -999;
+		else if(population>popT)
+			return 0;
+		else
+			return 1 - population / popT;
+	}
+
 
 }
