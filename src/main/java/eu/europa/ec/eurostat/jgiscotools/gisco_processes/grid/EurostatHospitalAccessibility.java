@@ -43,14 +43,14 @@ public class EurostatHospitalAccessibility {
 
 
 		logger.info("Load grid cells...");
-		int resKM = 1;
+		int resKM = 20;
 		String cellIdAtt = "GRD_ID";
 		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" /*, CQL.toFilter("CNTR_ID = 'BE'")*/);
 		logger.info(cells.size() + " cells");
 
 
 		logger.info("Load POIs...");
-		ArrayList<Feature> pois = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ )).fs;
+		ArrayList<Feature> pois = GeoPackageUtil.getFeatures(basePath+"/data/GovservP.gpkg", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ ));
 		logger.info(pois.size() + " POIs");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
