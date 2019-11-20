@@ -112,8 +112,9 @@ public class CSVUtil {
 			for(Map<String, String> obj : data){
 				i=0;
 				for(String key : keys){
-					String value = obj.get(key).toString();
-					bw.write(value);
+					Object v = obj.get(key);
+					if(v == null) System.err.println("Could not find value for key "+key);
+					bw.write( v == null? "null" : v.toString() );
 					if(i<keys.size()-1) bw.write(",");
 					i++;
 				}
