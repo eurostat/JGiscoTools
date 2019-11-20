@@ -124,9 +124,9 @@ public class SHPUtil {
 	public static void saveSHP(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs) { saveSHP(fs,outFile,crs,null); }
 	public static void saveSHP(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, List<String> atts) { saveSHP(fs, outFile, SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts)); }
 	public static void saveSHP(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft) { saveSHP(SimpleFeatureUtil.get(fs, ft), outFile); }
-	public static void saveSHP(SimpleFeatureCollection sfs, String outFile) {
+	public static void saveSHP(SimpleFeatureCollection sfc, String outFile) {
 		try {
-			if(sfs.size() == 0){
+			if(sfc.size() == 0){
 				//file.createNewFile();
 				LOGGER.warn("Could not save file "+outFile+" - collection of features is empty");
 				return;
@@ -141,14 +141,14 @@ public class SHPUtil {
 			params.put("create spatial index", Boolean.TRUE);
 			ShapefileDataStore ds = (ShapefileDataStore) new ShapefileDataStoreFactory().createNewDataStore(params);
 
-			ds.createSchema(sfs.getSchema());
+			ds.createSchema(sfc.getSchema());
 			SimpleFeatureStore fst = (SimpleFeatureStore)ds.getFeatureSource(ds.getTypeNames()[0]);
 
 			//creation transaction
 			Transaction tr = new DefaultTransaction("create");
 			fst.setTransaction(tr);
 			try {
-				fst.addFeatures(sfs);
+				fst.addFeatures(sfc);
 				tr.commit();
 			} catch (Exception e) {
 				e.printStackTrace();
