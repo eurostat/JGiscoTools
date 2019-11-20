@@ -37,7 +37,7 @@ public class Test {
 		logger.debug(out.size() + " kept");
 
 		logger.info("Save as gpkg file");
-		GeoPackageUtil.save(out, "C:\\Users\\clemoki\\Desktop\\hospi_lux.gpkg", crs);
+		GeoPackageUtil.save(out, "C:\\Users\\clemoki\\Desktop\\hospi_lux.gpkg", crs, true);
 
 		logger.info("End");
 	}

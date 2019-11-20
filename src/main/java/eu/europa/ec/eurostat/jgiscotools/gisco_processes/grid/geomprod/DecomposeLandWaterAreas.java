@@ -42,7 +42,7 @@ public class DecomposeLandWaterAreas {
 
 		logger.info("Save...");
 		//GeoPackageUtil.saveGeoms(landGeometries, path + "land_areas.gpkg", CRS.decode("EPSG:3035"));
-		GeoPackageUtil.saveGeoms(landGeometries, path + "inland_water_areas.gpkg", CRS.decode("EPSG:3035"));
+		GeoPackageUtil.saveGeoms(landGeometries, path + "inland_water_areas.gpkg", CRS.decode("EPSG:3035"), true);
 
 		logger.info("End");
 

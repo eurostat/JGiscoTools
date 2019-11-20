@@ -106,7 +106,7 @@ public class EurostatHospitalAccessibility {
 		logger.info("Save data...");
 		CSVUtil.save(ag.getCellData(), outPath + "cell_data_"+resKM+"km.csv");
 		logger.info("Save routes... Nb=" + ag.getRoutes().size());
-		GeoPackageUtil.save(ag.getRoutes(), outPath + "routes_"+resKM+"km.gpkg", crs);
+		GeoPackageUtil.save(ag.getRoutes(), outPath + "routes_"+resKM+"km.gpkg", crs, true);
 
 		logger.info("End");
 	}
