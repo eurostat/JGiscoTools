@@ -163,6 +163,8 @@ public class AccessibilityGrid {
 		logger.info("Compute cell figure");
 		for(Feature cell : cells) {
 			String cellId = cell.getAttribute(cellIdAtt).toString();
+			HashMap<String, String> d = new HashMap<String, String>();
+
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
 			/*/when cell contains at least one POI, set the duration to 0
@@ -195,10 +197,11 @@ public class AccessibilityGrid {
 			rt.setEdgeWeighter(getEdgeWeighter());
 
 			//get population data, if provided
-			Integer population = null;
+			int population = 0;
 			if(populationAtt != null) {
 				Object pop = cell.getAttribute(populationAtt);
-				population = pop==null? 0 : (int)Double.parseDouble(pop.toString());
+				if(pop != null) population = (int)Double.parseDouble(pop.toString());
+				d.put("pop_ind", "" + Util.round(getPopulationIndicator(population, 100), 3));
 			}
 
 
@@ -208,25 +211,19 @@ public class AccessibilityGrid {
 			Node oN = rt.getNode(oC);
 			if(oN == null) {
 				logger.error("Could not find graph node around cell center: " + oC);
-				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-10");
-				if(populationAtt != null) {
-					d.put(this.populationAtt, population.toString());
-					d.put("acc_ind", "-10");
-				}
+				d.put("dur_ind", "-10");
+				if(populationAtt != null) d.put("acc_ind", "-10");
 				cellData.add(d);
 				continue;
 			}
 			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
 				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
-				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-20");
-				if(populationAtt != null) {
-					d.put(this.populationAtt, population.toString());
-					d.put("acc_ind", "-20");
-				}
+				d.put("dur_ind", "-20");
+				if(populationAtt != null) d.put("acc_ind", "-20");
 				cellData.add(d);
 				continue;
 			}
@@ -272,28 +269,18 @@ public class AccessibilityGrid {
 
 			if(durMin > 0 && pMin == null) {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to POI for cell " + cellId + " around " + oC);
-				HashMap<String, String> d = new HashMap<String, String>();
 				d.put(cellIdAtt, cellId);
 				d.put("durMin", "-30");
-				if(populationAtt != null) {
-					d.put(this.populationAtt, population.toString());
-					d.put("acc_ind", "-30");
-				}
+				d.put("dur_ind", "-30");
+				if(populationAtt != null) d.put("acc_ind", "-30");
 				cellData.add(d);
 				continue;
 			}
 
 			//store data at grid cell level
-			HashMap<String, String> d = new HashMap<String, String>();
 			d.put(cellIdAtt, cellId);
 			d.put("durMin", ""+durMin);
-			d.put(this.populationAtt, population.toString());
-
-			double popI = getPopulationIndicator(population, 100);
-			double durI = getAccessibilityIndicator(durMin, 10, 40);
-			d.put("pop_ind", "" + Util.round(popI, 3));
-			d.put("dur_ind", "" + Util.round(durI, 3));
-			d.put("acc_ind", "" + Util.round(popI*durI, 3));
+			d.put("acc_ind", "" + Util.round(getPopulationAccessibilityIndicator(durMin, 10, 40, population, 100), 3));
 
 			cellData.add(d);
 
@@ -307,6 +294,7 @@ public class AccessibilityGrid {
 				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getDefaultGeometry().getLength()/durMin, 2));
 				routes.add(f);
 			}
+
 		}
 	}
 

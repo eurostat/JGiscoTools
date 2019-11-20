@@ -42,15 +42,15 @@ public class EurostatHospitalAccessibility {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 
-		logger.info("Load grid cells...");
-		int resKM = 20;
+		int resKM = 5;
+		logger.info("Load grid cells " + resKM + "km ...");
 		String cellIdAtt = "GRD_ID";
 		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" /*, CQL.toFilter("CNTR_ID = 'BE'")*/);
 		logger.info(cells.size() + " cells");
 
 
 		logger.info("Load POIs...");
-		ArrayList<Feature> pois = GeoPackageUtil.getFeatures(basePath+"/data/GovservP.gpkg", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ ));
+		ArrayList<Feature> pois = GeoPackageUtil.getFeatures(basePath+"/hospitals/GovservP.gpkg", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ ));
 		logger.info(pois.size() + " POIs");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
