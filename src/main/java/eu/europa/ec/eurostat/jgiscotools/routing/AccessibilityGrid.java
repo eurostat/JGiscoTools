@@ -213,7 +213,7 @@ public class AccessibilityGrid {
 				d.put("durMin", "-10");
 				if(populationAtt != null) {
 					d.put(this.populationAtt, population.toString());
-					d.put("pop_indicator", "-10");
+					d.put("acc_ind", "-10");
 				}
 				cellData.add(d);
 				continue;
@@ -225,7 +225,7 @@ public class AccessibilityGrid {
 				d.put("durMin", "-20");
 				if(populationAtt != null) {
 					d.put(this.populationAtt, population.toString());
-					d.put("pop_indicator", "-20");
+					d.put("acc_ind", "-20");
 				}
 				cellData.add(d);
 				continue;
@@ -277,7 +277,7 @@ public class AccessibilityGrid {
 				d.put("durMin", "-30");
 				if(populationAtt != null) {
 					d.put(this.populationAtt, population.toString());
-					d.put("pop_indicator", "-30");
+					d.put("acc_ind", "-30");
 				}
 				cellData.add(d);
 				continue;
