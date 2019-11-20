@@ -65,10 +65,10 @@ public class GeoPackageUtil {
 	public static ArrayList<Feature> getFeatures(String file) { return getFeatures(file, null); }
 	public static ArrayList<Feature> getFeatures(String file, Filter filter){
 		try {
-			HashMap<String, Object> map = new HashMap<>();
-			map.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
-			map.put(GeoPkgDataStoreFactory.DATABASE.key, file);
-			DataStore store = DataStoreFinder.getDataStore(map);
+			HashMap<String, Object> params = new HashMap<>();
+			params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
+			params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
+			DataStore store = DataStoreFinder.getDataStore(params);
 
 			ArrayList<Feature> fs = new ArrayList<Feature>();
 			String[] names = store.getTypeNames();
@@ -88,21 +88,58 @@ public class GeoPackageUtil {
 
 	//write
 
-	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs) { save(fs,outFile,crs,null); }
-	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, List<String> atts) { save(fs, outFile, SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts)); }
-	public static void save(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft) { save(SimpleFeatureUtil.get(fs, ft), outFile); }
-	public static void save(SimpleFeatureCollection sfc, String file){
+	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, boolean withSpatialIndex) { save(fs,outFile,crs,null, withSpatialIndex); }
+	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, List<String> atts, boolean withSpatialIndex) { save(fs, outFile, SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts), withSpatialIndex); }
+	public static void save(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft, boolean withSpatialIndex) { save(SimpleFeatureUtil.get(fs, ft), outFile, withSpatialIndex); }
+	public static void save(SimpleFeatureCollection sfc, String outFile, boolean withSpatialIndex){
 		try {
-			File fi = FileUtil.getFile(file, true, true);
+
+			if(sfc.size() == 0){
+				//file.createNewFile();
+				LOGGER.warn("Could not save file "+outFile+" - collection of features is empty");
+				return;
+			}
+
+			//create output file
+			File fi = FileUtil.getFile(outFile, true, true);
+
 			GeoPackage gp = new GeoPackage(fi);
 			gp.init();
-			gp.add(new FeatureEntry(), sfc);
+			FeatureEntry fe = new FeatureEntry();
+			gp.add(fe, sfc);
+			if(withSpatialIndex) gp.createSpatialIndex(fe);
 			gp.close();
+
+
+/*
+			//create feature store
+			HashMap<String, Serializable> params = new HashMap<String, Serializable>();
+			params.put("url", fi.toURI().toURL());
+			params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
+			params.put(GeoPkgDataStoreFactory.DATABASE.key, outFile);
+			params.put("create spatial index", Boolean.TRUE);
+			DataStore ds = DataStoreFinder.getDataStore(params);
+
+			ds.createSchema(sfc.getSchema());
+			SimpleFeatureStore fst = (SimpleFeatureStore)ds.getFeatureSource(ds.getTypeNames()[0]);
+
+			//creation transaction
+			Transaction tr = new DefaultTransaction("create");
+			fst.setTransaction(tr);
+			try {
+				fst.addFeatures(sfc);
+				tr.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+				tr.rollback();
+			} finally {
+				tr.close();
+			}*/			
 		} catch (IOException e) { e.printStackTrace(); }
 	}
 
-	public static <T extends Geometry> void saveGeoms(Collection<T> geoms, String outFile, CoordinateReferenceSystem crs) {
-		save(SimpleFeatureUtil.getFeaturesFromGeometries(geoms), outFile, crs);
+	public static <T extends Geometry> void saveGeoms(Collection<T> geoms, String outFile, CoordinateReferenceSystem crs, boolean withSpatialIndex) {
+		save(SimpleFeatureUtil.getFeaturesFromGeometries(geoms), outFile, crs, true);
 	}
 
 }
