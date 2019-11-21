@@ -47,6 +47,7 @@ public class GridsProduction {
 	//the different resolutions, in KM
 	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
 
+	//use: -Xms2G -Xmx8G
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 

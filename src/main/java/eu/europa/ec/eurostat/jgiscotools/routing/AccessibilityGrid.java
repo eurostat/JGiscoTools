@@ -160,19 +160,21 @@ public class AccessibilityGrid {
 		//make network sections feat
 		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections.iterator().next(), null);
 
-		logger.info("Compute cell figure");
+		logger.info("Compute cell data...");
 		for(Feature cell : cells) {
-			String cellId = cell.getAttribute(cellIdAtt).toString();
-			HashMap<String, String> d = new HashMap<String, String>();
 
+			//get cell id
+			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
+
+			//build structure for cell data
+			HashMap<String, String> d = new HashMap<String, String>();
+			d.put(cellIdAtt, cellId);
 
 			/*/when cell contains at least one POI, set the duration to 0
 			if(getPoisInd().query(cell.getDefaultGeometry().getEnvelopeInternal()).size()>0) {
 				if(logger.isDebugEnabled()) logger.debug("POI in cell " + cellId);
-				HashMap<String, String> d = new HashMap<String, String>();
-				d.put(cellIdAtt, cellId);
-				d.put("durMin", "0");
+				d.put("dur_min", "0");
 				cellData.add(d);
 				continue;
 			}*/
@@ -196,23 +198,25 @@ public class AccessibilityGrid {
 			Routing rt = new Routing(net__, ft);
 			rt.setEdgeWeighter(getEdgeWeighter());
 
-			//get population data, if provided
+			//get population, if provided
 			int population = 0;
 			if(populationAtt != null) {
 				Object pop = cell.getAttribute(populationAtt);
-				if(pop != null) population = (int)Double.parseDouble(pop.toString());
-				d.put("pop_ind", "" + Util.round(getPopulationIndicator(population, 100), 3));
+				if(pop != null) {
+					population = (int)Double.parseDouble(pop.toString());
+					d.put("pop_ind", "" + Util.round(getPopulationIndicator(population, 100), 3));
+				} else
+					d.put("pop_ind", "" + "-999");
 			}
 
 
 			//get cell centroid as origin point
-			//take another position depending on the network state inside the cell? Cell is supposed to be small enough?
+			//possible improvement: take another position depending on the network state inside the cell? Cell is supposed to be small enough?
 			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
 			Node oN = rt.getNode(oC);
 			if(oN == null) {
 				logger.error("Could not find graph node around cell center: " + oC);
-				d.put(cellIdAtt, cellId);
-				d.put("durMin", "-10");
+				d.put("dur_min", "-10");
 				d.put("dur_ind", "-10");
 				if(populationAtt != null) d.put("acc_ind", "-10");
 				cellData.add(d);
@@ -220,8 +224,7 @@ public class AccessibilityGrid {
 			}
 			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
 				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
-				d.put(cellIdAtt, cellId);
-				d.put("durMin", "-20");
+				d.put("dur_min", "-20");
 				d.put("dur_ind", "-20");
 				if(populationAtt != null) d.put("acc_ind", "-20");
 				cellData.add(d);
@@ -269,8 +272,7 @@ public class AccessibilityGrid {
 
 			if(durMin > 0 && pMin == null) {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to POI for cell " + cellId + " around " + oC);
-				d.put(cellIdAtt, cellId);
-				d.put("durMin", "-30");
+				d.put("dur_min", "-30");
 				d.put("dur_ind", "-30");
 				if(populationAtt != null) d.put("acc_ind", "-30");
 				cellData.add(d);
@@ -278,8 +280,8 @@ public class AccessibilityGrid {
 			}
 
 			//store data at grid cell level
-			d.put(cellIdAtt, cellId);
-			d.put("durMin", ""+durMin);
+			d.put("dur_min", "" + durMin);
+			d.put("dur_ind", "" + Util.round(getAccessibilityIndicator(durMin, 10, 40), 3));
 			d.put("acc_ind", "" + Util.round(getPopulationAccessibilityIndicator(durMin, 10, 40, population, 100), 3));
 
 			cellData.add(d);
@@ -290,7 +292,7 @@ public class AccessibilityGrid {
 				Feature f = Routing.toFeature(pMin);
 				f.setID(cellId);
 				f.setAttribute(cellIdAtt, cellId);
-				f.setAttribute("durMin", durMin);
+				f.setAttribute("dur_min", durMin);
 				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getDefaultGeometry().getLength()/durMin, 2));
 				routes.add(f);
 			}
