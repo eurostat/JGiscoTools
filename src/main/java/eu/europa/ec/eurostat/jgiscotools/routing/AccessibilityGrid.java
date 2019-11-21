@@ -198,7 +198,7 @@ public class AccessibilityGrid {
 			Routing rt = new Routing(net__, ft);
 			rt.setEdgeWeighter(getEdgeWeighter());
 
-			//get population, if provided
+			//get cell population, if provided
 			int population = 0;
 			if(populationAtt != null) {
 				Object pop = cell.getAttribute(populationAtt);
@@ -363,6 +363,5 @@ public class AccessibilityGrid {
 		else
 			return 1 - population / popT;
 	}
-
 
 }

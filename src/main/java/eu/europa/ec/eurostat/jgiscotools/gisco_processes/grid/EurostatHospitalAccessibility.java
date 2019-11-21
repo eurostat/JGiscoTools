@@ -65,7 +65,8 @@ public class EurostatHospitalAccessibility {
 		//TODO correct networks - snapping
 		//TODO add other transport networks (ferry, etc?)
 		logger.info("Load network sections...");
-		Filter fil = CQL.toFilter("EXS=28 AND RST=1" /*+ " AND ICC = 'BE'"*/);
+		//EXS Existence Category - RST Road Surface Type
+		Filter fil = CQL.toFilter("(EXS=28 OR EXS=0) AND (RST=1 OR RST=0)" /*+ " AND ICC = 'BE'"*/);
 		//EGM
 		//Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil).fs;
 		//ERM
