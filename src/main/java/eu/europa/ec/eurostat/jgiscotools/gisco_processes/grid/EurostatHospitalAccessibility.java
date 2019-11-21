@@ -16,7 +16,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculator;
 
@@ -38,7 +37,6 @@ public class EurostatHospitalAccessibility {
 		String basePath = "E:/workspace/gridstat/";
 		String outPath = basePath + "hospital_accessibility_output/";
 		String gridpath = basePath + "data/grid/";
-		String egpath = "E:/dissemination/shared-data/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 
@@ -61,18 +59,14 @@ public class EurostatHospitalAccessibility {
 
 
 
+		logger.info("Load network sections...");
+		//ERM
 		//TODO show map of transport network (EGM/ERM) based on speed
 		//TODO correct networks - snapping
 		//TODO add other transport networks (ferry, etc?)
-		logger.info("Load network sections...");
 		//EXS Existence Category - RST Road Surface Type
 		Filter fil = CQL.toFilter("(EXS=28 OR EXS=0) AND (RST=1 OR RST=0)" /*+ " AND ICC = 'BE'"*/);
-		//EGM
-		//Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"EGM/EGM_2019_SHP_20190312_LAEA/DATA/FullEurope/RoadL.shp", fil).fs;
-		//ERM
-		Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil).fs;
-		networkSections.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
-		networkSections.addAll( SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
+		Collection<Feature> networkSections = GeoPackageUtil.getFeatures(basePath+"data/RoadL.gpkg", fil);
 
 		logger.info(networkSections.size() + " sections loaded.");
 
