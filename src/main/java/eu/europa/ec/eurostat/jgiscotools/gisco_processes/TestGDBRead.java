@@ -25,7 +25,7 @@ public class TestGDBRead {
 
 		//merge ERM roadL
 
-		String egpath = "E:/dissemination/shared-data/";
+		String egpath = "E:/dissemination/shared-data/ERM/ERM_2019.1_shp_LAEA/Data/";
 
 		SimpleFeatureType ft = SHPUtil.getSchema(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp");
 		System.out.println(ft);
@@ -33,17 +33,17 @@ public class TestGDBRead {
 		SimpleFeatureCollection f;
 
 		System.out.println("load 1");
-		f = SHPUtil.getSimpleFeatures(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", null);
+		f = SHPUtil.getSimpleFeatures(egpath+"RoadL_RTT_14_15_16.shp", null);
 		sfc.addAll(f); f = null;
 		System.out.println(sfc.size());
 
 		System.out.println("load 2");
-		f = SHPUtil.getSimpleFeatures(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", null);
+		f = SHPUtil.getSimpleFeatures(egpath+"RoadL_RTT_984.shp", null);
 		sfc.addAll(f); f = null;
 		System.out.println(sfc.size());
 
 		System.out.println("load 3");
-		f = SHPUtil.getSimpleFeatures(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", null);
+		f = SHPUtil.getSimpleFeatures(egpath+"RoadL_RTT_0.shp", null);
 		sfc.addAll(f); f = null;
 		System.out.println(sfc.size());
 
