@@ -109,4 +109,28 @@ public class Util {
 		return set;
 	}
 
+
+
+	/**
+	 * 
+	 * value of a function whos value is between 0 and 1 and looks like that:
+	 * ___
+	 *    \
+	 *     \___
+	 * 
+	 * @param x
+	 * @param x1 the first value where the decrease from 1 starts.
+	 * @param x2 the second value from which the returned value is 0.
+	 * @return
+	 */
+	public static double getIndicatorValue(double x, double x1, double x2) {
+		if(x < x1)
+			return 1.0;
+		else if (x > x2)
+			return 0.0;
+		else
+			return (x-x2)/(x1-x2);
+	}
+
+
 }

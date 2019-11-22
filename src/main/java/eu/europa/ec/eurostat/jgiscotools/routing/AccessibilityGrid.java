@@ -284,7 +284,7 @@ public class AccessibilityGrid {
 				continue;
 			}
 
-			
+
 			//store data at grid cell level
 			d.put("dur_min", "" + durMin);
 			d.put("dur_ind", "" + Util.round(getAccessibilityIndicator(durMin, minDurAccMinT, maxDurAccMinT), 4));
@@ -338,7 +338,7 @@ public class AccessibilityGrid {
 	 * @return
 	 */
 	public static double getAccessibilityIndicator(double durMin, double durT1, double durT2) {
-		return getIndicatorValue(durMin, durT1, durT2);
+		return Util.getIndicatorValue(durMin, durT1, durT2);
 	}
 
 
@@ -358,29 +358,7 @@ public class AccessibilityGrid {
 	 */
 	public static double getPopulationIndicator(double population, double popT) {
 		if(population == 0) return -999;
-		return getIndicatorValue(population, 0, popT);
+		return Util.getIndicatorValue(population, 0, popT);
 	}
-	
-	/**
-	 * 
-	 * value of a function whos value is between 0 and 1 and looks like that:
-	 * ___
-	 *    \
-	 *     \___
-	 * 
-	 * @param x
-	 * @param x1 the first value where the decrease from 1 starts.
-	 * @param x2 the second value from which the returned value is 0.
-	 * @return
-	 */
-	public static double getIndicatorValue(double x, double x1, double x2) {
-		if(x < x1)
-			return 1.0;
-		else if (x > x2)
-			return 0.0;
-		else
-			return (x-x2)/(x1-x2);
-	}
-
 
 }
