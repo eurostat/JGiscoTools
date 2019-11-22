@@ -51,6 +51,11 @@ public class AccessibilityGrid {
 	//population attribute
 	private String populationAtt = null;
 
+	//threshol values to compute accessibility indicators
+	double minDurAccMinT = 10;
+	double maxDurAccMinT = 30;
+	double popAccMinT = 100;
+
 	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;
 	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
@@ -198,11 +203,6 @@ public class AccessibilityGrid {
 			Routing rt = new Routing(net__, ft);
 			rt.setEdgeWeighter(getEdgeWeighter());
 
-			//threshol values to compute accessibility indicators
-			double minDurAccMinT = 10;
-			double maxDurAccMinT = 30;
-			double popAccMinT = 100;
-
 			//get cell population, if provided
 			int population = 0;
 			if(populationAtt != null) {
@@ -338,12 +338,7 @@ public class AccessibilityGrid {
 	 * @return
 	 */
 	public static double getAccessibilityIndicator(double durMin, double durT1, double durT2) {
-		if(durMin < durT1)
-			return 1.0;
-		else if (durMin > durT2)
-			return 0.0;
-		else
-			return (durMin-durT2)/(durT1-durT2);
+		return getIndicatorValue(durMin, durT1, durT2);
 	}
 
 
@@ -362,12 +357,30 @@ public class AccessibilityGrid {
 	 * @return
 	 */
 	public static double getPopulationIndicator(double population, double popT) {
-		if(population == 0)
-			return -999;
-		else if(population>popT)
-			return 0;
-		else
-			return 1 - population / popT;
+		if(population == 0) return -999;
+		return getIndicatorValue(population, 0, popT);
 	}
+	
+	/**
+	 * 
+	 * value of a function whos value is between 0 and 1 and looks like that:
+	 * ___
+	 *    \
+	 *     \___
+	 * 
+	 * @param x
+	 * @param x1 the first value where the decrease from 1 starts.
+	 * @param x2 the second value from which the returned value is 0.
+	 * @return
+	 */
+	public static double getIndicatorValue(double x, double x1, double x2) {
+		if(x < x1)
+			return 1.0;
+		else if (x > x2)
+			return 0.0;
+		else
+			return (x-x2)/(x1-x2);
+	}
+
 
 }
