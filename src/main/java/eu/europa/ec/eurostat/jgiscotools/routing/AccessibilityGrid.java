@@ -198,13 +198,18 @@ public class AccessibilityGrid {
 			Routing rt = new Routing(net__, ft);
 			rt.setEdgeWeighter(getEdgeWeighter());
 
+			//threshol values to compute accessibility indicators
+			double minDurAccMinT = 10;
+			double maxDurAccMinT = 30;
+			double popAccMinT = 100;
+
 			//get cell population, if provided
 			int population = 0;
 			if(populationAtt != null) {
 				Object pop = cell.getAttribute(populationAtt);
 				if(pop != null) {
 					population = (int)Double.parseDouble(pop.toString());
-					d.put("pop_ind", "" + Util.round(getPopulationIndicator(population, 100), 3));
+					d.put("pop_ind", "" + Util.round(getPopulationIndicator(population, popAccMinT), 3));
 				} else
 					d.put("pop_ind", "" + "-999");
 			}
@@ -279,10 +284,11 @@ public class AccessibilityGrid {
 				continue;
 			}
 
+			
 			//store data at grid cell level
 			d.put("dur_min", "" + durMin);
-			d.put("dur_ind", "" + Util.round(getAccessibilityIndicator(durMin, 10, 40), 3));
-			d.put("acc_ind", "" + Util.round(getPopulationAccessibilityIndicator(durMin, 10, 40, population, 100), 3));
+			d.put("dur_ind", "" + Util.round(getAccessibilityIndicator(durMin, minDurAccMinT, maxDurAccMinT), 4));
+			d.put("acc_ind", "" + Util.round(getPopulationAccessibilityIndicator(durMin, minDurAccMinT, maxDurAccMinT, population, popAccMinT), 4));
 
 			cellData.add(d);
 
