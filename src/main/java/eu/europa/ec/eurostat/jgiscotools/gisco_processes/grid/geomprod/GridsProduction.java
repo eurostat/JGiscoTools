@@ -139,6 +139,7 @@ public class GridsProduction {
 
 			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);
+			//TODO make LAND_PC a nice decimal number
 
 			{
 				logger.info("Load 2006 population data...");
