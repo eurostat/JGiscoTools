@@ -31,7 +31,12 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**
  * Examples to produce European grids based on ETRS89-LAEA coordinate reference system (EPSG:3035)
- * for various resolutions. The cells are tagged by country and identified with their standard code.
+ * for various resolutions.
+ * The grid cell data which is computed is:
+ * - its standard grid code
+ * - the geostat population figures, for both 2006 and 2011
+ * - the countries and nuts regions it intersects
+ * - the percentage of the cell which is land area
  * 
  * @author julien Gaffuri
  *
