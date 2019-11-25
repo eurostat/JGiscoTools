@@ -139,7 +139,7 @@ public class GridsProduction {
 
 			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);
-			//TODO make LAND_PC a nice decimal number
+			//TODO make LAND_PC a nice decimal number (in gpkg)
 
 			{
 				logger.info("Load 2006 population data...");
@@ -162,6 +162,7 @@ public class GridsProduction {
 			logger.info("Save cells as GPKG...");
 			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km.gpkg", ftPolygon, true);
 
+			//do not save as shapefile for smaller resolution, because the file size limit is reached
 			if(resKM>3) {
 				logger.info("Save cells as SHP...");
 				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", ftPolygon);

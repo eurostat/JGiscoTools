@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,8 +15,10 @@ import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.DefaultTransaction;
+import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureReader;
+import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.geopkg.FeatureEntry;
 import org.geotools.geopkg.GeoPackage;
 import org.geotools.geopkg.GeoPkgDataStoreFactory;
@@ -102,16 +105,16 @@ public class GeoPackageUtil {
 
 			//create output file
 			File fi = FileUtil.getFile(outFile, true, true);
-
+/*
 			GeoPackage gp = new GeoPackage(fi);
 			gp.init();
 			FeatureEntry fe = new FeatureEntry();
 			gp.add(fe, sfc);
 			if(withSpatialIndex) gp.createSpatialIndex(fe);
 			gp.close();
+*/
 
 
-/*
 			//create feature store
 			HashMap<String, Serializable> params = new HashMap<String, Serializable>();
 			params.put("url", fi.toURI().toURL());
@@ -134,7 +137,7 @@ public class GeoPackageUtil {
 				tr.rollback();
 			} finally {
 				tr.close();
-			}*/			
+			}
 		} catch (IOException e) { e.printStackTrace(); }
 	}
 

@@ -68,9 +68,9 @@ public class SHPUtil {
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
-	public static String[] getAttributeNames(String shpFilePath){
+	/*public static String[] getAttributeNames(String shpFilePath){
 		return SimpleFeatureUtil.getAttributeNames(getSchema(shpFilePath));
-	}
+	}*/
 	public static CoordinateReferenceSystem getCRS(String shpFilePath){
 		return getSchema(shpFilePath).getCoordinateReferenceSystem();
 	}
