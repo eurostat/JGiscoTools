@@ -41,7 +41,7 @@ public class EurostatHospitalAccessibility {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 
-		int resKM = 2;
+		int resKM = 5;
 		logger.info("Load grid cells " + resKM + "km ...");
 		String cellIdAtt = "GRD_ID";
 		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" /*, CQL.toFilter("CNTR_ID = 'BE'")*/);
