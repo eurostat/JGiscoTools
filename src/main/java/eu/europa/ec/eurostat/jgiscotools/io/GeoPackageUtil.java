@@ -105,14 +105,14 @@ public class GeoPackageUtil {
 
 			//create output file
 			File fi = FileUtil.getFile(outFile, true, true);
-/*
+			/*
 			GeoPackage gp = new GeoPackage(fi);
 			gp.init();
 			FeatureEntry fe = new FeatureEntry();
 			gp.add(fe, sfc);
 			if(withSpatialIndex) gp.createSpatialIndex(fe);
 			gp.close();
-*/
+			 */
 
 
 			//create feature store
@@ -137,6 +137,7 @@ public class GeoPackageUtil {
 				tr.rollback();
 			} finally {
 				tr.close();
+				ds.dispose();
 			}
 		} catch (IOException e) { e.printStackTrace(); }
 	}
