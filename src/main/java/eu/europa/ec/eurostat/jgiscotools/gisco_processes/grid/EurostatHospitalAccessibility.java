@@ -41,15 +41,15 @@ public class EurostatHospitalAccessibility {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 
-		int resKM = 5;
+		int resKM = 2;
 		logger.info("Load grid cells " + resKM + "km ...");
 		String cellIdAtt = "GRD_ID";
-		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" /*, CQL.toFilter("CNTR_ID = 'BE'")*/);
+		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" /*, CQL.toFilter("CNTR_ID = 'ES' OR CNTR_ID = 'PT'")*/);
 		logger.info(cells.size() + " cells");
 
 
 		logger.info("Load POIs...");
-		ArrayList<Feature> pois = GeoPackageUtil.getFeatures(basePath+"/hospitals/GovservP.gpkg", CQL.toFilter("GST = 'GF0703'" /*+ " AND ICC = 'BE'"*/ ));
+		ArrayList<Feature> pois = GeoPackageUtil.getFeatures(basePath+"/hospitals/GovservP.gpkg", CQL.toFilter("GST = 'GF0703'" /*+ " AND (ICC = 'ES' OR ICC = 'PT')"*/ ));
 		logger.info(pois.size() + " POIs");
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
@@ -65,7 +65,7 @@ public class EurostatHospitalAccessibility {
 		//TODO show map of transport network (EGM/ERM) based on speed
 		//TODO add other transport networks (ferry, etc?)
 		//EXS Existence Category - RST Road Surface Type
-		Filter fil = CQL.toFilter("(EXS=28 OR EXS=0) AND (RST=1 OR RST=0)" /*+ " AND ICC = 'BE'"*/);
+		Filter fil = CQL.toFilter("(EXS=28 OR EXS=0) AND (RST=1 OR RST=0)" /*+ " AND (ICC = 'ES' OR ICC = 'PT')"*/);
 		//Collection<Feature> networkSections = GeoPackageUtil.getFeatures(basePath+"data/RoadL.gpkg", fil);
 		String egpath = "E:/dissemination/shared-data/";
 		Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"ERM/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil).fs;

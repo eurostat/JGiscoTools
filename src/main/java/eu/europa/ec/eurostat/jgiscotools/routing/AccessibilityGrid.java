@@ -313,6 +313,7 @@ public class AccessibilityGrid {
 	 * An indicator combining accessibility and population.
 	 * 0 to 1 (well accessible)
 	 * -999 is returned when the population is null
+	 * 1 is returned when the duration indicator is equal to 1
 	 * This is the product of two indicators on accessibility and population
 	 * 
 	 * @param population
@@ -321,7 +322,9 @@ public class AccessibilityGrid {
 	 */
 	public static double getPopulationAccessibilityIndicator(double durMin, double durT1, double durT2, double population, double popT) {
 		if(population == 0) return -999;
-		return getAccessibilityIndicator(durMin, durT1, durT2) * getPopulationIndicator(population, popT);
+		double accInd = getAccessibilityIndicator(durMin, durT1, durT2);
+		if(accInd == 1) return 1;
+		return accInd * getPopulationIndicator(population, popT);
 	}
 
 	/**
