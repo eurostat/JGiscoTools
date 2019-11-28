@@ -58,8 +58,6 @@ public class Decomposer {
 		PartitionedOperation op = new PartitionedOperation() {
 			@Override
 			public void run(Partition p) {
-				logger.warn("debug that !!!");
-				
 				logger.debug(p.getCode());
 				out.addAll(p.getFeatures());
 			}
