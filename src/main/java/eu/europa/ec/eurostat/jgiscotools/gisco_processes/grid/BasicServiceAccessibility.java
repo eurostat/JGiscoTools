@@ -36,12 +36,12 @@ public class BasicServiceAccessibility {
 		//logger.setLevel(Level.ALL);
 
 		String basePath = "E:/workspace/gridstat/";
-		String outPath = basePath + "hospital_accessibility_output/";
+		String outPath = basePath + "accessibility_output/";
 		String gridpath = basePath + "data/grid/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 		//set the country id (set to null for all countries)
-		String cnt = "BE";
+		String cnt = null;
 
 		int resKM = 5;
 		logger.info("Load grid cells " + resKM + "km ...");
@@ -55,7 +55,7 @@ public class BasicServiceAccessibility {
 		//TODO show map of transport network (EGM/ERM) based on speed
 		//TODO add other transport networks (ferry, etc?)
 		//EXS Existence Category - RST Road Surface Type
-		Filter fil = CQL.toFilter("(EXS=28 OR EXS=0) AND (RST=1 OR RST=0)" + (cnt==null?"":" AND (ICC = '"+cnt+"')") );
+		Filter fil = CQL.toFilter("((EXS=28 OR EXS=0) AND (RST=1 OR RST=0))" + (cnt==null?"":" AND (ICC = '"+cnt+"')") );
 		//Collection<Feature> networkSections = GeoPackageUtil.getFeatures(basePath+"data/RoadL.gpkg", fil);
 		String egpath = "E:/dissemination/shared-data/";
 		Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil).fs;
@@ -80,7 +80,7 @@ public class BasicServiceAccessibility {
 			String poiFilter = ((Object[])accMap)[1].toString();
 
 			logger.info("Load POIs " + poiLabel + "...");
-			ArrayList<Feature> pois = GeoPackageUtil.getFeatures(basePath+"/data/GovservP.gpkg", CQL.toFilter(poiFilter + (cnt==null?"":" AND (ICC = '"+cnt+"')") ));
+			ArrayList<Feature> pois = GeoPackageUtil.getFeatures(basePath+"/data/GovservP.gpkg", CQL.toFilter("("+poiFilter +")"+ (cnt==null?"":" AND (ICC = '"+cnt+"')") ));
 			logger.info(pois.size() + " POIs");
 
 
@@ -112,9 +112,9 @@ public class BasicServiceAccessibility {
 			ag.compute();
 
 			logger.info("Save data...");
-			CSVUtil.save(ag.getCellData(), outPath + "cell_data_"+poiLabel+"_"+(cnt==null?"":cnt+"_")+resKM+"km.csv");
+			CSVUtil.save(ag.getCellData(), outPath + "accessibility_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+poiLabel+".csv");
 			logger.info("Save routes... Nb=" + ag.getRoutes().size());
-			GeoPackageUtil.save(ag.getRoutes(), outPath + "routes_"+poiLabel+"_"+(cnt==null?"":cnt+"_")+resKM+"km.gpkg", crs, true);
+			GeoPackageUtil.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+poiLabel+".gpkg", crs, true);
 
 		}
 
