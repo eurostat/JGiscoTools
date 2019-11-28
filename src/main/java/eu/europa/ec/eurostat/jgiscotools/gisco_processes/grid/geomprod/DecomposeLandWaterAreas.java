@@ -37,7 +37,7 @@ public class DecomposeLandWaterAreas {
 		for(Feature f : fs) f.setDefaultGeometry( f.getDefaultGeometry().buffer(0) );
 
 		logger.info("Run decomposition...");
-		Collection<Geometry> landGeometries = Decomposer.decompose(fs, 1000, 500, GeomType.ONLY_AREAS, 0);
+		Collection<Geometry> landGeometries = Decomposer.decomposeGeometry(fs, 1000, 500, GeomType.ONLY_AREAS, 0);
 		logger.info(landGeometries.size());
 
 		logger.info("Save...");

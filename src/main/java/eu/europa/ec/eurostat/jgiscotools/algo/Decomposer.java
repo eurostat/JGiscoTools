@@ -32,13 +32,26 @@ public class Decomposer {
 	 * @param midRandom
 	 * @return
 	 */
-	public static Collection<Geometry> decompose(Collection<Feature> fs, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
+	public static Collection<Geometry> decomposeGeometry(Collection<Feature> fs, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
 		final Collection<Geometry> out = new ArrayList<>();
 		PartitionedOperation op = new PartitionedOperation() {
 			@Override
 			public void run(Partition p) {
 				logger.debug(p.getCode());
 				out.addAll(FeatureUtil.getGeometriesSimple(p.getFeatures()));
+			}
+		};
+		Partition.runRecursively(fs, op, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		return out;
+	}
+
+	public static Collection<Feature> decomposeFeature(Collection<Feature> fs, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
+		final Collection<Feature> out = new ArrayList<>();
+		PartitionedOperation op = new PartitionedOperation() {
+			@Override
+			public void run(Partition p) {
+				logger.debug(p.getCode());
+				out.addAll(p.getFeatures());
 			}
 		};
 		Partition.runRecursively(fs, op, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
