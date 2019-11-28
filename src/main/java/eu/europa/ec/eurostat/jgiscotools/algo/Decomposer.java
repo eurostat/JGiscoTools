@@ -45,6 +45,14 @@ public class Decomposer {
 		return out;
 	}
 
+	/**
+	 * @param fs
+	 * @param maxCoordinatesNumber
+	 * @param objMaxCoordinateNumber
+	 * @param gt
+	 * @param midRandom
+	 * @return
+	 */
 	public static Collection<Feature> decomposeFeature(Collection<Feature> fs, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
 		final Collection<Feature> out = new ArrayList<>();
 		PartitionedOperation op = new PartitionedOperation() {

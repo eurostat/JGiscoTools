@@ -8,7 +8,6 @@ import java.util.Collection;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
-import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.Decomposer;
 import eu.europa.ec.eurostat.jgiscotools.algo.Partition.GeomType;
@@ -37,12 +36,15 @@ public class DecomposeLandWaterAreas {
 		for(Feature f : fs) f.setDefaultGeometry( f.getDefaultGeometry().buffer(0) );
 
 		logger.info("Run decomposition...");
-		Collection<Geometry> landGeometries = Decomposer.decomposeGeometry(fs, 1000, 500, GeomType.ONLY_AREAS, 0);
-		logger.info(landGeometries.size());
+		//Collection<Geometry> landGeometries = Decomposer.decomposeGeometry(fs, 1000, 500, GeomType.ONLY_AREAS, 0);
+		Collection<Feature> landFeatures = Decomposer.decomposeFeature(fs, 1000, 500, GeomType.ONLY_AREAS, 0);
+		//logger.info(landGeometries.size());
+		logger.info(landFeatures.size());
 
 		logger.info("Save...");
 		//GeoPackageUtil.saveGeoms(landGeometries, path + "land_areas.gpkg", CRS.decode("EPSG:3035"));
-		GeoPackageUtil.saveGeoms(landGeometries, path + "inland_water_areas.gpkg", CRS.decode("EPSG:3035"), true);
+		//GeoPackageUtil.saveGeoms(landGeometries, path + "inland_water_areas.gpkg", CRS.decode("EPSG:3035"), true);
+		GeoPackageUtil.save(landFeatures, path + "inland_water_areas___.gpkg", CRS.decode("EPSG:3035"), true);
 
 		logger.info("End");
 
