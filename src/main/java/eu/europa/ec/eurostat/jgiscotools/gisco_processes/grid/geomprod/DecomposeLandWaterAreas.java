@@ -41,6 +41,9 @@ public class DecomposeLandWaterAreas {
 		//logger.info(landGeometries.size());
 		logger.info(landFeatures.size());
 
+		int i=1;
+		for(Feature lf : landFeatures) lf.setID("id_"+(i++));
+
 		logger.info("Save...");
 		//GeoPackageUtil.saveGeoms(landGeometries, path + "land_areas.gpkg", CRS.decode("EPSG:3035"));
 		//GeoPackageUtil.saveGeoms(landGeometries, path + "inland_water_areas.gpkg", CRS.decode("EPSG:3035"), true);
@@ -51,4 +54,3 @@ public class DecomposeLandWaterAreas {
 	}
 
 }
-
