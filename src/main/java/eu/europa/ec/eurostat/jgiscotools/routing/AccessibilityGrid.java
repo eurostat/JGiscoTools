@@ -52,9 +52,9 @@ public class AccessibilityGrid {
 	private String populationAtt = null;
 
 	//threshol values to compute accessibility indicators
-	double minDurAccMinT = 15;
-	double maxDurAccMinT = 30;
-	double popAccMinT = 100;
+	public double minDurAccMinT = 15;
+	public double maxDurAccMinT = 30;
+	public double popAccMinT = 100;
 
 	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;

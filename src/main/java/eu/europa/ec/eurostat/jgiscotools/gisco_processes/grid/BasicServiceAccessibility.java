@@ -27,7 +27,7 @@ import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculat
 public class BasicServiceAccessibility {
 	private static Logger logger = Logger.getLogger(BasicServiceAccessibility.class.getName());
 
-	//show where X-border cooperation can improve accessibility
+	//show where cross-border cooperation can improve accessibility
 
 	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Exception {
@@ -70,6 +70,8 @@ public class BasicServiceAccessibility {
 		//- GST = GF0902: Secondary education (ISCED-97 Level 2, 3): Secondary schools
 		//- GST = GF0904: Tertiary education (ISCED-97 Level 5, 6): Universities
 		//- GST = GF0905: Education not definable by level
+
+		//TODO define object
 		for(Object accMap : new Object[] {
 				new Object[] { "healthcare", "GST = 'GF0703' OR GST = 'GF0306'" } ,
 				new Object[] { "educ3", "GST = 'GF0904'" },
@@ -107,6 +109,8 @@ public class BasicServiceAccessibility {
 					if("984".equals(rtt)) return 80.0;
 					return 50.0;
 				}});
+			//TODO
+			//ag.minDurAccMinT = 
 
 			logger.info("Compute accessibility...");
 			ag.compute();
