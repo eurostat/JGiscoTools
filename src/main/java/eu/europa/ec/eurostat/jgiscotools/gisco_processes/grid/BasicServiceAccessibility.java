@@ -72,9 +72,9 @@ public class BasicServiceAccessibility {
 		//- GST = GF0905: Education not definable by level
 		for(Object accMap : new Object[] {
 				new Object[] { "healthcare", "GST = 'GF0703' OR GST = 'GF0306'" } ,
-				new Object[] { "3educ", "GST = 'GF0904'" },
-				new Object[] { "2educ", "GST = 'GF0902'" },
-				new Object[] { "1educ", "GST = 'GF090102'" }} ) {
+				new Object[] { "educ3", "GST = 'GF0904'" },
+				new Object[] { "educ2", "GST = 'GF0902'" },
+				new Object[] { "educ1", "GST = 'GF090102'" }} ) {
 
 			String poiLabel = ((Object[])accMap)[0].toString();
 			String poiFilter = ((Object[])accMap)[1].toString();
@@ -112,9 +112,9 @@ public class BasicServiceAccessibility {
 			ag.compute();
 
 			logger.info("Save data...");
-			CSVUtil.save(ag.getCellData(), outPath + "cell_data_"+poiLabel+"_"+resKM+"km.csv");
+			CSVUtil.save(ag.getCellData(), outPath + "cell_data_"+poiLabel+"_"+(cnt==null?"":cnt+"_")+resKM+"km.csv");
 			logger.info("Save routes... Nb=" + ag.getRoutes().size());
-			GeoPackageUtil.save(ag.getRoutes(), outPath + "routes_"+poiLabel+"_"+resKM+"km.gpkg", crs, true);
+			GeoPackageUtil.save(ag.getRoutes(), outPath + "routes_"+poiLabel+"_"+(cnt==null?"":cnt+"_")+resKM+"km.gpkg", crs, true);
 
 		}
 
