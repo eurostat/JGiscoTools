@@ -52,7 +52,7 @@ public class AccessibilityGrid {
 	private String populationAtt = null;
 
 	//threshol values to compute accessibility indicators
-	double minDurAccMinT = 10;
+	double minDurAccMinT = 15;
 	double maxDurAccMinT = 30;
 	double popAccMinT = 100;
 
@@ -223,7 +223,7 @@ public class AccessibilityGrid {
 				logger.error("Could not find graph node around cell center: " + oC);
 				d.put("dur_min", "-10");
 				d.put("dur_ind", "-10");
-				if(populationAtt != null) d.put("acc_ind", "-10");
+				if(populationAtt != null) { d.put("acc_ind", "-10"); d.put("dmp_ind", "-10"); }
 				cellData.add(d);
 				continue;
 			}
@@ -231,7 +231,7 @@ public class AccessibilityGrid {
 				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
 				d.put("dur_min", "-20");
 				d.put("dur_ind", "-20");
-				if(populationAtt != null) d.put("acc_ind", "-20");
+				if(populationAtt != null) { d.put("acc_ind", "-20"); d.put("dmp_ind", "-20"); }
 				cellData.add(d);
 				continue;
 			}
@@ -279,7 +279,7 @@ public class AccessibilityGrid {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to POI for cell " + cellId + " around " + oC);
 				d.put("dur_min", "-30");
 				d.put("dur_ind", "-30");
-				if(populationAtt != null) d.put("acc_ind", "-30");
+				if(populationAtt != null) { d.put("acc_ind", "-30"); d.put("dmp_ind", "-30"); }
 				cellData.add(d);
 				continue;
 			}
@@ -289,6 +289,7 @@ public class AccessibilityGrid {
 			d.put("dur_min", "" + durMin);
 			d.put("dur_ind", "" + Util.round(getAccessibilityIndicator(durMin, minDurAccMinT, maxDurAccMinT), 4));
 			d.put("acc_ind", "" + Util.round(getPopulationAccessibilityIndicator(durMin, minDurAccMinT, maxDurAccMinT, population, popAccMinT), 4));
+			d.put("dmp_ind", "" + Util.round(getDelayMinPerson(durMin, minDurAccMinT, population), 4));
 
 			cellData.add(d);
 
@@ -306,6 +307,16 @@ public class AccessibilityGrid {
 		}
 	}
 
+
+
+	//from 0 (good accessibility) to infinity (bad accessibility)
+	//this value is in delay minute . person
+	public static double getDelayMinPerson(double durMin, double durT, double population) {
+		if(durMin<0) return -999;
+		double delay = durMin-durT;
+		if(delay<0) return 0;
+		return delay * population;
+	}
 
 
 
