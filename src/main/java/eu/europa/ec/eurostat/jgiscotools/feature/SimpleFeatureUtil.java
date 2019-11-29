@@ -11,13 +11,17 @@ import org.apache.log4j.Logger;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -148,7 +152,7 @@ public class SimpleFeatureUtil {
 			return null;
 		}
 	}
-	public static SimpleFeatureType getFeatureType(String geomType, int epsgCode, String[] data) {
+	public static SimpleFeatureType getFeatureType(String geomType, int epsgCode, String... data) {
 		String datast = "";
 		for(String data_ : data) datast += ","+data_;
 		return getFeatureType(geomType, epsgCode, datast==""? "" : datast.substring(1, datast.length()));
@@ -178,6 +182,19 @@ public class SimpleFeatureUtil {
 		}
 		return atts.toArray(new String[atts.size()]);
 	}
+
+	/*public static SimpleFeatureType addAttribute(SimpleFeatureType ft, String newAttributeName, Class<?> newAttributeType) {
+		SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+		sftb.crs(ft.getCoordinateReferenceSystem());
+		for(int i=0; i<ft.getAttributeCount(); i++){
+			 AttributeDescriptor att = ft.getDescriptor(i);
+			 System.out.println(att);
+			 sftb.add(att);
+		}
+		sftb.add(newAttributeName, newAttributeType);
+		return sftb.buildFeatureType();
+	}*/
+
 
 	public static <T extends Geometry> Collection<Feature> getFeaturesFromGeometries(Collection<T> geoms) {
 		ArrayList<Feature> fs = new ArrayList<Feature>();
