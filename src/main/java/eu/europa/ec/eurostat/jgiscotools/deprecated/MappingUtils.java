@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.geostat.statmap;
+package eu.europa.ec.eurostat.jgiscotools.deprecated;
 
 import java.awt.Color;
 import java.awt.Font;
