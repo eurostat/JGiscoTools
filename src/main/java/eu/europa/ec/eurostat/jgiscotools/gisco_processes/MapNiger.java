@@ -31,7 +31,7 @@ public class MapNiger {
 		Collection<Feature> ps = FeatureUtil.toFeatures( CSVUtil.load(basePath_+"base_donnee.csv") );
 
 		LOGGER.info("Load commune data");
-		Collection<Feature> locs = SHPUtil.loadSHP(basePath+"commune_niger.shp").fs;
+		Collection<Feature> locs = SHPUtil.getFeatures(basePath+"commune_niger.shp");
 		for(Feature f : locs) f.setID( ""+f.getAttribute("CODECOMMUN") );
 		//Collection<Feature> locs = SHPUtil.loadSHP(basePath+"renacom.shp").fs;
 		//for(Feature f : locs) f.id = ""+f.get("CODE_LOCAL");

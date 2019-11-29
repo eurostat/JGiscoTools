@@ -27,7 +27,7 @@ public class MainRailwayQuality {
 		String inFile = basePath+"out/EM/RailwayLinkEM.shp";
 		//String inFile = basePath+"out/quality/railway.shp";
 		Filter fil = null; //CQL.toFilter( "CNTR = 'ES'" );
-		Collection<Feature> secs = SHPUtil.loadSHP(inFile, fil).fs;
+		Collection<Feature> secs = SHPUtil.getFeatures(inFile, fil);
 
 		//check identifier
 		//HashMap<String, Integer> out = FeatureUtil.checkIdentfier(secs, "id");

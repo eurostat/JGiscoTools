@@ -58,9 +58,9 @@ public class BasicServiceAccessibility {
 		Filter fil = CQL.toFilter("((EXS=28 OR EXS=0) AND (RST=1 OR RST=0))" + (cnt==null?"":" AND (ICC = '"+cnt+"')") );
 		//Collection<Feature> networkSections = GeoPackageUtil.getFeatures(basePath+"data/RoadL.gpkg", fil);
 		String egpath = "E:/dissemination/shared-data/";
-		Collection<Feature> networkSections = SHPUtil.loadSHP(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil).fs;
-		networkSections.addAll( SHPUtil.loadSHP(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil).fs );
-		networkSections.addAll( SHPUtil.loadSHP(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil).fs );
+		Collection<Feature> networkSections = SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
+		networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil) );
+		networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil) );
 		logger.info(networkSections.size() + " sections loaded.");
 
 

@@ -13,7 +13,6 @@ import org.locationtech.jts.geom.MultiLineString;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil.SHPData;
 
 /**
  * 
@@ -97,15 +96,16 @@ public class LineStringPairAverage {
 		System.out.println("Start");
 
 		//load test data
-		SHPData d = SHPUtil.loadSHP("src/test/resources/algo/linePairs.shp");
+		String file = "src/test/resources/algo/linePairs.shp";
+		ArrayList<Feature> fs = SHPUtil.getFeatures(file);
 
 		//index it by id
 		HashMap<String, LineString> data = new HashMap<>();
-		for(Feature f : d.fs) data.put(f.getAttributes().get("id").toString(), (LineString) ((MultiLineString) f.getDefaultGeometry()).getGeometryN(0));
+		for(Feature f : fs) data.put(f.getAttributes().get("id").toString(), (LineString) ((MultiLineString) f.getDefaultGeometry()).getGeometryN(0));
 
 		//compute
 		ArrayList<LineString> out = new ArrayList<LineString>();
-		for(int i=1; i<=d.fs.size()/2; i++) {
+		for(int i=1; i<=fs.size()/2; i++) {
 			LineString ls1 = data.get(i+"1"), ls2 = data.get(i+"2");
 
 			for(double w=0; w<1; w+=0.1) {
@@ -115,7 +115,7 @@ public class LineStringPairAverage {
 		}
 
 		//save output
-		SHPUtil.saveGeomsSHP(out, "/home/juju/Bureau/mergedLinePairs.shp", d.ft.getCoordinateReferenceSystem());
+		SHPUtil.saveGeomsSHP(out, "/home/juju/Bureau/mergedLinePairs.shp", SHPUtil.getCRS(file));
 
 		System.out.println("End " + out.size());
 	}

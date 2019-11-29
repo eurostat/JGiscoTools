@@ -61,7 +61,7 @@ public class MainRailwayEdgeMatching {
 		System.out.println("Load input sections");
 		String basePath = "/home/juju/Bureau/gisco_rail/";
 		//Filter fil = CQL.toFilter( "CNTR <> 'RO' AND CNTR <> 'EL' AND CNTR <> 'DK' AND CNTR <> 'EE'" );
-		ArrayList<Feature> secs = SHPUtil.loadSHP(basePath+"MS_data/RailwayLinkClean.shp").fs;
+		ArrayList<Feature> secs = SHPUtil.getFeatures(basePath+"MS_data/RailwayLinkClean.shp");
 		System.out.println(secs.size());
 
 		//compute edge matching

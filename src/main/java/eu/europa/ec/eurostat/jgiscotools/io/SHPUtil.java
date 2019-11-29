@@ -30,7 +30,6 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -100,20 +99,10 @@ public class SHPUtil {
 		return null;
 	}
 
-	public static class SHPData{
-		public SimpleFeatureType ft;
-		public ArrayList<Feature> fs;
-		public ReferencedEnvelope env;
-		public SHPData(SimpleFeatureType ft, ArrayList<Feature> fs, ReferencedEnvelope env){
-			this.ft=ft; this.fs=fs; this.env=env;
-		}
-	}
-
-	public static SHPData loadSHP(String shpFilePath) { return loadSHP(shpFilePath, null); }
-	public static SHPData loadSHP(String shpFilePath, Filter f) {
+	public static ArrayList<Feature> getFeatures(String shpFilePath) { return getFeatures(shpFilePath, null); }
+	public static ArrayList<Feature> getFeatures(String shpFilePath, Filter f) {
 		SimpleFeatureCollection sfs = getSimpleFeatures(shpFilePath, f);
-		SHPData sd = new SHPData(sfs.getSchema(), SimpleFeatureUtil.get(sfs), sfs.getBounds());
-		return sd;
+		return SimpleFeatureUtil.get(sfs);
 	}
 
 
@@ -243,15 +232,15 @@ public class SHPUtil {
 	//clean geometries of a shapefile
 	public static void cleanGeometries(String inFile, String geomAtt, String outFile){
 		System.out.println("Load data from "+inFile);
-		SHPData data = loadSHP(inFile);
+		ArrayList<Feature> fs = getFeatures(inFile);
 
 		System.out.print("clean all geometries...");
-		for(Feature f : data.fs)
+		for(Feature f : fs)
 			f.setDefaultGeometry( JTSGeomUtil.toMulti(JTSGeomUtil.clean( f.getDefaultGeometry() )));
 		System.out.println(" Done.");
 
 		System.out.println("Save data to "+outFile);
-		saveSHP(SimpleFeatureUtil.get(data.fs, getCRS(inFile)), outFile);
+		saveSHP(SimpleFeatureUtil.get(fs, getCRS(inFile)), outFile);
 	}
 
 
@@ -259,7 +248,7 @@ public class SHPUtil {
 	public static void union(String inFile, String outFile, double bufferDistance){
 		try {
 			//load input shp
-			ArrayList<Feature> fs = loadSHP(inFile).fs;
+			ArrayList<Feature> fs = getFeatures(inFile);
 
 			//build union
 			ArrayList<Geometry> geoms = new ArrayList<Geometry>();
@@ -293,17 +282,17 @@ public class SHPUtil {
 	//get geometrical difference of a shapefile
 	public static Geometry getDifferenceGeom(String inFile, String geomAtt, double margin) {
 		//load input shp
-		SHPData data = loadSHP(inFile);
+		ArrayList<Feature> fs = getFeatures(inFile);
 
 		//get envelope
-		Envelope e=data.env;
+		Envelope e = getBounds(inFile);
 		e.expandBy(margin, margin);
 		Geometry diff = JTSGeomUtil.getGeometry(e);
 		e=null;
 
 		//get poly list
 		ArrayList<Geometry> polys = new ArrayList<Geometry>();
-		for( Feature f:data.fs )
+		for( Feature f : fs )
 			polys.add(f.getDefaultGeometry());
 
 		//get union
@@ -347,7 +336,7 @@ public class SHPUtil {
 
 	public static void shpToCSV(String inSHP, String outCSV) throws Exception{
 		LOGGER.debug("Load "+inSHP);
-		ArrayList<Feature> fs = SHPUtil.loadSHP(inSHP).fs;
+		ArrayList<Feature> fs = getFeatures(inSHP);
 
 		LOGGER.debug("Prepare file");
 		File file = new File(outCSV);
@@ -387,9 +376,9 @@ public class SHPUtil {
 	public static void extractFilterClip(String in, String out) { extractFilterClip(in, out, null); }
 	public static void extractFilterClip(String in, String out, Envelope env) { extractFilterClip(in, out, env, null); }
 	public static void extractFilterClip(String in, String out, Envelope env, Filter f) {
-		SHPData fsd = SHPUtil.loadSHP(in, f);
-		if(env != null) fsd.fs = FeatureUtil.clip(fsd.fs, env);
-		SHPUtil.saveSHP(fsd.fs, out, fsd.ft.getCoordinateReferenceSystem());
+		ArrayList<Feature> fs = getFeatures(in, f);
+		if(env != null) fs = FeatureUtil.clip(fs, env);
+		SHPUtil.saveSHP(fs, out, getCRS(in));
 	}
 
 
@@ -415,9 +404,8 @@ public class SHPUtil {
 		CoordinateReferenceSystem crs = null;
 		for(String inSHP : inSHPs) {
 			if(!new File(inSHP).exists()) continue;
-			SHPData dt = SHPUtil.loadSHP(inSHP);
-			if(crs == null) crs = dt.ft.getCoordinateReferenceSystem();
-			ArrayList<Feature> fs = dt.fs;
+			ArrayList<Feature> fs = getFeatures(inSHP);
+			if(crs == null) crs = getCRS(inSHP);
 			for(Feature f : fs) {
 				geoms.add(f.getDefaultGeometry());
 			}
@@ -430,11 +418,11 @@ public class SHPUtil {
 
 	//convert shape file to keep only non-multi geometries
 	public static void saveAsSimpleGeometry(String inFile, String outFile, boolean showMessages) {
-		SHPData data = SHPUtil.loadSHP(inFile);
-		if(showMessages) System.out.println(data.fs.size()+" loaded from "+inFile);
-		ArrayList<Feature> out = FeatureUtil.getFeaturesWithSimpleGeometrie(data.fs);
+		ArrayList<Feature> fs = getFeatures(inFile);
+		if(showMessages) System.out.println(fs.size()+" loaded from "+inFile);
+		ArrayList<Feature> out = FeatureUtil.getFeaturesWithSimpleGeometrie(fs);
 		if(showMessages) System.out.println("Result nb: "+out.size());
-		SHPUtil.saveSHP(out, outFile, data.ft.getCoordinateReferenceSystem());
+		SHPUtil.saveSHP(out, outFile, getCRS(inFile));
 	}
 
 

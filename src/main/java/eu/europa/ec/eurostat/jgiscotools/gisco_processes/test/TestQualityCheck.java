@@ -19,7 +19,7 @@ public class TestQualityCheck {
 		System.out.println("Start");
 
 		LOGGER.info("Load data");
-		Collection<Feature> units = SHPUtil.loadSHP("src/test/resources/testTesselationGeneralisation.shp").fs;
+		Collection<Feature> units = SHPUtil.getFeatures("src/test/resources/testTesselationGeneralisation.shp");
 		for(Feature unit : units) unit.setID( unit.getAttribute("id").toString() );
 
 		LOGGER.info("Run quality check");

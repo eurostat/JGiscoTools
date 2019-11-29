@@ -25,7 +25,7 @@ public class CountriesUtil {
 
 
 	public static ArrayList<Feature> getEuropeanCountries(String filePath) {
-		return SHPUtil.loadSHP(filePath).fs;
+		return SHPUtil.getFeatures(filePath);
 	}
 	public static ArrayList<Feature> getEuropeanCountries(boolean withOST) {
 		return getEuropeanCountries("./src/main/resources/CNTR/CNTR_RG_01M_2016"+(withOST?"":"_no_ost")+".shp");
@@ -33,7 +33,7 @@ public class CountriesUtil {
 
 	public static Feature getEuropeanCountry(String countryCode, String filePath) {
 		try {
-			ArrayList<Feature> fs = SHPUtil.loadSHP(filePath, CQL.toFilter("CNTR_ID = '"+countryCode+"'")).fs;
+			ArrayList<Feature> fs = SHPUtil.getFeatures(filePath, CQL.toFilter("CNTR_ID = '"+countryCode+"'"));
 			if(fs.size() != 1) throw new Exception("Problem finding country with code: "+countryCode+". nb found="+fs.size());
 			return fs.iterator().next();
 		} catch (Exception e) { e.printStackTrace(); }
@@ -47,7 +47,7 @@ public class CountriesUtil {
 
 
 	public static Geometry getEurope(boolean withOST) {
-		return SHPUtil.loadSHP("./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp").fs.iterator().next().getDefaultGeometry();
+		return SHPUtil.getFeatures("./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp").iterator().next().getDefaultGeometry();
 	}
 
 	//build Europe geometry as a union of the country geometries

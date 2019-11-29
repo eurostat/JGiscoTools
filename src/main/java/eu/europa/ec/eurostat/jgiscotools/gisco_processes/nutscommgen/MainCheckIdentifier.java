@@ -16,7 +16,7 @@ public class MainCheckIdentifier {
 		LOGGER.info("Start");
 
 		LOGGER.info("Load data");
-		Collection<Feature> units = SHPUtil.loadSHP("/home/juju/Bureau/nuts_gene_data/nutsplus/NUTS_PLUS_01M_1904.shp").fs;
+		Collection<Feature> units = SHPUtil.getFeatures("/home/juju/Bureau/nuts_gene_data/nutsplus/NUTS_PLUS_01M_1904.shp");
 
 		LOGGER.info("Check id");
 		HashMap<String, Integer> ids = FeatureUtil.checkIdentfier(units, "NUTS_P_ID");

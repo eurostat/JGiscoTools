@@ -36,7 +36,7 @@ public class TestTesselationGeneralisation {
 
 		LOGGER.info("Load data");
 		String in = "src/test/resources/testTesselationGeneralisation.shp";
-		Collection<Feature> units = SHPUtil.loadSHP(in).fs;
+		Collection<Feature> units = SHPUtil.getFeatures(in);
 		for(Feature unit : units) unit.setID( unit.getAttribute("id").toString() );
 		HashMap<String, Collection<Point>> points = TesselationGeneralisation.loadPoints("src/test/resources/testTesselationGeneralisationPoints.shp", "id");
 

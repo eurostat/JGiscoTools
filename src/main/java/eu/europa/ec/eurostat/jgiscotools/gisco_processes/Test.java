@@ -10,7 +10,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil.SHPData;
 
 public class Test {
 	private static Logger logger = Logger.getLogger(Test.class.getName());
@@ -20,9 +19,9 @@ public class Test {
 		logger.info("Start");
 
 		logger.info("Load data");
-		SHPData shp = SHPUtil.loadSHP("E:/dissemination/shared-data/ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp", CQL.toFilter("F_CODE = 'AX502'") );
-		ArrayList<Feature> fs = shp.fs;
-		CoordinateReferenceSystem crs = shp.ft.getCoordinateReferenceSystem();
+		String file = "E:/dissemination/shared-data/ERM/ERM_2019.1_shp_LAEA/Data/GovservP.shp";
+		ArrayList<Feature> fs = SHPUtil.getFeatures(file, CQL.toFilter("F_CODE = 'AX502'") );
+		CoordinateReferenceSystem crs = SHPUtil.getCRS(file);
 
 		logger.debug(fs.size() + " loaded");
 

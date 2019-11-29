@@ -57,7 +57,7 @@ public class MainRailwayGeneralisation {
 		String basePath = "/home/juju/Bureau/gisco_rail/";
 		String inFile = basePath+"out/quality/railway.shp";
 		Filter fil = CQL.toFilter( "CNTR = 'NL'" );
-		Collection<Feature> secs = SHPUtil.loadSHP(inFile, fil).fs;
+		Collection<Feature> secs = SHPUtil.getFeatures(inFile, fil);
 		for(Feature f : secs) f.setID( f.getAttribute("id").toString() );
 		LOGGER.info(secs.size()+" sections - " + FeatureUtil.getVerticesNumber(secs)+" vertices.");
 

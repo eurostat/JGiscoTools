@@ -54,7 +54,7 @@ public class MainGenCommPlus100k {
 
 		LOGGER.info("Load data");
 		String rep="100k_1M/commplus"; String inFile = basePath+"commplus/COMM_PLUS.shp";
-		Collection<Feature> units = SHPUtil.loadSHP(inFile).fs;
+		Collection<Feature> units = SHPUtil.getFeatures(inFile);
 		for(Feature f : units) for(String id : new String[] {"NUTS_ID","COMM_ID","idgene","GISCO_ID"}) if(f.getAttribute(id) != null) f.setID( ""+f.getAttribute(id) );
 
 		for(int i=1; i<=100; i++) {

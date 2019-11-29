@@ -51,7 +51,7 @@ public class DataPreparation {
 	public static void buffer(String inFile, String outFile, double bufferDistance, int quadrantSegments, int endCapStyle){
 
 		//load data
-		ArrayList<Feature> fs = SHPUtil.loadSHP(inFile).fs;
+		ArrayList<Feature> fs = SHPUtil.getFeatures(inFile);
 
 		for(Feature f : fs) {
 			logger.info(f.getAttribute("CNTR_ID"));

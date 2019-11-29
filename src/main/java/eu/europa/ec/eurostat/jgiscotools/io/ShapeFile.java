@@ -40,8 +40,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Various functions to ease shapefiles manipulation
  * 
  * @author julien Gaffuri
+ * 
+ * @deprecated Use SHPUtil instead
  *
  */
+@Deprecated()
 public class ShapeFile {
 	private static final FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 
