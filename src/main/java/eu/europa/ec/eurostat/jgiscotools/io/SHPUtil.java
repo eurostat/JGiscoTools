@@ -57,7 +57,8 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 public class SHPUtil {
 	private final static Logger LOGGER = Logger.getLogger(SHPUtil.class);
 
-	//get basic info on shp file
+
+	//get basic information
 
 	public static SimpleFeatureType getSchema(String file){
 		try {
@@ -67,9 +68,9 @@ public class SHPUtil {
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
-	/*public static String[] getAttributeNames(String shpFilePath){
+	public static String[] getAttributeNames(String shpFilePath){
 		return SimpleFeatureUtil.getAttributeNames(getSchema(shpFilePath));
-	}*/
+	}
 	public static CoordinateReferenceSystem getCRS(String shpFilePath){
 		return getSchema(shpFilePath).getCoordinateReferenceSystem();
 	}
