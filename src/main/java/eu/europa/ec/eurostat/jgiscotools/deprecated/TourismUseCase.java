@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
+package eu.europa.ec.eurostat.jgiscotools.deprecated;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -17,11 +17,8 @@ import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
-import eu.europa.ec.eurostat.jgiscotools.NUTSShapeFile;
-import eu.europa.ec.eurostat.jgiscotools.NUTSUtils;
 import eu.europa.ec.eurostat.jgiscotools.geostat.DasymetricMapping;
 import eu.europa.ec.eurostat.jgiscotools.geostat.statmap.MappingUtils;
-import eu.europa.ec.eurostat.jgiscotools.geostat.statmap.NUTSMap;
 import eu.europa.ec.eurostat.jgiscotools.geostat.statmap.StatisticalMap;
 import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
 

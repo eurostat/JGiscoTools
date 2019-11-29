@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.geostat.statmap;
+package eu.europa.ec.eurostat.jgiscotools.deprecated;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -20,6 +20,8 @@ import org.opengis.filter.FilterFactory;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.EurobaseIO;
 import eu.europa.ec.eurostat.jgiscotools.NUTSShapeFile;
+import eu.europa.ec.eurostat.jgiscotools.geostat.statmap.MappingUtils;
+import eu.europa.ec.eurostat.jgiscotools.geostat.statmap.StatisticalMap;
 import eu.europa.ec.eurostat.jgiscotools.io.img.GifSequenceWriter;
 
 /**

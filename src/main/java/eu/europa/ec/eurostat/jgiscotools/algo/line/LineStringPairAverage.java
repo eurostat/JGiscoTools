@@ -4,15 +4,10 @@
 package eu.europa.ec.eurostat.jgiscotools.algo.line;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-
-import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**
  * 
@@ -91,7 +86,7 @@ public class LineStringPairAverage {
 	}
 
 
-
+	/*
 	public static void main(String[] args) {
 		System.out.println("Start");
 
@@ -119,6 +114,6 @@ public class LineStringPairAverage {
 
 		System.out.println("End " + out.size());
 	}
-
+	 */
 
 }

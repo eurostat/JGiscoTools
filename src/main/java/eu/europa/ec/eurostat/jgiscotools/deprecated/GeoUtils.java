@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools;
+package eu.europa.ec.eurostat.jgiscotools.deprecated;
 
 import java.util.HashMap;
 import java.util.Set;

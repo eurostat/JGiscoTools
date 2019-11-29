@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools;
+package eu.europa.ec.eurostat.jgiscotools.deprecated;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
