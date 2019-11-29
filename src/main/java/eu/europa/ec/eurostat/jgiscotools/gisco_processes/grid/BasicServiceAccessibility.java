@@ -74,7 +74,7 @@ public class BasicServiceAccessibility {
 		//TODO define object
 		for(Object accMap : new Object[] {
 				new Object[] { "healthcare", "GST = 'GF0703' OR GST = 'GF0306'" } ,
-				new Object[] { "educ3", "GST = 'GF0904'" },
+				//new Object[] { "educ3", "GST = 'GF0904'" },
 				new Object[] { "educ2", "GST = 'GF0902'" },
 				new Object[] { "educ1", "GST = 'GF090102'" }} ) {
 
