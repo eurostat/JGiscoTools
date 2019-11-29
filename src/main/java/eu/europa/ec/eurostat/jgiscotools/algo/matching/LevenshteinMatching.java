@@ -105,7 +105,7 @@ public class LevenshteinMatching {
 	}
 
 	/**
-	 * Index matches based on the fisrt string, in order to retrieve the matched string from the input one.
+	 * Index matches based on the first string, in order to retrieve the matched string from the input one.
 	 * 
 	 * @param ms
 	 * @return
