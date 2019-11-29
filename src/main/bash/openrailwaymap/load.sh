@@ -35,7 +35,7 @@ for cnt in "SE"
 do
 	echo "****** $cnt ******"
 	echo Get raw ORM data for $cnt
-	#wget -O osmxml/orm_$cnt.osm "http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=$cnt][admin_level=2];)->.a;(node"$fil"(area.a);way[railway](area.a);relation[railway](area.a););(._;>;);out;"
+	#wget -O osmxml/orm_$cnt.osm "http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=$cnt][admin_level=2];)->.a;(node"$fil"(area.a);way"$fil"(area.a);relation"$fil"(area.a););(._;>;);out;"
 	wget -O osmxml/orm_node_$cnt.osm "http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=$cnt][admin_level=2];)->.a;node(area.a)"$fil";out;"
 	wget -O osmxml/orm_way_$cnt.osm "http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=$cnt][admin_level=2];)->.a;(way(area.a)"$fil";>;);out;"
 	wget -O osmxml/orm_relation_$cnt.osm "http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=$cnt][admin_level=2];)->.a;(relation(area.a)"$fil";>>;);out;"
@@ -43,3 +43,16 @@ done
 
 #node[power=""];          // not supported
 #node[power~"^$"];        // use regular expression instead
+
+
+
+
+
+#universities
+#http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=FR][admin_level=2];)->.a;(node[amenity=university](area.a);way[amenity=university](area.a);relation[amenity=university](area.a););(._;>;);out;
+#http://overpass-api.de/api/map?data=[out:xml];(node[amenity=university];way[amenity=university];relation[amenity=university];);(._;>;);out;
+
+#pharmacy
+#http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=FR][admin_level=2];)->.a;(node[amenity=pharmacy](area.a);way[amenity=pharmacy](area.a);relation[amenity=pharmacy](area.a););(._;>;);out;
+
+
