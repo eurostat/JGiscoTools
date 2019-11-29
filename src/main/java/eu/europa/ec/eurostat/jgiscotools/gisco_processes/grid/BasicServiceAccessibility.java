@@ -43,7 +43,7 @@ public class BasicServiceAccessibility {
 		//set the country id (set to null for all countries)
 		String cnt = null;
 
-		int resKM = 5;
+		int resKM = 2;
 		logger.info("Load grid cells " + resKM + "km ...");
 		String cellIdAtt = "GRD_ID";
 		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(gridpath + "grid_"+resKM+"km.gpkg" , cnt==null?null:CQL.toFilter("CNTR_ID = '"+cnt+"'"));
@@ -74,9 +74,10 @@ public class BasicServiceAccessibility {
 		//TODO define object
 		for(Object accMap : new Object[] {
 				new Object[] { "healthcare", "GST = 'GF0703' OR GST = 'GF0306'" } ,
-				//new Object[] { "educ3", "GST = 'GF0904'" },
+				new Object[] { "educ1", "GST = 'GF090102'" },
 				new Object[] { "educ2", "GST = 'GF0902'" },
-				new Object[] { "educ1", "GST = 'GF090102'" }} ) {
+				new Object[] { "educ3", "GST = 'GF0904'" }
+		}) {
 
 			String poiLabel = ((Object[])accMap)[0].toString();
 			String poiFilter = ((Object[])accMap)[1].toString();
