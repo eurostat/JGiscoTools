@@ -154,7 +154,8 @@ public class SimpleFeatureUtil {
 		return getFeatureType(geomType, epsgCode, datast==""? "" : datast.substring(1, datast.length()));
 	}
 
-	//SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X:int,Y:int");
+	//SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X:int,Y:int");
+	//SimpleFeatureType ft = DataUtilities.createType("", "the_geom:Point:srid=3035,ex:String,nb:int");
 	public static SimpleFeatureType getFeatureType(String geomType, int epsgCode, String data) {
 		try {
 			String st = "";
