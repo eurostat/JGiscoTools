@@ -59,6 +59,27 @@ http://overpass-api.de/api/map?data=[out:xml];(area[%27ISO3166-1:alpha2%27=LU][a
 
 http://overpass-api.de/api/map?data=[out:xml];(area[%27ISO3166-1:alpha2%27=LU][admin_level=2];)-%3E.a;(node[%22amenity%22=%22hospital%22](area.a);way[%22amenity%22=%22hospital%22](area.a);relation[%22amenity%22=%22hospital%22](area.a);area[%22amenity%22=%22hospital%22](area.a););(._;%3E;);out;
 
-http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=LU][admin_level=2];)->.a;(node["amenity"="hospital"][(area.a);way["amenity"="hospital"](area.a);relation["amenity"="hospital"](area.a);relation["healthcare"="hospital"](area.a);area["amenity"="hospital"](area.a);area["healthcare"="hospital"](area.a););(._;>;);out;
+http://overpass-api.de/api/map?data=[out:xml];
+(area['ISO3166-1:alpha2'=LU][admin_level=2];)->.a;
+(node["amenity"="hospital"](area.a);
+way["amenity"="hospital"](area.a);
+relation["amenity"="hospital"](area.a);
+node["healthcare"="hospital"](area.a);
+way["healthcare"="hospital"](area.a);
+relation["healthcare"="hospital"](area.a);
+node["building"="hospital"](area.a);
+way["building"="hospital"](area.a);
+relation["building"="hospital"](area.a);
+node["building"="yes"]["healthcare"="hospital"](area.a);
+way["building"="yes"]["healthcare"="hospital"](area.a);
+relation["building"="yes"]["healthcare"="hospital"](area.a););(._;>;);out;
+
+http://overpass-api.de/api/map?data=[out:xml];
+(area['ISO3166-1:alpha2'=LU][admin_level=2];)->.a;
+(nwr["amenity"="hospital"](area.a);
+nwr["healthcare"="hospital"](area.a);
+nwr["building"="hospital"](area.a);
+nwr["building"="yes"]["healthcare"="hospital"](area.a);
+way["building"="yes"]["healthcare"="hospital"](area.a););(._;>;);out;
 
 http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=LU][admin_level=2];)->.a;(node["amenity"="hospital"](area.a);way["amenity"="hospital"](area.a);relation["amenity"="hospital"](area.a);area["amenity"="hospital"](area.a););(._;>;);out;
