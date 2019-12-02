@@ -9,8 +9,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
-
 public class TestsSF {
 
 	public static void main(String[] args) throws Throwable {
@@ -18,7 +16,7 @@ public class TestsSF {
 		//is it possible to perform the following operation: load some GeoTools SimpleFeatures, compute a new field, save the result back.
 
 		//first: create feature type
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType("Point", 3035, "ex:String,nb:int");
+		SimpleFeatureType ft = DataUtilities.createType("", "the_geom:Point:srid=3035,ex:String,nb:int");
 
 		//second: build features with this type
 		ArrayList<SimpleFeature> sfs = new ArrayList<SimpleFeature>();
@@ -39,7 +37,7 @@ public class TestsSF {
 		//test attribute addition
 
 		// is it possible to extend the ft on the fly to add an attribute? No.
-		SimpleFeatureType ft2 = SimpleFeatureUtil.getFeatureType("Point", 3035, "ex:String,nb:int,new:double");
+		SimpleFeatureType ft2 = DataUtilities.createType("", "the_geom:Point:srid=3035,ex:String,nb:int,new:double");
 		System.out.println(ft2);
 		//this works only to select existing attributes, not to add new:
 		//SimpleFeatureType ft3 = DataUtilities.createSubType(ft, new String[]{"new:double"});

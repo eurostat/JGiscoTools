@@ -11,17 +11,13 @@ import org.apache.log4j.Logger;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -158,7 +154,8 @@ public class SimpleFeatureUtil {
 		return getFeatureType(geomType, epsgCode, datast==""? "" : datast.substring(1, datast.length()));
 	}
 
-	//SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X:int,Y:int");
+	//SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X:int,Y:int");
+	//SimpleFeatureType ft = DataUtilities.createType("", "the_geom:Point:srid=3035,ex:String,nb:int");
 	public static SimpleFeatureType getFeatureType(String geomType, int epsgCode, String data) {
 		try {
 			String st = "";
