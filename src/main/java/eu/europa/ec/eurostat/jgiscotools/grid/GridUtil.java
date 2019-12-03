@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.SpatialIndex;
+import org.locationtech.jts.index.strtree.ItemBoundable;
+import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
@@ -180,6 +182,41 @@ public class GridUtil {
 		if(landCellGeom == null) return cellGeom.getFactory().createPolygon();
 		return landCellGeom;
 	}
+
+
+
+
+	public static void assignDistanceToLines(Collection<Feature> cells, String distanceAttribute, STRtree linesInd, int decimalNB) {
+
+		//go through the list of cells
+		for(Feature cell : cells) {
+
+			//get the lines that are nearby the cell
+			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
+			Object[] candidateLines = linesInd.nearestNeighbour(netEnv, cell.getDefaultGeometry(), itemDist, 10);
+
+			//find the closest line and compute minimum distance
+			double minDist = -1;
+			for(Object line : candidateLines) {
+				Geometry lineG = (Geometry)line;
+				double dist = lineG.distance( cell.getDefaultGeometry() );
+				if(minDist<0 || dist<minDist) minDist = dist;
+			}
+
+			//store the distance
+			minDist = Util.round(minDist, decimalNB);
+			cell.setAttribute(distanceAttribute, minDist);
+		}
+
+	}
+	private static ItemDistance itemDist = new ItemDistance() {
+		@Override
+		public double distance(ItemBoundable item1, ItemBoundable item2) {
+			Geometry g1 = (Geometry) item1.getItem();
+			Geometry g2 = (Geometry) item2.getItem();
+			return g1.distance(g2);
+		}
+	};
 
 
 }

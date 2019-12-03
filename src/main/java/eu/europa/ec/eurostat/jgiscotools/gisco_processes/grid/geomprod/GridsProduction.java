@@ -37,6 +37,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
  * - the geostat population figures, for both 2006 and 2011
  * - the countries and nuts regions it intersects
  * - the percentage of the cell which is land area
+ * - minimum distance to border and coast
  * 
  * @author julien Gaffuri
  *
@@ -106,6 +107,23 @@ public class GridsProduction {
 		nuts2.sort(nutsComp);
 		nuts3.sort(nutsComp);
 
+		logger.info("Load coastlines...");
+		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"NUTS_BN_100K_2016.gpkg", CQL.toFilter("COAS_FLAG = 'T'") ));
+
+		logger.info("Index coastlines...");
+		STRtree coastlineIndex = new STRtree();
+		for(Geometry g : coastLines) coastlineIndex.insert(g.getEnvelopeInternal(), g);
+		coastLines = null;
+
+		logger.info("Load country boundaries...");
+		Collection<Geometry> cntBn = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"NUTS_BN_100K_2016.gpkg", CQL.toFilter("STAT_LEVL_='0' AND COAS_FLAG='F'") ));
+
+		logger.info("Index country boundaries...");
+		STRtree cntbnIndex = new STRtree();
+		for(Geometry g : cntBn) cntbnIndex.insert(g.getEnvelopeInternal(), g);
+		cntBn = null;
+
+
 		logger.info("Define output feature type...");
 		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String");
 		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String");
@@ -140,6 +158,11 @@ public class GridsProduction {
 			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);
 			//TODO make LAND_PC a nice decimal number (in gpkg)
+
+			logger.info("Compute distance to coast...");
+			GridUtil.assignDistanceToLines(cells, "DIST_COAST", coastlineIndex, 2);
+			logger.info("Compute distance country boundaries...");
+			GridUtil.assignDistanceToLines(cells, "DIST_BORDE", cntbnIndex, 2);
 
 			{
 				logger.info("Load 2006 population data...");
