@@ -199,7 +199,7 @@ public class GridUtil {
 			double minDist = -1;
 			for(Object line : candidateLines) {
 				Geometry lineG = (Geometry)line;
-				double dist = lineG.distance( cell.getDefaultGeometry() );
+				double dist = lineG.distance( cell.getDefaultGeometry().getCentroid() );
 				if(minDist<0 || dist<minDist) minDist = dist;
 			}
 

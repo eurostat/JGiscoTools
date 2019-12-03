@@ -125,8 +125,8 @@ public class GridsProduction {
 
 
 		logger.info("Define output feature type...");
-		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORDER:double");
-		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORDER:double");
+		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
+		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
 
 
 		//build pan-European grids
@@ -162,7 +162,7 @@ public class GridsProduction {
 			logger.info("Compute distance to coast...");
 			GridUtil.assignDistanceToLines(cells, "DIST_COAST", coastlineIndex, 2);
 			logger.info("Compute distance country boundaries...");
-			GridUtil.assignDistanceToLines(cells, "DIST_BORDER", cntbnIndex, 2);
+			GridUtil.assignDistanceToLines(cells, "DIST_BORD", cntbnIndex, 2);
 
 			{
 				logger.info("Load 2006 population data...");
