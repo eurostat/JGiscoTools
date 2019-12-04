@@ -107,6 +107,9 @@ public class GridsProduction {
 		nuts2.sort(nutsComp);
 		nuts3.sort(nutsComp);
 
+
+		//TODO load file with shetland, islae of man, etc.
+
 		logger.info("Load coastlines...");
 		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"NUTS_BN_100K_2016.gpkg", CQL.toFilter("COAS_FLAG = 'T'") ));
 
@@ -124,6 +127,8 @@ public class GridsProduction {
 		cntBn = null;
 
 
+
+		
 		logger.info("Define output feature type...");
 		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
 		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
@@ -161,8 +166,11 @@ public class GridsProduction {
 
 			logger.info("Compute distance to coast...");
 			GridUtil.assignDistanceToLines(cells, "DIST_COAST", coastlineIndex, 2);
+			//TODO deal with fully maritime cells. Should they have coast dist equal to 0 ?
+
 			logger.info("Compute distance country boundaries...");
 			GridUtil.assignDistanceToLines(cells, "DIST_BORD", cntbnIndex, 2);
+			//TODO exclude vatican and san marino ?
 
 			{
 				logger.info("Load 2006 population data...");

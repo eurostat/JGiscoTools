@@ -186,6 +186,14 @@ public class GridUtil {
 
 
 
+	/**
+	 * For eache cell, compute
+	 * 
+	 * @param cells
+	 * @param distanceAttribute
+	 * @param linesInd
+	 * @param decimalNB
+	 */
 	public static void assignDistanceToLines(Collection<Feature> cells, String distanceAttribute, STRtree linesInd, int decimalNB) {
 
 		//go through the list of cells
@@ -195,7 +203,7 @@ public class GridUtil {
 			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
 			Object[] candidateLines = linesInd.nearestNeighbour(netEnv, cell.getDefaultGeometry(), itemDist, 10);
 
-			//find the closest line and compute minimum distance
+			//find the closest line to the cell center and compute minimum distance
 			double minDist = -1;
 			for(Object line : candidateLines) {
 				Geometry lineG = (Geometry)line;
