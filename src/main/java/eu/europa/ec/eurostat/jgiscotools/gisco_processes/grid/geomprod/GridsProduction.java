@@ -108,7 +108,6 @@ public class GridsProduction {
 		nuts3.sort(nutsComp);
 
 
-		//TODO load file with shetland, islae of man, etc.
 
 		logger.info("Load coastlines...");
 		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CQL.toFilter("COAS_FLAG = 'T'") ));
@@ -170,8 +169,8 @@ public class GridsProduction {
 
 			logger.info("Compute distance country boundaries...");
 			GridUtil.assignDistanceToLines(cells, "DIST_BORD", cntbnIndex, 2);
-			//TODO exclude vatican and san marino ?
-
+			//NB: Vatican and san marino are excluded
+4
 			{
 				logger.info("Load 2006 population data...");
 				StatsIndex pop2006 = getPopulationData(basePath+"pop_grid/pop_grid_2006_"+resKM+"km.csv");
