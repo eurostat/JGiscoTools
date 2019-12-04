@@ -40,7 +40,6 @@ public class HealthCareDataIntegration {
 		//print all attribut labels/keys
 		//System.out.println(erm.iterator().next().getAttributes().keySet());
 		//[NAMA2, NAMA1, NLN1, NLN2, ICC, FCsubtype, GST, F_CODE, geom, inspireId, CAP, NAMN1, beginLifes, NAMN2, SN]
-		//TODO check what SN attribute is
 
 
 		for(Feature f : erm) {
@@ -67,36 +66,38 @@ public class HealthCareDataIntegration {
 
 
 		//load tomtom dataset
-		//TODO
 		ArrayList<Feature> tom = GeoPackageUtil.getFeatures("E:/workspace/gridstat/hospitals/mmpoi_pi_healthcare_7321.gpkg");
 		//System.out.println(tom.size()); 28645
 		//print all attribut labels/keys
 		//System.out.println(tom.iterator().next().getAttributes().keySet());
-		//[BRANDNAME, POSTCODE, RELPOS, CLTRPELID, STNAME, geom, TELNUM, EMAIL, IMPORT, PACKAGE, LOCNAME, CONT_SRC, FEATTYP, LANCD, ID, EXTPOIID, HSNUM, HTTP, NAME, COMPNAME, GAL, CONT_MOD, POSACCUR, SUBCAT, FAXNUM, ADDRPID, TEL_TYPE]
-		
+		//[BRANDNAME, POSTCODE, RELPOS, CLTRPELID, STNAME, ,  LOCNAME, CONT_SRC, FEATTYP, LANCD, ID, EXTPOIID, HSNUM, HTTP, NAME, COMPNAME, 
+		//GAL, CONT_MOD, POSACCUR, SUBCAT, FAXNUM, ADDRPID, TEL_TYPE]
+		//DISCONTINUED ATTRIBUTES: geom, IMPORT, PACKAGE, TELNUM, EMAIL,
+		//TODO FIND OUT WHAT ATTRIBUTES IMPORTANCE, PACKAGE, SERVICE SUB-CATEGORY MEAN; 
+		//GAL: Geocoding Accuracy Level, RELPOS: Relative Position, CONT_SRC: Content Source, CONT_MOD: Content Modified, PACKAGE: Service Group
+ 
 
-/*
-		for(Feature f : erm) {
+
+		for(Feature f : tom) {
 			Feature f_ = new Feature();
 
 			//transform f into f_ according to target schema
 			f_.setDefaultGeometry( f.getDefaultGeometry() );
-			f_.setAttribute("sourceID", f.getAttribute("inspireId"));
-			f_.setAttribute("source", "ERM");
-			f_.setAttribute("name", f.getAttribute("NAMA1"));
-			f_.setAttribute("url", "");
-			String cap = f.getAttribute("CAP").toString();
-			f_.setAttribute("cap", cap.equals("N_P")?"":cap.equals("UNK")?"":cap);
-			f_.setAttribute("ICC", f.getAttribute("ICC"));
-			f_.setAttribute("address", "");
-			f_.setAttribute("beginls", f.getAttribute("beginLifes"));
-			f_.setAttribute("specialty", "");
-			f_.setAttribute("emergency", "AX503".equals(f.getAttribute("F_CODE"))?1:0 );
-			f_.setAttribute("type", f.getAttribute("F_CODE"));
+			f_.setAttribute("sourceID", f.getAttribute("id"));
+			f_.setAttribute("source", "mmpoi_pi");
+			f_.setAttribute("name", f.getAttribute("NAME"));
+			f_.setAttribute("url", f.getAttribute("HTTP"));
+			f_.setAttribute("cap", "");
+			f_.setAttribute("ICC", f.getAttribute("LANCD")); //3-digit
+			f_.setAttribute("address", f.); //STNAME, POSTCODE, HSNUM, LOCNAME 
+			f_.setAttribute("beginls", null);
+			f_.setAttribute("specialty", f.getAttribute("SUBCAT"));
+		//	f_.setAttribute("emergency", "FEATTYP".equals("")); //"cap", cap.equals("N_P")?"":cap.equals("UNK")?"":cap
+			f_.setAttribute("type", f.getAttribute("FEATTYP"));
 
 			out.add(f_);
 		}
-*/
+
 		
 		
 		System.out.println("save output");

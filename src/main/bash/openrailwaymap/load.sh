@@ -47,7 +47,6 @@ done
 
 
 
-
 #universities
 #http://overpass-api.de/api/map?data=[out:xml];(area['ISO3166-1:alpha2'=FR][admin_level=2];)->.a;(node[amenity=university](area.a);way[amenity=university](area.a);relation[amenity=university](area.a););(._;>;);out;
 #http://overpass-api.de/api/map?data=[out:xml];(node[amenity=university];way[amenity=university];relation[amenity=university];);(._;>;);out;
