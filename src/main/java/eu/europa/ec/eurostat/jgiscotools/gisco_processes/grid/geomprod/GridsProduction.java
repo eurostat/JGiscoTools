@@ -170,7 +170,7 @@ public class GridsProduction {
 			logger.info("Compute distance country boundaries...");
 			GridUtil.assignDistanceToLines(cells, "DIST_BORD", cntbnIndex, 2);
 			//NB: Vatican and san marino are excluded
-4
+
 			{
 				logger.info("Load 2006 population data...");
 				StatsIndex pop2006 = getPopulationData(basePath+"pop_grid/pop_grid_2006_"+resKM+"km.csv");
