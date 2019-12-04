@@ -16,9 +16,9 @@ import eu.europa.ec.eurostat.jgiscotools.algo.Partition.GeomType;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.deprecated.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 public class DataPreparation {
 	static Logger logger = Logger.getLogger(DataPreparation.class.getName());
@@ -49,6 +49,7 @@ public class DataPreparation {
 		Collection<Feature> bn = GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA.gpkg");
 		logger.info(bn.size());
 		bn = Decomposer.decomposeFeature(bn, 5000, 200, GeomType.ONLY_LINES, 0);
+		for(Feature f : bn) f.setDefaultGeometry( JTSGeomUtil.toMulti(f.getDefaultGeometry()) );
 		logger.info(bn.size());
 		GeoPackageUtil.save(bn, path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CRS.decode("EPSG:3035"), true);
 
@@ -58,7 +59,7 @@ public class DataPreparation {
 		Collection<Geometry> geoms = Decomposer.decomposeGeometry(bn, 5000, 200, GeomType.ONLY_LINES, 0);
 		logger.info(geoms.size());
 		GeoPackageUtil.saveGeoms(geoms, path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CRS.decode("EPSG:3035"), true);
-		*/
+		 */
 
 		logger.info("End");
 	}
