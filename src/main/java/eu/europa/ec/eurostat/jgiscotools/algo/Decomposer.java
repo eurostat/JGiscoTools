@@ -63,6 +63,8 @@ public class Decomposer {
 			}
 		};
 		Partition.runRecursively(fs, op, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		int i=1;
+		for(Feature f : out) f.setID( f.getID()+"_"+(i++) );
 		return out;
 	}
 
