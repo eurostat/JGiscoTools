@@ -175,6 +175,8 @@ public class SimpleFeatureUtil {
 			String att = ft.getDescriptor(i).getLocalName();
 			if("the_geom".equals(att)) continue;
 			if("GEOM".equals(att)) continue;
+			if("geom".equals(att)) continue;
+			if("Geom".equals(att)) continue;
 			atts.add(att);
 		}
 		return atts.toArray(new String[atts.size()]);
