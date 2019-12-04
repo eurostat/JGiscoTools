@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.geotools.geometry.jts.JTS;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 
@@ -53,7 +54,7 @@ public class Partition {
 
 	private Envelope env;
 	public Envelope getEnvelope() { return env; }
-	public Polygon getExtend() { return JTS.toGeometry(this.env); }
+	public Polygon getExtend(GeometryFactory gf) { return JTS.toGeometry(this.env, gf); }
 
 	private Partition(String code, Collection<Feature> features, PartitionedOperation op, GeomType gt, double midRandom){
 		this(code, op, gt, midRandom, FeatureUtil.getEnvelope(features, 1.001));
@@ -143,7 +144,7 @@ public class Partition {
 	private void cutAndSetFeatures(Collection<Feature> inFeatures) {
 
 		features = new HashSet<Feature>();
-		Polygon extend = getExtend();
+		Polygon extend = null;
 
 		for(Feature f : inFeatures) {
 			Geometry g = f.getDefaultGeometry();
@@ -157,6 +158,7 @@ public class Partition {
 			}
 
 			//check if feature intersects envelope
+			if(extend == null) extend = getExtend(g.getFactory());
 			Geometry inter = g.intersection(extend);
 			if(inter.isEmpty()) continue;
 			if(geomType.equals(GeomType.ONLY_AREAS) && inter.getArea() == 0) continue;
@@ -256,7 +258,7 @@ public class Partition {
 				LOGGER.info(p.toString());
 				double area = p.env.getArea();
 				Feature f = new Feature();
-				f.setDefaultGeometry(p.getExtend());
+				f.setDefaultGeometry(p.getExtend(null));
 				f.setAttribute("code", p.code);
 				f.setAttribute("f_nb", p.features.size());
 				f.setAttribute("c_nb", p.coordinatesNumber);

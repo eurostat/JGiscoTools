@@ -59,12 +59,7 @@ public class Decomposer {
 			@Override
 			public void run(Partition p) {
 				logger.debug(p.getCode());
-				for(Feature f : p.getFeatures()) {
-					Feature f_ = new Feature();
-					f_.setDefaultGeometry(f.getDefaultGeometry());
-					f_.getAttributes().putAll(f.getAttributes());
-					out.add(f_);
-				}
+				out.addAll(p.getFeatures());
 			}
 		};
 		Partition.runRecursively(fs, op, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);

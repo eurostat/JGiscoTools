@@ -84,15 +84,15 @@ public class SimpleFeatureUtil {
 		SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(ft);
 		String[] attNames = getAttributeNames(ft);
 		for(Feature f : fs) {
-			SimpleFeature sf = sfb.buildFeature(f.getID());
+			/*SimpleFeature sf = sfb.buildFeature(f.getID());
 			sf.setDefaultGeometry(f.getDefaultGeometry());
 			for(String attName : attNames)
-				sf.setAttribute(attName, f.getAttribute(attName));
-			/*Object[] data = new Object[attNames.length+1];
+				sf.setAttribute(attName, f.getAttribute(attName));*/
+			Object[] data = new Object[attNames.length+1];
 			data[0] = f.getDefaultGeometry();
 			for(int i=0; i<attNames.length; i++)
 				data[i+1] = f.getAttribute(attNames[i]);
-			SimpleFeature sf = sfb.buildFeature(f.getID(), data);*/
+			SimpleFeature sf = sfb.buildFeature(f.getID(), data);
 			sfc.add(sf);
 		}
 		return sfc;

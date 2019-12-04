@@ -48,7 +48,6 @@ public class DataPreparation {
 		Collection<Feature> bn = GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA.gpkg");
 		logger.info(bn.size());
 		bn = Decomposer.decomposeFeature(bn, 5000, 200, GeomType.ONLY_LINES, 0);
-		logger.info(bn.size());
 		GeoPackageUtil.save(bn, path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CRS.decode("EPSG:3035"), true);
 
 		logger.info("End");
