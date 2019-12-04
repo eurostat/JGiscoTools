@@ -111,7 +111,7 @@ public class GridsProduction {
 		//TODO load file with shetland, islae of man, etc.
 
 		logger.info("Load coastlines...");
-		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"NUTS_BN_100K_2016.gpkg", CQL.toFilter("COAS_FLAG = 'T'") ));
+		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CQL.toFilter("COAS_FLAG = 'T'") ));
 
 		logger.info("Index coastlines...");
 		STRtree coastlineIndex = new STRtree();
@@ -119,7 +119,7 @@ public class GridsProduction {
 		coastLines = null;
 
 		logger.info("Load country boundaries...");
-		Collection<Geometry> cntBn = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"NUTS_BN_100K_2016.gpkg", CQL.toFilter("STAT_LEVL_='0' AND COAS_FLAG='F'") ));
+		Collection<Geometry> cntBn = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CQL.toFilter("COAS_FLAG='F'") ));
 
 		logger.info("Index country boundaries...");
 		STRtree cntbnIndex = new STRtree();
