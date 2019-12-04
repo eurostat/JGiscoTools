@@ -8,13 +8,15 @@ import org.apache.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.jgiscotools.algo.Decomposer;
+import eu.europa.ec.eurostat.jgiscotools.algo.Partition.GeomType;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.deprecated.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 public class DataPreparation {
@@ -25,7 +27,7 @@ public class DataPreparation {
 		logger.info("Start");
 
 		String path = "E:/workspace/gridstat/data/CNTR_100k/";
-
+		/*
 		logger.info("Produce country geometry as the union of different versions");
 		produceCountriesUnionVersions(path);
 
@@ -39,8 +41,15 @@ public class DataPreparation {
 		buffer(path+"CNTR_RG_100K_union_LAEA.shp", path+"CNTR_RG_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
 		logger.info("Produce Europe (" + bufferDistance + ") buffer");
 		buffer(path+"Europe_100K_union_LAEA.shp", path+"Europe_100K_union_buff_" + bufferDistance + "_LAEA.shp", bufferDistance, 4, BufferParameters.CAP_ROUND);
-
+		 */
 		//TODO remove country holes ?
+
+		logger.info("Decompose boundaries");
+		Collection<Feature> bn = GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA.gpkg");
+		logger.info(bn.size());
+		bn = Decomposer.decomposeFeature(bn, 5000, 500, GeomType.ONLY_LINES, 0);
+		logger.info(bn.size());
+		GeoPackageUtil.save(bn, path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CRS.decode("EPSG:3035"), true);
 
 		logger.info("End");
 	}
