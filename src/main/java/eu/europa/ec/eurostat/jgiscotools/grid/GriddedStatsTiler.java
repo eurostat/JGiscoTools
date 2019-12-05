@@ -17,26 +17,10 @@ import eu.europa.ec.eurostat.java4eurostat.io.CSV;
  * 
  * Utility to create tiles of grided statistics.
  * 
- * Notes on zoom levels:
- * - Tiling should be restricted to zoom levels from 0 to 4.
- * - Zoom level 0: level where tiles are composed of 256*256 grid cells
- * - Zoom level 4: level where tiles are composed of 16*16 grid cells
- * - Tile dimension is equal to 2^(8-z) in cell nb, where z is the zoom level
- * - Better visualisation scale for zoom level 0 is the one where 1 pixel screen corresponds to one grid cell
- * 
  * @author Julien Gaffuri
  *
  */
 public class GriddedStatsTiler {
-
-	/**
-	 * @param zoomLevel
-	 * @return The tile size at this zoomLevel, in number of pixels.
-	 */
-	private static int getTileSizeCellNb(int zoomLevel) {
-		return (int) Math.pow(2, 8-zoomLevel);
-	}
-
 
 	/**
 	 * The statistical figures to tile
@@ -44,7 +28,7 @@ public class GriddedStatsTiler {
 	private StatsHypercube sh;
 
 	/**
-	 * The name of the attribute which contains the grid id
+	 * The name of the attribute with the grid id
 	 */
 	private String gridIdAtt = "GRD_ID";
 
@@ -63,9 +47,9 @@ public class GriddedStatsTiler {
 	public Collection<GridStatTile> getTiles() { return tiles; }
 
 	private class GridStatTile {
-		public int x,y,z;
+		public int x,y,s;
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
-		GridStatTile(int x, int y, int z) { this.x=x; this.y=y; this.z=z; }
+		GridStatTile(int x, int y, int s) { this.x=x; this.y=y; this.s=s; }
 	}
 
 
@@ -79,17 +63,17 @@ public class GriddedStatsTiler {
 
 
 	/**
-	 * Build the tiles for zoom levels 0 to 4.
+	 * Build the tiles for tile sizes from 2^5 to 2^8.
 	 */
-	public void createTiles() { createTiles(0,4); }
+	public void createTiles() { createTiles(5,8); }
 
 	/**
-	 * Build the tiles for several zoom levels.
+	 * Build the tiles for several tile sizes.
 	 * 
-	 * @param minZoomLevel
-	 * @param maxZoomLevel
+	 * @param minPowTwo
+	 * @param maxPowTwo
 	 */
-	public void createTiles(int minZoomLevel, int maxZoomLevel) {
+	public void createTiles(int minPowTwo, int maxPowTwo) {
 		//create tile dictionnary tileId -> tile
 		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
 
@@ -102,21 +86,22 @@ public class GriddedStatsTiler {
 			double y = cell.getLowerLeftCornerPositionY();
 			int resolution = cell.getResolution();
 
-			for(int z=minZoomLevel; z<=maxZoomLevel; z++) {
+			for(int pow=minPowTwo; pow<=maxPowTwo; pow++) {
 				//get id of the tile the cell should belong to
 
 				//compute tile size
-				int tileSize = resolution * getTileSizeCellNb(z);
+				int tileSizePix = (int)Math.pow(2, pow);
+				int tileSizeM = resolution * tileSizePix;
 
 				//find tile position
-				int xt = (int)( (x-originPoint.x)/tileSize );
-				int yt = (int)( (y-originPoint.y)/tileSize );
+				int xt = (int)( (x-originPoint.x)/tileSizeM );
+				int yt = (int)( (y-originPoint.y)/tileSizeM );
 
 				//get tile. If it does not exists, create it.
-				String tileId = z+"_"+xt+"_"+yt;
+				String tileId = tileSizePix+"_"+xt+"_"+yt;
 				GridStatTile tile = tiles_.get(tileId);
 				if(tile == null) {
-					tile = new GridStatTile(xt, yt, z);
+					tile = new GridStatTile(xt, yt, tileSizePix);
 					tiles_.put(tileId, tile);
 				}
 
@@ -137,7 +122,8 @@ public class GriddedStatsTiler {
 
 		for(GridStatTile t : tiles) {
 			//compute tile size
-			int ts = getTileSizeCellNb(t.z);
+			//int ts = getTileSizeCellNb(t.z);
+			int ts = t.s;
 
 			//build sh for the tile
 			StatsHypercube sht = new StatsHypercube(sh.getDimLabels());
@@ -176,7 +162,8 @@ public class GriddedStatsTiler {
 			//save as csv file
 			//TODO be sure order is x,y,val
 			//TODO handle case of more columns, when using multidimensional stats
-			CSV.save(sht, "val", folderPath + "/" +t.z+ "/" +t.x+ "/" +t.y+ ".csv");
+			//TODO add json with service information
+			CSV.save(sht, "val", folderPath + "/" +t.s+ "/" +t.x+ "/" +t.y+ ".csv");
 		}
 	}
 
