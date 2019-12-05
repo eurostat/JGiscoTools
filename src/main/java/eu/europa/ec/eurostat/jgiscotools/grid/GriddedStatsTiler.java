@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
@@ -51,7 +52,6 @@ public class GriddedStatsTiler {
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
 		GridStatTile(int x, int y, int s) { this.x=x; this.y=y; this.s=s; }
 	}
-
 
 	public GriddedStatsTiler(String csvFilePath, String statAttr) {
 		this( CSV.load(csvFilePath, statAttr) );
@@ -165,6 +165,30 @@ public class GriddedStatsTiler {
 			//TODO add json with service information
 			CSV.save(sht, "val", folderPath + "/" +t.s+ "/" +t.x+ "/" +t.y+ ".csv");
 		}
+	}
+
+
+
+
+
+	class TilesInfo {
+		//for each s, min/max x/y
+		HashMap<Integer,Envelope> bounds = new HashMap<>();
+		int resolution = -1;
+		int minS, maxS;
+		String crs;
+		double minValue, maxValue;
+		double[] percentiles;
+	}
+
+
+	public TilesInfo getTilesInfo() {
+		TilesInfo ti = new TilesInfo();
+
+		for(GridStatTile t : getTiles()) {
+			//TODO
+		}
+		return ti;
 	}
 
 }
