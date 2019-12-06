@@ -31,7 +31,7 @@ public class PopGridTiling {
 				logger.info("Save...");
 				String outpath = basePath+"pop_grid_tiled/pop_grid_"+year+"_"+resKM+"km/";
 				gst.saveCSV(outpath );
-				gst.saveInfosJSON(outpath, "Population in "+year);
+				gst.saveTilingInfoJSON(outpath, "Population in "+year);
 			}
 		}
 		logger.info("End");

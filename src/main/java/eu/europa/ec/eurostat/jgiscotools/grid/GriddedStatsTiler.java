@@ -123,7 +123,7 @@ public class GriddedStatsTiler {
 
 		tilesInfo = null;
 		if(createEmptyTiles) {
-			Envelope bn = getTilesInfo().bounds;
+			Envelope bn = getTilesInfo().tilingBounds;
 			for(int xt=(int)bn.getMinX(); xt<=bn.getMaxX(); xt++) {
 				for(int yt=(int)bn.getMinY(); yt<=bn.getMaxY(); yt++) {
 					String tileId = xt+"_"+yt;
@@ -203,23 +203,21 @@ public class GriddedStatsTiler {
 	}
 
 	public class TilesInfo {
-		Envelope bounds = null;
+		Envelope tilingBounds = null;
 		public int resolution = -1;
 		public String ePSGCode;
-		public double minStatValue = Double.MAX_VALUE, maxStatValue = -Double.MAX_VALUE;
+		public double minValue = Double.MAX_VALUE, maxValue = -Double.MAX_VALUE;
 		public double[] percentiles;
-		public double[] percentilesNoZero;
 	}
 
 	private TilesInfo computeTilesInfo() {
 		tilesInfo = new TilesInfo();
 		Collection<Double> vals = new ArrayList<>();
-		Collection<Double> valsNoZero = new ArrayList<>();
 
 		for(GridStatTile t : getTiles()) {
 			//set x/y envelope
-			if(tilesInfo.bounds==null) tilesInfo.bounds = new Envelope(new Coordinate(t.x, t.y));
-			else tilesInfo.bounds.expandToInclude(t.x, t.y);
+			if(tilesInfo.tilingBounds==null) tilesInfo.tilingBounds = new Envelope(new Coordinate(t.x, t.y));
+			else tilesInfo.tilingBounds.expandToInclude(t.x, t.y);
 
 			//set resolution and CRS
 			if(tilesInfo.resolution == -1 && t.stats.size()>0) {
@@ -230,43 +228,36 @@ public class GriddedStatsTiler {
 
 			//set min/max stat values
 			if(t.stats.size()>0) {
-				tilesInfo.maxStatValue = Math.max(t.getMaxValue().value, tilesInfo.maxStatValue);
-				tilesInfo.minStatValue = Math.min(t.getMinValue().value, tilesInfo.minStatValue);
+				tilesInfo.maxValue = Math.max(t.getMaxValue().value, tilesInfo.maxValue);
+				tilesInfo.minValue = Math.min(t.getMinValue().value, tilesInfo.minValue);
 			}
 
 			//store values
-			for(Stat s : t.stats) {
-				vals.add(s.value);
-				if(s.value !=0) valsNoZero.add(s.value);
-			}
-
+			for(Stat s : t.stats) vals.add(s.value);
 		}
 
 		tilesInfo.percentiles = StatsUtil.getQuantiles(vals, 99);
-		tilesInfo.percentilesNoZero = StatsUtil.getQuantiles(valsNoZero, 99);
 
 		return tilesInfo;
 	}
 
-	public void saveInfosJSON(String outpath, String description) {
+	public void saveTilingInfoJSON(String outpath, String description) {
 		TilesInfo ti = getTilesInfo();
 		JSONObject json = new JSONObject();
-		json.put("resolution", ti.resolution);
-		json.put("tileSize", this.tileResolutionPix);
+		json.put("resolutionGeo", ti.resolution);
+		json.put("tileSizeCell", this.tileResolutionPix);
 		json.put("crs", ti.ePSGCode);
-		json.put("min", ti.minStatValue);
-		json.put("max", ti.maxStatValue);
+		json.put("minValue", ti.minValue);
+		json.put("maxValue", ti.maxValue);
 		JSONObject bn = new JSONObject();
-		bn.put("minX", (int)ti.bounds.getMinX());
-		bn.put("maxX", (int)ti.bounds.getMaxX());
-		bn.put("minY", (int)ti.bounds.getMinY());
-		bn.put("maxY", (int)ti.bounds.getMaxY());
-		json.put("tileBounds", bn);
+		bn.put("minX", (int)ti.tilingBounds.getMinX());
+		bn.put("maxX", (int)ti.tilingBounds.getMaxX());
+		bn.put("minY", (int)ti.tilingBounds.getMinY());
+		bn.put("maxY", (int)ti.tilingBounds.getMaxY());
+		json.put("tilingBounds", bn);
 
-		JSONArray perc = new JSONArray();
-		json.put("perc", perc);
-		perc = new JSONArray();
-		json.put("percNZ", perc);
+		JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
+		json.put("percentiles", p);
 
 		System.out.println(json.toString());
 	}
