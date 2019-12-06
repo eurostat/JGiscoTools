@@ -172,13 +172,14 @@ public class GriddedStatsTiler {
 
 
 	class TilesInfo {
+		public String description;
 		//for each s, min/max x/y
-		HashMap<Integer,Envelope> bounds = new HashMap<>();
-		int resolution = -1;
-		int minS, maxS;
-		String crs;
-		double minValue, maxValue;
-		double[] percentiles;
+		public HashMap<Integer,Envelope> bounds = new HashMap<>();
+		public int resolution = -1;
+		public int minS, maxS;
+		public String crs;
+		public double minValue, maxValue;
+		public double[] percentiles;
 	}
 
 
@@ -186,7 +187,13 @@ public class GriddedStatsTiler {
 		TilesInfo ti = new TilesInfo();
 
 		for(GridStatTile t : getTiles()) {
-			//TODO
+			Envelope bn = ti.bounds.get(t.s);
+			if(bn==null) {bn = new Envelope(); ti.bounds.put(t.s, bn); }
+			bn.expandToInclude(t.x, t.y);
+
+			if(ti.resolution == -1) {
+				//TODO
+			}
 		}
 		return ti;
 	}
