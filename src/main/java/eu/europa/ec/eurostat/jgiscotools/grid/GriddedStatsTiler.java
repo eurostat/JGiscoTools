@@ -126,6 +126,8 @@ public class GriddedStatsTiler {
 			tile.stats.add(s);
 		}
 
+		tiles = tiles_.values();
+
 		tilesInfo = null;
 		if(createEmptyTiles) {
 			Envelope bn = getTilesInfo().tilingBounds;
