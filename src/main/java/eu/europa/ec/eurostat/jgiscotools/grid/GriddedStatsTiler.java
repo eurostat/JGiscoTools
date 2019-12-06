@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 
@@ -193,15 +195,14 @@ public class GriddedStatsTiler {
 
 
 
-	TilesInfo tilesInfo = null;
+	private TilesInfo tilesInfo = null;
 	public TilesInfo getTilesInfo() {
 		if (tilesInfo == null)
 			computeTilesInfo();
 		return tilesInfo;
 	}
 
-	class TilesInfo {
-		public String description;
+	public class TilesInfo {
 		Envelope bounds = null;
 		public int resolution = -1;
 		public String ePSGCode;
@@ -245,6 +246,29 @@ public class GriddedStatsTiler {
 		tilesInfo.percentilesNoZero = StatsUtil.getQuantiles(valsNoZero, 99);
 
 		return tilesInfo;
+	}
+
+	public void saveInfosJSON(String outpath, String description) {
+		TilesInfo ti = getTilesInfo();
+		JSONObject json = new JSONObject();
+		json.put("resolution", ti.resolution);
+		json.put("tileSize", this.tileResolutionPix);
+		json.put("crs", ti.ePSGCode);
+		json.put("min", ti.minStatValue);
+		json.put("max", ti.maxStatValue);
+		JSONObject bn = new JSONObject();
+		bn.put("minX", (int)ti.bounds.getMinX());
+		bn.put("maxX", (int)ti.bounds.getMaxX());
+		bn.put("minY", (int)ti.bounds.getMinY());
+		bn.put("maxY", (int)ti.bounds.getMaxY());
+		json.put("tileBounds", bn);
+
+		JSONArray perc = new JSONArray();
+		json.put("perc", perc);
+		perc = new JSONArray();
+		json.put("percNZ", perc);
+
+		System.out.println(json.toString());
 	}
 
 }

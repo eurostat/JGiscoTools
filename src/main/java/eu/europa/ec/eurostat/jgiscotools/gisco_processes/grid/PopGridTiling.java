@@ -24,12 +24,14 @@ public class PopGridTiling {
 				logger.info(sh.stats.size() + " values loaded");
 
 				logger.info("Build tiles...");
-				GriddedStatsTiler gst = new GriddedStatsTiler(sh);
-				gst.createTiles();
+				GriddedStatsTiler gst = new GriddedStatsTiler(sh, 256);
+				gst.createTiles(false);
 				logger.info(gst.getTiles().size() + " tiles created");
 
-				logger.info("Save tiles...");
-				gst.saveCSV(basePath+"pop_grid_tiled/pop_grid_"+year+"_"+resKM+"km/");
+				logger.info("Save...");
+				String outpath = basePath+"pop_grid_tiled/pop_grid_"+year+"_"+resKM+"km/";
+				gst.saveCSV(outpath );
+				gst.saveInfosJSON(outpath, "Population in "+year);
 			}
 		}
 		logger.info("End");
