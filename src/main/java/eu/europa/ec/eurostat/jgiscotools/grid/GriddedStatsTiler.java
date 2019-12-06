@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -195,7 +196,19 @@ public class GriddedStatsTiler {
 			//TODO be sure order is x,y,val
 			//TODO handle case of more columns, when using multidimensional stats
 			//TODO add json with service information
-			CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv");
+			CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", new Comparator<String>() {
+				@Override
+				public int compare(String s1, String s2) {
+					if(s1.equals(s2)) return 0;
+					if(s1.equals("x")) return -1;
+					if(s2.equals("x")) return 1;
+					if(s1.equals("y")) return -1;
+					if(s2.equals("y")) return 1;
+					if(s1.equals("val")) return -1;
+					if(s2.equals("val")) return 1;
+					return 0;
+				}
+			});
 		}
 	}
 
