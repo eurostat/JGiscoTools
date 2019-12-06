@@ -119,12 +119,20 @@ public class GriddedStatsTiler {
 			tile.stats.add(s);
 		}
 
-		/*tilesInfo = null;
+		tilesInfo = null;
 		if(createEmptyTiles) {
-			bn = getTilesInfo().bounds.
-					for(int x=getTilesInfo().bounds.);
-							//TODO
-		}*/
+			Envelope bn = getTilesInfo().bounds;
+			for(int xt=(int)bn.getMinX(); xt<=bn.getMaxX(); xt++) {
+				for(int yt=(int)bn.getMinY(); yt<=bn.getMaxY(); yt++) {
+					String tileId = xt+"_"+yt;
+					GridStatTile tile = tiles_.get(tileId);
+					if(tile == null) {
+						tile = new GridStatTile(xt, yt);
+						tiles_.put(tileId, tile);
+					}
+				}
+			}
+		}
 
 		tiles = tiles_.values();
 	}
