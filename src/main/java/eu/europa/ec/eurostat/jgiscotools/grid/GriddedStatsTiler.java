@@ -13,10 +13,11 @@ import org.locationtech.jts.geom.Envelope;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
 
 /**
  * 
- * Utility to create tiles of grided statistics.
+ * Utility to create tiles of gridded statistics.
  * 
  * @author Julien Gaffuri
  *
@@ -41,6 +42,12 @@ public class GriddedStatsTiler {
 	 */
 	private Coordinate originPoint = new Coordinate(0,0);
 
+
+	/**
+	 * The tile resolution, in number of grid cells.
+	 */
+	private int tileResolutionPix = 256;
+
 	/**
 	 * The computed tiles.
 	 */
@@ -48,24 +55,30 @@ public class GriddedStatsTiler {
 	public Collection<GridStatTile> getTiles() { return tiles; }
 
 	private class GridStatTile {
-		public int x,y,s;
+		public int x,y;
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
-		GridStatTile(int x, int y, int s) { this.x=x; this.y=y; this.s=s; }
+		GridStatTile(int x, int y) { this.x=x; this.y=y; }
+		public Stat getMaxValue() {
+			Stat s_ = null;
+			for(Stat s : stats) if (s_==null || s.value > s_.value) s_=s;
+			return s_;
+		}
+		public Stat getMinValue() {
+			Stat s_ = null;
+			for(Stat s : stats) if (s_==null || s.value < s_.value) s_=s;
+			return s_;
+		}
 	}
 
-	public GriddedStatsTiler(String csvFilePath, String statAttr) {
-		this( CSV.load(csvFilePath, statAttr) );
+	public GriddedStatsTiler(String csvFilePath, String statAttr, int tileResolutionPix) {
+		this( CSV.load(csvFilePath, statAttr), tileResolutionPix );
 	}
 
-	public GriddedStatsTiler(StatsHypercube sh) {
+	public GriddedStatsTiler(StatsHypercube sh, int tileResolutionPix) {
 		this.sh = sh;
+		this.tileResolutionPix = tileResolutionPix;
 	}
 
-
-	/**
-	 * Build the tiles for tile sizes from 2^5 to 2^8.
-	 */
-	public void createTiles() { createTiles(5,8); }
 
 	/**
 	 * Build the tiles for several tile sizes.
@@ -73,7 +86,7 @@ public class GriddedStatsTiler {
 	 * @param minPowTwo
 	 * @param maxPowTwo
 	 */
-	public void createTiles(int minPowTwo, int maxPowTwo) {
+	public void createTiles(boolean createEmptyTiles) {
 		//create tile dictionnary tileId -> tile
 		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
 
@@ -86,29 +99,33 @@ public class GriddedStatsTiler {
 			double y = cell.getLowerLeftCornerPositionY();
 			int resolution = cell.getResolution();
 
-			for(int pow=minPowTwo; pow<=maxPowTwo; pow++) {
-				//get id of the tile the cell should belong to
 
-				//compute tile size
-				int tileSizePix = (int)Math.pow(2, pow);
-				int tileSizeM = resolution * tileSizePix;
+			//compute tile size, in geo unit
+			int tileSizeM = resolution * this.tileResolutionPix;
 
-				//find tile position
-				int xt = (int)( (x-originPoint.x)/tileSizeM );
-				int yt = (int)( (y-originPoint.y)/tileSizeM );
+			//find tile position
+			int xt = (int)( (x-originPoint.x)/tileSizeM );
+			int yt = (int)( (y-originPoint.y)/tileSizeM );
 
-				//get tile. If it does not exists, create it.
-				String tileId = tileSizePix+"_"+xt+"_"+yt;
-				GridStatTile tile = tiles_.get(tileId);
-				if(tile == null) {
-					tile = new GridStatTile(xt, yt, tileSizePix);
-					tiles_.put(tileId, tile);
-				}
-
-				//add cell to tile
-				tile.stats.add(s);
+			//get tile. If it does not exists, create it.
+			String tileId = xt+"_"+yt;
+			GridStatTile tile = tiles_.get(tileId);
+			if(tile == null) {
+				tile = new GridStatTile(xt, yt);
+				tiles_.put(tileId, tile);
 			}
+
+			//add cell to tile
+			tile.stats.add(s);
 		}
+
+		/*tilesInfo = null;
+		if(createEmptyTiles) {
+			bn = getTilesInfo().bounds.
+					for(int x=getTilesInfo().bounds.);
+							//TODO
+		}*/
+
 		tiles = tiles_.values();
 	}
 
@@ -121,10 +138,6 @@ public class GriddedStatsTiler {
 	public void saveCSV(String folderPath) {
 
 		for(GridStatTile t : tiles) {
-			//compute tile size
-			//int ts = getTileSizeCellNb(t.z);
-			int ts = t.s;
-
 			//build sh for the tile
 			StatsHypercube sht = new StatsHypercube(sh.getDimLabels());
 			sht.dimLabels.add("x");
@@ -141,8 +154,8 @@ public class GriddedStatsTiler {
 				double r = cell.getResolution();
 
 				//compute cell position in tile space
-				x = x/r - ts*t.x;
-				y = y/r - ts*t.y;
+				x = x/r - t.x*tileResolutionPix;
+				y = y/r - t.y*tileResolutionPix;
 
 				/*/check x,y values. Should be within [0,tileSizeCellNb-1]
 				if(x==0) System.out.println("x=0 found");
@@ -159,43 +172,71 @@ public class GriddedStatsTiler {
 				sht.stats.add(s_);
 			}
 
+			//TODO empty tiles: make empty file
+
 			//save as csv file
 			//TODO be sure order is x,y,val
 			//TODO handle case of more columns, when using multidimensional stats
 			//TODO add json with service information
-			CSV.save(sht, "val", folderPath + "/" +t.s+ "/" +t.x+ "/" +t.y+ ".csv");
+			CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv");
 		}
 	}
 
 
 
 
+	TilesInfo tilesInfo = null;
+	public TilesInfo getTilesInfo() {
+		if (tilesInfo == null)
+			computeTilesInfo();
+		return tilesInfo;
+	}
 
 	class TilesInfo {
 		public String description;
-		//for each s, min/max x/y
-		public HashMap<Integer,Envelope> bounds = new HashMap<>();
+		Envelope bounds = null;
 		public int resolution = -1;
-		public int minS, maxS;
-		public String crs;
-		public double minValue, maxValue;
+		public String ePSGCode;
+		public double minStatValue = Double.MAX_VALUE, maxStatValue = -Double.MAX_VALUE;
 		public double[] percentiles;
+		public double[] percentilesNoZero;
 	}
 
-
-	public TilesInfo getTilesInfo() {
-		TilesInfo ti = new TilesInfo();
+	private TilesInfo computeTilesInfo() {
+		tilesInfo = new TilesInfo();
+		Collection<Double> vals = new ArrayList<>();
+		Collection<Double> valsNoZero = new ArrayList<>();
 
 		for(GridStatTile t : getTiles()) {
-			Envelope bn = ti.bounds.get(t.s);
-			if(bn==null) {bn = new Envelope(); ti.bounds.put(t.s, bn); }
-			bn.expandToInclude(t.x, t.y);
+			//set x/y envelope
+			if(tilesInfo.bounds==null) tilesInfo.bounds = new Envelope(new Coordinate(t.x, t.y));
+			else tilesInfo.bounds.expandToInclude(t.x, t.y);
 
-			if(ti.resolution == -1) {
-				//TODO
+			//set resolution and CRS
+			if(tilesInfo.resolution == -1 && t.stats.size()>0) {
+				GridCell cell = new GridCell( t.stats.get(0).dims.get(gridIdAtt) );
+				tilesInfo.resolution = cell.getResolution();
+				tilesInfo.ePSGCode = cell.getEpsgCode();
 			}
+
+			//set min/max stat values
+			if(t.stats.size()>0) {
+				tilesInfo.maxStatValue = Math.max(t.getMaxValue().value, tilesInfo.maxStatValue);
+				tilesInfo.minStatValue = Math.min(t.getMinValue().value, tilesInfo.minStatValue);
+			}
+
+			//store values
+			for(Stat s : t.stats) {
+				vals.add(s.value);
+				if(s.value !=0) valsNoZero.add(s.value);
+			}
+
 		}
-		return ti;
+
+		tilesInfo.percentiles = StatsUtil.getQuantiles(vals, 99);
+		tilesInfo.percentilesNoZero = StatsUtil.getQuantiles(valsNoZero, 99);
+
+		return tilesInfo;
 	}
 
 }
