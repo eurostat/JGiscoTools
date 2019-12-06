@@ -195,14 +195,14 @@ public class GriddedStatsTiler {
 
 
 
-	private TilesInfo tilesInfo = null;
-	public TilesInfo getTilesInfo() {
+	private TilingInfo tilesInfo = null;
+	public TilingInfo getTilesInfo() {
 		if (tilesInfo == null)
 			computeTilesInfo();
 		return tilesInfo;
 	}
 
-	public class TilesInfo {
+	public class TilingInfo {
 		Envelope tilingBounds = null;
 		public int resolution = -1;
 		public String ePSGCode;
@@ -210,8 +210,8 @@ public class GriddedStatsTiler {
 		public double[] percentiles;
 	}
 
-	private TilesInfo computeTilesInfo() {
-		tilesInfo = new TilesInfo();
+	private TilingInfo computeTilesInfo() {
+		tilesInfo = new TilingInfo();
 		Collection<Double> vals = new ArrayList<>();
 
 		for(GridStatTile t : getTiles()) {
@@ -242,7 +242,7 @@ public class GriddedStatsTiler {
 	}
 
 	public void saveTilingInfoJSON(String outpath, String description) {
-		TilesInfo ti = getTilesInfo();
+		TilingInfo ti = getTilesInfo();
 		JSONObject json = new JSONObject();
 		json.put("resolutionGeo", ti.resolution);
 		json.put("tileSizeCell", this.tileResolutionPix);
