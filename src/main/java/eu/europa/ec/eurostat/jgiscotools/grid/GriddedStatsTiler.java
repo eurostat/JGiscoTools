@@ -3,6 +3,10 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.grid;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,6 +20,7 @@ import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
+import eu.europa.ec.eurostat.java4eurostat.util.Util;
 
 /**
  * 
@@ -243,12 +248,16 @@ public class GriddedStatsTiler {
 
 	public void saveTilingInfoJSON(String outpath, String description) {
 		TilingInfo ti = getTilesInfo();
+
+		//build JSON object
 		JSONObject json = new JSONObject();
+
 		json.put("resolutionGeo", ti.resolution);
 		json.put("tileSizeCell", this.tileResolutionPix);
 		json.put("crs", ti.ePSGCode);
 		json.put("minValue", ti.minValue);
 		json.put("maxValue", ti.maxValue);
+
 		JSONObject bn = new JSONObject();
 		bn.put("minX", (int)ti.tilingBounds.getMinX());
 		bn.put("maxX", (int)ti.tilingBounds.getMaxX());
@@ -259,7 +268,15 @@ public class GriddedStatsTiler {
 		JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
 		json.put("percentiles", p);
 
-		System.out.println(json.toString());
+		//save
+		try {
+			File f = Util.getFile(outpath+"/info.json", true, true);
+			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
+			bw.write(json.toString());
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
