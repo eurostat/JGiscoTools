@@ -224,7 +224,7 @@ public class GriddedStatsTiler {
 		public String ePSGCode;
 		public double minValue = Double.MAX_VALUE, maxValue = -Double.MAX_VALUE;
 		public double[] percentiles;
-		public double average;
+		public double averageValue;
 	}
 
 	private TilingInfo computeTilesInfo() {
@@ -258,7 +258,7 @@ public class GriddedStatsTiler {
 		//get average
 		double sum = 0;
 		for(double v : vals) sum += v;
-		tilesInfo.average = sum/vals.size();
+		tilesInfo.averageValue = sum/vals.size();
 
 		return tilesInfo;
 	}
@@ -274,7 +274,7 @@ public class GriddedStatsTiler {
 		json.put("crs", ti.ePSGCode);
 		json.put("minValue", ti.minValue);
 		json.put("maxValue", ti.maxValue);
-		json.put("average", ti.average);
+		json.put("averageValue", ti.averageValue);
 
 		JSONObject bn = new JSONObject();
 		bn.put("minX", (int)ti.tilingBounds.getMinX());
