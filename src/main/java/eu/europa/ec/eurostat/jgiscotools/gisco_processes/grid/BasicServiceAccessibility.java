@@ -51,8 +51,10 @@ public class BasicServiceAccessibility {
 
 
 		logger.info("Load network sections...");
+		//test tomtom
+
+		
 		//ERM
-		//TODO show map of transport network (EGM/ERM) based on speed
 		//TODO add other transport networks (ferry, etc?)
 		//EXS Existence Category - RST Road Surface Type
 		Filter fil = CQL.toFilter("((EXS=28 OR EXS=0) AND (RST=1 OR RST=0))" + (cnt==null?"":" AND (ICC = '"+cnt+"')") );
@@ -63,6 +65,13 @@ public class BasicServiceAccessibility {
 		networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil) );
 		logger.info(networkSections.size() + " sections loaded.");
 
+		//tomtom
+		/*
+		U:/GISCO/archive/road-network/raw-deliveries/tomtom/2018/EETN2018/EU/eur2018_12_000/shpd/mn/lux/lux/luxlux___________00.shp
+		0 to 5
+		U:/GISCO/archive/road-network/raw-deliveries/tomtom/2018/EETN2018/EU/eur2018_12_000/shpd/mn/lux/lux/luxlux___________mn.shp
+		MINUTES
+		*/
 
 		//- GST = GF0306: Rescue service
 		//- GST = GF0703: Hospital service
