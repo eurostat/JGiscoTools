@@ -37,7 +37,8 @@ public class BasicServiceAccessibility {
 
 		String basePath = "E:/workspace/gridstat/";
 		String outPath = basePath + "accessibility_output/";
-		String gridpath = basePath + "data/grid/";
+		String gridpath = basePath + "grid/";
+		String egpath = "E:/dissemination/shared-data/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 
 		//set the country id (set to null for all countries)
@@ -58,11 +59,10 @@ public class BasicServiceAccessibility {
 		//TODO add other transport networks (ferry, etc?)
 		//EXS Existence Category - RST Road Surface Type
 		Filter fil = CQL.toFilter("((EXS=28 OR EXS=0) AND (RST=1 OR RST=0))" + (cnt==null?"":" AND (ICC = '"+cnt+"')") );
-		//Collection<Feature> networkSections = GeoPackageUtil.getFeatures(basePath+"data/RoadL.gpkg", fil);
-		String egpath = "E:/dissemination/shared-data/";
-		Collection<Feature> networkSections = SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
-		networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil) );
-		networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil) );
+		Collection<Feature> networkSections = GeoPackageUtil.getFeatures(egpath+ "ERM/gpkg/ERM_2019.1_LAEA/RoadL.gpkg", fil);
+		//Collection<Feature> networkSections = SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
+		//networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil) );
+		//networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil) );
 		logger.info(networkSections.size() + " sections loaded.");
 
 		//tomtom
@@ -92,7 +92,7 @@ public class BasicServiceAccessibility {
 			String poiFilter = ((Object[])accMap)[1].toString();
 
 			logger.info("Load POIs " + poiLabel + "...");
-			ArrayList<Feature> pois = GeoPackageUtil.getFeatures(basePath+"/data/GovservP.gpkg", CQL.toFilter("("+poiFilter +")"+ (cnt==null?"":" AND (ICC = '"+cnt+"')") ));
+			ArrayList<Feature> pois = GeoPackageUtil.getFeatures(egpath+"ERM/gpkg/ERM_2019.1_LAEA/GovservP.gpkg", CQL.toFilter("("+poiFilter +")"+ (cnt==null?"":" AND (ICC = '"+cnt+"')") ));
 			logger.info(pois.size() + " POIs");
 
 
