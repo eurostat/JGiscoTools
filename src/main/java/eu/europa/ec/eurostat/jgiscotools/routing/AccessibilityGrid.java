@@ -53,8 +53,6 @@ public class AccessibilityGrid {
 
 	//threshol values to compute accessibility indicators
 	public double minDurAccMinT = 15;
-	public double maxDurAccMinT = 30;
-	public double popAccMinT = 100;
 
 	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;
@@ -98,13 +96,14 @@ public class AccessibilityGrid {
 
 
 
-	public AccessibilityGrid(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, Collection<Feature> networkSections, String populationAtt) {
+	public AccessibilityGrid(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, Collection<Feature> networkSections, String populationAtt, double minDurAccMinT) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.resM = resM;
 		this.pois = pois;
 		this.networkSections = networkSections;
 		this.populationAtt = populationAtt;
+		this.minDurAccMinT = minDurAccMinT;
 	}
 
 
@@ -121,8 +120,7 @@ public class AccessibilityGrid {
 		return networkSectionsInd;
 	}
 
-
-	//a spatial index for POIs
+	//a spatial index for the POIs
 	private STRtree poisInd = null;
 	private STRtree getPoisInd() {
 		if(poisInd == null) {
@@ -209,9 +207,9 @@ public class AccessibilityGrid {
 				Object pop = cell.getAttribute(populationAtt);
 				if(pop != null) {
 					population = (int)Double.parseDouble(pop.toString());
-					d.put("pop_ind", "" + Util.round(getPopulationIndicator(population, popAccMinT), 3));
+					//d.put("pop_ind", "" + Util.round(getPopulationIndicator(population, popAccMinT), 3));
 				} else
-					d.put("pop_ind", "" + "-999");
+					;//d.put("pop_ind", "" + "-999");
 			}
 
 
@@ -222,16 +220,16 @@ public class AccessibilityGrid {
 			if(oN == null) {
 				logger.error("Could not find graph node around cell center: " + oC);
 				d.put("dur_min", "-10");
-				d.put("dur_ind", "-10");
-				if(populationAtt != null) { d.put("acc_ind", "-10"); d.put("dmp_ind", "-10"); }
+				//d.put("dur_ind", "-10");
+				if(populationAtt != null) { /*d.put("acc_ind", "-10");*/ d.put("dmp_ind", "-10"); }
 				cellData.add(d);
 				continue;
 			}
 			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
 				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
 				d.put("dur_min", "-20");
-				d.put("dur_ind", "-20");
-				if(populationAtt != null) { d.put("acc_ind", "-20"); d.put("dmp_ind", "-20"); }
+				//d.put("dur_ind", "-20");
+				if(populationAtt != null) { /*d.put("acc_ind", "-20");*/ d.put("dmp_ind", "-20"); }
 				cellData.add(d);
 				continue;
 			}
@@ -278,8 +276,8 @@ public class AccessibilityGrid {
 			if(durMin > 0 && pMin == null) {
 				if(logger.isDebugEnabled()) logger.debug("Could not find path to POI for cell " + cellId + " around " + oC);
 				d.put("dur_min", "-30");
-				d.put("dur_ind", "-30");
-				if(populationAtt != null) { d.put("acc_ind", "-30"); d.put("dmp_ind", "-30"); }
+				//d.put("dur_ind", "-30");
+				if(populationAtt != null) { /*d.put("acc_ind", "-30");*/ d.put("dmp_ind", "-30"); }
 				cellData.add(d);
 				continue;
 			}
@@ -287,8 +285,8 @@ public class AccessibilityGrid {
 
 			//store data at grid cell level
 			d.put("dur_min", "" + durMin);
-			d.put("dur_ind", "" + Util.round(getAccessibilityIndicator(durMin, minDurAccMinT, maxDurAccMinT), 4));
-			d.put("acc_ind", "" + Util.round(getPopulationAccessibilityIndicator(durMin, minDurAccMinT, maxDurAccMinT, population, popAccMinT), 4));
+			//d.put("dur_ind", "" + Util.round(getAccessibilityIndicator(durMin, minDurAccMinT, maxDurAccMinT), 4));
+			//d.put("acc_ind", "" + Util.round(getPopulationAccessibilityIndicator(durMin, minDurAccMinT, maxDurAccMinT, population, popAccMinT), 4));
 			d.put("dmp_ind", "" + Util.round(getDelayMinPerson(durMin, minDurAccMinT, population), 4));
 
 			cellData.add(d);
@@ -331,12 +329,12 @@ public class AccessibilityGrid {
 	 * @param durMin
 	 * @return
 	 */
-	public static double getPopulationAccessibilityIndicator(double durMin, double durT1, double durT2, double population, double popT) {
+	/*public static double getPopulationAccessibilityIndicator(double durMin, double durT1, double durT2, double population, double popT) {
 		if(population == 0) return -999;
 		double accInd = getAccessibilityIndicator(durMin, durT1, durT2);
 		if(accInd == 1) return 1;
 		return accInd * getPopulationIndicator(population, popT);
-	}
+	}*/
 
 	/**
 	 * An indicator on accessibility, within [0,1].
@@ -351,14 +349,15 @@ public class AccessibilityGrid {
 	 * @param durT2
 	 * @return
 	 */
-	public static double getAccessibilityIndicator(double durMin, double durT1, double durT2) {
+	/*public static double getAccessibilityIndicator(double durMin, double durT1, double durT2) {
 		return Util.getIndicatorValue(durMin, durT1, durT2);
-	}
+	}*/
 
 
 	/**
-	 * An indicator on population for accessibility, within [0,1].
-	 * 0 is bad (high population), 1 is good (low population)
+	 * An indicator on the gravity of having population taken into account, within [0,1].
+	 * 0 means low population value, which does not matter.
+	 * 1 means high population, which should be considered.
 	 * The higher the population, the worst:
 	 * 
 	 * \
@@ -370,9 +369,8 @@ public class AccessibilityGrid {
 	 * @param popT
 	 * @return
 	 */
-	public static double getPopulationIndicator(double population, double popT) {
+	/*public static double getPopulationIndicator(double population, double popT) {
 		if(population == 0) return -999;
 		return Util.getIndicatorValue(population, 0, popT);
-	}
-
+	}*/
 }
