@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.graph.TopologyAnalysis;
@@ -23,7 +24,7 @@ import eu.europa.ec.eurostat.jgiscotools.transfoengine.Transformation;
  *
  */
 public class CFaceSize extends Constraint<AFace> {
-	private final static Logger LOGGER = Logger.getLogger(CFaceSize.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(CFaceSize.class.getName());
 
 	private double minSizeDel, minSizeDelHole, minSize;
 	private boolean preserveAllUnits, preserveIfPointsInIt;

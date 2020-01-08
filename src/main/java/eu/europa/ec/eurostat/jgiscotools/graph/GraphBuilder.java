@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -40,7 +41,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class GraphBuilder {
-	public final static Logger LOGGER = Logger.getLogger(GraphBuilder.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(GraphBuilder.class.getName());
 
 
 	/**

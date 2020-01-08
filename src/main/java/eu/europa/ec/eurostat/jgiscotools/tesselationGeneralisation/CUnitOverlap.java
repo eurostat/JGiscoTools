@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.SpatialIndex;
@@ -19,7 +20,7 @@ import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
  *
  */
 public class CUnitOverlap  extends Constraint<AUnit> {
-	public final static Logger LOGGER = Logger.getLogger(CUnitOverlap.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(CUnitOverlap.class.getName());
 
 	private List<Overlap> overlaps;
 	private SpatialIndex index;

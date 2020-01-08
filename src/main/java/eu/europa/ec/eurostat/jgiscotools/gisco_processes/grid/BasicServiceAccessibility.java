@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -24,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculat
  *
  */
 public class BasicServiceAccessibility {
-	private static Logger logger = Logger.getLogger(BasicServiceAccessibility.class.getName());
+	private static Logger logger = LogManager.getLogger(BasicServiceAccessibility.class.getName());
 
 	//show where cross-border cooperation can improve accessibility
 

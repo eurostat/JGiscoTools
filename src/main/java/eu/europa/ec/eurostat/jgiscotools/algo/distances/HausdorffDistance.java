@@ -3,7 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.algo.distances;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.distance.DistanceOp;
@@ -17,7 +18,7 @@ import org.locationtech.jts.operation.distance.DistanceOp;
  *
  */
 public class HausdorffDistance {
-	private final static Logger LOGGER = Logger.getLogger(HausdorffDistance.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(HausdorffDistance.class.getName());
 
 	//the input geometries
 	private Geometry g0, g1;

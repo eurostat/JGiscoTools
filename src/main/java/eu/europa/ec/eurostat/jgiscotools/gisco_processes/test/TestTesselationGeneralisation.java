@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.test;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Point;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -19,7 +20,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
  *
  */
 public class TestTesselationGeneralisation {
-	private final static Logger LOGGER = Logger.getLogger(TestTesselationGeneralisation.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(TestTesselationGeneralisation.class.getName());
 
 	//TODO deployment
 	//TODO include noding as a constraint at tesselation level ???

@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.grid;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -26,7 +27,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class Grid {
-	public static Logger logger = Logger.getLogger(Grid.class.getName());
+	public static Logger logger = LogManager.getLogger(Grid.class.getName());
 
 	/**
 	 * The grid resolution (pixel size).

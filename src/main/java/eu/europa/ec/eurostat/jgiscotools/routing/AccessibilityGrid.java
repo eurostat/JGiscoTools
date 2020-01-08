@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Edge;
@@ -36,7 +37,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
  *
  */
 public class AccessibilityGrid {
-	private static Logger logger = Logger.getLogger(AccessibilityGrid.class.getName());
+	private static Logger logger = LogManager.getLogger(AccessibilityGrid.class.getName());
 
 	//the grid cells
 	private Collection<Feature> cells = null;

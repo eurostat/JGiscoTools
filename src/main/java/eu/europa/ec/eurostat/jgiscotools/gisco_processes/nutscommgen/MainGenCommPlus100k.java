@@ -5,11 +5,10 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.nutscommgen;
 
 import java.util.Collection;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AEdge;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AFace;
@@ -34,7 +33,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
  *
  */
 public class MainGenCommPlus100k {
-	private final static Logger LOGGER = Logger.getLogger(MainGenCommPlus100k.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(MainGenCommPlus100k.class.getName());
 	//-Xmx13g -Xms2g -XX:-UseGCOverheadLimit
 	//-XX:-UseGCOverheadLimit
 	//-XX:+UseG1GC -XX:G1HeapRegionSize=n -XX:MaxGCPauseMillis=m  
@@ -48,7 +47,7 @@ public class MainGenCommPlus100k {
 	public static void main(String[] args) {
 		LOGGER.info("Start");
 
-		GraphBuilder.LOGGER.setLevel(Level.WARN);
+		//GraphBuilder.LOGGER.setLevel(Level.WARN);
 
 		String basePath = "/home/juju/Bureau/nuts_gene_data/";
 

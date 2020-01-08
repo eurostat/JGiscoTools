@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -20,8 +21,7 @@ import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 
 public class JTSGeomUtil {
-	public final static Logger LOGGER = Logger.getLogger(JTSGeomUtil.class.getName());
-
+	public final static Logger LOGGER = LogManager.getLogger(JTSGeomUtil.class.getName());
 
 
 	//easy and quick creation of geometries, mainly for testing purposes

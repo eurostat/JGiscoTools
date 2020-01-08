@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.rail;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.TopologyException;
@@ -23,7 +24,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class RailwayServiceAreasBufferDetection {
-	public final static Logger LOGGER = Logger.getLogger(RailwayServiceAreasBufferDetection.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(RailwayServiceAreasBufferDetection.class.getName());
 
 	//TODO do partitionning for large datasets
 

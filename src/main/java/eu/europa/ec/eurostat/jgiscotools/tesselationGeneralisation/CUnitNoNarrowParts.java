@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
@@ -27,7 +28,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class CUnitNoNarrowParts extends Constraint<AUnit> {
-	private final static Logger LOGGER = Logger.getLogger(CUnitNoNarrowParts.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(CUnitNoNarrowParts.class.getName());
 
 	private double widthMeter, nodingResolution; private int quad; private boolean preserveAllUnits, preserveIfPointsInIt;
 	public CUnitNoNarrowParts(AUnit agent, double widthMeter, double nodingResolution, int quad, boolean preserveAllUnits, boolean preserveIfPointsInIt) {

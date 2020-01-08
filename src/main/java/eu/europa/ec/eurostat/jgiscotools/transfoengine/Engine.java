@@ -13,14 +13,15 @@ import java.util.Comparator;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.StatUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author julien Gaffuri
  *
  */
 public class Engine<T extends Agent> {
-	public final static Logger LOGGER = Logger.getLogger(Engine.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(Engine.class.getName());
 
 	private ArrayList<T> agents;
 	public Engine<T> shuffle() { Collections.shuffle(agents); return this; }

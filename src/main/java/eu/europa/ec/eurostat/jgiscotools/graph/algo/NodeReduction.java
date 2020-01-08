@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
@@ -19,7 +20,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
  *
  */
 public class NodeReduction {
-	private final static Logger LOGGER = Logger.getLogger(NodeReduction.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(NodeReduction.class.getName());
 
 
 	//specify when a node can be reduced or not

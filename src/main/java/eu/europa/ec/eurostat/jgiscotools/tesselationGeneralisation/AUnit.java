@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -28,7 +29,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class AUnit extends Agent {
-	private final static Logger LOGGER = Logger.getLogger(AUnit.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(AUnit.class.getName());
 
 	private ATesselation aTess;
 	public ATesselation getAtesselation(){ return aTess; }

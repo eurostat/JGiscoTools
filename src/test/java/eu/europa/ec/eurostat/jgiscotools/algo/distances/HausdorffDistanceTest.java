@@ -1,12 +1,11 @@
 package eu.europa.ec.eurostat.jgiscotools.algo.distances;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTReader;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
 import junit.framework.TestCase;
 
 /**
@@ -26,14 +25,14 @@ public class HausdorffDistanceTest extends TestCase {
 
 
 	public void testNull() throws Exception {
-		Logger.getLogger(HausdorffDistance.class.getName()).setLevel(Level.OFF);
+		LogManager.getLogger(HausdorffDistance.class.getName()).atLevel(Level.OFF);
 		HausdorffDistance hd = new HausdorffDistance(null, wr.read("LINESTRING(0 0, 100 0)"));
 		assertNull(hd.getC0());
 		assertNull(hd.getC1());
 		assertTrue(Double.isNaN(hd.getDistance()));
 	}
 	public void testEmpty() throws Exception {
-		Logger.getLogger(HausdorffDistance.class.getName()).setLevel(Level.OFF);
+		LogManager.getLogger(HausdorffDistance.class.getName()).atLevel(Level.OFF);
 		HausdorffDistance hd = new HausdorffDistance(wr.read("LINESTRING EMPTY"), wr.read("LINESTRING(0 0, 100 0)"));
 		assertNull(hd.getC0());
 		assertNull(hd.getC1());

@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.algo;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.Partition.GeomType;
@@ -22,7 +23,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
  *
  */
 public class Decomposer {
-	public static Logger logger = Logger.getLogger(Decomposer.class.getName());
+	public static Logger logger = LogManager.getLogger(Decomposer.class.getName());
 
 	/**
 	 * @param fs the input features

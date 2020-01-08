@@ -5,8 +5,9 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod;
 
 import java.util.Collection;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.referencing.CRS;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.Decomposer;
@@ -19,11 +20,11 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
  *
  */
 public class DecomposeLandWaterAreas {
-	static Logger logger = Logger.getLogger(DecomposeLandWaterAreas.class.getName());
+	static Logger logger = LogManager.getLogger(DecomposeLandWaterAreas.class.getName());
 
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-		Decomposer.logger.setLevel(Level.ALL);
+		Decomposer.logger.atLevel(Level.ALL);
 
 		String path = "E:/workspace/gridstat/data/CNTR_100k/";
 

@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 
@@ -31,7 +32,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
  *
  */
 public class TesselationGeneralisation {
-	public final static Logger LOGGER = Logger.getLogger(TesselationGeneralisation.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(TesselationGeneralisation.class.getName());
 	public static boolean tracePartitioning = true;
 
 	public static Collection<Feature> runGeneralisation(Collection<Feature> units, HashMap<String, Collection<Point>> points, CRSType crsType, double scaleDenominator, final int roundNb, int maxCoordinatesNumber, int objMaxCoordinateNumber) {

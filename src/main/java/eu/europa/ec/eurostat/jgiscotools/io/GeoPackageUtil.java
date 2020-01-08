@@ -11,7 +11,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.DefaultTransaction;
@@ -37,7 +38,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
  *
  */
 public class GeoPackageUtil {
-	private final static Logger LOGGER = Logger.getLogger(GeoPackageUtil.class);
+	private final static Logger LOGGER = LogManager.getLogger(GeoPackageUtil.class);
 
 	//See: https://docs.geotools.org/stable/userguide/library/data/geopackage.html
 	//https://gis.stackexchange.com/questions/341981/reading-geopackage-file-with-geotools-error-on-missing-gpkg-contents-database

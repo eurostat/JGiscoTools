@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.matching.LevenshteinMatching;
@@ -18,7 +19,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 public class MapNiger {
-	private final static Logger LOGGER = Logger.getLogger(MapNiger.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(MapNiger.class.getName());
 
 	public static void main(String[] args) {
 		System.out.println("Start");

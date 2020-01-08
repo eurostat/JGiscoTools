@@ -11,7 +11,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -24,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
  *
  */
 public class LevenshteinMatching {
-	private final static Logger LOGGER = Logger.getLogger(LevenshteinMatching.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(LevenshteinMatching.class.getName());
 
 	/**
 	 * Get Levenshtein distance between two strings.

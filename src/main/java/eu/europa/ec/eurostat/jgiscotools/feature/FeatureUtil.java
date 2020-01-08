@@ -14,7 +14,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.StatUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.geometry.jts.JTS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -35,7 +36,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class FeatureUtil {
-	private final static Logger LOGGER = Logger.getLogger(FeatureUtil.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(FeatureUtil.class.getName());
 
 	//spatial indexing
 	public static <T extends Feature> STRtree getSTRtree(Collection<T> fs) {

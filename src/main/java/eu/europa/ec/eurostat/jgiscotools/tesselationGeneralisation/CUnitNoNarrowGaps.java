@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
@@ -27,7 +28,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class CUnitNoNarrowGaps extends Constraint<AUnit> {
-	private final static Logger LOGGER = Logger.getLogger(CUnitNoNarrowGaps.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(CUnitNoNarrowGaps.class.getName());
 
 	private double separationDistanceMeter, nodingResolution; private int quad; private boolean preserveAllUnits, preserveIfPointsInIt;
 	public CUnitNoNarrowGaps(AUnit agent, double separationDistanceMeter, double nodingResolution, int quad, boolean preserveAllUnits, boolean preserveIfPointsInIt) {

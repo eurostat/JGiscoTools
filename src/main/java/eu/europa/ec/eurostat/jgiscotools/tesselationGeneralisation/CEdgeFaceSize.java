@@ -3,7 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
@@ -15,7 +16,7 @@ import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
  *
  */
 public class CEdgeFaceSize extends Constraint<AEdge> {
-	private final static Logger LOGGER = Logger.getLogger(CEdgeFaceSize.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(CEdgeFaceSize.class.getName());
 
 	private CFaceSize sc1=null, sc2=null;
 

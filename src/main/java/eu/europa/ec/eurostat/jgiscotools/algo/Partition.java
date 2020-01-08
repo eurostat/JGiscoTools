@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.geometry.jts.JTS;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -28,7 +29,7 @@ public class Partition {
 
 	//TODO handle operations which do not change the input features but produce outputs - exemple: partition areas creation. Recomposition method should then concern these outputs (when necessary).
 
-	public final static Logger LOGGER = Logger.getLogger(Partition.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(Partition.class.getName());
 
 	public static Collection<Feature> runRecursively(Collection<Feature> features, PartitionedOperation op, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition, GeomType gt, double midRandom) {
 		Partition p = new Partition("0", features, op, gt, midRandom);

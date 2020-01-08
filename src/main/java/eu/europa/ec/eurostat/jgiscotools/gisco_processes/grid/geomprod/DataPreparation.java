@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
@@ -21,7 +22,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 public class DataPreparation {
-	static Logger logger = Logger.getLogger(DataPreparation.class.getName());
+	static Logger logger = LogManager.getLogger(DataPreparation.class.getName());
 
 	//use: -Xms2G -Xmx6G
 	public static void main(String[] args) throws Exception {

@@ -5,7 +5,8 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.rail;
 
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.locationtech.jts.geom.LineString;
 import org.opengis.filter.Filter;
@@ -25,7 +26,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
  *
  */
 public class MainRailwayGeneralisation {
-	public final static Logger LOGGER = Logger.getLogger(MainRailwayGeneralisation.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(MainRailwayGeneralisation.class.getName());
 
 	public static void main(String[] args) throws Exception {
 

@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.index.SpatialIndex;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
@@ -24,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.transfoengine.Transformation;
  *
  */
 public class CUnitNoding  extends Constraint<AUnit> {
-	public final static Logger LOGGER = Logger.getLogger(CUnitNoding.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(CUnitNoding.class.getName());
 
 	private SpatialIndex index;
 	private NodingIssueType nType;

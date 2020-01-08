@@ -11,7 +11,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.feature.FeatureCollection;
@@ -47,7 +48,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
  *
  */
 public class Routing {
-	private static Logger logger = Logger.getLogger(Routing.class.getName());
+	private static Logger logger = LogManager.getLogger(Routing.class.getName());
 
 	/**
 	 * The graph structure used to compute routes.

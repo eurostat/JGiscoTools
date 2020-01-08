@@ -3,7 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.graph.algo;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.AffineTransformUtil;
@@ -16,7 +17,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
  *
  */
 public class FaceScaling {
-	private final static Logger LOGGER = Logger.getLogger(FaceScaling.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(FaceScaling.class.getName());
 
 	//scale a face
 	public static void scale(Face f, double factor) {

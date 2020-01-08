@@ -3,7 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.graph.algo;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.graph.TopologyAnalysis;
@@ -16,7 +17,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
  *
  */
 public class EdgeMerging {
-	private final static Logger LOGGER = Logger.getLogger(EdgeMerging.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(EdgeMerging.class.getName());
 
 	//merge two edges into a new single one. e1 should be the first edge, finishing at node n. e2 should start at node n
 	//edge e1 is transformed to include also e2 - n and e2 are removed from the graph.

@@ -3,7 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.graph.algo;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.AffineTransformUtil;
@@ -17,7 +18,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
  *
  */
 public class EdgeScaling {
-	private final static Logger LOGGER = Logger.getLogger(EdgeScaling.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(EdgeScaling.class.getName());
 
 	//scale the edge.
 	public static void scale(Edge e, double factor) { scale(e, factor, e.getGeometry().getCentroid().getCoordinate()); }

@@ -3,7 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.graph.algo;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
 
@@ -14,7 +15,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
  *
  */
 public class FaceValidity {
-	private final static Logger LOGGER = Logger.getLogger(FaceValidity.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(FaceValidity.class.getName());
 
 	//check the face is ok, that is: its geometry is "simple" (no self adjency and internal ring are inside) and it does not overlap other faces
 	public static boolean get(Face f, boolean checkIsSimple, boolean checkFaceToFaceOverlap) {

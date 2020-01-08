@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -27,7 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  */
 public class SimpleFeatureUtil {
-	private final static Logger LOGGER = Logger.getLogger(SimpleFeatureUtil.class);
+	private final static Logger LOGGER = LogManager.getLogger(SimpleFeatureUtil.class);
 
 	//SimpleFeature to feature
 	public static Feature get(SimpleFeature sf, String[] attNames){

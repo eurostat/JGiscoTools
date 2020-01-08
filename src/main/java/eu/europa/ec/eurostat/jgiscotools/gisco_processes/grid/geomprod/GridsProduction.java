@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -43,7 +44,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
  *
  */
 public class GridsProduction {
-	static Logger logger = Logger.getLogger(GridsProduction.class.getName());
+	static Logger logger = LogManager.getLogger(GridsProduction.class.getName());
 
 	//see also:
 	//https://www.eea.europa.eu/data-and-maps/data/eea-reference-grids-2
@@ -57,8 +58,8 @@ public class GridsProduction {
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
-		logger.setLevel(Level.ALL);
-		Grid.logger.setLevel(Level.ALL);
+		logger.atLevel(Level.ALL);
+		Grid.logger.atLevel(Level.ALL);
 
 		String basePath = "E:/workspace/gridstat/data/";
 		String outpath = basePath + "grid/";

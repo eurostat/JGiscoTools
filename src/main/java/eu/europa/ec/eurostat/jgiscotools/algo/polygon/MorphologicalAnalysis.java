@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.TopologyException;
@@ -24,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class MorphologicalAnalysis {
-	public final static Logger LOGGER = Logger.getLogger(MorphologicalAnalysis.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(MorphologicalAnalysis.class.getName());
 
 	public static double EPSILON = 0.00001;
 	public static Collection<Polygon> getNarrowGaps(Geometry geom, double separationDistanceMeter, int quad) {

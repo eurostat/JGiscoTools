@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.operation.linemerge.LineMerger;
@@ -29,7 +30,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
  *
  */
 public class GraphToFeature {
-	private final static Logger LOGGER = Logger.getLogger(GraphToFeature.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(GraphToFeature.class.getName());
 
 	//node
 	public static Feature asFeature(Node n){

@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.algo.aggregation;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
@@ -25,7 +26,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.polygon.HolesDeletion;
  *
  */
 public class BufferAggregation{
-	public final static Logger LOGGER = Logger.getLogger(BufferAggregation.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(BufferAggregation.class.getName());
 
 	private double bufferDist;
 	private double closureDist;

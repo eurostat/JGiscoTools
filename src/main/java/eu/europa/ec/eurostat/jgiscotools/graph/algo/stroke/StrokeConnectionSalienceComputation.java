@@ -3,7 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.geom.Coordinate;
 
@@ -18,7 +19,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
  *
  */
 public class StrokeConnectionSalienceComputation {
-	public final static Logger LOGGER = Logger.getLogger(StrokeConnectionSalienceComputation.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(StrokeConnectionSalienceComputation.class.getName());
 	private SemanticDistance sd = new SemanticDistance(true);
 
 	//between 0 (not salient) to 1 (very salient)

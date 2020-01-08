@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.geometry.jts.JTS;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -30,7 +31,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class TesselationQuality {
-	private final static Logger LOGGER = Logger.getLogger(TesselationQuality.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(TesselationQuality.class.getName());
 
 
 	//

@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.grid;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.SpatialIndex;
@@ -25,7 +26,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
  *
  */
 public class GridUtil {
-	static Logger logger = Logger.getLogger(GridUtil.class.getName());
+	static Logger logger = LogManager.getLogger(GridUtil.class.getName());
 
 	/**
 	 * Assign region codes to grid cells. These regions could be countries or NUTS regions.

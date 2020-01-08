@@ -3,14 +3,15 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.nutscommgen;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 public class MainCheckIdentifier {
-	private final static Logger LOGGER = Logger.getLogger(MainCheckIdentifier.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(MainCheckIdentifier.class.getName());
 
 	public static void main(String[] args) {
 		LOGGER.info("Start");

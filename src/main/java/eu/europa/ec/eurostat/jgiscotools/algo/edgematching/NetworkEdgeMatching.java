@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -35,7 +36,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
  *
  */
 public class NetworkEdgeMatching {
-	public final static Logger LOGGER = Logger.getLogger(NetworkEdgeMatching.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(NetworkEdgeMatching.class.getName());
 
 	/**
 	 * The network sections to be edge matched. The geometries must be LineString (or MultiLineString with a single element).

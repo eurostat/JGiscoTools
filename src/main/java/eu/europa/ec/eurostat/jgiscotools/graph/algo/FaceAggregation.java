@@ -7,7 +7,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.graph.TopologyAnalysis;
@@ -21,7 +22,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
  *
  */
 public class FaceAggregation {
-	private final static Logger LOGGER = Logger.getLogger(FaceAggregation.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(FaceAggregation.class.getName());
 
 
 

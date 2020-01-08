@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
@@ -8,7 +9,7 @@ import eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod.GridsProd
 import eu.europa.ec.eurostat.jgiscotools.grid.GriddedStatsTiler;
 
 public class PopGridTiling {
-	private static Logger logger = Logger.getLogger(PopGridTiling.class.getName());
+	private static Logger logger = LogManager.getLogger(PopGridTiling.class.getName());
 
 	public static void main(String[] args) {
 		logger.info("Start");

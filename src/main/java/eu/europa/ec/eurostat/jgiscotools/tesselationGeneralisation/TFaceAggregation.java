@@ -2,7 +2,8 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.FaceAggregation;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
@@ -14,7 +15,7 @@ import eu.europa.ec.eurostat.jgiscotools.transfoengine.TransformationNonCancella
  *
  */
 public class TFaceAggregation extends TransformationNonCancellable<AFace> {
-	private final static Logger LOGGER = Logger.getLogger(TFaceAggregation.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(TFaceAggregation.class.getName());
 
 	public TFaceAggregation(AFace agent) { super(agent); }
 

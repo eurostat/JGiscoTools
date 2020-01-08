@@ -6,7 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.transfoengine;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
@@ -15,7 +16,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
  *
  */
 public abstract class Agent {
-	public final static Logger LOGGER = Logger.getLogger(Agent.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(Agent.class.getName());
 
 	private static int ID_COUNT=1;	
 	private String id;

@@ -2,7 +2,8 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.test;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -12,7 +13,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 public class Test {
-	private static Logger logger = Logger.getLogger(Test.class.getName());
+	private static Logger logger = LogManager.getLogger(Test.class.getName());
 
 
 	public static void main(String[] args) throws Exception {

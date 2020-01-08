@@ -3,7 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.transfoengine;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
@@ -15,7 +16,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
  *
  */
 public class CartographicResolution {
-	private final static Logger LOGGER = Logger.getLogger(CartographicResolution.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(CartographicResolution.class.getName());
 
 	private double resolutionM;
 	public double getResolutionM() { return resolutionM; }
