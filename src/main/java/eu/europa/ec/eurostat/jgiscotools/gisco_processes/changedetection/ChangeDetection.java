@@ -27,26 +27,32 @@ public class ChangeDetection<T extends Feature> {
 	//TODO make test class with fake dataset
 
 	private Collection<T> fsIni, fsFin;
-	private String idProp = null;
+	private String idAtt = null;
+
+	private Collection<String> idsIni, idsFin;
 
 	/**
 	 * @param fsIni The initial version of the dataset.
 	 * @param fsFin The final version of the dataset.
-	 * @param idProp The identifier column.
+	 * @param idAtt The identifier column.
 	 */
-	public ChangeDetection(Collection<T> fsIni, Collection<T> fsFin, String idProp) {
+	public ChangeDetection(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
 		this.fsIni = fsIni;
 		this.fsFin = fsFin;
-		this.idProp = idProp;
+		this.idAtt = idAtt;
+
+		//extract ids of initial and final features
+		idsIni = getIdValues(fsIni);
+		idsFin = getIdValues(fsFin);
 	}
 
 	/**
-	 * Check that the id property is a true identifier, that is: It is populated and unique.
+	 * Check that the id attribute is a true identifier, that is: It is populated and unique.
 	 * @return
 	 */
 	public boolean checkId() {
-		if( FeatureUtil.checkIdentfier(this.fsIni, this.idProp).size()>0 ) return false;
-		if( FeatureUtil.checkIdentfier(this.fsFin, this.idProp).size()>0 ) return false;
+		if( FeatureUtil.checkIdentfier(this.fsIni, this.idAtt).size()>0 ) return false;
+		if( FeatureUtil.checkIdentfier(this.fsFin, this.idAtt).size()>0 ) return false;
 		return true;
 	}
 
@@ -56,17 +62,28 @@ public class ChangeDetection<T extends Feature> {
 	private Collection<T> inserted = null;
 	private Collection<T> changed = null;
 	private Collection<T> unchanged = null;
-	
-	
+
 	/**
 	 * @return The deleted features.
 	 */
 	public Collection<T> getDeleted() {
 		if(this.deleted == null) {
-			//get fs1 ids
-			//get fs2 ids
-			//get fs1-fs2
-			//TODO
+
+			//compute difference: ini - fin
+			Collection<String> idsDiff = new ArrayList<>(idsIni);
+			idsDiff.removeAll(idsFin);
+
+			//get corresponding features
+			//TODO use index
+			this.deleted = new ArrayList<>();
+			for(T fIni : fsIni) {
+				String id = fIni.getAttribute(idAtt).toString();
+				if(idsDiff.contains(id)) this.deleted.add(fIni);
+			}
+
+			//check
+			if(this.deleted.size() != idsDiff.size())
+				LOGGER.warn("Unexpected number of deleted features found.");
 		}
 		return this.deleted;
 	}
@@ -76,10 +93,22 @@ public class ChangeDetection<T extends Feature> {
 	 */
 	public Collection<T> getInserted() {
 		if(this.inserted == null) {
-			//get fs1 ids
-			//get fs2 ids
-			//get fs2-fs1
-			//TODO
+
+			//compute difference: fin - ini
+			Collection<String> idsDiff = new ArrayList<>(idsFin);
+			idsDiff.removeAll(idsIni);
+
+			//get corresponding features
+			//TODO use index
+			this.inserted = new ArrayList<>();
+			for(T fFin : fsFin) {
+				String id = fFin.getAttribute(idAtt).toString();
+				if(idsDiff.contains(id)) this.inserted.add(fFin);
+			}
+
+			//check
+			if(this.inserted.size() != idsDiff.size())
+				LOGGER.warn("Unexpected number of inserted features found.");
 		}
 		return this.inserted;
 	}
@@ -105,16 +134,31 @@ public class ChangeDetection<T extends Feature> {
 	private void computeChangedUnchanged() {
 		this.unchanged = new ArrayList<>();
 		this.changed = new ArrayList<>();
-		//TODO
-		//get fs1 ids
-		//get fs2 ids
-		//get fs2 inter fs1
-		//among them, check which one have changes
+
+		//compute intersection
+		Collection<String> idsInter = new ArrayList<>(idsIni);
+		idsInter.retainAll(idsFin);
+
+		for(String id : idsInter) {
+			//get two corresponding objects
+			//TODO index them by id
+			T fIni = null;
+			T fFin = null;
+
+			//compare them and add to relevant list
+			boolean b = getChangeCalculator().changed(fIni, fFin);
+			if(!b) {
+				unchanged.add(fFin);
+			} else {
+				changed.add(fFin); //TODO fFin or fIni?
+				//TODO add info on change
+			}
+		}
 	}
 
 	/**
 	 * The method used to compute the change between two versions of a feature.
-	 * By default, the geometries and property values should be the same.
+	 * By default, the geometries and attribute values should be the same.
 	 */
 	private ChangeCalculator<T> changeCalculator = new DefaultChangeCalculator<T>();
 	public ChangeCalculator<T> getChangeCalculator() { return changeCalculator; }
@@ -124,6 +168,7 @@ public class ChangeDetection<T extends Feature> {
 
 
 	public interface ChangeCalculator<U extends Feature> {
+		//TODO chould return change data
 		boolean changed(U fIni, U fFin);
 	}
 
@@ -138,9 +183,16 @@ public class ChangeDetection<T extends Feature> {
 			}
 			//if the geometry is different, it has changed
 			if( ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry()))
-				 return true;
+				return true;
 			return false;
 		}
+	}
+
+
+	private Collection<String> getIdValues(Collection<T> fs) {
+		ArrayList<String> out = new ArrayList<>();
+		for(T f : fs) out.add(f.getAttribute(idAtt).toString());
+		return out;
 	}
 
 }
