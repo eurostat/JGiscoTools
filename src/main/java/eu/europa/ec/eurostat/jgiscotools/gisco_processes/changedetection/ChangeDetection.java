@@ -3,9 +3,14 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.changedetection;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 
 /**
  * 
@@ -17,58 +22,89 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
  *
  */
 public class ChangeDetection<T extends Feature> {
+	private final static Logger LOGGER = LogManager.getLogger(ChangeDetection.class.getName());
 
-	private Collection<T> fs1, fs2;
+	//TODO make test class with fake dataset
+
+	private Collection<T> fsIni, fsFin;
 	private String idProp = null;
 
-	public ChangeDetection(Collection<T> fs1, Collection<T> fs2, String idProp) {
-		this.fs1 = fs1;
-		this.fs2 = fs2;
+	/**
+	 * @param fsIni The initial version of the dataset.
+	 * @param fsFin The final version of the dataset.
+	 * @param idProp The identifier column.
+	 */
+	public ChangeDetection(Collection<T> fsIni, Collection<T> fsFin, String idProp) {
+		this.fsIni = fsIni;
+		this.fsFin = fsFin;
 		this.idProp = idProp;
 	}
 
+	/**
+	 * Check that the id property is a true identifier, that is: It is populated and unique.
+	 * @return
+	 */
 	public boolean checkId() {
-		//TODO check if idProp is an id for both fs (populated, and unique)
+		if( FeatureUtil.checkIdentfier(this.fsIni, this.idProp).size()>0 ) return false;
+		if( FeatureUtil.checkIdentfier(this.fsFin, this.idProp).size()>0 ) return false;
 		return true;
 	}
 
+
+
 	private Collection<T> deleted = null;
+	private Collection<T> inserted = null;
+	private Collection<T> changed = null;
+	private Collection<T> unchanged = null;
+	
+	
+	/**
+	 * @return The deleted features.
+	 */
 	public Collection<T> getDeleted() {
-		if(deleted == null) {
+		if(this.deleted == null) {
 			//get fs1 ids
 			//get fs2 ids
 			//get fs1-fs2
 			//TODO
 		}
-		return deleted;
+		return this.deleted;
 	}
 
-	private Collection<T> inserted = null;
+	/**
+	 * @return The inserted features.
+	 */
 	public Collection<T> getInserted() {
-		if(inserted == null) {
+		if(this.inserted == null) {
 			//get fs1 ids
 			//get fs2 ids
 			//get fs2-fs1
 			//TODO
 		}
-		return inserted;
+		return this.inserted;
 	}
 
-	private Collection<T> changed = null;
+	/**
+	 * @return The features that have changed.
+	 */
 	public Collection<T> getChanged() {
-		if(changed == null)
+		if(this.changed == null)
 			computeChangedUnchanged();
-		return changed;
+		return this.changed;
 	}
 
-	private Collection<T> unchanged = null;
+	/**
+	 * @return The features that have not changed.
+	 */
 	public Collection<T> getUnchanged() {
-		if(unchanged == null)
+		if(this.unchanged == null)
 			computeChangedUnchanged();
-		return unchanged;
+		return this.unchanged;
 	}
 
 	private void computeChangedUnchanged() {
+		this.unchanged = new ArrayList<>();
+		this.changed = new ArrayList<>();
 		//TODO
 		//get fs1 ids
 		//get fs2 ids
@@ -76,7 +112,10 @@ public class ChangeDetection<T extends Feature> {
 		//among them, check which one have changes
 	}
 
-
+	/**
+	 * The method used to compute the change between two versions of a feature.
+	 * By default, the geometries and property values should be the same.
+	 */
 	private ChangeCalculator<T> changeCalculator = new DefaultChangeCalculator<T>();
 	public ChangeCalculator<T> getChangeCalculator() { return changeCalculator; }
 	public void setChangeCalculator(ChangeCalculator<T> changeCalculator) { this.changeCalculator = changeCalculator; }
@@ -84,22 +123,24 @@ public class ChangeDetection<T extends Feature> {
 
 
 
-	public interface ChangeCalculator<U> {
-		boolean changed(U f1, U f2);
+	public interface ChangeCalculator<U extends Feature> {
+		boolean changed(U fIni, U fFin);
 	}
 
-	public class DefaultChangeCalculator<R> implements ChangeCalculator<R> {
+	public class DefaultChangeCalculator<R extends Feature> implements ChangeCalculator<R> {
 		@Override
-		public boolean changed(R f1, R f2) {
-			//TODO compare properties
-			//TODO compare geometries
+		public boolean changed(R fIni, R fFin) {
+			//if any single attribute is different, it has changed
+			for(String att : fIni.getAttributes().keySet()) {
+				Object attIni = fIni.getAttribute(att);
+				Object attFin = fFin.getAttribute(att);
+				if(!attIni.equals(attFin)) return true;
+			}
+			//if the geometry is different, it has changed
+			if( ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry()))
+				 return true;
 			return false;
 		}
 	}
-
-	//TODO decompose change calculator into geom and attributes
-
-
-	//TODO make test class with fake dataset
 
 }
