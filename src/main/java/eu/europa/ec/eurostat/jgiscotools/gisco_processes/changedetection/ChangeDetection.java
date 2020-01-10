@@ -205,6 +205,9 @@ public class ChangeDetection<T extends Feature> {
 
 
 	public static void main(String[] args) {
+		
+		System.out.println("aaa");
+
 		LOGGER.info("Start");
 		String path = "src/test/resources/change_detection/";
 		String outpath = "target/";
