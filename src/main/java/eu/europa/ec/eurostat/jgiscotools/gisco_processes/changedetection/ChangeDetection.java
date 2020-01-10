@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 
 /**
  * 
@@ -27,7 +28,8 @@ public class ChangeDetection<T extends Feature> {
 
 	//TODO make test class with fake dataset
 
-	private Collection<T> fsIni, fsFin;
+	private Collection<T> fsIni;
+	private Collection<T> fsFin;
 	private String idAtt = null;
 
 	private Collection<String> idsIni, idsFin;
@@ -197,6 +199,33 @@ public class ChangeDetection<T extends Feature> {
 		ArrayList<String> out = new ArrayList<>();
 		for(T f : fs) out.add(getId(f));
 		return out;
+	}
+
+
+
+
+	public static void main(String[] args) {
+		LOGGER.info("Start");
+		String path = "src/test/resources/change_detection/";
+		String outpath = "target/";
+
+		ArrayList<Feature> fsIni = GeoPackageUtil.getFeatures(path+"ini.gpkg");
+		LOGGER.info("Ini="+fsIni.size());
+		ArrayList<Feature> fsFin = GeoPackageUtil.getFeatures(path+"fin.gpkg");
+		LOGGER.info("Fin="+fsFin.size());
+
+		ChangeDetection<Feature> cd = new ChangeDetection<>(fsIni, fsFin, "id");
+
+		Collection<Feature> deleted = cd.getDeleted();
+		LOGGER.info("deleted="+deleted.size());
+		Collection<Feature> inserted = cd.getInserted();
+		LOGGER.info("inserted="+inserted.size());
+		Collection<Feature> changed = cd.getChanged();
+		LOGGER.info("changed="+changed.size());
+		Collection<Feature> unchanged = cd.getUnchanged();
+		LOGGER.info("unchanged="+unchanged.size());
+
+		LOGGER.info("End");
 	}
 
 }
