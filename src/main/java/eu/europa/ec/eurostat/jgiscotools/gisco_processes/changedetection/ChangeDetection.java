@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
@@ -32,9 +33,6 @@ public class ChangeDetection<T extends Feature> {
 	private Collection<T> fsFin;
 	private String idAtt = null;
 
-	private Collection<String> idsIni, idsFin;
-	private HashMap<String,T> indIni, indFin;
-
 	/**
 	 * @param fsIni The initial version of the dataset.
 	 * @param fsFin The final version of the dataset.
@@ -44,14 +42,6 @@ public class ChangeDetection<T extends Feature> {
 		this.fsIni = fsIni;
 		this.fsFin = fsFin;
 		this.idAtt = idAtt;
-
-		//TODO extract that
-		//extract ids of initial and final features
-		idsIni = getIdValues(fsIni);
-		idsFin = getIdValues(fsFin);
-		//index features by id
-		indIni = FeatureUtil.index(fsIni, idAtt);
-		indFin = FeatureUtil.index(fsFin, idAtt);
 	}
 
 	/**
@@ -76,6 +66,7 @@ public class ChangeDetection<T extends Feature> {
 	 */
 	public Collection<T> getDeleted() {
 		if(this.deleted == null) {
+			if(idsIni == null) prepare();
 
 			//compute difference: ini - fin
 			Collection<String> idsDiff = new ArrayList<>(idsIni);
@@ -98,6 +89,7 @@ public class ChangeDetection<T extends Feature> {
 	 */
 	public Collection<T> getInserted() {
 		if(this.inserted == null) {
+			if(idsFin == null) prepare();
 
 			//compute difference: fin - ini
 			Collection<String> idsDiff = new ArrayList<>(idsFin);
@@ -119,8 +111,7 @@ public class ChangeDetection<T extends Feature> {
 	 * @return The features that have changed.
 	 */
 	public Collection<T> getChanged() {
-		if(this.changed == null)
-			computeChangedUnchanged();
+		if(this.changed == null) computeChangedUnchanged();
 		return this.changed;
 	}
 
@@ -128,8 +119,7 @@ public class ChangeDetection<T extends Feature> {
 	 * @return The features that have not changed.
 	 */
 	public Collection<T> getUnchanged() {
-		if(this.unchanged == null)
-			computeChangedUnchanged();
+		if(this.unchanged == null) computeChangedUnchanged();
 		return this.unchanged;
 	}
 
@@ -138,6 +128,7 @@ public class ChangeDetection<T extends Feature> {
 		this.changed = new ArrayList<>();
 
 		//compute intersection
+		if(idsIni == null) prepare();
 		Collection<String> idsInter = new ArrayList<>(idsIni);
 		idsInter.retainAll(idsFin);
 
@@ -148,14 +139,32 @@ public class ChangeDetection<T extends Feature> {
 
 			//compare them and add to relevant list
 			boolean b = getChangeCalculator().changed(fIni, fFin);
-			if(!b) {
-				unchanged.add(fFin);
-			} else {
-				changed.add(fFin); //TODO fFin or fIni?
-				//TODO add info on change
-			}
+			(b?changed:unchanged).add(fFin);
 		}
 	}
+
+
+
+	//delta
+
+	private Collection<Feature> delta = null;
+	public Collection<Feature> getDelta() {
+		if(this.delta == null) computeDelta();
+		return this.delta;
+	}
+
+	private void computeDelta() {
+		//TODO How to represent that?
+		//for each pair of object, the info which allows updating it
+		//deleted + inserted: the object with change description
+		//attribute change: the objects with changed attributes only - number of changed attributes
+		//geometry change: the object with new geometry? No: one with removed part + one with added part + info on geom change amount
+		//geometry + attribute change
+		//or: a CSV file with change description. fields: type of change (deletion, insertion, change) + geom change data + attribute change data
+	}
+
+
+
 
 	/**
 	 * The method used to compute the change between two versions of a feature.
@@ -169,7 +178,6 @@ public class ChangeDetection<T extends Feature> {
 
 
 	public interface ChangeCalculator<U extends Feature> {
-		//TODO chould return change data
 		boolean changed(U fIni, U fFin);
 	}
 
@@ -191,8 +199,19 @@ public class ChangeDetection<T extends Feature> {
 
 
 
+
 	private String getId(T f) {
 		return idAtt==null||idAtt.isEmpty()?f.getID() : f.getAttribute(idAtt).toString();
+	}
+
+	private Collection<String> idsIni, idsFin;
+	private HashMap<String,T> indIni, indFin;
+
+	private void prepare() {
+		idsIni = getIdValues(fsIni);
+		idsFin = getIdValues(fsFin);
+		indIni = FeatureUtil.index(fsIni, idAtt);
+		indFin = FeatureUtil.index(fsFin, idAtt);
 	}
 
 	private Collection<String> getIdValues(Collection<T> fs) {
@@ -205,9 +224,6 @@ public class ChangeDetection<T extends Feature> {
 
 
 	public static void main(String[] args) {
-		
-		System.out.println("aaa");
-
 		LOGGER.info("Start");
 		String path = "src/test/resources/change_detection/";
 		String outpath = "target/";
@@ -218,6 +234,8 @@ public class ChangeDetection<T extends Feature> {
 		LOGGER.info("Fin="+fsFin.size());
 
 		ChangeDetection<Feature> cd = new ChangeDetection<>(fsIni, fsFin, "id");
+		boolean b = cd.checkId();
+		LOGGER.info(b);
 
 		Collection<Feature> deleted = cd.getDeleted();
 		LOGGER.info("deleted="+deleted.size());
@@ -227,6 +245,13 @@ public class ChangeDetection<T extends Feature> {
 		LOGGER.info("changed="+changed.size());
 		Collection<Feature> unchanged = cd.getUnchanged();
 		LOGGER.info("unchanged="+unchanged.size());
+
+
+		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
+		GeoPackageUtil.save(deleted, outpath+"deleted.gpkg", crs, true);
+		GeoPackageUtil.save(inserted, outpath+"inserted.gpkg", crs, true);
+		GeoPackageUtil.save(changed, outpath+"changed.gpkg", crs, true);
+		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
 
 		LOGGER.info("End");
 	}
