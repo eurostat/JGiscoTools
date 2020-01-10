@@ -100,9 +100,9 @@ public class FeatureUtil {
 		//build id count index
 		HashMap<String,Integer> index = new HashMap<String,Integer>();
 		for(Feature f : fs) {
-			Object id_ = f.getAttribute(idAtt);
+			Object id_ = idAtt==null||idAtt.isEmpty()? f.getID() : f.getAttribute(idAtt);
 			if(id_ == null) {
-				LOGGER.warn("Could not find attribute " + idAtt + " for feature " + f.getID());
+				LOGGER.warn("Could not find identifier for feature " + f.getID());
 				continue;
 			}
 			String id = id_.toString();

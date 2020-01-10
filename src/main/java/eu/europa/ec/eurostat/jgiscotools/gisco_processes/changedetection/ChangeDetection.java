@@ -34,7 +34,7 @@ public class ChangeDetection<T extends Feature> {
 	/**
 	 * @param fsIni The initial version of the dataset.
 	 * @param fsFin The final version of the dataset.
-	 * @param idAtt The identifier column.
+	 * @param idAtt The identifier column. Set to null if the default getId() value should be used.
 	 */
 	public ChangeDetection(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
 		this.fsIni = fsIni;
@@ -44,6 +44,10 @@ public class ChangeDetection<T extends Feature> {
 		//extract ids of initial and final features
 		idsIni = getIdValues(fsIni);
 		idsFin = getIdValues(fsFin);
+	}
+
+	private String getId(T f) {
+		return idAtt==null||idAtt.isEmpty()?f.getID() : f.getAttribute(idAtt).toString();
 	}
 
 	/**
@@ -77,7 +81,7 @@ public class ChangeDetection<T extends Feature> {
 			//TODO use index
 			this.deleted = new ArrayList<>();
 			for(T fIni : fsIni) {
-				String id = fIni.getAttribute(idAtt).toString();
+				String id = getId(fIni);
 				if(idsDiff.contains(id)) this.deleted.add(fIni);
 			}
 
@@ -102,7 +106,7 @@ public class ChangeDetection<T extends Feature> {
 			//TODO use index
 			this.inserted = new ArrayList<>();
 			for(T fFin : fsFin) {
-				String id = fFin.getAttribute(idAtt).toString();
+				String id = getId(fFin);
 				if(idsDiff.contains(id)) this.inserted.add(fFin);
 			}
 
@@ -191,7 +195,7 @@ public class ChangeDetection<T extends Feature> {
 
 	private Collection<String> getIdValues(Collection<T> fs) {
 		ArrayList<String> out = new ArrayList<>();
-		for(T f : fs) out.add(f.getAttribute(idAtt).toString());
+		for(T f : fs) out.add(getId(f));
 		return out;
 	}
 
