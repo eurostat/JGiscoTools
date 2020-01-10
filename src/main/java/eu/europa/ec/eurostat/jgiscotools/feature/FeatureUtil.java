@@ -255,9 +255,9 @@ public class FeatureUtil {
 		return out;
 	}
 
-	public static HashMap<String, Feature> index(Collection<Feature> fs, String indexKey) {
-		HashMap<String, Feature> out = new HashMap<String, Feature>();
-		for(Feature f : fs) out.put(f.getAttribute(indexKey).toString(), f);
+	public static <T extends Feature> HashMap<String, T> index(Collection<T> fs, String indexKey) {
+		HashMap<String, T> out = new HashMap<String, T>();
+		for(T f : fs) out.put( indexKey==null||indexKey.isEmpty()? f.getID() : f.getAttribute(indexKey).toString(), f);
 		return out;
 	}
 
