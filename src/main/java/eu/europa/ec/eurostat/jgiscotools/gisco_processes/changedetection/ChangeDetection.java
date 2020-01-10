@@ -44,100 +44,41 @@ public class ChangeDetection<T extends Feature> {
 		this.idAtt = idAtt;
 	}
 
-	/**
-	 * Check that the id attribute is a true identifier, that is: It is populated and unique.
-	 * @return
-	 */
-	public boolean checkId() {
-		if( FeatureUtil.checkIdentfier(this.fsIni, this.idAtt).size()>0 ) return false;
-		if( FeatureUtil.checkIdentfier(this.fsFin, this.idAtt).size()>0 ) return false;
-		return true;
-	}
-
-
-
-	private Collection<T> deleted = null;
-	private Collection<T> inserted = null;
-	private Collection<T> changed = null;
+	private Collection<Feature> changes = null;
 	private Collection<T> unchanged = null;
-	private Collection<Feature> delta = null;
 
 	/**
-	 * @return The deleted features.
+	 * @return The changes.
 	 */
-	public Collection<T> getDeleted() {
-		if(this.deleted == null) {
-			if(idsIni == null) prepare();
-
-			//compute difference: ini - fin
-			Collection<String> idsDiff = new ArrayList<>(idsIni);
-			idsDiff.removeAll(idsFin);
-
-			//get corresponding features
-			this.deleted = new ArrayList<>();
-			for(String id : idsDiff)
-				this.deleted.add(indIni.get(id));
-
-			//check
-			if(this.deleted.size() != idsDiff.size())
-				LOGGER.warn("Unexpected number of deleted features found.");
-		}
-		return this.deleted;
-	}
-
-	/**
-	 * @return The inserted features.
-	 */
-	public Collection<T> getInserted() {
-		if(this.inserted == null) {
-			if(idsFin == null) prepare();
-
-			//compute difference: fin - ini
-			Collection<String> idsDiff = new ArrayList<>(idsFin);
-			idsDiff.removeAll(idsIni);
-
-			//get corresponding features
-			this.inserted = new ArrayList<>();
-			for(String id : idsDiff)
-				this.inserted.add(indFin.get(id));
-
-			//check
-			if(this.inserted.size() != idsDiff.size())
-				LOGGER.warn("Unexpected number of inserted features found.");
-		}
-		return this.inserted;
-	}
-
-	/**
-	 * @return The features that have changed.
-	 */
-	public Collection<T> getChanged() {
-		if(this.changed == null) computeChangedUnchangedDelta();
-		return this.changed;
+	public Collection<Feature> getChanges() {
+		if(this.changes == null) compute();
+		return this.changes;
 	}
 
 	/**
 	 * @return The features that have not changed.
 	 */
 	public Collection<T> getUnchanged() {
-		if(this.unchanged == null) computeChangedUnchangedDelta();
+		if(this.unchanged == null) compute();
 		return this.unchanged;
 	}
 
-	/**
-	 * @return The delta between initial and final version
-	 */
-	public Collection<Feature> getDelta() {
-		if(this.delta == null) computeChangedUnchangedDelta();
-		return delta;
-	}
 
-	private void computeChangedUnchangedDelta() {
+	private void compute() {
+		this.changes = new ArrayList<>();
 		this.unchanged = new ArrayList<>();
-		this.changed = new ArrayList<>();
 
-		//compute intersection
-		if(idsIni == null) prepare();
+		//list ids
+		Collection<String> idsIni = getIdValues(fsIni);
+		Collection<String> idsFin = getIdValues(fsFin);
+
+		//index features by ids
+		HashMap<String,T> indIni = FeatureUtil.index(fsIni, idAtt);
+		HashMap<String,T> indFin = FeatureUtil.index(fsFin, idAtt);
+
+		//handle features present in both initial and final version
+
+		//compute intersection of id lists
 		Collection<String> idsInter = new ArrayList<>(idsIni);
 		idsInter.retainAll(idsFin);
 
@@ -146,34 +87,58 @@ public class ChangeDetection<T extends Feature> {
 			T fIni = indIni.get(id);
 			T fFin = indFin.get(id);
 
-			//compare them and add to relevant list
-			Feature d = delta(fIni, fFin);
-			if(d == null) {
-				unchanged.add(fFin);
-				continue;
-			} else {
-				changed.add(fFin);
-				delta.add(d);
-			}
+			//compute change between them
+			Feature d = computeChange(fIni, fFin);
+			if(d == null) unchanged.add(fFin);
+			else changes.add(d);
 		}
+
+		//handle deleted features
+
+		//compute difference: ini - fin
+		Collection<String> idsDiff = new ArrayList<>(idsIni);
+		idsDiff.removeAll(idsFin);
+
+		//keep as deleted features
+		for(String id : idsDiff) {
+			T f = indIni.get(id);
+			f.setAttribute("change", "D");
+			changes.add(f);
+		}
+
+		//handle inserted features
+
+		//compute difference: fin - ini
+		idsDiff = new ArrayList<>(idsFin);
+		idsDiff.removeAll(idsIni);
+
+		//keep as inserted features
+		for(String id : idsDiff) {
+			T f = indFin.get(id);
+			f.setAttribute("change", "I");
+			changes.add(f);
+		}
+
 	}
 
 
 
-	private Feature delta(T fIni, T fFin) {
+
+
+	private Feature computeChange(T fIni, T fFin) {
 		boolean attChanged = false, geomChanged = false;
-		Feature d = new Feature();
+		Feature change = new Feature();
 
 		//attributes
-		int nb=0;
+		int nb = 0;
 		for(String att : fIni.getAttributes().keySet()) {
 			Object attIni = fIni.getAttribute(att);
 			Object attFin = fFin.getAttribute(att);
 			if(attIni.equals(attFin)) {
-				d.setAttribute(att, null);
+				change.setAttribute(att, null);
 			} else {
 				attChanged = true;
-				d.setAttribute(att, attFin);
+				change.setAttribute(att, attFin);
 				nb++;
 			}
 		}
@@ -184,12 +149,19 @@ public class ChangeDetection<T extends Feature> {
 		//no change: return null
 		if(!attChanged && !geomChanged) return null;
 
-		//set attribute on change
-		d.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
+		//set id
+		change.setID(fFin.getID());
+		if(idAtt != null) change.setAttribute(idAtt, fFin.getAttribute(idAtt));
 
-		//set geom as final one
-		d.setDefaultGeometry(fFin.getDefaultGeometry());
-		return d;
+		//set geometry
+		change.setDefaultGeometry(fFin.getDefaultGeometry());
+
+		//set attribute on change
+		change.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
+
+		//TODO pb: some have same identifier .getID()
+
+		return change;
 	}
 
 
@@ -199,22 +171,21 @@ public class ChangeDetection<T extends Feature> {
 		return idAtt==null||idAtt.isEmpty()?f.getID() : f.getAttribute(idAtt).toString();
 	}
 
-	private Collection<String> idsIni, idsFin;
-	private HashMap<String,T> indIni, indFin;
-
-	private void prepare() {
-		idsIni = getIdValues(fsIni);
-		idsFin = getIdValues(fsFin);
-		indIni = FeatureUtil.index(fsIni, idAtt);
-		indFin = FeatureUtil.index(fsFin, idAtt);
-	}
-
 	private Collection<String> getIdValues(Collection<T> fs) {
 		ArrayList<String> out = new ArrayList<>();
 		for(T f : fs) out.add(getId(f));
 		return out;
 	}
 
+	/**
+	 * Check that the id attribute is a true identifier, that is: It is populated and unique.
+	 * @return
+	 */
+	public boolean checkId() {
+		if( FeatureUtil.checkIdentfier(this.fsIni, this.idAtt).size()>0 ) return false;
+		if( FeatureUtil.checkIdentfier(this.fsFin, this.idAtt).size()>0 ) return false;
+		return true;
+	}
 
 
 
@@ -232,20 +203,13 @@ public class ChangeDetection<T extends Feature> {
 		boolean b = cd.checkId();
 		LOGGER.info(b);
 
-		Collection<Feature> deleted = cd.getDeleted();
-		LOGGER.info("deleted="+deleted.size());
-		Collection<Feature> inserted = cd.getInserted();
-		LOGGER.info("inserted="+inserted.size());
-		Collection<Feature> changed = cd.getChanged();
-		LOGGER.info("changed="+changed.size());
 		Collection<Feature> unchanged = cd.getUnchanged();
-		LOGGER.info("unchanged="+unchanged.size());
-
+		LOGGER.info("unchanged = "+unchanged.size());
+		Collection<Feature> changes = cd.getChanges();
+		LOGGER.info("changes = "+changes.size());
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
-		GeoPackageUtil.save(deleted, outpath+"deleted.gpkg", crs, true);
-		GeoPackageUtil.save(inserted, outpath+"inserted.gpkg", crs, true);
-		GeoPackageUtil.save(changed, outpath+"changed.gpkg", crs, true);
+		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
 
 		LOGGER.info("End");
