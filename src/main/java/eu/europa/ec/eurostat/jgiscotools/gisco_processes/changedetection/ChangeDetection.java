@@ -60,6 +60,7 @@ public class ChangeDetection<T extends Feature> {
 	private Collection<T> inserted = null;
 	private Collection<T> changed = null;
 	private Collection<T> unchanged = null;
+	private Collection<Feature> delta = null;
 
 	/**
 	 * @return The deleted features.
@@ -111,7 +112,7 @@ public class ChangeDetection<T extends Feature> {
 	 * @return The features that have changed.
 	 */
 	public Collection<T> getChanged() {
-		if(this.changed == null) computeChangedUnchanged();
+		if(this.changed == null) computeChangedUnchangedDelta();
 		return this.changed;
 	}
 
@@ -119,11 +120,19 @@ public class ChangeDetection<T extends Feature> {
 	 * @return The features that have not changed.
 	 */
 	public Collection<T> getUnchanged() {
-		if(this.unchanged == null) computeChangedUnchanged();
+		if(this.unchanged == null) computeChangedUnchangedDelta();
 		return this.unchanged;
 	}
 
-	private void computeChangedUnchanged() {
+	/**
+	 * @return The delta between initial and final version
+	 */
+	public Collection<Feature> getDelta() {
+		if(this.delta == null) computeChangedUnchangedDelta();
+		return delta;
+	}
+
+	private void computeChangedUnchangedDelta() {
 		this.unchanged = new ArrayList<>();
 		this.changed = new ArrayList<>();
 
@@ -138,63 +147,49 @@ public class ChangeDetection<T extends Feature> {
 			T fFin = indFin.get(id);
 
 			//compare them and add to relevant list
-			boolean b = getChangeCalculator().changed(fIni, fFin);
-			(b?changed:unchanged).add(fFin);
-		}
-	}
-
-
-
-	//delta
-
-	private Collection<Feature> delta = null;
-	public Collection<Feature> getDelta() {
-		if(this.delta == null) computeDelta();
-		return this.delta;
-	}
-
-	private void computeDelta() {
-		//TODO How to represent that?
-		//for each pair of object, the info which allows updating it
-		//deleted + inserted: the object with change description
-		//attribute change: the objects with changed attributes only - number of changed attributes
-		//geometry change: the object with new geometry? No: one with removed part + one with added part + info on geom change amount
-		//geometry + attribute change
-		//or: a CSV file with change description. fields: type of change (deletion, insertion, change) + geom change data + attribute change data
-	}
-
-
-
-
-	/**
-	 * The method used to compute the change between two versions of a feature.
-	 * By default, the geometries and attribute values should be the same.
-	 */
-	private ChangeCalculator<T> changeCalculator = new DefaultChangeCalculator<T>();
-	public ChangeCalculator<T> getChangeCalculator() { return changeCalculator; }
-	public void setChangeCalculator(ChangeCalculator<T> changeCalculator) { this.changeCalculator = changeCalculator; }
-
-
-
-
-	public interface ChangeCalculator<U extends Feature> {
-		boolean changed(U fIni, U fFin);
-	}
-
-	public class DefaultChangeCalculator<R extends Feature> implements ChangeCalculator<R> {
-		@Override
-		public boolean changed(R fIni, R fFin) {
-			//if any single attribute is different, it has changed
-			for(String att : fIni.getAttributes().keySet()) {
-				Object attIni = fIni.getAttribute(att);
-				Object attFin = fFin.getAttribute(att);
-				if(!attIni.equals(attFin)) return true;
+			Feature d = delta(fIni, fFin);
+			if(d == null) {
+				unchanged.add(fFin);
+				continue;
+			} else {
+				changed.add(fFin);
+				delta.add(d);
 			}
-			//if the geometry is different, it has changed
-			if( ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry()))
-				return true;
-			return false;
 		}
+	}
+
+
+
+	private Feature delta(T fIni, T fFin) {
+		boolean attChanged = false, geomChanged = false;
+		Feature d = new Feature();
+
+		//attributes
+		int nb=0;
+		for(String att : fIni.getAttributes().keySet()) {
+			Object attIni = fIni.getAttribute(att);
+			Object attFin = fFin.getAttribute(att);
+			if(attIni.equals(attFin)) {
+				d.setAttribute(att, null);
+			} else {
+				attChanged = true;
+				d.setAttribute(att, attFin);
+				nb++;
+			}
+		}
+		//geometry
+		if( ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry()))
+			geomChanged = true;
+
+		//no change: return null
+		if(!attChanged && !geomChanged) return null;
+
+		//set attribute on change
+		d.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
+
+		//set geom as final one
+		d.setDefaultGeometry(fFin.getDefaultGeometry());
+		return d;
 	}
 
 
