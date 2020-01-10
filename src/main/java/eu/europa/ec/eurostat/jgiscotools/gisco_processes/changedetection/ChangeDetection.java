@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.changedetection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +31,7 @@ public class ChangeDetection<T extends Feature> {
 	private String idAtt = null;
 
 	private Collection<String> idsIni, idsFin;
+	private HashMap<String,T> indIni, indFin;
 
 	/**
 	 * @param fsIni The initial version of the dataset.
@@ -41,13 +43,13 @@ public class ChangeDetection<T extends Feature> {
 		this.fsFin = fsFin;
 		this.idAtt = idAtt;
 
+		//TODO extract that
 		//extract ids of initial and final features
 		idsIni = getIdValues(fsIni);
 		idsFin = getIdValues(fsFin);
-	}
-
-	private String getId(T f) {
-		return idAtt==null||idAtt.isEmpty()?f.getID() : f.getAttribute(idAtt).toString();
+		//index features by id
+		indIni = FeatureUtil.index(fsIni, idAtt);
+		indFin = FeatureUtil.index(fsFin, idAtt);
 	}
 
 	/**
@@ -78,12 +80,9 @@ public class ChangeDetection<T extends Feature> {
 			idsDiff.removeAll(idsFin);
 
 			//get corresponding features
-			//TODO use index
 			this.deleted = new ArrayList<>();
-			for(T fIni : fsIni) {
-				String id = getId(fIni);
-				if(idsDiff.contains(id)) this.deleted.add(fIni);
-			}
+			for(String id : idsDiff)
+				this.deleted.add(indIni.get(id));
 
 			//check
 			if(this.deleted.size() != idsDiff.size())
@@ -103,12 +102,9 @@ public class ChangeDetection<T extends Feature> {
 			idsDiff.removeAll(idsIni);
 
 			//get corresponding features
-			//TODO use index
 			this.inserted = new ArrayList<>();
-			for(T fFin : fsFin) {
-				String id = getId(fFin);
-				if(idsDiff.contains(id)) this.inserted.add(fFin);
-			}
+			for(String id : idsDiff)
+				this.inserted.add(indFin.get(id));
 
 			//check
 			if(this.inserted.size() != idsDiff.size())
@@ -145,9 +141,8 @@ public class ChangeDetection<T extends Feature> {
 
 		for(String id : idsInter) {
 			//get two corresponding objects
-			//TODO index them by id
-			T fIni = null;
-			T fFin = null;
+			T fIni = indIni.get(id);
+			T fFin = indFin.get(id);
 
 			//compare them and add to relevant list
 			boolean b = getChangeCalculator().changed(fIni, fFin);
@@ -192,6 +187,11 @@ public class ChangeDetection<T extends Feature> {
 		}
 	}
 
+
+
+	private String getId(T f) {
+		return idAtt==null||idAtt.isEmpty()?f.getID() : f.getAttribute(idAtt).toString();
+	}
 
 	private Collection<String> getIdValues(Collection<T> fs) {
 		ArrayList<String> out = new ArrayList<>();
