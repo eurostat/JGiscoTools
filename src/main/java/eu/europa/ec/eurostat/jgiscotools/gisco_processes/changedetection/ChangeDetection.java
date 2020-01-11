@@ -124,9 +124,28 @@ public class ChangeDetection<T extends Feature> {
 
 
 	public Collection<Feature> getFakeChanges() {
-		//TODO
-		//among changes, detect the ones that concern the same object being deleted and inserted
-		return null;
+
+		//copy list of changes
+		ArrayList<Feature> ch_ = new ArrayList<>(getChanges());
+
+		//build spatial index of changes
+
+		Collection<Feature> out = new ArrayList<>();
+		while(ch_.size()>0) {
+			//get first element
+			Feature change = ch_.get(0);
+			ch_.remove(0);
+
+			//if not inserted/removed, skip?
+			//TODO
+			//among changes, detect the ones that concern the same object being deleted and inserted
+
+			//find one nearby
+			//
+
+			out .add(change);
+		}		
+		return out;
 	}
 
 
@@ -164,7 +183,7 @@ public class ChangeDetection<T extends Feature> {
 
 		//set attribute on change
 		change.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
-		
+
 		return change;
 	}
 
@@ -201,9 +220,11 @@ public class ChangeDetection<T extends Feature> {
 
 		FeatureUtil.setId(fsIni, "id");
 		FeatureUtil.setId(fsFin, "id");
-		//TODO check id
 
-		//
+		//LOGGER.info("check ids:");
+		//LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "id") );
+		//LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "id") );
+
 		ChangeDetection<Feature> cd = new ChangeDetection<>(fsIni, fsFin, "id");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
@@ -216,6 +237,15 @@ public class ChangeDetection<T extends Feature> {
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
 
 		LOGGER.info("End");
+	}
+
+
+	public static <T extends Feature> Collection<Feature> getChanges(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
+		return new ChangeDetection<T>(fsIni, fsFin, idAtt).getChanges();
+	}
+
+	public static <T extends Feature> boolean equals(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
+		return new ChangeDetection<T>(fsIni, fsFin, idAtt).getChanges().size() > 0;
 	}
 
 }
