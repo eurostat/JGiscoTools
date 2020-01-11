@@ -95,6 +95,17 @@ public class FeatureUtil {
 		return c;
 	}
 
+
+	public static void setId(ArrayList<Feature> fs, String idAtt) {
+		for(Feature f : fs) {
+			Object id = f.getAttribute(idAtt);
+			if(id==null)
+				LOGGER.warn("Could not find id attribute");
+			f.setID(id.toString());
+		}
+	}
+
+
 	//check if an attribute is an identifier (that is it is unique)
 	public static <T extends Feature> HashMap<String,Integer> checkIdentfier(Collection<T> fs, String idAtt) {
 		//build id count index

@@ -31,15 +31,17 @@ public class ChangeDetection<T extends Feature> {
 
 	private Collection<T> fsIni;
 	private Collection<T> fsFin;
+	private String idAtt = null;
 
 	/**
 	 * @param fsIni The initial version of the dataset.
 	 * @param fsFin The final version of the dataset.
 	 * @param idAtt The identifier column. Set to null if the default getId() value should be used.
 	 */
-	public ChangeDetection(Collection<T> fsIni, Collection<T> fsFin) {
+	public ChangeDetection(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
 		this.fsIni = fsIni;
 		this.fsFin = fsFin;
+		this.idAtt = idAtt;
 	}
 
 	private Collection<Feature> changes = null;
@@ -71,8 +73,8 @@ public class ChangeDetection<T extends Feature> {
 		Collection<String> idsFin = getIdValues(fsFin);
 
 		//index features by ids
-		HashMap<String,T> indIni = FeatureUtil.index(fsIni, null);
-		HashMap<String,T> indFin = FeatureUtil.index(fsFin, null);
+		HashMap<String,T> indIni = FeatureUtil.index(fsIni, idAtt);
+		HashMap<String,T> indFin = FeatureUtil.index(fsFin, idAtt);
 
 		//handle features present in both initial and final version
 
@@ -148,23 +150,39 @@ public class ChangeDetection<T extends Feature> {
 		if(!attChanged && !geomChanged) return null;
 
 		//set id
-		change.setID(fFin.getID());
+		change.setID( fFin.getAttribute(idAtt).toString() );
+		if(idAtt != null) change.setAttribute(idAtt, fFin.getAttribute(idAtt));
 
 		//set geometry
 		change.setDefaultGeometry(fFin.getDefaultGeometry());
 
 		//set attribute on change
 		change.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
-
+		
 		return change;
 	}
 
 
 
+
+	private String getId(T f) {
+		return idAtt==null||idAtt.isEmpty()?f.getID() : f.getAttribute(idAtt).toString();
+	}
+
 	private Collection<String> getIdValues(Collection<T> fs) {
 		ArrayList<String> out = new ArrayList<>();
-		for(T f : fs) out.add(f.getID());
+		for(T f : fs) out.add(getId(f));
 		return out;
+	}
+
+	/**
+	 * Check that the id attribute is a true identifier, that is: It is populated and unique.
+	 * @return
+	 */
+	public boolean checkId() {
+		if( FeatureUtil.checkIdentfier(this.fsIni, this.idAtt).size()>0 ) return false;
+		if( FeatureUtil.checkIdentfier(this.fsFin, this.idAtt).size()>0 ) return false;
+		return true;
 	}
 
 
@@ -179,12 +197,11 @@ public class ChangeDetection<T extends Feature> {
 		ArrayList<Feature> fsFin = GeoPackageUtil.getFeatures(path+"fin.gpkg");
 		LOGGER.info("Fin="+fsFin.size());
 
-		//TODO set id
+		FeatureUtil.setId(fsIni, "id");
+		FeatureUtil.setId(fsFin, "id");
 		//TODO check id
-		//boolean b = FeatureUtil.checkIdentfier(this.fsIni, this.idAtt).)
-		//LOGGER.info(b);
-
-		ChangeDetection<Feature> cd = new ChangeDetection<>(fsIni, fsFin);
+		
+		ChangeDetection<Feature> cd = new ChangeDetection<>(fsIni, fsFin, "id");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
 		LOGGER.info("unchanged = "+unchanged.size());
