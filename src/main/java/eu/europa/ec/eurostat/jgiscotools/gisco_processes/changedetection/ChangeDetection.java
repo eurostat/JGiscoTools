@@ -150,7 +150,7 @@ public class ChangeDetection<T extends Feature> {
 		if(!attChanged && !geomChanged) return null;
 
 		//set id
-		change.setID( fFin.getAttribute(idAtt).toString() );
+		change.setID( getId(fFin) );
 		if(idAtt != null) change.setAttribute(idAtt, fFin.getAttribute(idAtt));
 
 		//set geometry
