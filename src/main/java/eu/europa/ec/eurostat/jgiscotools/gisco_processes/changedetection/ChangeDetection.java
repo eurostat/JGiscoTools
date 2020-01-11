@@ -149,7 +149,6 @@ public class ChangeDetection<T extends Feature> {
 	}
 
 
-
 	private Feature computeChange(T fIni, T fFin) {
 		boolean attChanged = false, geomChanged = false;
 		Feature change = new Feature();
@@ -208,6 +207,41 @@ public class ChangeDetection<T extends Feature> {
 		return true;
 	}
 
+
+
+	
+	public static Collection<Feature> getChanges(Collection<Feature> fsIni, Collection<Feature> fsFin, String idAtt) {
+		return getChanges(fsIni, fsFin, idAtt);
+	}
+
+	
+	/**
+	 * 
+	 * 
+	 * @param <T> The feature class
+	 * @param fsIni
+	 * @param fsFin
+	 * @param idAtt
+	 * @return
+	 */
+	public static <T extends Feature> Collection<Feature> getChanges(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
+		return new ChangeDetection<T>(fsIni, fsFin, idAtt).getChanges();
+	}
+
+	public static <T extends Feature> boolean equals(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
+		return new ChangeDetection<T>(fsIni, fsFin, idAtt).getChanges().size() > 0;
+	}
+
+
+	public static <T extends Feature> Collection<T> applyChanges(Collection<T> fs, Collection<Feature> changes, String idAtt) {
+		//TODO
+		return fs;
+	}
+
+
+
+
+
 	public static void main(String[] args) {
 		LOGGER.info("Start");
 		String path = "src/test/resources/change_detection/";
@@ -237,15 +271,6 @@ public class ChangeDetection<T extends Feature> {
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
 
 		LOGGER.info("End");
-	}
-
-
-	public static <T extends Feature> Collection<Feature> getChanges(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
-		return new ChangeDetection<T>(fsIni, fsFin, idAtt).getChanges();
-	}
-
-	public static <T extends Feature> boolean equals(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
-		return new ChangeDetection<T>(fsIni, fsFin, idAtt).getChanges().size() > 0;
 	}
 
 }
