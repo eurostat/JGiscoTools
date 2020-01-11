@@ -96,6 +96,7 @@ public class FeatureUtil {
 	}
 
 
+
 	public static void setId(ArrayList<Feature> fs, String idAtt) {
 		for(Feature f : fs) {
 			Object id = f.getAttribute(idAtt);
@@ -104,6 +105,17 @@ public class FeatureUtil {
 			f.setID(id.toString());
 		}
 	}
+
+
+	public static <T extends Feature> Collection<String> getIdValues(Collection<T> fs, String idAtt) {
+		ArrayList<String> out = new ArrayList<>();
+		for(T f : fs) {
+			String id = idAtt==null||idAtt.isEmpty()? f.getID() : f.getAttribute(idAtt).toString();
+			out.add(id);
+		}
+		return out;
+	}
+
 
 
 	//check if an attribute is an identifier (that is it is unique)

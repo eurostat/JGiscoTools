@@ -36,7 +36,7 @@ public class ChangeDetection<T extends Feature> {
 	/**
 	 * @param fsIni The initial version of the dataset.
 	 * @param fsFin The final version of the dataset.
-	 * @param idAtt The identifier column. Set to null if the default getId() value should be used.
+	 * @param idAtt The identifier column. Set to null if the default getID() value should be used.
 	 */
 	public ChangeDetection(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
 		this.fsIni = fsIni;
@@ -51,7 +51,7 @@ public class ChangeDetection<T extends Feature> {
 	 * @return The changes.
 	 */
 	public Collection<Feature> getChanges() {
-		if(this.changes == null) compute();
+		if(this.changes == null) compare();
 		return this.changes;
 	}
 
@@ -59,60 +59,67 @@ public class ChangeDetection<T extends Feature> {
 	 * @return The features that have not changed.
 	 */
 	public Collection<T> getUnchanged() {
-		if(this.unchanged == null) compute();
+		if(this.unchanged == null) compare();
 		return this.unchanged;
 	}
 
 
-	private void compute() {
+	/**
+	 * Compare both datasets.
+	 */
+	private void compare() {
 		this.changes = new ArrayList<>();
 		this.unchanged = new ArrayList<>();
 
-		//list ids
-		Collection<String> idsIni = getIdValues(fsIni);
-		Collection<String> idsFin = getIdValues(fsFin);
+		//list id values
+		Collection<String> idsIni = FeatureUtil.getIdValues(fsIni, idAtt);
+		Collection<String> idsFin = FeatureUtil.getIdValues(fsFin, idAtt);
 
 		//index features by ids
 		HashMap<String,T> indIni = FeatureUtil.index(fsIni, idAtt);
 		HashMap<String,T> indFin = FeatureUtil.index(fsFin, idAtt);
 
-		//handle features present in both initial and final version
+		//find features present in both datasets and compare them
 
-		//compute intersection of id lists
+		//compute intersection of id sets
 		Collection<String> idsInter = new ArrayList<>(idsIni);
 		idsInter.retainAll(idsFin);
 
 		for(String id : idsInter) {
-			//get two corresponding objects
+			//get two corresponding features
 			T fIni = indIni.get(id);
 			T fFin = indFin.get(id);
 
 			//compute change between them
-			Feature d = computeChange(fIni, fFin);
+			Feature d = compare(fIni, fFin, idAtt);
+			
+			//both versions identical. No change detected.
 			if(d == null) unchanged.add(fFin);
+
+			//change
 			else changes.add(d);
 		}
 
-		//handle deleted features
+		//find deleted features
 
 		//compute difference: ini - fin
 		Collection<String> idsDiff = new ArrayList<>(idsIni);
 		idsDiff.removeAll(idsFin);
 
-		//keep as deleted features
+		//retrieve deleted features
 		for(String id : idsDiff) {
 			T f = indIni.get(id);
 			f.setAttribute("change", "D");
 			changes.add(f);
 		}
 
-		//handle inserted features
+		//find inserted features
 
 		//compute difference: fin - ini
 		idsDiff = new ArrayList<>(idsFin);
 		idsDiff.removeAll(idsIni);
 
-		//keep as inserted features
+		//retrieve inserted features
 		for(String id : idsDiff) {
 			T f = indFin.get(id);
 			f.setAttribute("change", "I");
@@ -121,8 +128,57 @@ public class ChangeDetection<T extends Feature> {
 
 	}
 
+	/**
+	 * Compare two versions of the same feature.
+	 * Both features are expected to have the same identifier and the same structure (list of attributes).
+	 * The changes can be either on the attribute values, or on the geometry.
+	 * 
+	 * @param fIni The initial version
+	 * @param fFin The final version
+	 * @return A feature representing the changes.
+	 */
+	public static <S extends Feature> Feature compare(S fIni, S fFin, String idAtt) {
+		boolean attChanged = false, geomChanged = false;
+		Feature change = new Feature();
+
+		//attributes
+		int nb = 0;
+		for(String att : fIni.getAttributes().keySet()) {
+			Object attIni = fIni.getAttribute(att);
+			Object attFin = fFin.getAttribute(att);
+			if(attIni.equals(attFin)) {
+				change.setAttribute(att, null);
+			} else {
+				attChanged = true;
+				change.setAttribute(att, attFin);
+				nb++;
+			}
+		}
+		//geometry
+		if( ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry()))
+			geomChanged = true;
+
+		//no change: return null
+		if(!attChanged && !geomChanged) return null;
+
+		//set id
+		String id = idAtt==null? fFin.getID() : fFin.getAttribute(idAtt).toString();
+		change.setID(id);
+		if(idAtt != null) change.setAttribute(idAtt, id);
+
+		//set geometry
+		change.setDefaultGeometry(fFin.getDefaultGeometry());
+
+		//set attribute on change
+		change.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
+
+		return change;
+	}
 
 
+
+
+	
 	public Collection<Feature> getFakeChanges() {
 
 		//copy list of changes
@@ -149,87 +205,33 @@ public class ChangeDetection<T extends Feature> {
 	}
 
 
-	private Feature computeChange(T fIni, T fFin) {
-		boolean attChanged = false, geomChanged = false;
-		Feature change = new Feature();
-
-		//attributes
-		int nb = 0;
-		for(String att : fIni.getAttributes().keySet()) {
-			Object attIni = fIni.getAttribute(att);
-			Object attFin = fFin.getAttribute(att);
-			if(attIni.equals(attFin)) {
-				change.setAttribute(att, null);
-			} else {
-				attChanged = true;
-				change.setAttribute(att, attFin);
-				nb++;
-			}
-		}
-		//geometry
-		if( ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry()))
-			geomChanged = true;
-
-		//no change: return null
-		if(!attChanged && !geomChanged) return null;
-
-		//set id
-		change.setID( getId(fFin) );
-		if(idAtt != null) change.setAttribute(idAtt, fFin.getAttribute(idAtt));
-
-		//set geometry
-		change.setDefaultGeometry(fFin.getDefaultGeometry());
-
-		//set attribute on change
-		change.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
-
-		return change;
-	}
-
-
-	private String getId(T f) {
-		return idAtt==null||idAtt.isEmpty()?f.getID() : f.getAttribute(idAtt).toString();
-	}
-
-	private Collection<String> getIdValues(Collection<T> fs) {
-		ArrayList<String> out = new ArrayList<>();
-		for(T f : fs) out.add(getId(f));
-		return out;
-	}
-
-	/**
-	 * Check that the id attribute is a true identifier, that is: It is populated and unique.
-	 * @return
-	 */
-	public boolean checkId() {
-		if( FeatureUtil.checkIdentfier(this.fsIni, this.idAtt).size()>0 ) return false;
-		if( FeatureUtil.checkIdentfier(this.fsFin, this.idAtt).size()>0 ) return false;
-		return true;
-	}
-
 
 
 	
-	public static Collection<Feature> getChanges(Collection<Feature> fsIni, Collection<Feature> fsFin, String idAtt) {
-		return getChanges(fsIni, fsFin, idAtt);
-	}
-
-	
 	/**
-	 * 
+	 * Return the changes from a version of a dataset to another one.
 	 * 
 	 * @param <T> The feature class
-	 * @param fsIni
-	 * @param fsFin
-	 * @param idAtt
-	 * @return
+	 * @param fsIni The initial dataset
+	 * @param fsFin The final dataset
+	 * @param idAtt The identifier column. Set to null if the default getID() value should be used.
+	 * @return The changes
 	 */
 	public static <T extends Feature> Collection<Feature> getChanges(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
 		return new ChangeDetection<T>(fsIni, fsFin, idAtt).getChanges();
 	}
 
-	public static <T extends Feature> boolean equals(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
-		return new ChangeDetection<T>(fsIni, fsFin, idAtt).getChanges().size() > 0;
+	/**
+	 * Analyse the differences between two datasets to check wether they are identical.
+	 * 
+	 * @param <T> The feature class
+	 * @param fs1 The first dataset
+	 * @param fs2 The second dataset
+	 * @param idAtt The identifier column. Set to null if the default getID() value should be used.
+	 * @return
+	 */
+	public static <T extends Feature> boolean equals(Collection<T> fs1, Collection<T> fs2, String idAtt) {
+		return new ChangeDetection<T>(fs1, fs2, idAtt).getChanges().size() > 0;
 	}
 
 
