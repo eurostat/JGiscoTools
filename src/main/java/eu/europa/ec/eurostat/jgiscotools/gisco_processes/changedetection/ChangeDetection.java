@@ -123,6 +123,12 @@ public class ChangeDetection<T extends Feature> {
 
 
 
+	public Collection<Feature> getFakeChanges() {
+		//TODO
+		//among changes, detect the ones that concern the same object being deleted and inserted
+		return null;
+	}
+
 
 
 	private Feature computeChange(T fIni, T fFin) {
@@ -163,8 +169,6 @@ public class ChangeDetection<T extends Feature> {
 	}
 
 
-
-
 	private String getId(T f) {
 		return idAtt==null||idAtt.isEmpty()?f.getID() : f.getAttribute(idAtt).toString();
 	}
@@ -185,8 +189,6 @@ public class ChangeDetection<T extends Feature> {
 		return true;
 	}
 
-
-
 	public static void main(String[] args) {
 		LOGGER.info("Start");
 		String path = "src/test/resources/change_detection/";
@@ -200,7 +202,8 @@ public class ChangeDetection<T extends Feature> {
 		FeatureUtil.setId(fsIni, "id");
 		FeatureUtil.setId(fsFin, "id");
 		//TODO check id
-		
+
+		//
 		ChangeDetection<Feature> cd = new ChangeDetection<>(fsIni, fsFin, "id");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
