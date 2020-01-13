@@ -400,7 +400,7 @@ public class FeatureUtil {
 		Feature f_ = new Feature();
 		f_.setDefaultGeometry(f.getDefaultGeometry());
 		f_.getAttributes().putAll(f.getAttributes());
-		return null;
+		return f_;
 	}
 
 }
