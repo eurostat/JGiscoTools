@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.changedetection;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.jgiscotools.changedetection.ChangeDetection;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;

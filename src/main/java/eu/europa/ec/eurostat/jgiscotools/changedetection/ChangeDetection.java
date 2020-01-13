@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.changedetection;
+package eu.europa.ec.eurostat.jgiscotools.changedetection;
 
 import java.util.ArrayList;
 import java.util.Collection;
