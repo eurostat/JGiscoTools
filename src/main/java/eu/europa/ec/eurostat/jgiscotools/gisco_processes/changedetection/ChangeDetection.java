@@ -90,13 +90,13 @@ public class ChangeDetection {
 			Feature fFin = indFin.get(id);
 
 			//compute change between them
-			Feature d = compare(fIni, fFin, idAtt);
+			Feature ch = compare(fIni, fFin, idAtt);
 
 			//both versions identical. No change detected.
-			if(d == null) unchanged.add(fFin);
+			if(ch == null) unchanged.add(fFin);
 
 			//change
-			else changes.add(d);
+			else changes.add(ch);
 		}
 
 		//find deleted features
@@ -107,9 +107,9 @@ public class ChangeDetection {
 
 		//retrieve deleted features
 		for(String id : idsDiff) {
-			Feature d = FeatureUtil.copy( indIni.get(id) );
-			d.setAttribute("change", "D");
-			changes.add(d);
+			Feature ch = FeatureUtil.copy( indIni.get(id) );
+			ch.setAttribute("change", "D");
+			changes.add(ch);
 		}
 
 		//find inserted features
@@ -120,9 +120,9 @@ public class ChangeDetection {
 
 		//retrieve inserted features
 		for(String id : idsDiff) {
-			Feature i = FeatureUtil.copy( indFin.get(id) );
-			i.setAttribute("change", "I");
-			changes.add(i);
+			Feature ch = FeatureUtil.copy( indFin.get(id) );
+			ch.setAttribute("change", "I");
+			changes.add(ch);
 		}
 
 	}
@@ -136,7 +136,7 @@ public class ChangeDetection {
 	 * @param fFin The final version
 	 * @return A feature representing the changes.
 	 */
-	public static <S extends Feature> Feature compare(S fIni, S fFin, String idAtt) {
+	public static Feature compare(Feature fIni, Feature fFin, String idAtt) {
 		boolean attChanged = false, geomChanged = false;
 		Feature change = new Feature();
 
@@ -178,7 +178,7 @@ public class ChangeDetection {
 
 
 
-	public Collection<Feature> getFakeChanges() {
+	public Collection<Feature> findWrongInsertionDeletions() {
 
 		//copy list of changes
 		ArrayList<Feature> ch_ = new ArrayList<>(getChanges());
@@ -243,10 +243,12 @@ public class ChangeDetection {
 			String ct = ch.getAttribute("change").toString();
 			String id = idAtt == null? ch.getID() : ch.getAttribute(idAtt).toString();
 
-			//insertion of new feature
+			//new feature insertion
 			if("I".equals(ct)) {
 				LOGGER.info("New feature inserted. id="+id);
-				fs.add(ch); //TODO create new feature, without 'change' attribute
+				Feature f = FeatureUtil.copy(ch);
+				f.getAttributes().remove("change");
+				fs.add(f);
 				continue;
 			}
 
@@ -342,7 +344,7 @@ public class ChangeDetection {
 		applyChanges(fsIni, changes, "id");
 		LOGGER.info( equals(fsIni, fsFin, "id") );
 
-		GeoPackageUtil.save(fsIni, outpath+"ini_changed.gpkg", crs, true);
+		//GeoPackageUtil.save(fsIni, outpath+"ini_changed.gpkg", crs, true);
 
 		LOGGER.info("End");
 	}
