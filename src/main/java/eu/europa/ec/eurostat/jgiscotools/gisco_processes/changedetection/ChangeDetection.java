@@ -6,6 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.changedetection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -92,7 +93,7 @@ public class ChangeDetection<T extends Feature> {
 
 			//compute change between them
 			Feature d = compare(fIni, fFin, idAtt);
-			
+
 			//both versions identical. No change detected.
 			if(d == null) unchanged.add(fFin);
 
@@ -178,7 +179,7 @@ public class ChangeDetection<T extends Feature> {
 
 
 
-	
+
 	public Collection<Feature> getFakeChanges() {
 
 		//copy list of changes
@@ -207,7 +208,7 @@ public class ChangeDetection<T extends Feature> {
 
 
 
-	
+
 	/**
 	 * Return the changes from a version of a dataset to another one.
 	 * 
@@ -235,14 +236,63 @@ public class ChangeDetection<T extends Feature> {
 	}
 
 
-	public static <T extends Feature> Collection<T> applyChanges(Collection<T> fs, Collection<Feature> changes, String idAtt) {
-		//TODO
-		return fs;
+	public static <D extends Feature> void applyChanges(Collection<D> fs, Collection<Feature> changes, String idAtt) {
+
+		//index input features
+		HashMap<String, D> ind = FeatureUtil.index(fs, idAtt);
+
+		//go through changes
+		for(Feature ch : changes) {
+			//retrieve type of change and change/feature id
+			String ct = ch.getAttribute("change").toString();
+			String id = idAtt == null? ch.getID() : ch.getAttribute(idAtt).toString();
+
+			//insertion of new feature
+			if("I".equals(ct)) {
+				LOGGER.warn("New feature inserted. id="+id);
+				fs.add((D)ch); //TODO
+				continue;
+			}
+
+			//retrieve feature to be changed
+			D f = ind.get(id);
+
+			if(f == null) {
+				LOGGER.warn("Could not handle change for feature with id="+id+". Feature not present in initial dataset.");
+				continue;
+			}
+
+			//feature deletion
+			if("D".equals(ct)) {
+				boolean b = fs.remove(f);
+				if(!b) LOGGER.warn("Could not remove feature. id="+id);
+				continue;
+			}
+
+			//case of geometry change
+			if(ct.contains("G"))
+				f.setDefaultGeometry(ch.getDefaultGeometry());
+
+			//if no attribute change, continue
+			if(!ct.contains("A")) continue;
+
+			//get number of attribute changes
+			int nbAtt = Integer.parseInt( ct.replace("G", "").replace("A", "") );
+
+			//change attributes
+			int nbAtt_ = 0;
+			for(Entry<String,Object> att : ch.getAttributes().entrySet()) {
+				if(att.getValue() == null) continue;
+				f.setAttribute(att.getKey(), att.getValue());
+				nbAtt_++;
+			}
+
+			//check number of attributes changed is as expected
+			if(nbAtt != nbAtt_)
+				LOGGER.warn("Unexpected number of attribute changes ("+nbAtt_+" instead of "+nbAtt_+") for feature id="+id+".");
+		}
+
 	}
-
-
-
-
 
 	public static void main(String[] args) {
 		LOGGER.info("Start");
