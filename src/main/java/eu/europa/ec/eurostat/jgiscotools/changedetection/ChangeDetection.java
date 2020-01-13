@@ -10,9 +10,11 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
@@ -63,6 +65,7 @@ public class ChangeDetection {
 		return this.unchanged;
 	}
 
+	private HashMap<String,Feature> indIni, indFin;
 
 	/**
 	 * Compare both datasets.
@@ -76,8 +79,8 @@ public class ChangeDetection {
 		Collection<String> idsFin = FeatureUtil.getIdValues(fsFin, idAtt);
 
 		//index features by ids
-		HashMap<String,Feature> indIni = FeatureUtil.index(fsIni, idAtt);
-		HashMap<String,Feature> indFin = FeatureUtil.index(fsFin, idAtt);
+		indIni = FeatureUtil.index(fsIni, idAtt);
+		indFin = FeatureUtil.index(fsFin, idAtt);
 
 		//find features present in both datasets and compare them
 
@@ -230,6 +233,39 @@ public class ChangeDetection {
 		}		
 		return out;
 	}
+
+
+
+	//TODO: include that in normal compute?
+	private void computeGeometryChanges() {
+		for(Feature ch : getChanges()) {
+
+			//consider only geometry changes
+			String ct = ch.getAttribute("change").toString();
+			if(!ct.contains("G")) continue;
+
+			//get initial and final geometries
+			String id = idAtt==null?ch.getID():ch.getAttribute(idAtt).toString();
+			Geometry gIni = indIni.get(id).getDefaultGeometry();
+			Geometry gFin = indFin.get(id).getDefaultGeometry();
+
+			//compute hausdorff distance
+			HausdorffDistance hd = new HausdorffDistance(gIni, gFin);
+
+			//store hausdorf segment
+			//TODO
+
+			//compute added and removed parts
+			Geometry gD = gIni.difference(gFin);
+			Geometry gI = gFin.difference(gIni);
+
+			//store geometries
+			//TODO
+		}
+	}
+
+
+
 
 
 
