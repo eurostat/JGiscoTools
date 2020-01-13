@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -178,27 +179,46 @@ public class ChangeDetection {
 
 
 
-	public Collection<Feature> findWrongInsertionDeletions() {
+	public static Collection<Feature> findSuspectInsertionDeletionCouples(Collection<Feature> changes) {
 
-		//copy list of changes
-		ArrayList<Feature> ch_ = new ArrayList<>(getChanges());
+		//copy list of changes, keeping only deletions and insertions.
+		ArrayList<Feature> chs = new ArrayList<>();
+		for(Feature ch : changes) {
+			String ct = ch.getAttribute("change").toString();
+			if("I".equals(ct)) chs.add(ch);
+			if("D".equals(ct)) chs.add(ch);
+		}
 
 		//build spatial index of changes
+		Quadtree ind = FeatureUtil.getQuadtree(chs);
 
 		Collection<Feature> out = new ArrayList<>();
-		while(ch_.size()>0) {
+		while(chs.size()>0) {
 			//get first element
-			Feature change = ch_.get(0);
-			ch_.remove(0);
+			Feature ch = chs.get(0);
+			chs.remove(0);
+			boolean b = ind.remove(ch.getDefaultGeometry().getEnvelopeInternal(), ch);
+			if(!b) LOGGER.warn("Pb");
 
-			//if not inserted/removed, skip?
-			//TODO
-			//among changes, detect the ones that concern the same object being deleted and inserted
+			//get change type
+			String ct = ch.getAttribute("change").toString();
 
-			//find one nearby
-			//
+			//get try to find other change
+			Feature ch2 = null;
+			for(Object cho_ : ind.query( ch.getDefaultGeometry().getEnvelopeInternal() )) {
+				Feature ch_ = (Feature) cho_;
+				if(ct.equals(ch_.getAttribute("change").toString())) continue;
+				if(ch.getDefaultGeometry().equalsExact(ch_.getDefaultGeometry())) { ch2=ch_; break; }
+			}
 
-			out .add(change);
+			if(ch2 == null) continue;
+
+			chs.remove(ch2);
+			b = ind.remove(ch.getDefaultGeometry().getEnvelopeInternal(), ch2);
+			if(!b) LOGGER.warn("Pb");
+
+			out.add(ch);
+			out.add(ch2);
 		}		
 		return out;
 	}
@@ -333,6 +353,10 @@ public class ChangeDetection {
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
+
+		Collection<Feature> sus = findSuspectInsertionDeletionCouples(changes);
+		LOGGER.info("suspect changes = "+sus.size());
+		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
 
 		LOGGER.info("--- Test equality");
 		LOGGER.info( equals(fsIni, fsFin, "id") );
