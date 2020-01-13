@@ -31,6 +31,7 @@ public class ChangeEBM {
 		LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "inspireId") );
 		LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "inspireId") );
 
+		LOGGER.info("change detection");
 		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, "inspireId");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
@@ -38,7 +39,7 @@ public class ChangeEBM {
 		Collection<Feature> changes = cd.getChanges();
 		LOGGER.info("changes = "+changes.size());
 
-		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
+		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"EBM_2019_LAEA/EBM_A.gpkg");
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
 
