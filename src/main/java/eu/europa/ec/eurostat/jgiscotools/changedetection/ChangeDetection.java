@@ -142,6 +142,7 @@ public class ChangeDetection {
 		Feature change = new Feature();
 
 		//attributes
+		//TODO handle attributes to ignore
 		int nb = 0;
 		for(String att : fIni.getAttributes().keySet()) {
 			Object attIni = fIni.getAttribute(att);
@@ -356,13 +357,12 @@ public class ChangeDetection {
 		LOGGER.info("unchanged = "+unchanged.size());
 		Collection<Feature> changes = cd.getChanges();
 		LOGGER.info("changes = "+changes.size());
+		Collection<Feature> sus = findIdStabilityIssues(changes);
+		LOGGER.info("suspect changes = "+sus.size());
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
-
-		Collection<Feature> sus = findIdStabilityIssues(changes);
-		LOGGER.info("suspect changes = "+sus.size());
 		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
 
 		LOGGER.info("--- Test equality");

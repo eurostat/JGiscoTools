@@ -17,8 +17,8 @@ public class ChangeEBM {
 
 	public static void main(String[] args) {
 		LOGGER.info("Start");
-		String path = "E:\\dissemination\\shared-data\\EBM\\gpkg\\";
-		String outpath = "E:\\workspace\\EBM_2019_2020_comparison\\comparison_";
+		String path = "E:/dissemination/shared-data/EBM/gpkg/";
+		String outpath = "E:/workspace/EBM_2019_2020_comparison/comparison_/";
 
 		ArrayList<Feature> fsIni = GeoPackageUtil.getFeatures(path+"EBM_2019_LAEA/EBM_A.gpkg");
 		LOGGER.info("Ini="+fsIni.size());
@@ -32,6 +32,9 @@ public class ChangeEBM {
 		LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "inspireId") );
 		LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "inspireId") );
 
+		//TODO
+		//ignore field change - OBJECTID
+
 		LOGGER.info("change detection");
 		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, "inspireId");
 
@@ -39,10 +42,13 @@ public class ChangeEBM {
 		LOGGER.info("unchanged = "+unchanged.size());
 		Collection<Feature> changes = cd.getChanges();
 		LOGGER.info("changes = "+changes.size());
+		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes);
+		LOGGER.info("suspect changes = "+sus.size());
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"EBM_2019_LAEA/EBM_A.gpkg");
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
+		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
 
 		LOGGER.info("End");
 	}
