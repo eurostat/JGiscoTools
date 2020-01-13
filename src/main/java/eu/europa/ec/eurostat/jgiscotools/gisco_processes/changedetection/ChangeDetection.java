@@ -232,7 +232,7 @@ public class ChangeDetection<T extends Feature> {
 	 * @return
 	 */
 	public static <T extends Feature> boolean equals(Collection<T> fs1, Collection<T> fs2, String idAtt) {
-		return new ChangeDetection<T>(fs1, fs2, idAtt).getChanges().size() > 0;
+		return new ChangeDetection<T>(fs1, fs2, idAtt).getChanges().size() == 0;
 	}
 
 
@@ -249,7 +249,7 @@ public class ChangeDetection<T extends Feature> {
 
 			//insertion of new feature
 			if("I".equals(ct)) {
-				LOGGER.warn("New feature inserted. id="+id);
+				LOGGER.info("New feature inserted. id="+id);
 				fs.add((D)ch); //TODO
 				continue;
 			}
@@ -266,8 +266,11 @@ public class ChangeDetection<T extends Feature> {
 			if("D".equals(ct)) {
 				boolean b = fs.remove(f);
 				if(!b) LOGGER.warn("Could not remove feature. id="+id);
+				LOGGER.info("Feature deleted. id="+id);
 				continue;
 			}
+
+			LOGGER.info("Feature changed. id="+id+". change="+ct+".");
 
 			//case of geometry change
 			if(ct.contains("G"))
@@ -282,14 +285,19 @@ public class ChangeDetection<T extends Feature> {
 			//change attributes
 			int nbAtt_ = 0;
 			for(Entry<String,Object> att : ch.getAttributes().entrySet()) {
+
+				if("change".equals(att.getKey())) continue;
+				if(idAtt!=null && idAtt.equals(att.getKey())) continue;
+
 				if(att.getValue() == null) continue;
+
 				f.setAttribute(att.getKey(), att.getValue());
 				nbAtt_++;
 			}
 
 			//check number of attributes changed is as expected
 			if(nbAtt != nbAtt_)
-				LOGGER.warn("Unexpected number of attribute changes ("+nbAtt_+" instead of "+nbAtt_+") for feature id="+id+".");
+				LOGGER.warn("Unexpected number of attribute changes ("+nbAtt_+" instead of "+nbAtt+") for feature id="+id+".");
 		}
 
 	}
@@ -321,6 +329,20 @@ public class ChangeDetection<T extends Feature> {
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
+
+		/*
+		LOGGER.info("--- Test equality");
+		LOGGER.info( equals(fsIni, fsFin, "id") );
+		LOGGER.info( equals(fsFin, fsIni, "id") );
+		LOGGER.info( equals(fsIni, fsIni, "id") );
+		LOGGER.info( equals(fsFin, fsFin, "id") );
+		 */
+
+		LOGGER.info("--- Test change application");
+		applyChanges(fsIni, changes, "id");
+		LOGGER.info( equals(fsIni, fsFin, "id") );
+
+		GeoPackageUtil.save(fsIni, outpath+"ini_changed.gpkg", crs, true);
 
 		LOGGER.info("End");
 	}
