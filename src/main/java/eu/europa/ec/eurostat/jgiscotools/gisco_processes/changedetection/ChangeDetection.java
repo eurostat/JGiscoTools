@@ -179,7 +179,14 @@ public class ChangeDetection {
 
 
 
-	public static Collection<Feature> findSuspectInsertionDeletionCouples(Collection<Feature> changes) {
+	/**
+	 * Detect among some changes the ones are are unecessary: the deletion and insertion of features with same geometries.
+	 * This happen when id stability is not perfectly followed.
+	 * 
+	 * @param changes
+	 * @return
+	 */
+	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> changes) {
 
 		//copy list of changes, keeping only deletions and insertions.
 		ArrayList<Feature> chs = new ArrayList<>();
@@ -354,7 +361,7 @@ public class ChangeDetection {
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
 
-		Collection<Feature> sus = findSuspectInsertionDeletionCouples(changes);
+		Collection<Feature> sus = findIdStabilityIssues(changes);
 		LOGGER.info("suspect changes = "+sus.size());
 		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
 
