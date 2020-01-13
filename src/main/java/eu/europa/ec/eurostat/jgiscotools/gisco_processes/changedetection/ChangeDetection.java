@@ -25,13 +25,11 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
  * @author julien Gaffuri
  *
  */
-public class ChangeDetection<T extends Feature> {
+public class ChangeDetection {
 	private final static Logger LOGGER = LogManager.getLogger(ChangeDetection.class.getName());
 
-	//TODO make test class with fake dataset
-
-	private Collection<T> fsIni;
-	private Collection<T> fsFin;
+	private Collection<Feature> fsIni;
+	private Collection<Feature> fsFin;
 	private String idAtt = null;
 
 	/**
@@ -39,14 +37,14 @@ public class ChangeDetection<T extends Feature> {
 	 * @param fsFin The final version of the dataset.
 	 * @param idAtt The identifier column. Set to null if the default getID() value should be used.
 	 */
-	public ChangeDetection(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
+	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin, String idAtt) {
 		this.fsIni = fsIni;
 		this.fsFin = fsFin;
 		this.idAtt = idAtt;
 	}
 
 	private Collection<Feature> changes = null;
-	private Collection<T> unchanged = null;
+	private Collection<Feature> unchanged = null;
 
 	/**
 	 * @return The changes.
@@ -59,7 +57,7 @@ public class ChangeDetection<T extends Feature> {
 	/**
 	 * @return The features that have not changed.
 	 */
-	public Collection<T> getUnchanged() {
+	public Collection<Feature> getUnchanged() {
 		if(this.unchanged == null) compare();
 		return this.unchanged;
 	}
@@ -77,8 +75,8 @@ public class ChangeDetection<T extends Feature> {
 		Collection<String> idsFin = FeatureUtil.getIdValues(fsFin, idAtt);
 
 		//index features by ids
-		HashMap<String,T> indIni = FeatureUtil.index(fsIni, idAtt);
-		HashMap<String,T> indFin = FeatureUtil.index(fsFin, idAtt);
+		HashMap<String,Feature> indIni = FeatureUtil.index(fsIni, idAtt);
+		HashMap<String,Feature> indFin = FeatureUtil.index(fsFin, idAtt);
 
 		//find features present in both datasets and compare them
 
@@ -88,8 +86,8 @@ public class ChangeDetection<T extends Feature> {
 
 		for(String id : idsInter) {
 			//get two corresponding features
-			T fIni = indIni.get(id);
-			T fFin = indFin.get(id);
+			Feature fIni = indIni.get(id);
+			Feature fFin = indFin.get(id);
 
 			//compute change between them
 			Feature d = compare(fIni, fFin, idAtt);
@@ -109,9 +107,9 @@ public class ChangeDetection<T extends Feature> {
 
 		//retrieve deleted features
 		for(String id : idsDiff) {
-			T f = indIni.get(id);
-			f.setAttribute("change", "D");
-			changes.add(f);
+			Feature d = FeatureUtil.copy( indIni.get(id) );
+			d.setAttribute("change", "D");
+			changes.add(d);
 		}
 
 		//find inserted features
@@ -122,9 +120,9 @@ public class ChangeDetection<T extends Feature> {
 
 		//retrieve inserted features
 		for(String id : idsDiff) {
-			T f = indFin.get(id);
-			f.setAttribute("change", "I");
-			changes.add(f);
+			Feature i = FeatureUtil.copy( indFin.get(id) );
+			i.setAttribute("change", "I");
+			changes.add(i);
 		}
 
 	}
@@ -212,34 +210,32 @@ public class ChangeDetection<T extends Feature> {
 	/**
 	 * Return the changes from a version of a dataset to another one.
 	 * 
-	 * @param <T> The feature class
 	 * @param fsIni The initial dataset
 	 * @param fsFin The final dataset
 	 * @param idAtt The identifier column. Set to null if the default getID() value should be used.
 	 * @return The changes
 	 */
-	public static <T extends Feature> Collection<Feature> getChanges(Collection<T> fsIni, Collection<T> fsFin, String idAtt) {
-		return new ChangeDetection<T>(fsIni, fsFin, idAtt).getChanges();
+	public static Collection<Feature> getChanges(Collection<Feature> fsIni, Collection<Feature> fsFin, String idAtt) {
+		return new ChangeDetection(fsIni, fsFin, idAtt).getChanges();
 	}
 
 	/**
 	 * Analyse the differences between two datasets to check wether they are identical.
 	 * 
-	 * @param <T> The feature class
 	 * @param fs1 The first dataset
 	 * @param fs2 The second dataset
 	 * @param idAtt The identifier column. Set to null if the default getID() value should be used.
 	 * @return
 	 */
-	public static <T extends Feature> boolean equals(Collection<T> fs1, Collection<T> fs2, String idAtt) {
-		return new ChangeDetection<T>(fs1, fs2, idAtt).getChanges().size() == 0;
+	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2, String idAtt) {
+		return new ChangeDetection(fs1, fs2, idAtt).getChanges().size() == 0;
 	}
 
 
-	public static <D extends Feature> void applyChanges(Collection<D> fs, Collection<Feature> changes, String idAtt) {
+	public static void applyChanges(Collection<Feature> fs, Collection<Feature> changes, String idAtt) {
 
 		//index input features
-		HashMap<String, D> ind = FeatureUtil.index(fs, idAtt);
+		HashMap<String, Feature> ind = FeatureUtil.index(fs, idAtt);
 
 		//go through changes
 		for(Feature ch : changes) {
@@ -250,12 +246,12 @@ public class ChangeDetection<T extends Feature> {
 			//insertion of new feature
 			if("I".equals(ct)) {
 				LOGGER.info("New feature inserted. id="+id);
-				fs.add((D)ch); //TODO
+				fs.add(ch); //TODO create new feature, without 'change' attribute
 				continue;
 			}
 
 			//retrieve feature to be changed
-			D f = ind.get(id);
+			Feature f = ind.get(id);
 
 			if(f == null) {
 				LOGGER.warn("Could not handle change for feature with id="+id+". Feature not present in initial dataset.");
@@ -302,6 +298,12 @@ public class ChangeDetection<T extends Feature> {
 
 	}
 
+
+
+
+
+
+	//TODO extract that into tests
 	public static void main(String[] args) {
 		LOGGER.info("Start");
 		String path = "src/test/resources/change_detection/";
@@ -319,7 +321,7 @@ public class ChangeDetection<T extends Feature> {
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "id") );
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "id") );
 
-		ChangeDetection<Feature> cd = new ChangeDetection<>(fsIni, fsFin, "id");
+		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, "id");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
 		LOGGER.info("unchanged = "+unchanged.size());
@@ -330,13 +332,11 @@ public class ChangeDetection<T extends Feature> {
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
 
-		/*
 		LOGGER.info("--- Test equality");
 		LOGGER.info( equals(fsIni, fsFin, "id") );
 		LOGGER.info( equals(fsFin, fsIni, "id") );
 		LOGGER.info( equals(fsIni, fsIni, "id") );
 		LOGGER.info( equals(fsFin, fsFin, "id") );
-		 */
 
 		LOGGER.info("--- Test change application");
 		applyChanges(fsIni, changes, "id");

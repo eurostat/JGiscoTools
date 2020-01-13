@@ -396,5 +396,11 @@ public class FeatureUtil {
 		}
 		return fs;
 	}
+	public static Feature copy(Feature f) {
+		Feature f_ = new Feature();
+		f_.setDefaultGeometry(f.getDefaultGeometry());
+		f_.getAttributes().putAll(f.getAttributes());
+		return null;
+	}
 
 }
