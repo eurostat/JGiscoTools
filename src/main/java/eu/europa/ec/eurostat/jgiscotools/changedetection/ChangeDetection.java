@@ -10,7 +10,9 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -235,9 +237,15 @@ public class ChangeDetection {
 	}
 
 
+	private Collection<Feature> hdgeomChanges = null;
+	private Collection<Feature> geomChanges = null;
 
 	//TODO: include that in normal compute?
 	private void computeGeometryChanges() {
+
+		hdgeomChanges = new ArrayList<Feature>();
+		geomChanges = new ArrayList<Feature>();
+
 		for(Feature ch : getChanges()) {
 
 			//consider only geometry changes
@@ -249,18 +257,31 @@ public class ChangeDetection {
 			Geometry gIni = indIni.get(id).getDefaultGeometry();
 			Geometry gFin = indFin.get(id).getDefaultGeometry();
 
-			//compute hausdorff distance
+			//hausdorff distance
 			HausdorffDistance hd = new HausdorffDistance(gIni, gFin);
-
-			//store hausdorf segment
-			//TODO
+			Feature hdf = new Feature();
+			LineString ls = ch.getDefaultGeometry().getFactory().createLineString(new Coordinate[] { hd.getC0(), hd.getC1()});
+			hdf.setDefaultGeometry(ls);
+			hdf.setAttribute("ch_id", id);
+			hdf.setAttribute("hdist", hd.getDistance());
+			hdgeomChanges.add(hdf);
 
 			//compute added and removed parts
 			Geometry gD = gIni.difference(gFin);
+			if(!gD.isEmpty()) {
+				Feature f = new Feature();
+				f.setDefaultGeometry(gD);
+				f.setAttribute("ch_id", id);
+				f.setAttribute("type", "D");
+			}
 			Geometry gI = gFin.difference(gIni);
+			if(!gI.isEmpty()) {
+				Feature f = new Feature();
+				f.setDefaultGeometry(gI);
+				f.setAttribute("ch_id", id);
+				f.setAttribute("type", "I");
+			}
 
-			//store geometries
-			//TODO
 		}
 	}
 
