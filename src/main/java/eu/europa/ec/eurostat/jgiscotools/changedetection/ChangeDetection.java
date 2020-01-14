@@ -36,17 +36,14 @@ public class ChangeDetection {
 
 	private Collection<Feature> fsIni;
 	private Collection<Feature> fsFin;
-	private String idAtt = null;
 
 	/**
 	 * @param fsIni The initial version of the dataset.
 	 * @param fsFin The final version of the dataset.
-	 * @param idAtt The identifier column. Set to null if the default getID() value should be used.
 	 */
-	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin, String idAtt) {
+	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin) {
 		this.fsIni = fsIni;
 		this.fsFin = fsFin;
-		this.idAtt = idAtt;
 	}
 
 	private Collection<Feature> changes = null;
@@ -86,12 +83,12 @@ public class ChangeDetection {
 		this.unchanged = new ArrayList<>();
 
 		//list id values
-		Collection<String> idsIni = FeatureUtil.getIdValues(fsIni, idAtt);
-		Collection<String> idsFin = FeatureUtil.getIdValues(fsFin, idAtt);
+		Collection<String> idsIni = FeatureUtil.getIdValues(fsIni, null);
+		Collection<String> idsFin = FeatureUtil.getIdValues(fsFin, null);
 
 		//index features by ids
-		indIni = FeatureUtil.index(fsIni, idAtt);
-		indFin = FeatureUtil.index(fsFin, idAtt);
+		indIni = FeatureUtil.index(fsIni, null);
+		indFin = FeatureUtil.index(fsFin, null);
 
 		//find features present in both datasets and compare them
 
@@ -106,7 +103,7 @@ public class ChangeDetection {
 			Feature fFin = indFin.get(id);
 
 			//compute change between them
-			Feature ch = compare(fIni, fFin, idAtt, attributesToIgnoreL );
+			Feature ch = compare(fIni, fFin, attributesToIgnoreL );
 
 			//both versions identical. No change detected.
 			if(ch == null) unchanged.add(fFin);
@@ -123,7 +120,9 @@ public class ChangeDetection {
 
 		//retrieve deleted features
 		for(String id : idsDiff) {
-			Feature ch = FeatureUtil.copy( indIni.get(id) );
+			Feature f = indIni.get(id);
+			Feature ch = FeatureUtil.copy(f);
+			ch.setAttribute("ch_id", f.getID());
 			ch.setAttribute("change", "D");
 			changes.add(ch);
 		}
@@ -136,7 +135,9 @@ public class ChangeDetection {
 
 		//retrieve inserted features
 		for(String id : idsDiff) {
-			Feature ch = FeatureUtil.copy( indFin.get(id) );
+			Feature f = indFin.get(id);
+			Feature ch = FeatureUtil.copy(f);
+			ch.setAttribute("ch_id", f.getID());
 			ch.setAttribute("change", "I");
 			changes.add(ch);
 		}
@@ -150,11 +151,10 @@ public class ChangeDetection {
 	 * 
 	 * @param fIni The initial version
 	 * @param fFin The final version
-	 * @param idAtt
 	 * @param attributesToIgnore
 	 * @return A feature representing the changes.
 	 */
-	public static Feature compare(Feature fIni, Feature fFin, String idAtt, List<String> attributesToIgnore) {
+	public static Feature compare(Feature fIni, Feature fFin, List<String> attributesToIgnore) {
 		boolean attChanged = false, geomChanged = false;
 		Feature change = new Feature();
 
@@ -179,9 +179,8 @@ public class ChangeDetection {
 		if(!attChanged && !geomChanged) return null;
 
 		//set id
-		String id = idAtt==null? fFin.getID() : fFin.getAttribute(idAtt).toString();
-		change.setID(id);
-		if(idAtt != null) change.setAttribute(idAtt, id);
+		change.setID(fFin.getID());
+		change.setAttribute("ch_id", fFin.getID());
 
 		//set geometry
 		change.setDefaultGeometry(fFin.getDefaultGeometry());
@@ -277,7 +276,7 @@ public class ChangeDetection {
 			if(!ct.contains("G")) continue;
 
 			//get initial and final geometries
-			String id = idAtt==null?ch.getID():ch.getAttribute(idAtt).toString();
+			String id = ch.getID();
 			Geometry gIni = indIni.get(id).getDefaultGeometry();
 			Geometry gFin = indFin.get(id).getDefaultGeometry();
 
@@ -322,11 +321,10 @@ public class ChangeDetection {
 	 * 
 	 * @param fsIni The initial dataset
 	 * @param fsFin The final dataset
-	 * @param idAtt The identifier column. Set to null if the default getID() value should be used.
 	 * @return The changes
 	 */
-	public static Collection<Feature> getChanges(Collection<Feature> fsIni, Collection<Feature> fsFin, String idAtt) {
-		return new ChangeDetection(fsIni, fsFin, idAtt).getChanges();
+	public static Collection<Feature> getChanges(Collection<Feature> fsIni, Collection<Feature> fsFin) {
+		return new ChangeDetection(fsIni, fsFin).getChanges();
 	}
 
 	/**
@@ -334,30 +332,31 @@ public class ChangeDetection {
 	 * 
 	 * @param fs1 The first dataset
 	 * @param fs2 The second dataset
-	 * @param idAtt The identifier column. Set to null if the default getID() value should be used.
 	 * @return
 	 */
-	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2, String idAtt) {
-		return new ChangeDetection(fs1, fs2, idAtt).getChanges().size() == 0;
+	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2) {
+		return new ChangeDetection(fs1, fs2).getChanges().size() == 0;
 	}
 
 
-	public static void applyChanges(Collection<Feature> fs, Collection<Feature> changes, String idAtt) {
+	public static void applyChanges(Collection<Feature> fs, Collection<Feature> changes) {
 
 		//index input features
-		HashMap<String, Feature> ind = FeatureUtil.index(fs, idAtt);
+		HashMap<String, Feature> ind = FeatureUtil.index(fs, null);
 
 		//go through changes
 		for(Feature ch : changes) {
+
 			//retrieve type of change and change/feature id
 			String ct = ch.getAttribute("change").toString();
-			String id = idAtt == null? ch.getID() : ch.getAttribute(idAtt).toString();
+			String id = ch.getAttribute("ch_id").toString();
 
 			//new feature insertion
 			if("I".equals(ct)) {
 				LOGGER.info("New feature inserted. id="+id);
 				Feature f = FeatureUtil.copy(ch);
 				f.getAttributes().remove("change");
+				f.getAttributes().remove("ch_id");
 				fs.add(f);
 				continue;
 			}
@@ -395,8 +394,7 @@ public class ChangeDetection {
 			for(Entry<String,Object> att : ch.getAttributes().entrySet()) {
 
 				if("change".equals(att.getKey())) continue;
-				if(idAtt!=null && idAtt.equals(att.getKey())) continue;
-
+				if("ch_id".equals(att.getKey())) continue;
 				if(att.getValue() == null) continue;
 
 				f.setAttribute(att.getKey(), att.getValue());
@@ -433,7 +431,7 @@ public class ChangeDetection {
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "id") );
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "id") );
 
-		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, "id");
+		ChangeDetection cd = new ChangeDetection(fsIni, fsFin);
 
 		Collection<Feature> unchanged = cd.getUnchanged();
 		LOGGER.info("unchanged = "+unchanged.size());
@@ -454,16 +452,14 @@ public class ChangeDetection {
 		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
 
 		LOGGER.info("--- Test equality");
-		LOGGER.info( equals(fsIni, fsFin, "id") );
-		LOGGER.info( equals(fsFin, fsIni, "id") );
-		LOGGER.info( equals(fsIni, fsIni, "id") );
-		LOGGER.info( equals(fsFin, fsFin, "id") );
+		LOGGER.info( equals(fsIni, fsFin) );
+		LOGGER.info( equals(fsFin, fsIni) );
+		LOGGER.info( equals(fsIni, fsIni) );
+		LOGGER.info( equals(fsFin, fsFin) );
 
 		LOGGER.info("--- Test change application");
-		applyChanges(fsIni, changes, "id");
-		LOGGER.info( equals(fsIni, fsFin, "id") );
-
-		//GeoPackageUtil.save(fsIni, outpath+"ini_changed.gpkg", crs, true);
+		applyChanges(fsIni, changes);
+		LOGGER.info( equals(fsIni, fsFin) );
 
 		LOGGER.info("End");
 	}

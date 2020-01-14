@@ -36,7 +36,7 @@ public class ChangeEBM {
 		//ignore field change - OBJECTID
 
 		LOGGER.info("change detection");
-		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, "inspireId");
+		ChangeDetection cd = new ChangeDetection(fsIni, fsFin);
 
 		Collection<Feature> unchanged = cd.getUnchanged();
 		LOGGER.info("unchanged = "+unchanged.size());
