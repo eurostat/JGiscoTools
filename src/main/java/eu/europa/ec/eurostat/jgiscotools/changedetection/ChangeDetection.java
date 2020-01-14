@@ -69,9 +69,9 @@ public class ChangeDetection {
 	/**
 	 * The attribute to ignore when comparing the changes of a feature.
 	 */
-	private String[] attributesToIgnore = new String[] {};
-	public String[] getAttributesToIgnore() { return attributesToIgnore; }
-	public void setAttributesToIgnore(String[] attributesToIgnore) { this.attributesToIgnore = attributesToIgnore; }
+	private List<String> attributesToIgnore = null;
+	public List<String> getAttributesToIgnore() { return attributesToIgnore; }
+	public void setAttributesToIgnore(String... attributesToIgnore) { this.attributesToIgnore = Arrays.asList(attributesToIgnore); }
 
 	private HashMap<String,Feature> indIni, indFin;
 
@@ -96,14 +96,13 @@ public class ChangeDetection {
 		Collection<String> idsInter = new ArrayList<>(idsIni);
 		idsInter.retainAll(idsFin);
 
-		List<String> attributesToIgnoreL = Arrays.asList(attributesToIgnore);;
 		for(String id : idsInter) {
 			//get two corresponding features
 			Feature fIni = indIni.get(id);
 			Feature fFin = indFin.get(id);
 
 			//compute change between them
-			Feature ch = compare(fIni, fFin, attributesToIgnoreL );
+			Feature ch = compare(fIni, fFin, attributesToIgnore );
 
 			//both versions identical. No change detected.
 			if(ch == null) unchanged.add(fFin);
@@ -163,7 +162,8 @@ public class ChangeDetection {
 		for(String att : fIni.getAttributes().keySet()) {
 			Object attIni = fIni.getAttribute(att);
 			Object attFin = fFin.getAttribute(att);
-			if(attributesToIgnore.contains(att) || attIni.equals(attFin)) {
+			if((attributesToIgnore!=null && attributesToIgnore.contains(att))
+					|| attIni.equals(attFin)) {
 				change.setAttribute(att, null);
 			} else {
 				attChanged = true;
@@ -289,16 +289,27 @@ public class ChangeDetection {
 			hdgeomChanges.add(hdf);
 
 			//compute added and removed parts
-			Geometry gD = gIni.difference(gFin);
-			if(!gD.isEmpty()) {
+			Geometry gD = null;
+			try {
+				gD = gIni.difference(gFin);
+			} catch (Exception e) {
+				LOGGER.warn(e.getMessage());
+			}
+			if(gD!=null && !gD.isEmpty()) {
 				Feature f = new Feature();
 				f.setDefaultGeometry(JTSGeomUtil.toMulti(gD));
 				f.setAttribute("ch_id", id);
 				f.setAttribute("type", "D");
 				geomChanges.add(f);
 			}
-			Geometry gI = gFin.difference(gIni);
-			if(!gI.isEmpty()) {
+
+			Geometry gI = null;
+			try {
+				gI = gFin.difference(gIni);
+			} catch (Exception e) {
+				LOGGER.warn(e.getMessage());
+			}
+			if(gI!=null && !gI.isEmpty()) {
 				Feature f = new Feature();
 				f.setDefaultGeometry(JTSGeomUtil.toMulti(gI));
 				f.setAttribute("ch_id", id);
@@ -429,9 +440,10 @@ public class ChangeDetection {
 
 		//LOGGER.info("check ids:");
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "id") );
-		//LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "id") );
+		LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "id") );
 
 		ChangeDetection cd = new ChangeDetection(fsIni, fsFin);
+		//cd.setAttributesToIgnore("id","name");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
 		LOGGER.info("unchanged = "+unchanged.size());

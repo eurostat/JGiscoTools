@@ -32,22 +32,26 @@ public class ChangeEBM {
 		LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "inspireId") );
 		LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "inspireId") );
 
-		//TODO
-		//ignore field change - OBJECTID
-
 		LOGGER.info("change detection");
 		ChangeDetection cd = new ChangeDetection(fsIni, fsFin);
+		cd.setAttributesToIgnore("OBJECTID");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
 		LOGGER.info("unchanged = "+unchanged.size());
 		Collection<Feature> changes = cd.getChanges();
 		LOGGER.info("changes = "+changes.size());
+		Collection<Feature> hfgeoms = cd.getHdgeomChanges();
+		LOGGER.info("hfgeoms = "+hfgeoms.size());
+		Collection<Feature> geomch = cd.getGeomChanges();
+		LOGGER.info("geomch = "+geomch.size());
 		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes);
 		LOGGER.info("suspect changes = "+sus.size());
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"EBM_2019_LAEA/EBM_A.gpkg");
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
+		GeoPackageUtil.save(hfgeoms, outpath+"hfgeoms.gpkg", crs, true);
+		GeoPackageUtil.save(geomch, outpath+"geomch.gpkg", crs, true);
 		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
 
 		LOGGER.info("End");
