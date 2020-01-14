@@ -20,6 +20,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
+import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * 
@@ -283,7 +284,7 @@ public class ChangeDetection {
 			Geometry gD = gIni.difference(gFin);
 			if(!gD.isEmpty()) {
 				Feature f = new Feature();
-				f.setDefaultGeometry(gD);
+				f.setDefaultGeometry(JTSGeomUtil.toMulti(gD));
 				f.setAttribute("ch_id", id);
 				f.setAttribute("type", "D");
 				geomChanges.add(f);
@@ -291,7 +292,7 @@ public class ChangeDetection {
 			Geometry gI = gFin.difference(gIni);
 			if(!gI.isEmpty()) {
 				Feature f = new Feature();
-				f.setDefaultGeometry(gI);
+				f.setDefaultGeometry(JTSGeomUtil.toMulti(gI));
 				f.setAttribute("ch_id", id);
 				f.setAttribute("type", "I");
 				geomChanges.add(f);
