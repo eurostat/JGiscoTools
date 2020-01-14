@@ -115,17 +115,16 @@ public class HausdorffDistance {
 		return dopMax;
 	}
 
-
-	@Override
-	public String toString() {
-		return "Dist="+getDistance()+" c0="+getC0()+" c1="+getC1();
-	}
-
-	
 	/**
 	 * @return A linear segment representing the distance
 	 */
 	public LineString toGeom() {
 		return new GeometryFactory().createLineString(new Coordinate[] { getC0(), getC1()});
 	}
+
+	@Override
+	public String toString() {
+		return "Dist="+getDistance()+" c0="+getC0()+" c1="+getC1();
+	}
+
 }
