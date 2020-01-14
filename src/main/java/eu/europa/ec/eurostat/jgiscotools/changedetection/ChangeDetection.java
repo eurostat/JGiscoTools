@@ -237,8 +237,21 @@ public class ChangeDetection {
 	}
 
 
+
+
+
 	private Collection<Feature> hdgeomChanges = null;
+	public Collection<Feature> getHdgeomChanges() {
+		if(hdgeomChanges==null) computeGeometryChanges();
+		return hdgeomChanges;
+	}
+
 	private Collection<Feature> geomChanges = null;
+	public Collection<Feature> getGeomChanges() {
+		if(geomChanges==null) computeGeometryChanges();
+		return geomChanges;
+	}
+
 
 	//TODO: include that in normal compute?
 	private void computeGeometryChanges() {
@@ -273,6 +286,7 @@ public class ChangeDetection {
 				f.setDefaultGeometry(gD);
 				f.setAttribute("ch_id", id);
 				f.setAttribute("type", "D");
+				geomChanges.add(f);
 			}
 			Geometry gI = gFin.difference(gIni);
 			if(!gI.isEmpty()) {
@@ -280,6 +294,7 @@ public class ChangeDetection {
 				f.setDefaultGeometry(gI);
 				f.setAttribute("ch_id", id);
 				f.setAttribute("type", "I");
+				geomChanges.add(f);
 			}
 
 		}
@@ -414,12 +429,18 @@ public class ChangeDetection {
 		LOGGER.info("unchanged = "+unchanged.size());
 		Collection<Feature> changes = cd.getChanges();
 		LOGGER.info("changes = "+changes.size());
+		Collection<Feature> hfgeoms = cd.getHdgeomChanges();
+		LOGGER.info("hfgeoms = "+hfgeoms.size());
+		Collection<Feature> geomch = cd.getGeomChanges();
+		LOGGER.info("geomch = "+geomch.size());
 		Collection<Feature> sus = findIdStabilityIssues(changes);
 		LOGGER.info("suspect changes = "+sus.size());
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
 		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
+		GeoPackageUtil.save(hfgeoms, outpath+"hfgeoms.gpkg", crs, true);
+		GeoPackageUtil.save(geomch, outpath+"geomch.gpkg", crs, true);
 		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
 
 		LOGGER.info("--- Test equality");
