@@ -4,8 +4,10 @@
 package eu.europa.ec.eurostat.jgiscotools.changedetection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
@@ -97,13 +99,14 @@ public class ChangeDetection {
 		Collection<String> idsInter = new ArrayList<>(idsIni);
 		idsInter.retainAll(idsFin);
 
+		List<String> attributesToIgnoreL = Arrays.asList(attributesToIgnore);;
 		for(String id : idsInter) {
 			//get two corresponding features
 			Feature fIni = indIni.get(id);
 			Feature fFin = indFin.get(id);
 
 			//compute change between them
-			Feature ch = compare(fIni, fFin, idAtt, attributesToIgnore);
+			Feature ch = compare(fIni, fFin, idAtt, attributesToIgnoreL );
 
 			//both versions identical. No change detected.
 			if(ch == null) unchanged.add(fFin);
@@ -151,7 +154,7 @@ public class ChangeDetection {
 	 * @param attributesToIgnore
 	 * @return A feature representing the changes.
 	 */
-	public static Feature compare(Feature fIni, Feature fFin, String idAtt, String[] attributesToIgnore) {
+	public static Feature compare(Feature fIni, Feature fFin, String idAtt, List<String> attributesToIgnore) {
 		boolean attChanged = false, geomChanged = false;
 		Feature change = new Feature();
 
