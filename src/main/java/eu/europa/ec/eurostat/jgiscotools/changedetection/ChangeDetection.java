@@ -232,9 +232,12 @@ public class ChangeDetection {
 			for(Object cho_ : ind.query( ch.getDefaultGeometry().getEnvelopeInternal() )) {
 				Feature ch_ = (Feature) cho_;
 				if(ct.equals(ch_.getAttribute("change").toString())) continue;
-				HausdorffDistance hd = new HausdorffDistance(ch.getDefaultGeometry(), ch_.getDefaultGeometry());
-				if(res>0 && hd.getDistance()<=res) { ch2=ch_; break; }
-				if(res <=0 && ch.getDefaultGeometry().equalsExact(ch_.getDefaultGeometry())) { ch2=ch_; break; }
+				if(res>0) {
+					HausdorffDistance hd = new HausdorffDistance(ch.getDefaultGeometry(), ch_.getDefaultGeometry());
+					if(hd.getDistance()<=res) { ch2=ch_; break; }
+					continue;
+				}
+				if(ch.getDefaultGeometry().equalsExact(ch_.getDefaultGeometry())) { ch2=ch_; break; }
 			}
 
 			if(ch2 == null) continue;
