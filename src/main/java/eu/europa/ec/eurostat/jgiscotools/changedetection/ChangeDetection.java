@@ -10,9 +10,7 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -68,6 +66,14 @@ public class ChangeDetection {
 		return this.unchanged;
 	}
 
+
+	/**
+	 * The attribute to ignore when comparing the changes of a feature.
+	 */
+	private String[] attributesToIgnore = new String[] {};
+	public String[] getAttributesToIgnore() { return attributesToIgnore; }
+	public void setAttributesToIgnore(String[] attributesToIgnore) { this.attributesToIgnore = attributesToIgnore; }
+
 	private HashMap<String,Feature> indIni, indFin;
 
 	/**
@@ -97,7 +103,7 @@ public class ChangeDetection {
 			Feature fFin = indFin.get(id);
 
 			//compute change between them
-			Feature ch = compare(fIni, fFin, idAtt);
+			Feature ch = compare(fIni, fFin, idAtt, attributesToIgnore);
 
 			//both versions identical. No change detected.
 			if(ch == null) unchanged.add(fFin);
@@ -141,19 +147,20 @@ public class ChangeDetection {
 	 * 
 	 * @param fIni The initial version
 	 * @param fFin The final version
+	 * @param idAtt
+	 * @param attributesToIgnore
 	 * @return A feature representing the changes.
 	 */
-	public static Feature compare(Feature fIni, Feature fFin, String idAtt) {
+	public static Feature compare(Feature fIni, Feature fFin, String idAtt, String[] attributesToIgnore) {
 		boolean attChanged = false, geomChanged = false;
 		Feature change = new Feature();
 
 		//attributes
-		//TODO handle attributes to ignore
 		int nb = 0;
 		for(String att : fIni.getAttributes().keySet()) {
 			Object attIni = fIni.getAttribute(att);
 			Object attFin = fFin.getAttribute(att);
-			if(attIni.equals(attFin)) {
+			if(attributesToIgnore.contains(att) || attIni.equals(attFin)) {
 				change.setAttribute(att, null);
 			} else {
 				attChanged = true;
@@ -274,9 +281,7 @@ public class ChangeDetection {
 			//hausdorff distance
 			HausdorffDistance hd = new HausdorffDistance(gIni, gFin);
 			Feature hdf = new Feature();
-			//TODO
-			LineString ls = ch.getDefaultGeometry().getFactory().createLineString(new Coordinate[] { hd.getC0(), hd.getC1()});
-			hdf.setDefaultGeometry(ls);
+			hdf.setDefaultGeometry(hd.toGeom());
 			hdf.setAttribute("ch_id", id);
 			hdf.setAttribute("hdist", hd.getDistance());
 			hdgeomChanges.add(hdf);
