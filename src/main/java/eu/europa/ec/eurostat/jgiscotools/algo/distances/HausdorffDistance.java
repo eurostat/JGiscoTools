@@ -7,6 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.operation.distance.DistanceOp;
 
 /**
@@ -119,4 +121,11 @@ public class HausdorffDistance {
 		return "Dist="+getDistance()+" c0="+getC0()+" c1="+getC1();
 	}
 
+	
+	/**
+	 * @return A linear segment representing the distance
+	 */
+	public LineString toGeom() {
+		return new GeometryFactory().createLineString(new Coordinate[] { getC0(), getC1()});
+	}
 }
