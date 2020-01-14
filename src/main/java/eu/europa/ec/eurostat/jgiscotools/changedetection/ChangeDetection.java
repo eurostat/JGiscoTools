@@ -274,6 +274,7 @@ public class ChangeDetection {
 			//hausdorff distance
 			HausdorffDistance hd = new HausdorffDistance(gIni, gFin);
 			Feature hdf = new Feature();
+			//TODO
 			LineString ls = ch.getDefaultGeometry().getFactory().createLineString(new Coordinate[] { hd.getC0(), hd.getC1()});
 			hdf.setDefaultGeometry(ls);
 			hdf.setAttribute("ch_id", id);
