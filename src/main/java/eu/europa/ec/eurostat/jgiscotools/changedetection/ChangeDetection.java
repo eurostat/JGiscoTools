@@ -200,9 +200,10 @@ public class ChangeDetection {
 	 * This happen when id stability is not perfectly followed.
 	 * 
 	 * @param changes
+	 * @param res
 	 * @return
 	 */
-	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> changes) {
+	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> changes, double res) {
 
 		//copy list of changes, keeping only deletions and insertions.
 		ArrayList<Feature> chs = new ArrayList<>();
@@ -231,7 +232,9 @@ public class ChangeDetection {
 			for(Object cho_ : ind.query( ch.getDefaultGeometry().getEnvelopeInternal() )) {
 				Feature ch_ = (Feature) cho_;
 				if(ct.equals(ch_.getAttribute("change").toString())) continue;
-				if(ch.getDefaultGeometry().equalsExact(ch_.getDefaultGeometry())) { ch2=ch_; break; }
+				HausdorffDistance hd = new HausdorffDistance(ch.getDefaultGeometry(), ch_.getDefaultGeometry());
+				if(res>0 && hd.getDistance()<=res) { ch2=ch_; break; }
+				if(res <=0 && ch.getDefaultGeometry().equalsExact(ch_.getDefaultGeometry())) { ch2=ch_; break; }
 			}
 
 			if(ch2 == null) continue;
@@ -453,7 +456,7 @@ public class ChangeDetection {
 		LOGGER.info("hfgeoms = "+hfgeoms.size());
 		Collection<Feature> geomch = cd.getGeomChanges();
 		LOGGER.info("geomch = "+geomch.size());
-		Collection<Feature> sus = findIdStabilityIssues(changes);
+		Collection<Feature> sus = findIdStabilityIssues(changes, -1);
 		LOGGER.info("suspect changes = "+sus.size());
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
