@@ -25,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * 
- * Analyse the differences between two versions of a datasets.
+ * Analyse the differences between two versions of a dataset.
  * Compute the difference.
  * Note: both datasets are suppose to have a shared stable identifier.
  * 
@@ -35,12 +35,19 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 public class ChangeDetection {
 	private final static Logger LOGGER = LogManager.getLogger(ChangeDetection.class.getName());
 
+	/**
+	 * The dataset in its initial version.
+	 */
 	private Collection<Feature> fsIni;
+
+	/**
+	 * The dataset in its final version.
+	 */
 	private Collection<Feature> fsFin;
 
 	/**
-	 * @param fsIni The initial version of the dataset.
-	 * @param fsFin The final version of the dataset.
+	 * @param fsIni The dataset in its initial version.
+	 * @param fsFin The dataset in its final version.
 	 */
 	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin) {
 		this.fsIni = fsIni;
@@ -51,7 +58,7 @@ public class ChangeDetection {
 	private Collection<Feature> unchanged = null;
 
 	/**
-	 * @return The changes.
+	 * @return The changes between the initial and final versions.
 	 */
 	public Collection<Feature> getChanges() {
 		if(this.changes == null) compare();
@@ -68,16 +75,22 @@ public class ChangeDetection {
 
 
 	/**
-	 * The attribute to ignore when comparing the changes of a feature.
+	 * The attributes to ignore when comparing the changes of a feature.
+	 * If one or several values of these attributes only change,
+	 * then the feature is condidered as unchanged. 
 	 */
 	private List<String> attributesToIgnore = null;
 	public List<String> getAttributesToIgnore() { return attributesToIgnore; }
 	public void setAttributesToIgnore(String... attributesToIgnore) { this.attributesToIgnore = Arrays.asList(attributesToIgnore); }
 
+	/**
+	 * Indexed structure to speedup the retrieval of features by id.
+	 */
 	private HashMap<String,Feature> indIni, indFin;
 
 	/**
 	 * Compare both datasets.
+	 * Populate the changes.
 	 */
 	private void compare() {
 		this.changes = new ArrayList<>();
@@ -146,7 +159,8 @@ public class ChangeDetection {
 
 	/**
 	 * Compare two versions of the same feature.
-	 * Both features are expected to have the same identifier and the same structure (list of attributes).
+	 * Both features are expected to have the same identifier and the same
+	 * structure (list of attributes).
 	 * The changes can be either on the attribute values, or on the geometry.
 	 * 
 	 * @param fIni The initial version
@@ -197,12 +211,13 @@ public class ChangeDetection {
 
 
 	/**
-	 * Detect among some changes the ones are are unecessary: The deletion and insertion of features with very similar geometries.
-	 * This happen when id stability is not perfectly followed.
+	 * Detect among some changes the ones are are unecessary:
+	 * The deletion and insertion of features with very similar geometries.
+	 * This happen when id stability is not strictly followed.
 	 * 
-	 * @param changes
-	 * @param res
-	 * @return
+	 * @param changes The changes to check.
+	 * @param res The spatial resolution value to consider two geometries as similar.
+	 * @return The collection of unecessary changes.
 	 */
 	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> changes, double res) {
 
@@ -210,11 +225,10 @@ public class ChangeDetection {
 		ArrayList<Feature> chs = new ArrayList<>();
 		for(Feature ch : changes) {
 			String ct = ch.getAttribute("change").toString();
-			if("I".equals(ct)) chs.add(ch);
-			if("D".equals(ct)) chs.add(ch);
+			if("I".equals(ct) || "D".equals(ct)) chs.add(ch);
 		}
 
-		//build spatial index of changes
+		//build spatial index of the selected changes
 		Quadtree ind = FeatureUtil.getQuadtree(chs);
 
 		Collection<Feature> out = new ArrayList<>();
@@ -240,10 +254,9 @@ public class ChangeDetection {
 				if(ct.equals(ch_.getAttribute("change").toString())) continue;
 
 				//check geometry similarity
-				//TODO test that
 				if( (res>0 && new HausdorffDistance(g, g_).getDistance() <= res)
 						|| ( res<=0 && g.equalsExact(g_) )) {
-					ch2=ch_;
+					ch2 = ch_;
 					break;
 				}
 			}
@@ -266,12 +279,23 @@ public class ChangeDetection {
 
 
 
-	private Collection<Feature> hdgeomChanges = null;
-	public Collection<Feature> getHdgeomChanges() {
-		if(hdgeomChanges==null) computeGeometryChanges();
-		return hdgeomChanges;
+	/**
+	 * A collection of features representing the geometrical changes.
+	 * For each feature whose geometry has changed, a segment
+	 * representing the hausdorff distance between the initial and
+	 * final geometries is created. This feature allows assessing the
+	 * magnitude of the geometrical change.
+	 */
+	private Collection<Feature> hausdorffGeomChanges = null;
+	public Collection<Feature> getHausdorffGeomChanges() {
+		if(hausdorffGeomChanges==null) computeGeometryChanges();
+		return hausdorffGeomChanges;
 	}
 
+	/**
+	 * Feature representing the geometrical parts which have been
+	 * deleted/inserted between the two versions.
+	 */
 	private Collection<Feature> geomChanges = null;
 	public Collection<Feature> getGeomChanges() {
 		if(geomChanges==null) computeGeometryChanges();
@@ -279,10 +303,12 @@ public class ChangeDetection {
 	}
 
 
-	//TODO: include that in normal compute?
+	/**
+	 * Create the features representing the geometrical changes.
+	 */
 	private void computeGeometryChanges() {
 
-		hdgeomChanges = new ArrayList<Feature>();
+		hausdorffGeomChanges = new ArrayList<Feature>();
 		geomChanges = new ArrayList<Feature>();
 
 		for(Feature ch : getChanges()) {
@@ -302,7 +328,7 @@ public class ChangeDetection {
 			hdf.setDefaultGeometry(hd.toGeom());
 			hdf.setAttribute("ch_id", id);
 			hdf.setAttribute("hdist", hd.getDistance());
-			hdgeomChanges.add(hdf);
+			hausdorffGeomChanges.add(hdf);
 
 			//compute added and removed parts
 			Geometry gD = null;
@@ -313,6 +339,7 @@ public class ChangeDetection {
 			}
 			if(gD!=null && !gD.isEmpty()) {
 				Feature f = new Feature();
+				//TODO ensure geometry type
 				f.setDefaultGeometry(JTSGeomUtil.toMulti(gD));
 				f.setAttribute("ch_id", id);
 				f.setAttribute("type", "D");
@@ -456,21 +483,26 @@ public class ChangeDetection {
 
 		//LOGGER.info("check ids:");
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "id") );
-		LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "id") );
+		//LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "id") );
 
 		ChangeDetection cd = new ChangeDetection(fsIni, fsFin);
 		//cd.setAttributesToIgnore("id","name");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
 		LOGGER.info("unchanged = "+unchanged.size());
+		LOGGER.info( FeatureUtil.checkIdentfier(unchanged, null) );
 		Collection<Feature> changes = cd.getChanges();
 		LOGGER.info("changes = "+changes.size());
-		Collection<Feature> hfgeoms = cd.getHdgeomChanges();
+		LOGGER.info( FeatureUtil.checkIdentfier(changes, null) );
+		Collection<Feature> hfgeoms = cd.getHausdorffGeomChanges();
 		LOGGER.info("hfgeoms = "+hfgeoms.size());
+		LOGGER.info( FeatureUtil.checkIdentfier(hfgeoms, null) );
 		Collection<Feature> geomch = cd.getGeomChanges();
 		LOGGER.info("geomch = "+geomch.size());
-		Collection<Feature> sus = findIdStabilityIssues(changes, -1);
+		LOGGER.info( FeatureUtil.checkIdentfier(geomch, null) );
+		Collection<Feature> sus = findIdStabilityIssues(changes, 50);
 		LOGGER.info("suspect changes = "+sus.size());
+		LOGGER.info( FeatureUtil.checkIdentfier(sus, null) );
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
 		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);

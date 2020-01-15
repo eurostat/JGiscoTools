@@ -18,7 +18,7 @@ public class ChangeEBM {
 	public static void main(String[] args) {
 		LOGGER.info("Start");
 		String path = "E:/dissemination/shared-data/EBM/gpkg/";
-		String outpath = "E:/workspace/EBM_2019_2020_comparison/comparison_/";
+		String outpath = "E:/workspace/EBM_2019_2020_comparison/comparison/";
 
 		ArrayList<Feature> fsIni = GeoPackageUtil.getFeatures(path+"EBM_2019_LAEA/EBM_A.gpkg");
 		LOGGER.info("Ini="+fsIni.size());
@@ -40,7 +40,7 @@ public class ChangeEBM {
 		LOGGER.info("unchanged = "+unchanged.size());
 		Collection<Feature> changes = cd.getChanges();
 		LOGGER.info("changes = "+changes.size());
-		Collection<Feature> hfgeoms = cd.getHdgeomChanges();
+		Collection<Feature> hfgeoms = cd.getHausdorffGeomChanges();
 		LOGGER.info("hfgeoms = "+hfgeoms.size());
 		Collection<Feature> geomch = cd.getGeomChanges();
 		LOGGER.info("geomch = "+geomch.size());
