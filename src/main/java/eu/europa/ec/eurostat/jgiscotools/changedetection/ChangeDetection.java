@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -220,8 +221,9 @@ public class ChangeDetection {
 		while(chs.size()>0) {
 			//get first element
 			Feature ch = chs.get(0);
+			Geometry g = ch.getDefaultGeometry();
 			chs.remove(0);
-			boolean b = ind.remove(ch.getDefaultGeometry().getEnvelopeInternal(), ch);
+			boolean b = ind.remove(g.getEnvelopeInternal(), ch);
 			if(!b) LOGGER.warn("Pb");
 
 			//get change type
@@ -229,19 +231,21 @@ public class ChangeDetection {
 
 			//get try to find other change
 			Feature ch2 = null;
-			for(Object cho_ : ind.query( ch.getDefaultGeometry().getEnvelopeInternal() )) {
+			Envelope env = g.getEnvelopeInternal(); env.expandBy(2*res);
+			for(Object cho_ : ind.query(env)) {
 				Feature ch_ = (Feature) cho_;
+				Geometry g_ = ch_.getDefaultGeometry();
 
 				//check change type: it as to be different
 				if(ct.equals(ch_.getAttribute("change").toString())) continue;
 
 				//check geometry similarity
-				if(res>0) {
-					HausdorffDistance hd = new HausdorffDistance(ch.getDefaultGeometry(), ch_.getDefaultGeometry());
-					if(hd.getDistance()<=res) { ch2=ch_; break; }
-					continue;
+				//TODO test that
+				if( (res>0 && new HausdorffDistance(g, g_).getDistance() <= res)
+						|| ( res<=0 && g.equalsExact(g_) )) {
+					ch2=ch_;
+					break;
 				}
-				if(ch.getDefaultGeometry().equalsExact(ch_.getDefaultGeometry())) { ch2=ch_; break; }
 			}
 
 			//no other similar change found: go to next
