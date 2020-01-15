@@ -196,7 +196,7 @@ public class ChangeDetection {
 
 
 	/**
-	 * Detect among some changes the ones are are unecessary: the deletion and insertion of features with same geometries.
+	 * Detect among some changes the ones are are unecessary: The deletion and insertion of features with very similar geometries.
 	 * This happen when id stability is not perfectly followed.
 	 * 
 	 * @param changes
@@ -231,7 +231,11 @@ public class ChangeDetection {
 			Feature ch2 = null;
 			for(Object cho_ : ind.query( ch.getDefaultGeometry().getEnvelopeInternal() )) {
 				Feature ch_ = (Feature) cho_;
+
+				//check change type: it as to be different
 				if(ct.equals(ch_.getAttribute("change").toString())) continue;
+
+				//check geometry similarity
 				if(res>0) {
 					HausdorffDistance hd = new HausdorffDistance(ch.getDefaultGeometry(), ch_.getDefaultGeometry());
 					if(hd.getDistance()<=res) { ch2=ch_; break; }
@@ -240,8 +244,10 @@ public class ChangeDetection {
 				if(ch.getDefaultGeometry().equalsExact(ch_.getDefaultGeometry())) { ch2=ch_; break; }
 			}
 
+			//no other similar change found: go to next
 			if(ch2 == null) continue;
 
+			//remove
 			chs.remove(ch2);
 			b = ind.remove(ch.getDefaultGeometry().getEnvelopeInternal(), ch2);
 			if(!b) LOGGER.warn("Pb");

@@ -44,7 +44,7 @@ public class ChangeEBM {
 		LOGGER.info("hfgeoms = "+hfgeoms.size());
 		Collection<Feature> geomch = cd.getGeomChanges();
 		LOGGER.info("geomch = "+geomch.size());
-		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 20);
+		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 100);
 		LOGGER.info("suspect changes = "+sus.size());
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"EBM_2019_LAEA/EBM_A.gpkg");
