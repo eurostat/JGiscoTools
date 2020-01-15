@@ -28,9 +28,9 @@ public class ChangeEBM {
 		FeatureUtil.setId(fsIni, "inspireId");
 		FeatureUtil.setId(fsFin, "inspireId");
 
-		LOGGER.info("check ids:");
-		LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "inspireId") );
-		LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "inspireId") );
+		//LOGGER.info("check ids:");
+		//LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "inspireId") );
+		//LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "inspireId") );
 
 		LOGGER.info("change detection");
 		ChangeDetection cd = new ChangeDetection(fsIni, fsFin);
@@ -44,7 +44,7 @@ public class ChangeEBM {
 		LOGGER.info("hfgeoms = "+hfgeoms.size());
 		Collection<Feature> geomch = cd.getGeomChanges();
 		LOGGER.info("geomch = "+geomch.size());
-		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 250); //TODO 1018? seems to be ignored
+		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 500);
 		LOGGER.info("suspect changes = "+sus.size());
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"EBM_2019_LAEA/EBM_A.gpkg");
