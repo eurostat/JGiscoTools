@@ -15,12 +15,10 @@ import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.quadtree.Quadtree;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
@@ -476,69 +474,6 @@ public class ChangeDetection {
 				LOGGER.warn("Unexpected number of attribute changes ("+nbAtt_+" instead of "+nbAtt+") for feature id="+id+".");
 		}
 
-	}
-
-
-
-
-
-
-	//TODO extract that into tests
-	public static void main(String[] args) {
-		LOGGER.info("Start");
-		String path = "src/test/resources/change_detection/";
-		String outpath = "target/";
-
-		ArrayList<Feature> fsIni = GeoPackageUtil.getFeatures(path+"ini.gpkg");
-		LOGGER.info("Ini="+fsIni.size());
-		ArrayList<Feature> fsFin = GeoPackageUtil.getFeatures(path+"fin.gpkg");
-		LOGGER.info("Fin="+fsFin.size());
-
-		FeatureUtil.setId(fsIni, "id");
-		FeatureUtil.setId(fsFin, "id");
-
-		//LOGGER.info("check ids:");
-		//LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "id") );
-		//LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "id") );
-
-		double resolution = 1;
-		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
-		//cd.setAttributesToIgnore("id","name");
-
-		Collection<Feature> unchanged = cd.getUnchanged();
-		LOGGER.info("unchanged = "+unchanged.size());
-		LOGGER.info( FeatureUtil.checkIdentfier(unchanged, null) );
-		Collection<Feature> changes = cd.getChanges();
-		LOGGER.info("changes = "+changes.size());
-		LOGGER.info( FeatureUtil.checkIdentfier(changes, null) );
-		Collection<Feature> hfgeoms = cd.getHausdorffGeomChanges();
-		LOGGER.info("hfgeoms = "+hfgeoms.size());
-		LOGGER.info( FeatureUtil.checkIdentfier(hfgeoms, null) );
-		Collection<Feature> geomch = cd.getGeomChanges();
-		LOGGER.info("geomch = "+geomch.size());
-		LOGGER.info( FeatureUtil.checkIdentfier(geomch, null) );
-		Collection<Feature> sus = findIdStabilityIssues(changes, 50);
-		LOGGER.info("suspect changes = "+sus.size());
-		LOGGER.info( FeatureUtil.checkIdentfier(sus, null) );
-
-		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini.gpkg");
-		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
-		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
-		GeoPackageUtil.save(hfgeoms, outpath+"hfgeoms.gpkg", crs, true);
-		GeoPackageUtil.save(geomch, outpath+"geomch.gpkg", crs, true);
-		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
-
-		LOGGER.info("--- Test equality");
-		LOGGER.info( equals(fsIni, fsFin, resolution) );
-		LOGGER.info( equals(fsFin, fsIni, resolution) );
-		LOGGER.info( equals(fsIni, fsIni, resolution) );
-		LOGGER.info( equals(fsFin, fsFin, resolution) );
-
-		LOGGER.info("--- Test change application");
-		applyChanges(fsIni, changes);
-		LOGGER.info( equals(fsIni, fsFin, resolution) );
-
-		LOGGER.info("End");
 	}
 
 }
