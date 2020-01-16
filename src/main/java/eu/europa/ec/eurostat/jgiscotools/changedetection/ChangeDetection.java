@@ -178,14 +178,14 @@ public class ChangeDetection {
 	 * @param fIni The initial version
 	 * @param fFin The final version
 	 * @param attributesToIgnore
-	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
+	 * @param res The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
 	 * @return A feature representing the changes.
 	 */
-	public static Feature compare(Feature fIni, Feature fFin, double resolution, List<String> attributesToIgnore) {
+	public static Feature compare(Feature fIni, Feature fFin, double res, List<String> attributesToIgnore) {
 		boolean attChanged = false, geomChanged = false;
 		Feature change = new Feature();
 
-		//attributes
+		//compare attribute values
 		int nb = 0;
 		for(String att : fIni.getAttributes().keySet()) {
 			Object attIni = fIni.getAttribute(att);
@@ -199,9 +199,9 @@ public class ChangeDetection {
 				nb++;
 			}
 		}
-		//geometry
-		//TODO
-		if( ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry()))
+		//compare geometries
+		if( (res>0 && new HausdorffDistance(fIni.getDefaultGeometry(), fFin.getDefaultGeometry()).getDistance() <= res)
+				|| (res<=0 && ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry())))
 			geomChanged = true;
 
 		//no change: return null
@@ -230,10 +230,10 @@ public class ChangeDetection {
 	 * This happen when id stability is not strictly followed.
 	 * 
 	 * @param changes The changes to check.
-	 * @param res The spatial resolution value to consider two geometries as similar.
+	 * @param resolution The spatial resolution value to consider two geometries as similar.
 	 * @return The collection of unecessary changes.
 	 */
-	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> changes, double res) {
+	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> changes, double resolution) {
 
 		//copy list of changes, keeping only deletions and insertions.
 		ArrayList<Feature> chs = new ArrayList<>();
@@ -259,7 +259,7 @@ public class ChangeDetection {
 
 			//get try to find other change
 			Feature ch2 = null;
-			Envelope env = g.getEnvelopeInternal(); env.expandBy(2*res);
+			Envelope env = g.getEnvelopeInternal(); env.expandBy(2*resolution);
 			for(Object cho_ : ind.query(env)) {
 				Feature ch_ = (Feature) cho_;
 				Geometry g_ = ch_.getDefaultGeometry();
@@ -268,8 +268,8 @@ public class ChangeDetection {
 				if(ct.equals(ch_.getAttribute("change").toString())) continue;
 
 				//check geometry similarity
-				if( (res>0 && new HausdorffDistance(g, g_).getDistance() <= res)
-						|| ( res<=0 && g.equalsExact(g_) )) {
+				if( (resolution>0 && new HausdorffDistance(g, g_).getDistance() <= resolution)
+						|| ( resolution<=0 && g.equalsTopo(g_) )) {
 					ch2 = ch_;
 					break;
 				}
