@@ -200,7 +200,7 @@ public class ChangeDetection {
 			}
 		}
 		//compare geometries
-		if( (res>0 && new HausdorffDistance(fIni.getDefaultGeometry(), fFin.getDefaultGeometry()).getDistance() <= res)
+		if( (res>0 && new HausdorffDistance(fIni.getDefaultGeometry(), fFin.getDefaultGeometry()).getDistance() > res)
 				|| (res<=0 && ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry())))
 			geomChanged = true;
 
@@ -218,75 +218,6 @@ public class ChangeDetection {
 		change.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
 
 		return change;
-	}
-
-
-
-
-
-	/**
-	 * Detect among some changes the ones are are unecessary:
-	 * The deletion and insertion of features with very similar geometries.
-	 * This happen when id stability is not strictly followed.
-	 * 
-	 * @param changes The changes to check.
-	 * @param resolution The spatial resolution value to consider two geometries as similar.
-	 * @return The collection of unecessary changes.
-	 */
-	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> changes, double resolution) {
-
-		//copy list of changes, keeping only deletions and insertions.
-		ArrayList<Feature> chs = new ArrayList<>();
-		for(Feature ch : changes) {
-			String ct = ch.getAttribute("change").toString();
-			if("I".equals(ct) || "D".equals(ct)) chs.add(ch);
-		}
-
-		//build spatial index of the selected changes
-		Quadtree ind = FeatureUtil.getQuadtree(chs);
-
-		Collection<Feature> out = new ArrayList<>();
-		while(chs.size()>0) {
-			//get first element
-			Feature ch = chs.get(0);
-			Geometry g = ch.getDefaultGeometry();
-			chs.remove(0);
-			boolean b = ind.remove(g.getEnvelopeInternal(), ch);
-			if(!b) LOGGER.warn("Pb");
-
-			//get change type
-			String ct = ch.getAttribute("change").toString();
-
-			//get try to find other change
-			Feature ch2 = null;
-			Envelope env = g.getEnvelopeInternal(); env.expandBy(2*resolution);
-			for(Object cho_ : ind.query(env)) {
-				Feature ch_ = (Feature) cho_;
-				Geometry g_ = ch_.getDefaultGeometry();
-
-				//check change type: it as to be different
-				if(ct.equals(ch_.getAttribute("change").toString())) continue;
-
-				//check geometry similarity
-				if( (resolution>0 && new HausdorffDistance(g, g_).getDistance() <= resolution)
-						|| ( resolution<=0 && g.equalsTopo(g_) )) {
-					ch2 = ch_;
-					break;
-				}
-			}
-
-			//no other similar change found: go to next
-			if(ch2 == null) continue;
-
-			//remove
-			chs.remove(ch2);
-			b = ind.remove(ch.getDefaultGeometry().getEnvelopeInternal(), ch2);
-			if(!b) LOGGER.warn("Pb");
-
-			out.add(ch);
-			out.add(ch2);
-		}		
-		return out;
 	}
 
 
@@ -383,16 +314,86 @@ public class ChangeDetection {
 
 
 
+	/**
+	 * Detect among some changes the ones are are unecessary:
+	 * The deletion and insertion of features with very similar geometries.
+	 * This happen when id stability is not strictly followed.
+	 * 
+	 * @param changes The changes to check.
+	 * @param resolution The spatial resolution value to consider two geometries as similar.
+	 * @return The collection of unecessary changes.
+	 */
+	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> changes, double resolution) {
+
+		//copy list of changes, keeping only deletions and insertions.
+		ArrayList<Feature> chs = new ArrayList<>();
+		for(Feature ch : changes) {
+			String ct = ch.getAttribute("change").toString();
+			if("I".equals(ct) || "D".equals(ct)) chs.add(ch);
+		}
+
+		//build spatial index of the selected changes
+		Quadtree ind = FeatureUtil.getQuadtree(chs);
+
+		Collection<Feature> out = new ArrayList<>();
+		while(chs.size()>0) {
+			//get first element
+			Feature ch = chs.get(0);
+			Geometry g = ch.getDefaultGeometry();
+			chs.remove(0);
+			boolean b = ind.remove(g.getEnvelopeInternal(), ch);
+			if(!b) LOGGER.warn("Pb");
+
+			//get change type
+			String ct = ch.getAttribute("change").toString();
+
+			//get try to find other change
+			Feature ch2 = null;
+			Envelope env = g.getEnvelopeInternal(); env.expandBy(2*resolution);
+			for(Object cho_ : ind.query(env)) {
+				Feature ch_ = (Feature) cho_;
+				Geometry g_ = ch_.getDefaultGeometry();
+
+				//check change type: it as to be different
+				if(ct.equals(ch_.getAttribute("change").toString())) continue;
+
+				//check geometry similarity
+				if( (resolution>0 && new HausdorffDistance(g, g_).getDistance() <= resolution)
+						|| ( resolution<=0 && g.equalsTopo(g_) )) {
+					ch2 = ch_;
+					break;
+				}
+			}
+
+			//no other similar change found: go to next
+			if(ch2 == null) continue;
+
+			//remove
+			chs.remove(ch2);
+			b = ind.remove(ch.getDefaultGeometry().getEnvelopeInternal(), ch2);
+			if(!b) LOGGER.warn("Pb");
+
+			out.add(ch);
+			out.add(ch2);
+		}		
+		return out;
+	}
+
+
+
+
+
 
 	/**
 	 * Return the changes from a version of a dataset to another one.
 	 * 
 	 * @param fsIni The initial dataset
 	 * @param fsFin The final dataset
+	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
 	 * @return The changes
 	 */
-	public static Collection<Feature> getChanges(Collection<Feature> fsIni, Collection<Feature> fsFin) {
-		return new ChangeDetection(fsIni, fsFin).getChanges();
+	public static Collection<Feature> getChanges(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
+		return new ChangeDetection(fsIni, fsFin, resolution).getChanges();
 	}
 
 	/**
@@ -400,10 +401,11 @@ public class ChangeDetection {
 	 * 
 	 * @param fs1 The first dataset
 	 * @param fs2 The second dataset
+	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
 	 * @return
 	 */
-	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2) {
-		return new ChangeDetection(fs1, fs2).getChanges().size() == 0;
+	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2, double resolution) {
+		return new ChangeDetection(fs1, fs2, resolution).getChanges().size() == 0;
 	}
 
 
@@ -499,7 +501,8 @@ public class ChangeDetection {
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "id") );
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "id") );
 
-		ChangeDetection cd = new ChangeDetection(fsIni, fsFin);
+		double resolution = 1;
+		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
 		//cd.setAttributesToIgnore("id","name");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
@@ -526,14 +529,14 @@ public class ChangeDetection {
 		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
 
 		LOGGER.info("--- Test equality");
-		LOGGER.info( equals(fsIni, fsFin) );
-		LOGGER.info( equals(fsFin, fsIni) );
-		LOGGER.info( equals(fsIni, fsIni) );
-		LOGGER.info( equals(fsFin, fsFin) );
+		LOGGER.info( equals(fsIni, fsFin, resolution) );
+		LOGGER.info( equals(fsFin, fsIni, resolution) );
+		LOGGER.info( equals(fsIni, fsIni, resolution) );
+		LOGGER.info( equals(fsFin, fsFin, resolution) );
 
 		LOGGER.info("--- Test change application");
 		applyChanges(fsIni, changes);
-		LOGGER.info( equals(fsIni, fsFin) );
+		LOGGER.info( equals(fsIni, fsFin, resolution) );
 
 		LOGGER.info("End");
 	}
