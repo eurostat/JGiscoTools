@@ -33,6 +33,8 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 public class ChangeDetection {
 	private final static Logger LOGGER = LogManager.getLogger(ChangeDetection.class.getName());
 
+	//TODO: test datasets of points and lines
+
 	/**
 	 * The dataset in its initial version.
 	 */
