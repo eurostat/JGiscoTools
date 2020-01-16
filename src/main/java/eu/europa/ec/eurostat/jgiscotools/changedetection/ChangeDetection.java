@@ -245,7 +245,6 @@ public class ChangeDetection {
 		return geomChanges;
 	}
 
-
 	/**
 	 * Create the features representing the geometrical changes.
 	 */
@@ -253,6 +252,7 @@ public class ChangeDetection {
 
 		hausdorffGeomChanges = new ArrayList<Feature>();
 		geomChanges = new ArrayList<Feature>();
+		int geomType = JTSGeomUtil.getGeomBigType(getChanges().iterator().next().getDefaultGeometry());
 
 		for(Feature ch : getChanges()) {
 
@@ -273,34 +273,38 @@ public class ChangeDetection {
 			hdf.setAttribute("hdist", hd.getDistance());
 			hausdorffGeomChanges.add(hdf);
 
-			//compute added and removed parts
-			Geometry gD = null;
-			try {
-				gD = gIni.difference(gFin);
-			} catch (Exception e) {
-				LOGGER.warn(e.getMessage());
-			}
-			if(gD!=null && !gD.isEmpty()) {
-				Feature f = new Feature();
-				//TODO ensure geometry type
-				f.setDefaultGeometry(JTSGeomUtil.toMulti(gD));
-				f.setAttribute("ch_id", id);
-				f.setAttribute("type", "D");
-				geomChanges.add(f);
+			//compute added parts
+			{
+				Geometry gD = null;
+				try {
+					gD = gIni.difference(gFin);
+				} catch (Exception e) {
+					LOGGER.warn(e.getMessage());
+				}
+				if(gD!=null && !gD.isEmpty()) {
+					Feature f = new Feature();
+					f.setDefaultGeometry(JTSGeomUtil.extract(gD, geomType));
+					f.setAttribute("ch_id", id);
+					f.setAttribute("type", "D");
+					geomChanges.add(f);
+				}
 			}
 
-			Geometry gI = null;
-			try {
-				gI = gFin.difference(gIni);
-			} catch (Exception e) {
-				LOGGER.warn(e.getMessage());
-			}
-			if(gI!=null && !gI.isEmpty()) {
-				Feature f = new Feature();
-				f.setDefaultGeometry(JTSGeomUtil.toMulti(gI));
-				f.setAttribute("ch_id", id);
-				f.setAttribute("type", "I");
-				geomChanges.add(f);
+			//compute removed parts
+			{
+				Geometry gI = null;
+				try {
+					gI = gFin.difference(gIni);
+				} catch (Exception e) {
+					LOGGER.warn(e.getMessage());
+				}
+				if(gI!=null && !gI.isEmpty()) {
+					Feature f = new Feature();
+					f.setDefaultGeometry(JTSGeomUtil.extract(gI, geomType));
+					f.setAttribute("ch_id", id);
+					f.setAttribute("type", "I");
+					geomChanges.add(f);
+				}
 			}
 
 		}

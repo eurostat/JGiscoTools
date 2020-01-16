@@ -275,6 +275,33 @@ public class JTSGeomUtil {
 		return g.getFactory().createMultiPolygon(mps.toArray(new Polygon[mps.size()]));
 	}
 
+	public static int getGeomBigType(Geometry g) {
+		String gt = g.getGeometryType();
+		switch (gt) {
+		case "Point": return 1;
+		case "LineString": return 2;
+		case "Polygon": return 3;
+		case "MultiPoint": return 1;
+		case "MultiLineString": return 2;
+		case "MultiPolygon": return 3;
+		case "GeometryCollection": return 4;
+		}
+		LOGGER.warn("Unexpected geometry type: " + gt);
+		return -1;
+	}
+
+	public static GeometryCollection extract(Geometry g, int geomBigType) {
+		switch (geomBigType) {
+		case 1: return getPuntual(g);
+		case 2: return getLinear(g);
+		case 3: return getPolygonal(g);
+		}
+		return toMulti(g);
+	}
+
+
+
+
 	//returns the envelope of a set of geometries
 	public static Envelope getEnvelopeInternal(Collection<Geometry> gs) {
 		Envelope env = new Envelope();
