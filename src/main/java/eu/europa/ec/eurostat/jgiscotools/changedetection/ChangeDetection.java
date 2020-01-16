@@ -46,12 +46,24 @@ public class ChangeDetection {
 	private Collection<Feature> fsFin;
 
 	/**
+	 * The geometrical resolution of the dataset.
+	 * Geometrical changes below this value will be ignored.
+	 */
+	private double resolution = -1;
+	public double getResolution() { return resolution; }
+
+	/**
 	 * @param fsIni The dataset in its initial version.
 	 * @param fsFin The dataset in its final version.
+	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
 	 */
-	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin) {
+	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
 		this.fsIni = fsIni;
 		this.fsFin = fsFin;
+		this.resolution = resolution;
+	}
+	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin) {
+		this(fsIni, fsFin, -1);
 	}
 
 	private Collection<Feature> changes = null;
@@ -116,7 +128,7 @@ public class ChangeDetection {
 			Feature fFin = indFin.get(id);
 
 			//compute change between them
-			Feature ch = compare(fIni, fFin, attributesToIgnore );
+			Feature ch = compare(fIni, fFin, getResolution(), attributesToIgnore );
 
 			//both versions identical. No change detected.
 			if(ch == null) unchanged.add(fFin);
@@ -166,9 +178,10 @@ public class ChangeDetection {
 	 * @param fIni The initial version
 	 * @param fFin The final version
 	 * @param attributesToIgnore
+	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
 	 * @return A feature representing the changes.
 	 */
-	public static Feature compare(Feature fIni, Feature fFin, List<String> attributesToIgnore) {
+	public static Feature compare(Feature fIni, Feature fFin, double resolution, List<String> attributesToIgnore) {
 		boolean attChanged = false, geomChanged = false;
 		Feature change = new Feature();
 
@@ -187,6 +200,7 @@ public class ChangeDetection {
 			}
 		}
 		//geometry
+		//TODO
 		if( ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry()))
 			geomChanged = true;
 
