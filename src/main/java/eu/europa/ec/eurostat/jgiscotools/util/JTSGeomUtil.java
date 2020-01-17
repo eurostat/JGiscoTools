@@ -20,6 +20,8 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+
 public class JTSGeomUtil {
 	public final static Logger LOGGER = LogManager.getLogger(JTSGeomUtil.class.getName());
 
@@ -324,6 +326,26 @@ public class JTSGeomUtil {
 			if(g_.intersects(g)) return true;
 		}
 		return false;
+	}
+
+
+
+	/**
+	 * Check some features have a geometry (non null and non empty).
+	 * Possibly check the geometry validity and its type.
+	 * 
+	 * @param fs The input features
+	 * @return true if OK, false else
+	 */
+	public static <T extends Geometry> boolean checkGeometry(Collection<Feature> fs, boolean checkValidity, Class<T> cl) {
+		for(Feature f : fs) {
+			Geometry g = f.getDefaultGeometry();
+			if(g == null) return false;
+			if(g.isEmpty()) return false;
+			if(checkValidity && !g.isValid()) return false;
+			if(cl!=null && !cl.isInstance(f)) return false;
+		}
+		return true;
 	}
 
 }
