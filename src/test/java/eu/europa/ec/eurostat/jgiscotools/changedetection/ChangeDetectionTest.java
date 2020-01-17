@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 
@@ -71,6 +72,7 @@ public class ChangeDetectionTest extends TestCase {
 		//check id stability issues
 		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(cd.getChanges(), 50);
 		assertEquals(4, sus.size());
+		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiPolygon.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
 
 		/*
@@ -150,6 +152,7 @@ public class ChangeDetectionTest extends TestCase {
 		//check id stability issues
 		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(cd.getChanges(), 50);
 		assertEquals(2, sus.size());
+		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiPoint.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
 
 		/*
@@ -174,6 +177,82 @@ public class ChangeDetectionTest extends TestCase {
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPoint.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
 
+	}
+
+
+	public void testLin() throws Exception {
+		String path = "src/test/resources/change_detection/";
+
+		//load datasets
+		ArrayList<Feature> fsIni = GeoPackageUtil.getFeatures(path+"ini_lin.gpkg");
+		assertEquals(9, fsIni.size());
+		ArrayList<Feature> fsFin = GeoPackageUtil.getFeatures(path+"fin_lin.gpkg");
+		assertEquals(10, fsFin.size());
+
+		//set identifiers
+		FeatureUtil.setId(fsIni, "id");
+		FeatureUtil.setId(fsFin, "id");
+
+		//check geometries
+		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiLineString.class));
+		assertTrue(JTSGeomUtil.checkGeometry(fsFin, true, MultiLineString.class));
+
+		//check ids
+		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, "id").size());
+		assertEquals(0, FeatureUtil.checkIdentfier(fsFin, "id").size());
+
+		//build change detection object
+		double resolution = 1;
+		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
+		//cd.setAttributesToIgnore("id","name");
+
+		//check unchanged
+		assertEquals(3, cd.getUnchanged().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getUnchanged(), true, MultiLineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getUnchanged(), null).size());
+
+		//check changes
+		assertEquals(10, cd.getChanges().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getChanges(), true, MultiLineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getChanges(), null).size());
+
+		//check hausdorf geom changes
+		assertEquals(2, cd.getHausdorffGeomChanges().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getHausdorffGeomChanges(), true, LineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getHausdorffGeomChanges(), null).size());
+
+		//check  geometry changes
+		assertEquals(4, cd.getGeomChanges().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getGeomChanges(), true, MultiLineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomChanges(), null).size());
+
+		//check id stability issues
+		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(cd.getChanges(), 50);
+		assertEquals(2, sus.size());
+		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiLineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
+
+		/*
+		String outpath = "target/";
+		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"ini_lin.gpkg");
+		GeoPackageUtil.save(cd.getChanges(), outpath+"changes_lin.gpkg", crs, true);
+		GeoPackageUtil.save(cd.getUnchanged(), outpath+"unchanged_lin.gpkg", crs, true);
+		GeoPackageUtil.save(cd.getHausdorffGeomChanges(), outpath+"hfgeoms_lin.gpkg", crs, true);
+		GeoPackageUtil.save(cd.getGeomChanges(), outpath+"geomch_lin.gpkg", crs, true);
+		GeoPackageUtil.save(sus, outpath+"suspects_lin.gpkg", crs, true);
+		 */
+
+		//test equals function
+		assertFalse( ChangeDetection.equals(fsIni, fsFin, resolution) );
+		assertFalse( ChangeDetection.equals(fsFin, fsIni, resolution) );
+		assertTrue( ChangeDetection.equals(fsIni, fsIni, resolution) );
+		assertTrue( ChangeDetection.equals(fsFin, fsFin, resolution) );
+
+		//test change application
+		ChangeDetection.applyChanges(fsIni, cd.getChanges());
+		assertTrue( ChangeDetection.equals(fsIni, fsFin, resolution) );
+		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiLineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
 	}
 
 }
