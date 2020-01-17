@@ -452,34 +452,54 @@ public class ChangeDetection {
 			}
 
 			LOGGER.info("Feature changed. id="+id+". change="+ct+".");
-
-			//case of geometry change
-			if(ct.contains("G"))
-				f.setDefaultGeometry(ch.getDefaultGeometry());
-
-			//if no attribute change, continue
-			if(!ct.contains("A")) continue;
-
-			//get number of attribute changes
-			int nbAtt = Integer.parseInt( ct.replace("G", "").replace("A", "") );
-
-			//change attributes
-			int nbAtt_ = 0;
-			for(Entry<String,Object> att : ch.getAttributes().entrySet()) {
-
-				if("change".equals(att.getKey())) continue;
-				if("ch_id".equals(att.getKey())) continue;
-				if(att.getValue() == null) continue;
-
-				f.setAttribute(att.getKey(), att.getValue());
-				nbAtt_++;
-			}
-
-			//check number of attributes changed is as expected
-			if(nbAtt != nbAtt_)
-				LOGGER.warn("Unexpected number of attribute changes ("+nbAtt_+" instead of "+nbAtt+") for feature id="+id+".");
+			applyChange(f, ch, ct);
 		}
 
+	}
+
+	/**
+	 * Apply a change to a feature.
+	 * 
+	 * @param f The feature to change, in its initial state.
+	 * @param ch The change. NB: this change cannot be a deletion or an insertion
+	 * @param ct The type of change, if known.
+	 */
+	public static void applyChange(Feature f, Feature ch, String ct) {
+
+		//retrieve change type if necessary
+		if(ct==null || ct.isEmpty()) ct = ch.getAttribute("change").toString();
+
+		//check change type
+		if("I".equals(ct) || "D".equals(ct)) {
+			LOGGER.warn("Unexpected type of change ("+ct+" instead of GAX) for feature id="+f.getID()+".");
+			return;
+		}
+
+		//case of geometry change
+		if(ct.contains("G"))
+			f.setDefaultGeometry(ch.getDefaultGeometry());
+
+		//if no attribute change, continue
+		if(!ct.contains("A")) return;
+
+		//get number of attribute changes
+		int nbAtt = Integer.parseInt( ct.replace("G", "").replace("A", "") );
+
+		//change attributes
+		int nbAtt_ = 0;
+		for(Entry<String,Object> att : ch.getAttributes().entrySet()) {
+
+			if("change".equals(att.getKey())) continue;
+			if("ch_id".equals(att.getKey())) continue;
+			if(att.getValue() == null) continue;
+
+			f.setAttribute(att.getKey(), att.getValue());
+			nbAtt_++;
+		}
+
+		//check number of attributes changed is as expected
+		if(nbAtt != nbAtt_)
+			LOGGER.warn("Unexpected number of attribute changes ("+nbAtt_+" instead of "+nbAtt+") for feature id="+f.getID()+".");		
 	}
 
 }
