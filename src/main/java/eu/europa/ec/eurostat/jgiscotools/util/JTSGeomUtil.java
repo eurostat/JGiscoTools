@@ -343,7 +343,7 @@ public class JTSGeomUtil {
 			if(g == null) return false;
 			if(g.isEmpty()) return false;
 			if(checkValidity && !g.isValid()) return false;
-			if(cl!=null && !cl.isInstance(f)) return false;
+			if(cl!=null && !cl.isInstance(g)) return false;
 		}
 		return true;
 	}
