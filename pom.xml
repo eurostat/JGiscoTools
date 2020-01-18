@@ -8,6 +8,7 @@
 	<version>0.2-SNAPSHOT</version>
 	<name>JGiscoTools</name>
 	<url>https://github.com/eurostat/JGiscoTools</url>
+	<description>Some processing functions for geographical data.</description>
 
 	<issueManagement>
 		<url>https://github.com/eurostat/JGiscoTools/issues</url>
