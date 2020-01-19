@@ -21,7 +21,7 @@ import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
-import eu.europa.ec.eurostat.java4eurostat.util.Util;
+import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 
 /**
  * 
@@ -288,7 +288,7 @@ public class GriddedStatsTiler {
 
 		//save
 		try {
-			File f = Util.getFile(outpath+"/info.json", true, true);
+			File f = FileUtil.getFile(outpath+"/info.json", true, true);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
 			bw.write(json.toString());
 			bw.close();
