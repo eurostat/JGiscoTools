@@ -411,6 +411,12 @@ public class ChangeDetection {
 	}
 
 
+	/**
+	 * Apply changes to features.
+	 * 
+	 * @param fs The features to change, in their initial state.
+	 * @param changes The changes to apply.
+	 */
 	public static void applyChanges(Collection<Feature> fs, Collection<Feature> changes) {
 
 		//index input features
