@@ -16,11 +16,11 @@ import junit.framework.TestCase;
 
 public class ChangeDetectionTest extends TestCase {
 
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
 		junit.textui.TestRunner.run(ChangeDetectionTest.class);
 		//new ChangeDetectionTest().testSurf();
 		//new ChangeDetectionTest().testPt();
-	}
+	}*/
 
 
 	public void testSurf() throws Exception {
