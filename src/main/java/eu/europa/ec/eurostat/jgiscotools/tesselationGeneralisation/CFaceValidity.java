@@ -7,7 +7,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.algo.FaceValidity;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
 
 /**
- * Ensures that the face remain valid, that is its geometry is simple & valid, and it does not overlap any other face of the tesselation.
+ * Ensures that the face remain valid, that is its geometry is simple and valid, and it does not overlap any other face of the tesselation.
  * 
  * @author julien Gaffuri
  *

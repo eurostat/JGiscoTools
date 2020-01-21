@@ -32,7 +32,7 @@ public class CFaceSize extends Constraint<AFace> {
 	/**
 	 * @param agent
 	 * @param minSizeDel Below this size, the face is always deleted. Above, it is enlarged to minSize or deleted if not possible
-	 * @param minSizeDelHoles Below this size, the hole always is deleted. Above, it is enlarged to minSize or deleted if not possible
+	 * @param minSizeDelHole Below this size, the hole always is deleted. Above, it is enlarged to minSize or deleted if not possible
 	 * @param minSize The minimum size of a face
 	 * @param preserveAllUnits Ensure that no unit disappear. At least one face of a unit is preserved.
 	 * @param preserveIfPointsInIt Ensure that the face is not deleted if it has points in it.

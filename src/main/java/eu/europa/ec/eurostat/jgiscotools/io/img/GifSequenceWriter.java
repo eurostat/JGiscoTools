@@ -28,14 +28,13 @@ public class GifSequenceWriter {
 
 	/**
 	 * Creates a new GifSequenceWriter
+	 * Author: Elliot Kroo (elliot[at]kroo[dot]net)
 	 * 
 	 * @param outputStream the ImageOutputStream to be written to
 	 * @param imageType one of the imageTypes specified in BufferedImage
 	 * @param timeBetweenFramesMS the time between frames in miliseconds
 	 * @param loopContinuously wether the gif should loop repeatedly
 	 * @throws IIOException if no gif ImageWriters are found
-	 *
-	 * @author Elliot Kroo (elliot[at]kroo[dot]net)
 	 */
 	public GifSequenceWriter(
 			ImageOutputStream outputStream,

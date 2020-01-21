@@ -90,9 +90,6 @@ public class GriddedStatsTiler {
 
 	/**
 	 * Build the tiles for several tile sizes.
-	 * 
-	 * @param minPowTwo
-	 * @param maxPowTwo
 	 */
 	public void createTiles(boolean createEmptyTiles) {
 		//create tile dictionnary tileId -> tile

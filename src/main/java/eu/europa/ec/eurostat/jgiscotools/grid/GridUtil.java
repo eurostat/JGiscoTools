@@ -104,7 +104,8 @@ public class GridUtil {
 	 * 
 	 * @param cells
 	 * @param cellLandPropAttribute
-	 * @param landGeometry
+	 * @param landGeometries
+	 * @param inlandWaterGeometriesIndex
 	 * @param decimalNB The number of decimal places to keep for the percentage
 	 */
 	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, SpatialIndex landGeometries, SpatialIndex inlandWaterGeometriesIndex, int decimalNB) {

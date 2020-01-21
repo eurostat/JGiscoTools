@@ -56,15 +56,6 @@ public class StatisticalUnitsIntersectionMatrix {
 	 * Value of the intersection area is also computed.
 	 * 
 	 * NB: this operation commutes.
-	 * 
-	 * @param suName1 name of the first dataset (for labelling)
-	 * @param su1 the first dataset
-	 * @param idField1 name of the first dataset id attribute
-	 * @param suName2 name of the second dataset (for labelling)
-	 * @param su2 the second dataset
-	 * @param idField2 name of the second dataset id attribute
-	 * @param outFolder the folder where output files are stored
-	 * @throws IOException 
 	 */
 	public StatisticalUnitsIntersectionMatrix compute() throws IOException{
 		interSectionMatrix = new StatsHypercube(this.idField1, this.idField2, "type");
