@@ -17,6 +17,18 @@ JGiscoTools allows:
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) is mainly based on [GeoTools](http://www.geotools.org/), [JTS Topology Suite](https://locationtech.github.io/jts/) and [java4eurostat](https://github.com/eurostat/java4eurostat) libraries.
 
+## Setup
+
+[JGiscoTools](https://github.com/eurostat/JGiscoTools) uses [Apache Maven](http://maven.apache.org/). To use java4eurostat, add it as a dependency to the *pom.xml* file:
+
+```
+<dependency>
+	<groupId>eu.europa.ec.eurostat</groupId>
+	<artifactId>JGiscoTools</artifactId>
+	<version>0.6.5</version>
+</dependency>
+```
+
 ## Support and contribution
 
 Feel free to [ask support](https://github.com/eurostat/JGiscoTools/issues/new), fork the project or simply star it (it's always a pleasure).
