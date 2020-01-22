@@ -6,7 +6,7 @@ JGiscoTools allows:
 - Manipulation and transformation of vector geographical data such as clustering, generalisation, deformation, filtering, edge matching and partitionning.
 - Generalisation of geographical tesselations.
 - Routing and accessibility computation.
-- Production of gridded datasets in various GIS formats.
+- [Production of gridded datasets](https://github.com/eurostat/JGiscoTools/tree/master/src/site/gridmaker) in various GIS formats.
 - Change detection between two version of a same dataset.
 - Automatic production statistical maps (with a focus on maps based on Eurostat data and NUTS regions).
 - Various analyses based on NUTS regions and NUTS codes.
