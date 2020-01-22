@@ -51,6 +51,8 @@ public class GridsProduction {
 	//https://www.efgs.info/data/
 	//https://esdac.jrc.ec.europa.eu/content/european-reference-grids
 
+	//TODO use better info source for coast line / land area
+
 	//the different resolutions, in KM
 	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
 
@@ -61,9 +63,9 @@ public class GridsProduction {
 		logger.atLevel(Level.ALL);
 		Grid.logger.atLevel(Level.ALL);
 
-		String basePath = "E:/workspace/gridstat/data/";
+		String basePath = "E:/workspace/gridstat/";
 		String outpath = basePath + "grid/";
-		String path = basePath + "CNTR_100k/";
+		String path = basePath + "geo_grid_production/";
 		int bufferDistance = 1500;
 
 		logger.info("Get European countries (buffer) ...");
@@ -128,7 +130,7 @@ public class GridsProduction {
 
 
 
-		
+
 		logger.info("Define output feature type...");
 		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
 		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
