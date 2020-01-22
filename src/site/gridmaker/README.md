@@ -1,29 +1,8 @@
 # Grid maker
 
-[GridMaker](https://github.com/eurostat/GridMaker) can be used as a Java library. To quickly setup a development environment, see [these instructions](https://eurostat.github.io/README/howto/java_eclipse_maven_git_quick_guide).
+[GridMaker](https://github.com/eurostat/GridMaker) can be used as a Java library as part of JGiscoTools.
 
-Download and install [GridMaker](https://github.com/eurostat/GridMaker) with:
-
-```
-git clone https://github.com/eurostat/GridMaker.git
-cd GridMaker
-mvn clean install
-```
-
-and then use it in your Java project as a dependency by adding it to the *pom.xml* file:
-
-```
-<dependencies>
-	...
-	<dependency>
-		<groupId>eu.europa.ec.eurostat</groupId>
-		<artifactId>GridMaker</artifactId>
-		<version>1.0</version>
-	</dependency>
-</dependencies>
-```
-
-You can then start using [GridMaker](https://github.com/eurostat/GridMaker) in your project. Here is an example showing how to create a 10m resolution grid over 1km² starting at point (0,0):
+Here is an example showing how to create a 10m resolution grid over 1km² starting at point (0,0):
 
 ```java
 
