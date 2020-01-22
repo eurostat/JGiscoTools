@@ -12,7 +12,7 @@ import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
  * Ensure the edge is valid:
  * 1. The edge do not self intersect (it is simple)
  * 2. Both faces connected to the edge (if any) remain valid, that is:
- * - Their geometry is simple & valid
+ * - Their geometry is simple and valid
  * - They do not overlap other faces (this could happen when for example an edge is significantly simplified and a samll island becomes on the other side)
  * 
  * @author julien Gaffuri

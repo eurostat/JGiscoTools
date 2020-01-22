@@ -20,14 +20,6 @@ public class NUTSShapeFile {
 
 	private static final String BASE_PATH = "resources/NUTS/";
 
-	/**
-	 * @param year
-	 * @param lod The level of detail, among 1, 3, 10, 20 or 60
-	 * @param proj The projection, among LAEA and ETRS89
-	 * @param type The object type, among RG,BN,LB,JOIN,SEPA
-	 * @return
-	 */
-
 	public static ShapeFile get(){ return get("RG"); }
 	public static ShapeFile get(String type){ return get(type, 10); }
 	public static ShapeFile get(String type, int lod){ return get(type, 2013, lod, "LAEA"); }
