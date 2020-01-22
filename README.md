@@ -17,7 +17,9 @@ JGiscoTools allows:
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) is mainly based on [GeoTools](http://www.geotools.org/), [JTS Topology Suite](https://locationtech.github.io/jts/) and [java4eurostat](https://github.com/eurostat/java4eurostat) libraries.
 
-## Using it
+## Quick start
+
+### Setup
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) uses [Apache Maven](http://maven.apache.org/). To use JGiscoTools, add it as a dependency to the *pom.xml* file:
 
@@ -28,6 +30,10 @@ JGiscoTools allows:
 	<version>0.6.5</version>
 </dependency>
 ```
+
+### Loading/saving data
+
+TODO
 
 ## Documentation
 
