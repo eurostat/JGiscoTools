@@ -47,7 +47,7 @@ public class TestTesselationGeneralisation {
 		units = TesselationGeneralisation.runGeneralisation(units, points, crsType, scaleDenominator, roundNb, 1000000, 1000);
 
 		LOGGER.info("Save output data");
-		SHPUtil.saveSHP(units, "target/testTesselationGeneralisation_out.shp", SHPUtil.getCRS(in));
+		SHPUtil.save(units, "target/testTesselationGeneralisation_out.shp", SHPUtil.getCRS(in));
 
 		LOGGER.info("End");
 	}

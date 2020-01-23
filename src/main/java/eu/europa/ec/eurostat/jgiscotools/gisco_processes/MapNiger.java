@@ -141,7 +141,7 @@ public class MapNiger {
 		//CSVUtil.save(cs.values(), basePath_+"projets_par_commune.csv", atts);
 		Collection<Feature> projectsByComm = FeatureUtil.toFeatures(cs.values());
 		for(Feature f : projectsByComm) f.setDefaultGeometry((Geometry)f.getAttribute("geom"));
-		SHPUtil.saveSHP(projectsByComm, basePath_+"commune_projects.shp", SHPUtil.getCRS(basePath+"commune_niger.shp"), atts);
+		SHPUtil.save(projectsByComm, basePath_+"commune_projects.shp", SHPUtil.getCRS(basePath+"commune_niger.shp"), atts);
 
 
 

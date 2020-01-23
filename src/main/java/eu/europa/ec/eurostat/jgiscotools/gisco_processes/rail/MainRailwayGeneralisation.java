@@ -77,7 +77,7 @@ public class MainRailwayGeneralisation {
 		//TODO define selection procedure based on their salience
 
 		LOGGER.info("Strokes: " + sts.size());
-		SHPUtil.saveSHP(sts, basePath+"out/strokes/strokes.shp", SHPUtil.getCRS(inFile));
+		SHPUtil.save(sts, basePath+"out/strokes/strokes.shp", SHPUtil.getCRS(inFile));
 
 		/*/TODO define and use importance criteria. Use it in salience definition (for both connections and strokes (representative))
 		Comparator<Feature> comp = new Comparator<Feature>() {

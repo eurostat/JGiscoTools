@@ -60,7 +60,7 @@ public class CountriesUtil {
 
 		Feature f = new Feature(); f.setDefaultGeometry(mask);
 		ArrayList<Feature> fs = new ArrayList<Feature>(); fs.add(f);
-		SHPUtil.saveSHP(fs, "./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp", CRS.decode("EPSG:3035"));
+		SHPUtil.save(fs, "./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp", CRS.decode("EPSG:3035"));
 	}
 
 	/*public static void main(String[] args) throws Exception {

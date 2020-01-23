@@ -198,7 +198,7 @@ public class GridsProduction {
 			//do not save as shapefile for smaller resolution, because the file size limit is reached
 			if(resKM>3) {
 				logger.info("Save cells as SHP...");
-				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", ftPolygon);
+				SHPUtil.save(cells, outpath + "grid_"+resKM+"km_shp" + "/grid_"+resKM+"km.shp", ftPolygon);
 			}
 
 			logger.info("Set cell geometries as points...");
@@ -211,7 +211,7 @@ public class GridsProduction {
 
 			if(resKM>3) {
 				logger.info("Save cells (point) as SHP...");
-				SHPUtil.saveSHP(cells, outpath + "grid_"+resKM+"km_point_shp" + "/grid_"+resKM+"km_point.shp", ftPoint);
+				SHPUtil.save(cells, outpath + "grid_"+resKM+"km_point_shp" + "/grid_"+resKM+"km_point.shp", ftPoint);
 			}
 
 		}

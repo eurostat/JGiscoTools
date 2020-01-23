@@ -81,7 +81,7 @@ public class DataPreparation {
 		}
 
 		logger.info("Save");
-		SHPUtil.saveSHP(fs, outFile, SHPUtil.getCRS(inFile));
+		SHPUtil.save(fs, outFile, SHPUtil.getCRS(inFile));
 	}
 
 	//return list of geometries that are not GeometryCollection
@@ -135,7 +135,7 @@ public class DataPreparation {
 			cnts.add(cnt);
 		}
 		logger.info("Save");
-		SHPUtil.saveSHP(cnts, path+"CNTR_RG_100K_union_LAEA.shp", crs);
+		SHPUtil.save(cnts, path+"CNTR_RG_100K_union_LAEA.shp", crs);
 	}
 
 }
