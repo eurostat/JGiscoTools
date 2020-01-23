@@ -1,8 +1,6 @@
 # Grid maker
 
-[GridMaker](https://github.com/eurostat/GridMaker) can be used as a Java library as part of JGiscoTools.
-
-Here is an example showing how to create a 10m resolution grid over 1km² starting at point (0,0):
+This instruction creates a 10m resolution grid over 1km² starting at point (0,0):
 
 ```java
 
