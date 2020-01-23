@@ -4,7 +4,7 @@ This instruction creates a 10m resolution grid over 1km² starting at point (0,0
 
 ```java
 
-StatGrid grid = new StatGrid()
+Grid grid = new Grid()
 		.setResolution(10)
 		.setGeometryToCover(new Envelope(0, 1000, 0, 1000));
 
@@ -18,13 +18,14 @@ This other example creates a 5km resolution grid covering Luxembourg (code LU) a
 Geometry cntGeom = CountriesUtil.getEuropeanCountry("LU", true).getDefaultGeometry();
 
 //build cells
-StatGrid grid = new StatGrid()
+Grid grid = new Grid()
 		.setResolution(5000)
 		.setEPSGCode("3035")
 		.setGeometryToCover(cntGeom)
 		.setToleranceDistance(1000);
 
-//save cells as SHP file
+//save cells as GeoPackage and SHP file
+GeoPackageUtil.save(grid.getCells(), "path_to_my/file.gpkg", CRS.decode("EPSG:3035"), true);
 SHPUtil.saveSHP(grid.getCells(), "path_to_my/file.shp", CRS.decode("EPSG:3035"));
 ```
 
