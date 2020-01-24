@@ -3,6 +3,10 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
+import java.util.HashSet;
+
+import eu.europa.ec.eurostat.java4eurostat.base.Selection.Criteria;
+import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 
@@ -15,11 +19,11 @@ public class AccidentStats {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		String filePath = "C:\\Users\\gaffuju\\Desktop\\NUTS_3.csv";
+		String basePath = "E:\\workspace\\traffic_accident_map\\";
 
-		StatsHypercube hc = CSV.load(filePath, "Victims");
+		StatsHypercube hc = CSV.load(basePath+"NUTS_3.csv", "Victims");
 		hc.delete("C - Year");
-		hc.delete("A-4 Nuts Level 3 Description");
+		hc.delete("geo Description");
 		hc.delete("C - Country Code (ISO-2)");
 
 		hc.delete("Fatally Injured (as reported)");
@@ -83,13 +87,63 @@ public class AccidentStats {
       quad up to 50cc
 		 */
 
-		hc = hc.selectDimValueEqualTo("U-2 Traffic Unit type","Ridden animal");
-		hc.delete("U-2 Traffic Unit type");
-		hc.printInfo(true);
+		//hc = hc.selectDimValueEqualTo("U-2 Traffic Unit type","Ridden animal");
+		//hc.delete("U-2 Traffic Unit type");
+		//hc.printInfo(true);
 
-		//TODO compute totals by gender, age, area
-		
-		
+		/*/check how many with nuts=#NA
+		StatsHypercube hcNA = hc.selectDimValueEqualTo("A-4 Nuts Level 3", "#NA");
+		System.out.println(hc.stats.size());
+		System.out.println(hcNA.stats.size());
+		hc.printInfo(false);
+		hcNA.printInfo(false);*/
+
+
+		//dimensions to consider:
+		//gender, age, 
+
+
+		//filter
+		hc = hc.selectValueGreaterThan(0);
+		hc = hc.select(new Criteria() {
+			@Override
+			public boolean keep(Stat stat) {
+				return !stat.dims.get("geo").equals("#NA");
+			}});
+
+
+		//System.out.println(hc.getDimValues("age"));
+		HashSet<String> genders = hc.getDimValues("gender");
+		HashSet<String> tuts = hc.getDimValues("tut");
+		HashSet<String> roadTypes = hc.getDimValues("road_type");
+		HashSet<String> ages = hc.getDimValues("age");
+
+		for(String gender : genders)
+			for(String tut : tuts)
+				for(String roadType : roadTypes)
+					for(String age : ages) {
+						System.out.println(gender + " *** "+tut+" *** "+roadType+" *** "+age);
+						StatsHypercube hc_ = hc.selectDimValueEqualTo("gender", gender, "tut", tut, "road_type", roadType, "age", age);
+						hc_.delete("gender");
+						hc_.delete("tut");
+						hc_.delete("road_type");
+						hc_.delete("age");
+
+						//if no data, skip
+						if( hc_.stats.size() == 0 ) continue;
+
+						//remove strange characters
+						gender = gender.replace(" ", "_");
+						tut = tut.replace("/", "").replace(" ", "_");
+						roadType = roadType.replace(" ", "_");
+						age = age.replace("-", "").replace("+", "").replace("<", "").replace(" ", "_");
+
+						//save as CSV
+						CSV.save(hc_, "val", basePath+"data/"+gender+"/"+tut+"/"+roadType+"/"+age+".csv");
+					}
+
+		//TODO compute totals
+
 		System.out.println("End");
 	}
 
