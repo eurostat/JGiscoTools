@@ -250,7 +250,6 @@ public class GridsProduction {
 	}
 
 
-
 	private static StatsIndex getPopulationData(String file) {
 		StatsHypercube sh = CSV.load(file, "TOT_P");
 		return new StatsIndex(sh, "GRD_ID");
