@@ -246,7 +246,7 @@
 		<dependency>
 			<groupId>eu.europa.ec.eurostat</groupId>
 			<artifactId>java4eurostat</artifactId>
-			<version>1.15</version>
+			<version>1.16</version>
 		</dependency>
 
 	</dependencies>
