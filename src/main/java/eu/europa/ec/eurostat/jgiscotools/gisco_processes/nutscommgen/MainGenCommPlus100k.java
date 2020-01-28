@@ -91,7 +91,7 @@ public class MainGenCommPlus100k {
 			System.gc();
 
 			LOGGER.info("Save output data");
-			SHPUtil.saveSHP(units, basePath+"out/"+ rep+"/COMM_PLUS_WM_1M_"+i+".shp", SHPUtil.getCRS(inFile));
+			SHPUtil.save(units, basePath+"out/"+ rep+"/COMM_PLUS_WM_1M_"+i+".shp", SHPUtil.getCRS(inFile));
 		}
 
 		LOGGER.info("End");

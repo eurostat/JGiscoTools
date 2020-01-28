@@ -112,10 +112,10 @@ public class SHPUtil {
 
 	//save
 
-	public static void saveSHP(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs) { saveSHP(fs,outFile,crs,null); }
-	public static void saveSHP(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, List<String> atts) { saveSHP(fs, outFile, SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts)); }
-	public static void saveSHP(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft) { saveSHP(SimpleFeatureUtil.get(fs, ft), outFile); }
-	public static void saveSHP(SimpleFeatureCollection sfc, String outFile) {
+	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs) { save(fs,outFile,crs,null); }
+	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, List<String> atts) { save(fs, outFile, SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts)); }
+	public static void save(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft) { save(SimpleFeatureUtil.get(fs, ft), outFile); }
+	public static void save(SimpleFeatureCollection sfc, String outFile) {
 		try {
 			if(sfc.size() == 0){
 				//file.createNewFile();
@@ -163,7 +163,7 @@ public class SHPUtil {
 		saveGeomsSHP(geoms, outFile, null);
 	}
 	public static <T extends Geometry> void saveGeomsSHP(Collection<T> geoms, String outFile, CoordinateReferenceSystem crs) {
-		saveSHP(SimpleFeatureUtil.getFeaturesFromGeometries(geoms), outFile, crs);
+		save(SimpleFeatureUtil.getFeaturesFromGeometries(geoms), outFile, crs);
 	}
 
 	public static void saveCoordsSHP(Collection<Coordinate> cs, String outFile) {
@@ -171,7 +171,7 @@ public class SHPUtil {
 	}
 	public static void saveCoordsSHP(Collection<Coordinate> cs, String outFile, CoordinateReferenceSystem crs) {
 		Collection<Point> pts = JTSGeomUtil.getPointsFromCoordinates(cs);
-		saveSHP(SimpleFeatureUtil.getFeaturesFromGeometries(pts), outFile, crs);
+		save(SimpleFeatureUtil.getFeaturesFromGeometries(pts), outFile, crs);
 	}
 
 
@@ -242,7 +242,7 @@ public class SHPUtil {
 		System.out.println(" Done.");
 
 		System.out.println("Save data to "+outFile);
-		saveSHP(SimpleFeatureUtil.get(fs, getCRS(inFile)), outFile);
+		save(SimpleFeatureUtil.get(fs, getCRS(inFile)), outFile);
 	}
 
 
@@ -275,7 +275,7 @@ public class SHPUtil {
 			//save shp
 			DefaultFeatureCollection outfc = new DefaultFeatureCollection(null,null);
 			outfc.add(sf);
-			saveSHP(outfc, outFile);
+			save(outfc, outFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -380,7 +380,7 @@ public class SHPUtil {
 	public static void extractFilterClip(String in, String out, Envelope env, Filter f) {
 		ArrayList<Feature> fs = getFeatures(in, f);
 		if(env != null) fs = FeatureUtil.clip(fs, env);
-		SHPUtil.saveSHP(fs, out, getCRS(in));
+		SHPUtil.save(fs, out, getCRS(in));
 	}
 
 
@@ -424,7 +424,7 @@ public class SHPUtil {
 		if(showMessages) System.out.println(fs.size()+" loaded from "+inFile);
 		ArrayList<Feature> out = FeatureUtil.getFeaturesWithSimpleGeometrie(fs);
 		if(showMessages) System.out.println("Result nb: "+out.size());
-		SHPUtil.saveSHP(out, outFile, getCRS(inFile));
+		SHPUtil.save(out, outFile, getCRS(inFile));
 	}
 
 
@@ -442,7 +442,7 @@ public class SHPUtil {
 				iterator.close();
 			}
 
-			saveSHP(sfs, outFile);
+			save(sfs, outFile);
 
 		} catch (Exception e) {
 			e.printStackTrace();

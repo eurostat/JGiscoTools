@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.europa.ec.eurostat</groupId>
 	<artifactId>JGiscoTools</artifactId>
-	<version>0.6.6-SNAPSHOT</version>
+	<version>0.6.7-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>JGiscoTools</name>
 	<url>https://github.com/eurostat/JGiscoTools</url>
@@ -71,6 +71,7 @@
 				<version>3.1.1</version>
 				<configuration>
 					<source>8</source>
+					<reportOutputDirectory>src/site</reportOutputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -245,7 +246,7 @@
 		<dependency>
 			<groupId>eu.europa.ec.eurostat</groupId>
 			<artifactId>java4eurostat</artifactId>
-			<version>1.15</version>
+			<version>1.16</version>
 		</dependency>
 
 	</dependencies>

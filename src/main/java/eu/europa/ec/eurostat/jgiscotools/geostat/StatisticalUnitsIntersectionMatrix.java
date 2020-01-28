@@ -124,7 +124,7 @@ public class StatisticalUnitsIntersectionMatrix {
 		StatsHypercube out = new StatsHypercube(idFieldFin);
 
 		//index matrix figures
-		StatsIndex interInd = new StatsIndex(interSectionMatrix.selectDimValueEqualTo("type",type).shrinkDims(), idFieldFin, idFieldIni);
+		StatsIndex interInd = new StatsIndex(interSectionMatrix.selectDimValueEqualTo("type",type).shrinkDimensions(), idFieldFin, idFieldIni);
 
 		for(String idFin : interInd.getKeys()){
 			double statValueFin = 0;

@@ -47,7 +47,7 @@ public class MainRailwayQuality {
 		//System.out.println("ok!!!");
 
 		LOGGER.info("Save - nb=" + secs.size());
-		SHPUtil.saveSHP(secs, basePath+"out/quality/railway.shp", SHPUtil.getCRS(inFile));
+		SHPUtil.save(secs, basePath+"out/quality/railway.shp", SHPUtil.getCRS(inFile));
 
 		LOGGER.info("End");
 	}

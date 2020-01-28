@@ -176,7 +176,7 @@ public class ArcGISRest {
 			}
 
 			System.out.println("Save...");
-			SHPUtil.saveSHP(fs, shpFile);
+			SHPUtil.save(fs, shpFile);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -241,7 +241,7 @@ public class ArcGISRest {
 			reader.close();
 
 			System.out.println("Save...");
-			SHPUtil.saveSHP(fs, shpFile);
+			SHPUtil.save(fs, shpFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

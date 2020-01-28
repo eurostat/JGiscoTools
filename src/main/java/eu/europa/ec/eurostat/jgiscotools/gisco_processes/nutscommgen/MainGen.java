@@ -72,7 +72,7 @@ public class MainGen {
 		units = TesselationGeneralisation.runGeneralisation(units, null, crsType, scaleDenominator, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);
 
 		LOGGER.info("Save output data in "+out);
-		SHPUtil.saveSHP(units, out, SHPUtil.getCRS(in));
+		SHPUtil.save(units, out, SHPUtil.getCRS(in));
 		 
 
 

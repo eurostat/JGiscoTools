@@ -70,10 +70,10 @@ public class MainRailwayEdgeMatching {
 		nem.makeEdgeMatching();
 
 		System.out.println("Save matching edges " + nem.getMatchingEdges().size());
-		SHPUtil.saveSHP(GraphToFeature.asFeature(nem.getMatchingEdges()), basePath+"out/EM/matching_edges.shp", SHPUtil.getCRS(basePath+"MS_data/RailwayLink.shp"));
+		SHPUtil.save(GraphToFeature.asFeature(nem.getMatchingEdges()), basePath+"out/EM/matching_edges.shp", SHPUtil.getCRS(basePath+"MS_data/RailwayLink.shp"));
 
 		System.out.println("Save output " + nem.getSections().size());
-		SHPUtil.saveSHP(nem.getSections(), basePath+"out/EM/RailwayLinkEM.shp", SHPUtil.getCRS(basePath+"MS_data/RailwayLink.shp"));
+		SHPUtil.save(nem.getSections(), basePath+"out/EM/RailwayLinkEM.shp", SHPUtil.getCRS(basePath+"MS_data/RailwayLink.shp"));
 
 		System.out.println("End");
 	}
