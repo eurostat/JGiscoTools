@@ -50,7 +50,7 @@ public class NUTSMap extends StatisticalMap {
 		this(nutsLevel, lod, EurobaseIO.getData(databaseCode, dimLabelValues), classifier, dimLabelValues);
 	}
 	public NUTSMap(int nutsLevel, int lod, StatsHypercube sh, Classifier classifier, String... dimLabelValues){
-		this(nutsLevel, lod, sh.selectDimValueEqualTo(dimLabelValues).shrinkDims().toMap(), classifier);
+		this(nutsLevel, lod, sh.selectDimValueEqualTo(dimLabelValues).shrinkDimensions().toMap(), classifier);
 	}
 
 	public NUTSMap(int nutsLevel, int lod, HashMap<String, Double> statData, Classifier classifier){
