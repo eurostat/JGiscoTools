@@ -27,9 +27,11 @@ JGiscoTools allows:
 <dependency>
 	<groupId>eu.europa.ec.eurostat</groupId>
 	<artifactId>JGiscoTools</artifactId>
-	<version>0.6.5</version>
+	<version>X.Y.Z</version>
 </dependency>
 ```
+
+Where *X.Y.Z* is the current version number, as available [Maven central repository](https://search.maven.org/artifact/eu.europa.ec.eurostat/JGiscoTools).
 
 ### Loading/saving data
 
