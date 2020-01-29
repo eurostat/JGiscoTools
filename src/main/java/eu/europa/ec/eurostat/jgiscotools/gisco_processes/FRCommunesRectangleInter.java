@@ -28,7 +28,7 @@ public class FRCommunesRectangleInter {
 					.compute();
 
 			//save
-			CSV.save(suInter.interSectionMatrix.selectDimValueEqualTo("type", "intersection_area").shrinkDims(), "intersection_area", folder, "intersection_matrix_commune_carreau.csv");
+			CSV.save(suInter.interSectionMatrix.selectDimValueEqualTo("type", "intersection_area").shrinkDimensions(), "intersection_area", folder, "intersection_matrix_commune_carreau.csv");
 
 			System.out.println("End");
 		} catch (Exception e) { e.printStackTrace(); }

@@ -10,8 +10,7 @@ import java.util.HashMap;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.filter.function.RangedClassifier;
 
-import eu.europa.ec.eurostat.java4eurostat.analysis.Validation;
-import eu.europa.ec.eurostat.java4eurostat.base.Selection;
+import eu.europa.ec.eurostat.java4eurostat.analysis.Selection;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
@@ -306,21 +305,21 @@ public class TourismUseCase {
 
 		StatsHypercube diff;
 
-		diff = Validation.computeDifference(hcVal, hc, false, false);
-		Validation.printBasicStatistics(diff); System.out.println("");
-		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff.csv");
+		//diff = Validation.computeDifference(hcVal, hc, false, false);
+		//diff.printBasicStats(); System.out.println("");
+		//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff.csv");
 
-		diff = Validation.computeDifference(hcVal, hc, true, false);
-		Validation.printBasicStatistics(diff); System.out.println("");
-		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_abs.csv");
+		//diff = Validation.computeDifference(hcVal, hc, true, false);
+		//diff.printBasicStats(); System.out.println("");
+		//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_abs.csv");
 
-		diff = Validation.computeDifference(hcVal, hc, false, true);
-		Validation.printBasicStatistics(diff); System.out.println("");
-		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_ratio.csv");
+		//diff = Validation.computeDifference(hcVal, hc, false, true);
+		//diff.printBasicStats(); System.out.println("");
+		//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_ratio.csv");
 
-		diff = Validation.computeDifference(hcVal, hc, true, true);
-		Validation.printBasicStatistics(diff); System.out.println("");
-		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_abs_ratio.csv");
+		//diff = Validation.computeDifference(hcVal, hc, true, true);
+		//diff.printBasicStats(); System.out.println("");
+		//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_result_diff_abs_ratio.csv");
 	}
 
 
@@ -332,23 +331,23 @@ public class TourismUseCase {
 		int time = 2015;
 
 		//computed data: nuts 3 level map
-		statData = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens.csv", "value").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+"").shrinkDims().toMap();
+		statData = CSV.load("H:/methnet/geostat/out/tour_occ_nin2_nuts3_popratio_dens.csv", "value").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+"").shrinkDimensions().toMap();
 		new NUTSMap(3, 60, statData, classifier).setTitle("NUTS 3 - "+time).make()
 		.saveLegendAsImage(outPath+"legend.png", 0, 150, 20, 5)
 		.saveAsImage(outPath+"map_result_nuts3_"+time+".png").dispose();
 		//*/
 
 		//nuts 2 level map
-		statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+"").shrinkDims().toMap();
+		statData = EurostatTSV.load("H:/eurobase/tour_occ_nin2.tsv").selectDimValueEqualTo("unit","P_THAB","nace_r2","I551-I553","indic_to","B006","time",time+"").shrinkDimensions().toMap();
 		new NUTSMap(2, 60, statData, classifier).setTitle("NUTS 2 - "+time).make()
 		.saveAsImage(outPath+"map_nuts2_"+time+".png").dispose();
 		//*/
 
 		//validation data
-		StatsHypercube hc = CSV.load("H:/methnet/geostat/validation/validation_data_2013_filtered.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006").shrinkDims();
+		StatsHypercube hc = CSV.load("H:/methnet/geostat/validation/validation_data_2013_filtered.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006").shrinkDimensions();
 		hc = NUTSUtils.computePopRatioFigures(hc);
 		for(int time_ = 2005; time_<= 2013; time_++){
-			statData = hc.selectDimValueEqualTo("time",time_+"").shrinkDims().toMap();
+			statData = hc.selectDimValueEqualTo("time",time_+"").shrinkDimensions().toMap();
 			new NUTSMap(3, 60, statData, classifier).setTitle("NUTS 3 validation - "+time_).make()
 			.saveAsImage(outPath+"map_validation_data_nuts3_"+time_+".png", 1000, true, false).dispose();
 		}
@@ -359,9 +358,9 @@ public class TourismUseCase {
 	public static void makeValidationMaps(){
 		String outPath = "H:/methnet/geostat/maps/";
 
-		StatsHypercube hc = CSV.load("H:/methnet/geostat/validation/validation_result_diff_abs.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006").shrinkDims();
+		StatsHypercube hc = CSV.load("H:/methnet/geostat/validation/validation_result_diff_abs.csv", "value").selectDimValueEqualTo("nace_r2","I551-I553","indic_to","B006").shrinkDimensions();
 		for(int time_ = 2010; time_<= 2013; time_++){
-			HashMap<String, Double> statData = hc.selectDimValueEqualTo("time",time_+"").shrinkDims().toMap();
+			HashMap<String, Double> statData = hc.selectDimValueEqualTo("time",time_+"").shrinkDimensions().toMap();
 			new NUTSMap(3, 60, statData, classifier).setTitle(time_+" - error").make().saveAsImage(outPath+"map_validation_result_diff_abs_"+time_+".png", 1000, true, false).dispose();
 		}
 		//*/
@@ -428,13 +427,13 @@ public class TourismUseCase {
 			StatsHypercube hc_;
 			hc_ = hcEBNuts2.selectDimValueEqualTo("nace_r2", nace).selectDimValueEqualTo("indic_to", indic);
 
-			StatsHypercube diff = Validation.computeDifference(hcValNuts2, hc_, true, true);
+			//StatsHypercube diff = Validation.computeDifference(hcValNuts2, hc_, true, true);
 			//Validation.printBasicStatistics(diff);
 			//System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
 			//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
-			diff = diff.selectValueEqualTo(0);
-			for(Stat s : diff.stats) { s.dims.put("nace_r2", nace); s.dims.put("indic_to", indic); }
-			dataNuts2.stats.addAll(diff.stats);
+			//diff = diff.selectValueEqualTo(0);
+			//for(Stat s : diff.stats) { s.dims.put("nace_r2", nace); s.dims.put("indic_to", indic); }
+			//dataNuts2.stats.addAll(diff.stats);
 		}{
 			String nace = "I551", indic = "B006";
 			//System.out.println( nace + "   " + indic );
@@ -442,13 +441,13 @@ public class TourismUseCase {
 			StatsHypercube hc_;
 			hc_ = hcEBNuts2.selectDimValueEqualTo("nace_r2", nace).selectDimValueEqualTo("indic_to", indic);
 
-			StatsHypercube diff = Validation.computeDifference(hcValNuts2, hc_, true, true);
+			//StatsHypercube diff = Validation.computeDifference(hcValNuts2, hc_, true, true);
 			//Validation.printBasicStatistics(diff);
 			//System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
 			//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff_"+nace+".csv");
-			diff = diff.selectValueEqualTo(0);
-			for(Stat s : diff.stats) { s.dims.put("nace_r2", nace); s.dims.put("indic_to", indic); }
-			dataNuts2.stats.addAll(diff.stats);
+			//diff = diff.selectValueEqualTo(0);
+			//for(Stat s : diff.stats) { s.dims.put("nace_r2", nace); s.dims.put("indic_to", indic); }
+			//dataNuts2.stats.addAll(diff.stats);
 		}
 		//}
 
@@ -515,10 +514,10 @@ public class TourismUseCase {
 						));
 		hcEBNuts2.delete("unit");
 
-		StatsHypercube diff = Validation.computeDifference(hcValNuts2, hcEBNuts2, true, true);
-		Validation.printBasicStatistics(diff);
-		System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
-		CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff.csv");
+		//StatsHypercube diff = Validation.computeDifference(hcValNuts2, hcEBNuts2, true, true);
+		//diff.printBasicStats();
+		//System.out.println( diff.stats.size() + "   " + diff.selectValueEqualTo(0).stats.size() );
+		//CSV.save(diff, "value", "H:/methnet/geostat/validation/", "validation_data_nuts2_agg_diff.csv");
 	}
 
 }

@@ -6,7 +6,7 @@ JGiscoTools allows:
 - Manipulation and transformation of vector geographical data such as clustering, generalisation, deformation, filtering, edge matching and partitionning.
 - Generalisation of geographical tesselations.
 - Routing and accessibility computation.
-- Production of gridded datasets in various GIS formats.
+- [Production of gridded datasets](https://github.com/eurostat/JGiscoTools/tree/master/src/site/gridmaker) in various GIS formats.
 - Change detection between two version of a same dataset.
 - Automatic production statistical maps (with a focus on maps based on Eurostat data and NUTS regions).
 - Various analyses based on NUTS regions and NUTS codes.
@@ -17,7 +17,9 @@ JGiscoTools allows:
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) is mainly based on [GeoTools](http://www.geotools.org/), [JTS Topology Suite](https://locationtech.github.io/jts/) and [java4eurostat](https://github.com/eurostat/java4eurostat) libraries.
 
-## Using it
+## Quick start
+
+### Setup
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) uses [Apache Maven](http://maven.apache.org/). To use JGiscoTools, add it as a dependency to the *pom.xml* file:
 
@@ -25,9 +27,15 @@ JGiscoTools allows:
 <dependency>
 	<groupId>eu.europa.ec.eurostat</groupId>
 	<artifactId>JGiscoTools</artifactId>
-	<version>0.6.5</version>
+	<version>X.Y.Z</version>
 </dependency>
 ```
+
+Where *X.Y.Z* is the current version number, as available [Maven central repository](https://search.maven.org/artifact/eu.europa.ec.eurostat/JGiscoTools).
+
+### Loading/saving data
+
+TODO
 
 ## Documentation
 
