@@ -5,10 +5,12 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.HashSet;
 
+import eu.europa.ec.eurostat.java4eurostat.analysis.Operations;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Selection.Criteria;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
 
 /**
  * @author gaffuju
@@ -21,7 +23,53 @@ public class AccidentStats {
 
 		String basePath = "E:\\workspace\\traffic_accident_map\\";
 
+		//TODO update compress format
+
+		//load population figures
+		StatsHypercube hcPop = EurostatTSV.load(basePath+"demo_r_pjangrp3.tsv");
+		//age TOTAL
+		//time 2017
+		//sexT
+		//unit
+		//geo size=5
+		hcPop = hcPop.selectDimValueEqualTo("age", "TOTAL", "time", "2017", "sex", "T");
+		hcPop = hcPop.shrinkDimensions();
+		hcPop = hcPop.select(new Criteria() {
+			@Override
+			public boolean keep(Stat stat) {
+				return stat.dims.get("geo").length() == 5;
+			}
+		});
+		//hcPop.printInfo(true);
+
+		
+
+		//See: https://ec.europa.eu/commission/presscorner/detail/en/MEMO_19_1990
+
+
+		//TODO better load procedure
 		StatsHypercube hc = CSV.load(basePath+"NUTS_3.csv", "Victims");
+
+		System.out.println(hc.getDimValues("geo"));
+		System.out.println(hc.getDimValues("geo").size());
+		System.out.println(hcPop.getDimValues("geo"));
+		System.out.println(hcPop.getDimValues("geo").size());
+		
+		//System.out.println( Compacity.getCompacityIndicator(hc, false, false) );
+		//1.9322945767601065E-4
+
+		//System.out.println( Compacity.getCompacityIndicator(hc.selectDimValueEqualTo("tut", "Pedestrian"), false, false) );
+		//7.5126216276403455E-6
+		//System.out.println( Compacity.getCompacityIndicator(hc.selectDimValueEqualTo("tut", "Passenger car"), false, false) );
+
+		//StatsHypercube hc__ = hc.selectDimValueEqualTo("tut", "Passenger car");
+		//System.out.println(Compacity.getMaxSize(hc__));
+		//System.out.println(hc__.stats.size());
+		//TODO bug there - negative value
+
+		//TODO check again
+		//System.out.println( Validation.checkUnicity(hc) );
+
 		hc.delete("C - Year");
 		hc.delete("geo Description");
 		hc.delete("C - Country Code (ISO-2)");
@@ -36,6 +84,7 @@ public class AccidentStats {
 		hc.delete("Not Injured");
 		hc.delete("Injured (total)");
 		hc.delete("Injured (total as reported)");
+		//TODO
 
 		//hc.printInfo(true);
 
@@ -111,6 +160,18 @@ public class AccidentStats {
 				return !stat.dims.get("geo").equals("#NA");
 			}});
 
+		//compute totals
+		hc.stats.addAll( Operations.computeSumDim(hc, "gender", "total") );
+		hc.stats.addAll( Operations.computeSumDim(hc, "tut", "total") );
+		hc.stats.addAll( Operations.computeSumDim(hc, "road_type", "total") );
+		hc.stats.addAll( Operations.computeSumDim(hc, "age", "total") );
+		//hc.stats.addAll( Operations.computeSumDim(hc, "geo", "total") );
+		//hc.printInfo();
+
+		//StatsHypercube hcT = hc.selectDimValueEqualTo("gender", "total", "tut", "total", "road_type", "total", "age", "total", "geo", "total");
+		//System.out.println(hcT.stats.size());
+		//System.out.println(hcT.stats.iterator().next());
+		//TODO 1012328.0 - a lot. check that !!!
 
 		//System.out.println(hc.getDimValues("age"));
 		HashSet<String> genders = hc.getDimValues("gender");
@@ -139,10 +200,11 @@ public class AccidentStats {
 						age = age.replace("-", "").replace("+", "").replace("<", "").replace(" ", "_");
 
 						//save as CSV
-						CSV.save(hc_, "val", basePath+"data/"+gender+"/"+tut+"/"+roadType+"/"+age+".csv");
+						CSV.save(hc_, "val", "E:/web/traffic_map/data/"+gender+"/"+tut+"/"+roadType+"/"+age+".csv");
 					}
 
-		//TODO compute totals
+
+		//TODO analyse compacity on dimension to select the most pertnent one to show
 
 		System.out.println("End");
 	}
