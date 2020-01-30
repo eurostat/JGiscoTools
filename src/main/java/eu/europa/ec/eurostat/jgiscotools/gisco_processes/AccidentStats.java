@@ -3,16 +3,10 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 
-import eu.europa.ec.eurostat.java4eurostat.analysis.Compacity;
-import eu.europa.ec.eurostat.java4eurostat.analysis.Compacity.DimensionValueCompacity;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Operations;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Selection.Criteria;
-import eu.europa.ec.eurostat.java4eurostat.analysis.Validation;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
@@ -77,9 +71,10 @@ public class AccidentStats {
 		//System.out.println( Compacity.getCompacityIndicator(hc, "tut", "Passenger car", false, false) );
 		//0.4037205898908027
 
+		/*
 		ArrayList<DimensionValueCompacity> ca = Compacity.getDimensionValuesByCompacity(hc, false, false);
 		for(DimensionValueCompacity dvc : ca)
-			if(!"geo".equals(dvc.dimLabel)) System.out.println(dvc);
+			if(!"geo".equals(dvc.dimLabel)) System.out.println(dvc);*/
 
 		//check unicity
 		//HashMap<String, Integer> un = Validation.checkUnicity(hc);
@@ -192,9 +187,6 @@ public class AccidentStats {
 						//save as CSV
 						CSV.save(hc_, "val", "E:/web/traffic_map/data/"+gender+"/"+tut+"/"+roadType+"/"+age+".csv");
 					}
-
-
-		//TODO analyse compacity on dimension to select the most pertnent one to show
 
 		System.out.println("End");
 	}
