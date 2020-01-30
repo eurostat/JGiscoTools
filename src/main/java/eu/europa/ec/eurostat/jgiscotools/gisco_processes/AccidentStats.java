@@ -3,11 +3,13 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
 import eu.europa.ec.eurostat.java4eurostat.analysis.Compacity;
+import eu.europa.ec.eurostat.java4eurostat.analysis.Compacity.DimensionValueCompacity;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Operations;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Selection.Criteria;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Validation;
@@ -60,7 +62,7 @@ public class AccidentStats {
 		hc.delete("Not Injured");
 		hc.delete("Injured (total)");
 		hc.delete("Injured (total as reported)");
-		//TODO
+		//TODO include that as a new dimension
 
 		hc.delete("C - Year");
 		hc.delete("geo Description");
@@ -68,11 +70,16 @@ public class AccidentStats {
 
 		//hc.printInfo(true);
 
-		System.out.println( Compacity.getCompacityIndicator(hc, false, false) );
-		//1.9322945767601065E-4
-		System.out.println( Compacity.getCompacityIndicator(hc.selectDimValueEqualTo("tut", "Pedestrian"), false, false) );
-		//7.5126216276403455E-6
-		System.out.println( Compacity.getCompacityIndicator(hc.selectDimValueEqualTo("tut", "Passenger car"), false, false) );
+		//analyse compacity
+
+		//System.out.println( Compacity.getCompacityIndicator(hc, false, false) );
+		//0.06797196892941573
+		//System.out.println( Compacity.getCompacityIndicator(hc, "tut", "Passenger car", false, false) );
+		//0.4037205898908027
+
+		ArrayList<DimensionValueCompacity> ca = Compacity.getDimensionValuesByCompacity(hc, false, false);
+		for(DimensionValueCompacity dvc : ca)
+			if(!"geo".equals(dvc.dimLabel)) System.out.println(dvc);
 
 		//check unicity
 		//HashMap<String, Integer> un = Validation.checkUnicity(hc);
