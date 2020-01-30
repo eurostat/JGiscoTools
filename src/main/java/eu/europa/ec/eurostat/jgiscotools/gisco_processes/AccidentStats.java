@@ -3,11 +3,14 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import eu.europa.ec.eurostat.java4eurostat.analysis.Compacity;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Operations;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Selection.Criteria;
+import eu.europa.ec.eurostat.java4eurostat.analysis.Validation;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
@@ -18,8 +21,8 @@ import eu.europa.ec.eurostat.java4eurostat.io.CSV;
  */
 public class AccidentStats {
 
-	/***/
-	public static void main() {
+
+	public static void main(String[] args) {
 		System.out.println("Start");
 
 		String basePath = "E:\\workspace\\traffic_accident_map\\";
@@ -47,26 +50,6 @@ public class AccidentStats {
 
 
 		StatsHypercube hc = CSV.load(basePath+"NUTS_3.csv", "Victims");
-
-		//System.out.println( Compacity.getCompacityIndicator(hc, false, false) );
-		//1.9322945767601065E-4
-
-		//System.out.println( Compacity.getCompacityIndicator(hc.selectDimValueEqualTo("tut", "Pedestrian"), false, false) );
-		//7.5126216276403455E-6
-		//System.out.println( Compacity.getCompacityIndicator(hc.selectDimValueEqualTo("tut", "Passenger car"), false, false) );
-
-		StatsHypercube hc__ = hc.selectDimValueEqualTo("tut", "Passenger car");
-		System.out.println(Compacity.getMaxSize(hc__));
-		System.out.println(hc__.stats.size());
-		//TODO bug there - negative value
-
-		//TODO check again
-		//System.out.println( Validation.checkUnicity(hc) );
-
-		hc.delete("C - Year");
-		hc.delete("geo Description");
-		hc.delete("C - Country Code (ISO-2)");
-
 		hc.delete("Fatally Injured (as reported)");
 		hc.delete("Fatally Injured (at 30 days)");
 		hc.delete("Seriously Injured (as reported)");
@@ -79,7 +62,31 @@ public class AccidentStats {
 		hc.delete("Injured (total as reported)");
 		//TODO
 
+		hc.delete("C - Year");
+		hc.delete("geo Description");
+		hc.delete("C - Country Code (ISO-2)");
+
 		//hc.printInfo(true);
+
+		System.out.println( Compacity.getCompacityIndicator(hc, false, false) );
+		//1.9322945767601065E-4
+		System.out.println( Compacity.getCompacityIndicator(hc.selectDimValueEqualTo("tut", "Pedestrian"), false, false) );
+		//7.5126216276403455E-6
+		System.out.println( Compacity.getCompacityIndicator(hc.selectDimValueEqualTo("tut", "Passenger car"), false, false) );
+
+		//check unicity
+		//HashMap<String, Integer> un = Validation.checkUnicity(hc);
+		//for(Entry<String, Integer> e : un.entrySet())
+		//	System.out.println( e.getKey() + "   " + e.getValue() );
+
+		//filter
+		hc = hc.selectValueGreaterThan(0);
+		hc = hc.select(new Criteria() {
+			@Override
+			public boolean keep(Stat stat) {
+				return !stat.dims.get("geo").equals("#NA");
+			}});
+
 
 		/*
 		P-3 Person Gender
@@ -133,25 +140,9 @@ public class AccidentStats {
 		//hc.delete("U-2 Traffic Unit type");
 		//hc.printInfo(true);
 
-		/*/check how many with nuts=#NA
-		StatsHypercube hcNA = hc.selectDimValueEqualTo("A-4 Nuts Level 3", "#NA");
-		System.out.println(hc.stats.size());
-		System.out.println(hcNA.stats.size());
-		hc.printInfo(false);
-		hcNA.printInfo(false);*/
-
 
 		//dimensions to consider:
 		//gender, age, 
-
-
-		//filter
-		hc = hc.selectValueGreaterThan(0);
-		hc = hc.select(new Criteria() {
-			@Override
-			public boolean keep(Stat stat) {
-				return !stat.dims.get("geo").equals("#NA");
-			}});
 
 		//compute totals
 		hc.stats.addAll( Operations.computeSumDim(hc, "gender", "total") );
