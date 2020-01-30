@@ -5,12 +5,12 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.HashSet;
 
+import eu.europa.ec.eurostat.java4eurostat.analysis.Compacity;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Operations;
 import eu.europa.ec.eurostat.java4eurostat.analysis.Selection.Criteria;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
 
 /**
  * @author gaffuju
@@ -18,13 +18,12 @@ import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
  */
 public class AccidentStats {
 
-	public static void main(String[] args) {
+	/***/
+	public static void main() {
 		System.out.println("Start");
 
 		String basePath = "E:\\workspace\\traffic_accident_map\\";
-
-		//TODO update compress format
-
+		/*
 		//load population figures
 		StatsHypercube hcPop = EurostatTSV.load(basePath+"demo_r_pjangrp3.tsv");
 		//age TOTAL
@@ -41,20 +40,14 @@ public class AccidentStats {
 			}
 		});
 		//hcPop.printInfo(true);
+		 */
 
-		
 
 		//See: https://ec.europa.eu/commission/presscorner/detail/en/MEMO_19_1990
 
 
-		//TODO better load procedure
 		StatsHypercube hc = CSV.load(basePath+"NUTS_3.csv", "Victims");
 
-		System.out.println(hc.getDimValues("geo"));
-		System.out.println(hc.getDimValues("geo").size());
-		System.out.println(hcPop.getDimValues("geo"));
-		System.out.println(hcPop.getDimValues("geo").size());
-		
 		//System.out.println( Compacity.getCompacityIndicator(hc, false, false) );
 		//1.9322945767601065E-4
 
@@ -62,9 +55,9 @@ public class AccidentStats {
 		//7.5126216276403455E-6
 		//System.out.println( Compacity.getCompacityIndicator(hc.selectDimValueEqualTo("tut", "Passenger car"), false, false) );
 
-		//StatsHypercube hc__ = hc.selectDimValueEqualTo("tut", "Passenger car");
-		//System.out.println(Compacity.getMaxSize(hc__));
-		//System.out.println(hc__.stats.size());
+		StatsHypercube hc__ = hc.selectDimValueEqualTo("tut", "Passenger car");
+		System.out.println(Compacity.getMaxSize(hc__));
+		System.out.println(hc__.stats.size());
 		//TODO bug there - negative value
 
 		//TODO check again
@@ -171,7 +164,6 @@ public class AccidentStats {
 		//StatsHypercube hcT = hc.selectDimValueEqualTo("gender", "total", "tut", "total", "road_type", "total", "age", "total", "geo", "total");
 		//System.out.println(hcT.stats.size());
 		//System.out.println(hcT.stats.iterator().next());
-		//TODO 1012328.0 - a lot. check that !!!
 
 		//System.out.println(hc.getDimValues("age"));
 		HashSet<String> genders = hc.getDimValues("gender");
