@@ -21,6 +21,51 @@ import eu.europa.ec.eurostat.java4eurostat.io.CSVAsHashMap;
 public class AccidentStats {
 
 
+
+	//TODO remove and use java4eurostat version instead
+
+	/**
+	 * Load a CSV file of statistical data for which several values are specified per raw.
+	 * 
+	 * @param csvFilePath The CSV file.
+	 * @param newDimLabel The new dimension label for the different value columns.
+	 * @param valueColumns The header of the raws containing statistical values.
+	 * @return
+	 */
+	public static StatsHypercube loadMultiValues(String csvFilePath, String newDimLabel, String... valueColumns) {
+		ArrayList<HashMap<String, String>> data = CSVAsHashMap.load(csvFilePath);
+
+		//get list of dimension labels
+		ArrayList<String> dimLabels = new ArrayList<>(data.iterator().next().keySet());
+		for(String vc : valueColumns) {
+			boolean b = dimLabels.remove(vc);
+			if(!b) System.out.println("Pb " + vc);
+		}
+
+		//build new hypercube
+		StatsHypercube hc = new StatsHypercube( dimLabels.toArray(new String[dimLabels.size()]) );
+		hc.dimLabels.add(newDimLabel);
+
+		//fill new hypercube
+		for(HashMap<String, String> elt : data) {
+			for(String value : valueColumns) {
+				if(elt.get(value) == null) {
+					System.out.println("no data found for "+value+"   "+elt);
+					continue;
+				}
+				Stat s = new Stat();
+				for(String dl_ : dimLabels) s.dims.put(dl_, elt.get(dl_));
+				s.dims.put(newDimLabel, value);
+				s.value = Double.parseDouble(elt.get(value));
+				hc.stats.add(s);
+			}
+		}
+		return hc;
+	}
+
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		System.out.println("Start");
 
@@ -47,36 +92,17 @@ public class AccidentStats {
 
 		//See: https://ec.europa.eu/commission/presscorner/detail/en/MEMO_19_1990
 
-		
-		ArrayList<HashMap<String, String>> data = CSVAsHashMap.load(basePath+"NUTS_3.csv");
-		
-		System.out.println(data.size());
-		HashMap<String, String> elt = data.iterator().next();
-		System.out.println(elt);
-		System.out.println(elt.keySet());
-		
-		
-		if(true) return;
 
-		
-		StatsHypercube hc = CSV.load(basePath+"NUTS_3.csv", "Victims");
-		hc.delete("Fatally Injured (as reported)");
-		hc.delete("Fatally Injured (at 30 days)");
-		hc.delete("Seriously Injured (as reported)");
-		hc.delete("Seriously Injured (at 30 days)");
-		hc.delete("Slightly Injured");
-		hc.delete("Injured (injury severity not known)");
-		hc.delete("Injury Type Not Known");
-		hc.delete("Not Injured");
-		hc.delete("Injured (total)");
-		hc.delete("Injured (total as reported)");
-		//TODO include that as a new dimension
+		//load data
+		StatsHypercube hc = loadMultiValues(basePath+"NUTS_3.csv", "casuality type", "Fatally Injured (as reported)", "Fatally Injured (at 30 days)", "Seriously Injured (as reported)", "Seriously Injured (at 30 days)", "Slightly Injured", "Injured (injury severity not known)", "Injury Type Not Known", "Not Injured", "Injured (total)", "Injured (total as reported)", "Victims");
 
 		hc.delete("C - Year");
 		hc.delete("geo Description");
 		hc.delete("C - Country Code (ISO-2)");
 
-		//hc.printInfo(true);
+		hc.printInfo(true);
+		if(true) return;
+
 
 		//analyse compacity
 
