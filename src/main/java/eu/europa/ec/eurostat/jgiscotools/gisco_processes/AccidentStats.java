@@ -3,6 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import eu.europa.ec.eurostat.java4eurostat.analysis.Operations;
@@ -10,6 +12,7 @@ import eu.europa.ec.eurostat.java4eurostat.analysis.Selection.Criteria;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.java4eurostat.io.CSVAsHashMap;
 
 /**
  * @author gaffuju
@@ -44,7 +47,18 @@ public class AccidentStats {
 
 		//See: https://ec.europa.eu/commission/presscorner/detail/en/MEMO_19_1990
 
+		
+		ArrayList<HashMap<String, String>> data = CSVAsHashMap.load(basePath+"NUTS_3.csv");
+		
+		System.out.println(data.size());
+		HashMap<String, String> elt = data.iterator().next();
+		System.out.println(elt);
+		System.out.println(elt.keySet());
+		
+		
+		if(true) return;
 
+		
 		StatsHypercube hc = CSV.load(basePath+"NUTS_3.csv", "Victims");
 		hc.delete("Fatally Injured (as reported)");
 		hc.delete("Fatally Injured (at 30 days)");
