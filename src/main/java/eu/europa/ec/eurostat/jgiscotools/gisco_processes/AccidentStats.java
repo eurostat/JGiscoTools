@@ -3,8 +3,6 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import eu.europa.ec.eurostat.java4eurostat.analysis.Operations;
@@ -12,7 +10,6 @@ import eu.europa.ec.eurostat.java4eurostat.analysis.Selection.Criteria;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.java4eurostat.io.CSVAsHashMap;
 
 /**
  * @author gaffuju
@@ -51,7 +48,7 @@ public class AccidentStats {
 
 
 		//load data
-		StatsHypercube hc = loadMultiValues(basePath+"NUTS_3.csv", "casuality type", "Fatally Injured (as reported)", "Fatally Injured (at 30 days)", "Seriously Injured (as reported)", "Seriously Injured (at 30 days)", "Slightly Injured", "Injured (injury severity not known)", "Injury Type Not Known", "Not Injured", "Injured (total)", "Injured (total as reported)", "Victims");
+		StatsHypercube hc = CSV.loadMultiValues(basePath+"NUTS_3.csv", "casuality type", "Fatally Injured (as reported)", "Fatally Injured (at 30 days)", "Seriously Injured (as reported)", "Seriously Injured (at 30 days)", "Slightly Injured", "Injured (injury severity not known)", "Injury Type Not Known", "Not Injured", "Injured (total)", "Injured (total as reported)", "Victims");
 
 		hc.delete("C - Year");
 		hc.delete("geo Description");
