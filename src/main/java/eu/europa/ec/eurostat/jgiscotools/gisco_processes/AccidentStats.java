@@ -20,49 +20,6 @@ import eu.europa.ec.eurostat.java4eurostat.io.CSVAsHashMap;
  */
 public class AccidentStats {
 
-
-
-	//TODO remove and use java4eurostat version instead
-
-	/**
-	 * Load a CSV file of statistical data for which several values are specified per raw.
-	 * 
-	 * @param csvFilePath The CSV file.
-	 * @param newDimLabel The new dimension label for the different value columns.
-	 * @param valueColumns The header of the raws containing statistical values.
-	 * @return
-	 */
-	public static StatsHypercube loadMultiValues(String csvFilePath, String newDimLabel, String... valueColumns) {
-		ArrayList<HashMap<String, String>> data = CSVAsHashMap.load(csvFilePath);
-
-		//get list of dimension labels
-		ArrayList<String> dimLabels = new ArrayList<>(data.iterator().next().keySet());
-		for(String vc : valueColumns) {
-			boolean b = dimLabels.remove(vc);
-			if(!b) System.out.println("Pb " + vc);
-		}
-
-		//build new hypercube
-		StatsHypercube hc = new StatsHypercube( dimLabels.toArray(new String[dimLabels.size()]) );
-		hc.dimLabels.add(newDimLabel);
-
-		//fill new hypercube
-		for(HashMap<String, String> elt : data) {
-			for(String value : valueColumns) {
-				if(elt.get(value) == null) {
-					System.out.println("no data found for "+value+"   "+elt);
-					continue;
-				}
-				Stat s = new Stat();
-				for(String dl_ : dimLabels) s.dims.put(dl_, elt.get(dl_));
-				s.dims.put(newDimLabel, value);
-				s.value = Double.parseDouble(elt.get(value));
-				hc.stats.add(s);
-			}
-		}
-		return hc;
-	}
-
 	/**
 	 * @param args
 	 */
