@@ -29,6 +29,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.data.store.ContentFeatureSource;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.locationtech.jts.geom.Coordinate;
@@ -80,6 +81,16 @@ public class SHPUtil {
 	}
 	public static Envelope getBounds(String shpFilePath) {
 		return getSimpleFeatures(shpFilePath).getBounds();
+	}
+	public static ContentFeatureSource getFeatureSource(String shpFilePath, boolean withMemoryMappedBuffer){
+		try {
+			HashMap<String, Object> params = new HashMap<String, Object>();
+			params.put("url", new File(shpFilePath).toURI().toURL());
+			if(withMemoryMappedBuffer) params.put("memory mapped buffer", Boolean.TRUE); else params.put("memory mapped buffer", Boolean.FALSE);
+			ShapefileDataStore dataStore = (ShapefileDataStore) DataStoreFinder.getDataStore(params);
+			return (ContentFeatureSource) dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
+		} catch (Exception e) { e.printStackTrace(); }
+		return null;
 	}
 
 

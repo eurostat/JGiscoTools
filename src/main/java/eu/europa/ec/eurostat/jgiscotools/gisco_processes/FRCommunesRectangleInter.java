@@ -5,7 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.geostat.StatisticalUnitsIntersectionMatrix;
-import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
+import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**
  * @author julien Gaffuri
@@ -22,8 +22,10 @@ public class FRCommunesRectangleInter {
 
 			//compute matrix
 			StatisticalUnitsIntersectionMatrix suInter = new StatisticalUnitsIntersectionMatrix(
-					new ShapeFile(folder+"commune.shp", true).getFeatureSource(), "INSEE_COM", true,
-					new ShapeFile(folder+"carreau.shp", true).getFeatureSource(), "id", true
+					SHPUtil.getFeatureSource(folder+"commune.shp", true), "INSEE_COM", true,
+					SHPUtil.getFeatureSource(folder+"carreau.shp", true), "id", true
+					//new ShapeFile(folder+"commune.shp", true).getFeatureSource(), "INSEE_COM", true,
+					//new ShapeFile(folder+"carreau.shp", true).getFeatureSource(), "id", true
 					)
 					.compute();
 
