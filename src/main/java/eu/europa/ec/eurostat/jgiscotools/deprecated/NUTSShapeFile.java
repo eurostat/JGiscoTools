@@ -9,8 +9,6 @@ import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.filter.Filter;
 
-import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
-
 /**
  * @author julien Gaffuri
  *

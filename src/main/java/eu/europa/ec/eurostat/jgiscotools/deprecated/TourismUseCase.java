@@ -17,7 +17,6 @@ import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
 import eu.europa.ec.eurostat.jgiscotools.geostat.DasymetricMapping;
-import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
 
 /**
  * @author julien Gaffuri

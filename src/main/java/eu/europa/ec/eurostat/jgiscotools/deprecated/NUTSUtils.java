@@ -15,7 +15,6 @@ import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
 import eu.europa.ec.eurostat.java4eurostat.io.EurobaseIO;
 import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
-import eu.europa.ec.eurostat.jgiscotools.io.ShapeFile;
 
 /**
  * 
