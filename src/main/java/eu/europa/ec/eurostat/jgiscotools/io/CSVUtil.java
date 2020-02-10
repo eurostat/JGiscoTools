@@ -116,7 +116,6 @@ public class CSVUtil {
 					Object v = obj.get(key);
 					if(v == null) System.err.println("Could not find value for key "+key);
 					bw.write( v == null? "null" : v.toString() );
-					//TODO
 					if(i<keys.size()-1) bw.write(",");
 					i++;
 				}
