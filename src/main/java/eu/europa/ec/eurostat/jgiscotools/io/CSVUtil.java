@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 /**
@@ -24,12 +25,13 @@ import org.apache.commons.csv.CSVRecord;
  */
 public class CSVUtil {
 
-	/*
+
 	public static void main(String[] args) {
-		ArrayList<Map<String, String>> a = load2("src/test/resources/csv/test.csv");
+		ArrayList<Map<String, String>> a = load("src/test/resources/csv/test.csv");
 		System.out.println(a);
+		save2(a, "target/out.csv");
 	}
-	 */
+
 
 	/**
 	 * @param filePath
@@ -59,6 +61,27 @@ public class CSVUtil {
 		return data;
 	}
 
+
+
+
+	public static void save2(Collection<Map<String, String>> data, String outFile) {
+		save2(data, outFile, CSVFormat.DEFAULT.withFirstRecordAsHeader());
+	}
+
+	public static void save2(Collection<Map<String, String>> data, String outFile, CSVFormat cf) {
+		try {
+			FileWriter out = new FileWriter(outFile);
+			CSVPrinter printer = new CSVPrinter(out, cf);
+			for(Map<String, String> raw : data) {
+				//TODO !!!
+				printer.printRecord(raw.entrySet());
+			}
+			printer.close();
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 
 
