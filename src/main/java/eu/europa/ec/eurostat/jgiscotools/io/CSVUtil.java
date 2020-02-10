@@ -63,7 +63,7 @@ public class CSVUtil {
 
 	//save a csv file
 	public static void save(Collection<Map<String, String>> data, String outFile) {
-		ArrayList<String> header = new ArrayList( data.iterator().next().keySet() );
+		ArrayList<String> header = new ArrayList<>( data.iterator().next().keySet() );
 		CSVFormat cf = CSVFormat.DEFAULT.withHeader(header.toArray(new String[header.size()]));
 		save(data, outFile, cf);
 	}
