@@ -254,7 +254,7 @@ public class FeatureUtil {
 		}
 		return out;
 	}
-	public static Collection<Feature> toFeatures(ArrayList<HashMap<String, String>> ps) {
+	public static Collection<Feature> toFeatures(ArrayList<Map<String, String>> ps) {
 		Collection<Feature> out = new ArrayList<Feature>();
 		for(Map<String, String> p : ps) {
 			Feature f = new Feature();

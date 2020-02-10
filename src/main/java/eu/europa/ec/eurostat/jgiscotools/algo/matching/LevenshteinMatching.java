@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -204,7 +205,7 @@ public class LevenshteinMatching {
 	 * @param outFile
 	 */
 	public static void saveAsCSV(Collection<Match> ms, String outFile) {
-		ArrayList<HashMap<String, String>> data = new ArrayList<>();
+		ArrayList<Map<String, String>> data = new ArrayList<>();
 		for(Match m : ms) {
 			HashMap<String, String> data_ = new HashMap<>();
 			data_.put("s1", m.s1);
@@ -212,9 +213,9 @@ public class LevenshteinMatching {
 			data_.put("cost", m.cost+"");
 			data.add(data_);
 		}
-		data.sort(new Comparator<HashMap<String, String>>() {
+		data.sort(new Comparator<Map<String, String>>() {
 			@Override
-			public int compare(HashMap<String, String> m1, HashMap<String, String> m2) {
+			public int compare(Map<String, String> m1, Map<String, String> m2) {
 				return (int) (1000*(Double.parseDouble(m2.get("cost").toString()) - Double.parseDouble(m1.get("cost").toString())));
 			}
 		});

@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.locationtech.jts.geom.Coordinate;
 
@@ -16,11 +17,11 @@ public class Geocoding {
 	public static void main(String[] args) throws Exception {
 
 		String filePath = "E:\\dissemination\\shared-data\\MS_data\\Service - Health\\AT/KA-Verzeichnis 2019-10-15.csv";
-		ArrayList<HashMap<String,String>> hospitals = CSVUtil.load(filePath, "\\s*(\"[^\"]*\"|[^;]*)\\s*");
+		ArrayList<Map<String,String>> hospitals = CSVUtil.load(filePath);
 		System.out.println(hospitals.size());
 
 		//int count = 0;
-		for(HashMap<String,String> hospital : hospitals) {
+		for(Map<String,String> hospital : hospitals) {
 			//count++;
 			String address = hospital.get("Adresse");
 			System.out.println(address);
@@ -32,7 +33,7 @@ public class Geocoding {
 		}
 
 		//remove commas
-		for(HashMap<String,String> hospital : hospitals) {
+		for(Map<String,String> hospital : hospitals) {
 			for(String key : hospital.keySet()) {
 				if(key.equals("lon")) continue;
 				if(key.equals("lat")) continue;

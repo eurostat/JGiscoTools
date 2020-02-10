@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,8 +88,8 @@ public class AccessibilityGrid {
 
 
 	//the transport duration by grid cell
-	private Collection<HashMap<String, String>> cellData = null;
-	public Collection<HashMap<String, String>> getCellData() { return cellData; }
+	private Collection<Map<String, String>> cellData = null;
+	public Collection<Map<String, String>> getCellData() { return cellData; }
 
 	//the fastest route to one of the POIs for each grid cell
 	private Collection<Feature> routes = null;

@@ -3,22 +3,20 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.io;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * @author julien Gaffuri
@@ -26,68 +24,48 @@ import java.util.regex.Pattern;
  */
 public class CSVUtil {
 
-	//load a csv file
-	//NB: for tab separated files, use "([^\t]*)"
-	public static ArrayList<HashMap<String,String>> load(String filePath) {
-		return load(filePath, "\\s*(\"[^\"]*\"|[^,]*)\\s*");
+	/*
+	public static void main(String[] args) {
+		ArrayList<Map<String, String>> a = load2("src/test/resources/csv/test.csv");
+		System.out.println(a);
+	}
+	 */
+
+	/**
+	 * @param filePath
+	 * @return
+	 */
+	public static ArrayList<Map<String,String>> load(String filePath) {
+		return load(filePath, CSVFormat.DEFAULT.withFirstRecordAsHeader());
 	}
 
-	public static ArrayList<HashMap<String,String>> load(String filePath, String patternString) {
-		return load(filePath, null, patternString);
-	}
-
-	public static ArrayList<HashMap<String,String>> load(String filePath, String[] header, String patternString) {
-		ArrayList<HashMap<String,String>> data = new ArrayList<HashMap<String,String>>();
-		BufferedReader br = null;
+	/**
+	 * @param filePath
+	 * @param cf
+	 * @return
+	 */
+	public static ArrayList<Map<String,String>> load(String filePath, CSVFormat cf) {
+		ArrayList<Map<String,String>> data = new ArrayList<>();
 		try {
-			br = new BufferedReader(new FileReader(filePath));
-			Pattern pattern = Pattern.compile(patternString);
-
-			String line;
-			Matcher m;
-			ArrayList<String> keys;
-			if(header==null){
-				//read header
-				line = br.readLine();
-				m = pattern.matcher(line);
-				keys = new ArrayList<String>();
-				while(m.find()){
-					keys.add(m.group(1));
-					m.find();
-				}
-			} else
-				keys = new ArrayList<String>(Arrays.asList(header));
+			//parse file
+			Reader in = new FileReader(filePath);
+			Iterable<CSVRecord> raws = cf.parse(in);
 
 			//read data
-			while ((line = br.readLine()) != null) {
-				m = pattern.matcher(line);
-				LinkedHashMap<String,String> obj = new LinkedHashMap<String,String>();
-				for(String key:keys){
-					m.find();
-					String value=m.group(1);
-					//System.out.println("******"+value + "------"+("".equals(value)));
-					if(!"".equals(value)) m.find();
-					obj.put(key, value);
-					//System.out.println(key+":"+value);
-				}
-				data.add(obj);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (br != null)br.close();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-		return data;		
+			for (CSVRecord raw : raws) data.add(raw.toMap());
+
+			in.close();
+		} catch (Exception e) { e.printStackTrace(); }
+		return data;
 	}
+
+
+
 
 
 	//save a csv file
-	public static void save(Collection<HashMap<String, String>> data, String outFile) { save(data, outFile, null); }
-	public static void save(Collection<HashMap<String, String>> data, String outFile, List<String> keys) {
+	public static void save(Collection<Map<String, String>> data, String outFile) { save(data, outFile, null); }
+	public static void save(Collection<Map<String, String>> data, String outFile, List<String> keys) {
 		try {
 			if(data.size()==0){
 				System.err.println("Cannot save CSV file: Empty dataset.");
@@ -152,7 +130,7 @@ public class CSVUtil {
 	}
 
 	public static void save(List<String> data, String outFile) {
-		ArrayList<HashMap<String, String>> data_ = new ArrayList<>();
+		ArrayList<Map<String, String>> data_ = new ArrayList<>();
 		for(int i=0; i<data.size(); i++) {
 			HashMap<String, String> m = new HashMap<>();
 			m.put("id", i+"");
