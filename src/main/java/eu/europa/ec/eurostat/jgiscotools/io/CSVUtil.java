@@ -3,8 +3,6 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.io;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
@@ -29,7 +27,7 @@ public class CSVUtil {
 	public static void main(String[] args) {
 		ArrayList<Map<String, String>> a = load("src/test/resources/csv/test.csv");
 		System.out.println(a);
-		save2(a, "target/out.csv");
+		save(a, "target/out.csv");
 	}
 
 
@@ -63,74 +61,33 @@ public class CSVUtil {
 
 
 
-
-	public static void save2(Collection<Map<String, String>> data, String outFile) {
-		save2(data, outFile, CSVFormat.DEFAULT.withFirstRecordAsHeader());
+	//save a csv file
+	public static void save(Collection<Map<String, String>> data, String outFile) {
+		ArrayList<String> header = new ArrayList( data.iterator().next().keySet() );
+		CSVFormat cf = CSVFormat.DEFAULT.withHeader(header.toArray(new String[header.size()]));
+		save(data, outFile, cf);
 	}
 
-	public static void save2(Collection<Map<String, String>> data, String outFile, CSVFormat cf) {
+	public static void save(Collection<Map<String, String>> data, String outFile, List<String> header) {
+		CSVFormat cf = CSVFormat.DEFAULT.withHeader(header.toArray(new String[header.size()]));
+		save(data, outFile, cf);
+	}
+
+	public static void save(Collection<Map<String, String>> data, String outFile, CSVFormat cf) {
 		try {
 			FileWriter out = new FileWriter(outFile);
+			String[] header = cf.getHeader(); int nb = header.length;
 			CSVPrinter printer = new CSVPrinter(out, cf);
 			for(Map<String, String> raw : data) {
-				//TODO !!!
-				printer.printRecord(raw.entrySet());
+				String[] values = new String[nb];
+				for(int i=0; i<nb; i++) values[i]=raw.get(header[i]);
+				printer.printRecord(values);
 			}
 			printer.close();
 			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-
-
-
-	//save a csv file
-	public static void save(Collection<Map<String, String>> data, String outFile) { save(data, outFile, null); }
-	public static void save(Collection<Map<String, String>> data, String outFile, List<String> keys) {
-		try {
-			if(data.size()==0){
-				System.err.println("Cannot save CSV file: Empty dataset.");
-				return;
-			}
-
-			//create output file
-			File f = FileUtil.getFile(outFile, true, true);
-			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
-
-			//write header
-			if(keys==null) keys = new ArrayList<String>(data.iterator().next().keySet());
-			int i=0;
-			for(String key : keys ){
-				bw.write(key);
-				if(i<keys.size()-1) bw.write(",");
-				i++;
-			}
-			bw.write("\n");
-
-			//write data
-			for(Map<String, String> obj : data){
-				i=0;
-				for(String key : keys){
-					Object v = obj.get(key);
-					if(v == null) System.err.println("Could not find value for key "+key);
-					bw.write( v == null? "null" : v.toString() );
-					if(i<keys.size()-1) bw.write(",");
-					i++;
-				}
-				bw.write("\n");
-
-				/*Collection<String> values = obj.values(); i=0;
-				for(String value:values){
-					bw.write(value);
-					if(i<values.size()-1) bw.write(",");
-					i++;
-				}
-				bw.write("\n");*/
-			}
-			bw.close();
-		} catch (Exception e) {e.printStackTrace();}
 	}
 
 	public static HashSet<String> getUniqueValues(Collection<HashMap<String, String>> data, String key, boolean print) {
