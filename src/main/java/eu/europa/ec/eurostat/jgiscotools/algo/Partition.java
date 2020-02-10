@@ -15,8 +15,8 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 
+import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
@@ -212,7 +212,7 @@ public class Partition {
 					f.setDefaultGeometry(pieces.iterator().next());
 				else {
 					Geometry union = null;
-					if(geomType.equals(GeomType.ONLY_AREAS)) union = CascadedPolygonUnion.union(pieces);
+					if(geomType.equals(GeomType.ONLY_AREAS)) union = Union.polygonsUnionAll(pieces);
 					else if(geomType.equals(GeomType.ONLY_LINES)) ; //TODO
 					else if(geomType.equals(GeomType.ONLY_POINTS)) ; //TODO
 					else ; //TODO
