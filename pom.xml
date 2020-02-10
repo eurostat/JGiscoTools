@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.europa.ec.eurostat</groupId>
 	<artifactId>JGiscoTools</artifactId>
@@ -19,8 +21,8 @@
 		<url>https://github.com/eurostat/JGiscoTools</url>
 		<connection>scm:git:git://github.com/eurostat/JGiscoTools.git</connection>
 		<developerConnection>scm:git:git@github.com:eurostat/JGiscoTools.git</developerConnection>
-	  <tag>JGiscoTools-0.5</tag>
-  </scm>
+		<tag>JGiscoTools-0.5</tag>
+	</scm>
 
 	<issueManagement>
 		<url>https://github.com/eurostat/JGiscoTools/issues</url>
@@ -221,6 +223,12 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
 			<version>3.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.8</version>
 		</dependency>
 
 		<dependency>
