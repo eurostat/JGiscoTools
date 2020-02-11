@@ -19,6 +19,20 @@ JGiscoTools allows:
 
 ## Quick start
 
+## Setup
+
+[JGiscoTools](https://github.com/eurostat/JGiscoTools) uses [Apache Maven](http://maven.apache.org/). To use JGiscoTools, add it as a dependency to the *pom.xml* file:
+
+```
+<dependency>
+	<groupId>eu.europa.ec.eurostat</groupId>
+	<artifactId>JGiscoTools</artifactId>
+	<version>X.Y.Z</version>
+</dependency>
+```
+
+Where *X.Y.Z* is the current version number, as available [Maven central repository](https://search.maven.org/artifact/eu.europa.ec.eurostat/JGiscoTools).
+
 ### Load
 
 To load geographical features from a [GeoPackage](https://www.geopackage.org/) or a [Shapefile](https://en.wikipedia.org/wiki/Shapefile) file, use:
@@ -32,7 +46,7 @@ Collection<Feature> featuresSHP = SHPUtil.getFeatures("C:/myFile.shp");
 
 ### Read
 
-An `Feature` object is simple an object with a geometry and some attributes. This information can be accessed with:
+A `Feature` object has an identifier, a geometry and some attributes. This information can be accessed with:
 
 ```java
 //load features
@@ -68,7 +82,7 @@ A `Feature` object can be modified directly. See for example how to change an at
 ```java
 Feature f = ...
 f.setAttribute("myAttribute1", "new value");
-f.setGeometry(f.getGeometry().buffer(10));
+f.setGeometry( f.getGeometry().buffer(10) );
 ```
 
 ### Save
@@ -93,20 +107,6 @@ CoordinateReferenceSystem crsEPSG = CRS.decode("EPSG:3035")
 ## Documentation
 
 See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/).
-
-## Setup
-
-[JGiscoTools](https://github.com/eurostat/JGiscoTools) uses [Apache Maven](http://maven.apache.org/). To use JGiscoTools, add it as a dependency to the *pom.xml* file:
-
-```
-<dependency>
-	<groupId>eu.europa.ec.eurostat</groupId>
-	<artifactId>JGiscoTools</artifactId>
-	<version>X.Y.Z</version>
-</dependency>
-```
-
-Where *X.Y.Z* is the current version number, as available [Maven central repository](https://search.maven.org/artifact/eu.europa.ec.eurostat/JGiscoTools).
 
 ## Support and contribution
 
