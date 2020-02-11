@@ -38,11 +38,9 @@ This produces a new dataset containing the changes between both versions:
 
 <kbd><img src="img/ini.png" /></kbd>
 
-> ![initial dataset](img/ini.png)
+<kbd><img src="img/fin.png" /></kbd>
 
-> ![final dataset](img/fin.png)
-
-> ![changes](img/changes.png)
+<kbd><img src="img/changes.png" /></kbd>
 
 Unchanged features can also be retrieved with:
 
@@ -72,7 +70,7 @@ Collection<Feature> hfgeoms = cd.getHausdorffGeomChanges();
 
 This produces a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical change between the two versions is maximum. Its length is the good measure of the change magnitude.
 
-![TODO: show example on image](img/geom_hausdorf_ex.png)
+<kbd><img src="img/geom_hausdorf_ex.png" /></kbd>
 
 For a more detailled overview of the geometrical changes, use:
 
@@ -81,7 +79,7 @@ Collection<Feature> geomch = cd.getGeomChanges();
 ```
 This produces a set of features representing the spatial gains and losses between the two versions of the geometries. Gains are labeled with an attribute *change* set to *I*, and losses are labeled with *D* value.
 
-![TODO: show example on image](img/geom_ex.png)
+<kbd><img src="img/geomch.png" /></kbd>
 
 ### Identifier stability issues
 
@@ -93,7 +91,7 @@ Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 500);
 
 This extracts the change features representing these superflous (deletion, insertion) pairs. Those pairs could be either removed if both feature versions are exactly the same, or replaced with a change if these versions are similar. The parameter *500* indicates the distance threshold to decide when the geometries are too similar to be considered as representing totally different entities.
 
-![TODO: show example on image](img/id_stab_issues.png)
+<kbd><img src="img/id_stab_issues.png" /></kbd>
 
 ## Documentation
 
