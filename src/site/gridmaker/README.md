@@ -1,6 +1,6 @@
 # Grid maker
 
-This instruction creates a 10m resolution grid over 1km² starting at point (0,0):
+To create a 10m resolution grid over 1km² starting at point (0,0):
 
 ```java
 
