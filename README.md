@@ -19,7 +19,7 @@ JGiscoTools allows:
 
 ## Quick start
 
-## Setup
+### Setup
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) uses [Apache Maven](http://maven.apache.org/). To use JGiscoTools, add it as a dependency to the *pom.xml* file:
 
@@ -32,6 +32,8 @@ JGiscoTools allows:
 ```
 
 Where *X.Y.Z* is the current version number, as available [Maven central repository](https://search.maven.org/artifact/eu.europa.ec.eurostat/JGiscoTools).
+
+For more information on how to setup a coding environment based on Eclipse, see [this page](https://github.com/eurostat/README/blob/master/docs/howto/java_eclipse_maven_git_quick_guide.md).
 
 ### Load
 
