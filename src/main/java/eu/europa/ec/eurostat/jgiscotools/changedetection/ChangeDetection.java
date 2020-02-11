@@ -302,7 +302,7 @@ public class ChangeDetection {
 					Feature f = new Feature();
 					f.setGeometry(JTSGeomUtil.extract(gD, geomType));
 					f.setAttribute("ch_id", id);
-					f.setAttribute("type", "D");
+					f.setAttribute("change", "D");
 					geomChanges.add(f);
 				}
 			}
@@ -319,7 +319,7 @@ public class ChangeDetection {
 					Feature f = new Feature();
 					f.setGeometry(JTSGeomUtil.extract(gI, geomType));
 					f.setAttribute("ch_id", id);
-					f.setAttribute("type", "I");
+					f.setAttribute("change", "I");
 					geomChanges.add(f);
 				}
 			}
