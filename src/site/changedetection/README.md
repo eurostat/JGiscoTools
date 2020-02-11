@@ -36,11 +36,13 @@ This produces a new dataset containing the changes between both versions:
     * or some attribute values (attribute *change* set to *An* where *n* is the number of modified attributes)
     * or both (attribute *change* set to *GAn*)
 
-![initial dataset](img/ini.png)
+<kbd><img src="img/ini.png" /></kbd>
 
-![final dataset](img/fin.png)
+> ![initial dataset](img/ini.png)
 
-![changes](img/changes.png)
+> ![final dataset](img/fin.png)
+
+> ![changes](img/changes.png)
 
 Unchanged features can also be retrieved with:
 
