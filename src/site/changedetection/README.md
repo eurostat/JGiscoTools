@@ -36,6 +36,8 @@ This produces a new dataset containing the changes between both versions:
     * or some attribute values (attribute *change* set to *An* where *n* is the number of modified attributes)
     * or both (attribute *change* set to *GAn*)
 
+See below an example of change detection on a test dataset:
+
 <kbd><img src="img/ini.png" /></kbd>
 
 <kbd><img src="img/fin.png" /></kbd>
@@ -72,6 +74,8 @@ This produces a set of linear features representing the [Hausdorf segments](http
 
 <kbd><img src="img/hausdorf_segment.png" /></kbd>
 
+(Initial version in gray - Final version blue outline - Corresponding Hausdorf segment in purple)
+
 For a more detailled overview of the geometrical changes, use:
 
 ```java
@@ -80,6 +84,8 @@ Collection<Feature> geomch = cd.getGeomChanges();
 This produces a set of features representing the spatial gains and losses between the two versions of the geometries. Gains are labeled with an attribute *change* set to *I*, and losses are labeled with *D* value.
 
 <kbd><img src="img/geomch.png" /></kbd>
+
+(Geometry gains in green, losses in red)
 
 ### Identifier stability issues
 
@@ -92,6 +98,8 @@ Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 500);
 This extracts the change features representing these superflous (deletion, insertion) pairs. Those pairs could be either removed if both feature versions are exactly the same, or replaced with a change if these versions are similar. The parameter *500* indicates the distance threshold to decide when the geometries are too similar to be considered as representing totally different entities.
 
 <kbd><img src="img/id_stab_issues.png" /></kbd>
+
+(Detected stability issues in pink)
 
 ## Documentation
 
