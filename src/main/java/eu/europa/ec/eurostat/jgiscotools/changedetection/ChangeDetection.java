@@ -111,8 +111,7 @@ public class ChangeDetection {
 	private HashMap<String,Feature> indIni, indFin;
 
 	/**
-	 * Compare both datasets.
-	 * Populate the changes.
+	 * Compare both datasets. Populate the changes.
 	 */
 	private void compare() {
 		this.changes = new ArrayList<>();
@@ -188,10 +187,10 @@ public class ChangeDetection {
 	 * @param fIni The initial version
 	 * @param fFin The final version
 	 * @param attributesToIgnore
-	 * @param res The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
+	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
 	 * @return A feature representing the changes.
 	 */
-	public static Feature compare(Feature fIni, Feature fFin, double res, List<String> attributesToIgnore) {
+	public static Feature compare(Feature fIni, Feature fFin, double resolution, List<String> attributesToIgnore) {
 		boolean attChanged = false, geomChanged = false;
 		Feature change = new Feature();
 
@@ -210,8 +209,8 @@ public class ChangeDetection {
 			}
 		}
 		//compare geometries
-		if( (res>0 && new HausdorffDistance(fIni.getGeometry(), fFin.getGeometry()).getDistance() > res)
-				|| (res<=0 && ! fIni.getGeometry().equalsTopo(fFin.getGeometry())))
+		if( (resolution>0 && new HausdorffDistance(fIni.getGeometry(), fFin.getGeometry()).getDistance() > resolution)
+				|| (resolution<=0 && ! fIni.getGeometry().equalsTopo(fFin.getGeometry())))
 			geomChanged = true;
 
 		//no change: return null
@@ -435,7 +434,7 @@ public class ChangeDetection {
 	 * @return
 	 */
 	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2) {
-		return equals(fs1, fs2, -1);
+		return new ChangeDetection(fs1, fs2).getChanges().size() == 0;
 	}
 
 	/**
@@ -447,7 +446,7 @@ public class ChangeDetection {
 	public static void applyChanges(Collection<Feature> fs, Collection<Feature> changes) {
 
 		//index input features
-		HashMap<String, Feature> ind = FeatureUtil.index(fs, null);
+		HashMap<String, Feature> index = FeatureUtil.index(fs, null);
 
 		//go through changes
 		for(Feature ch : changes) {
@@ -458,7 +457,7 @@ public class ChangeDetection {
 
 			//new feature insertion
 			if("I".equals(ct)) {
-				LOGGER.info("New feature inserted. id="+id);
+				LOGGER.info("New feature inserted. id=" + id);
 				Feature f = FeatureUtil.copy(ch);
 				f.getAttributes().remove("change");
 				f.getAttributes().remove("ch_id");
@@ -467,22 +466,22 @@ public class ChangeDetection {
 			}
 
 			//retrieve feature to be changed
-			Feature f = ind.get(id);
+			Feature f = index.get(id);
 
 			if(f == null) {
-				LOGGER.warn("Could not handle change for feature with id="+id+". Feature not present in initial dataset.");
+				LOGGER.warn("Could not handle change for feature with id=" + id + ". Feature not present in initial dataset.");
 				continue;
 			}
 
 			//feature deletion
 			if("D".equals(ct)) {
 				boolean b = fs.remove(f);
-				if(!b) LOGGER.warn("Could not remove feature. id="+id);
-				LOGGER.info("Feature deleted. id="+id);
+				if(!b) LOGGER.warn("Could not remove feature. id=" + id);
+				LOGGER.info("Feature deleted. id=" + id);
 				continue;
 			}
 
-			LOGGER.info("Feature changed. id="+id+". change="+ct+".");
+			LOGGER.info("Feature changed. id=" + id + ". change=" + ct + ".");
 			applyChange(f, ch, ct);
 		}
 

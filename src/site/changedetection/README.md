@@ -77,9 +77,17 @@ Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 500);
 
 This produces a set of features representing these superflous (deletion, insertion) pairs. Those pairs could be either removed if both feature versions are exactly the same, or replaced with a change if these versions are similar. The parameter *500* indicates the distance threshold to decide when the geometries are too similar to be considered as representing totally different entities.
 
-## Apply changes
+(TODO: show example on image)
 
-TODO
+## Apply incremental changes
+
+The changes returned by the ``cd.getChanges()`` method capture the entire information needed to transform the dataset from its initial version to the final one. The final version can thus be obtained by applying the changes to the initial version with:
+
+```java
+ChangeDetection.applyChanges(featuresIni, cd.getChanges());
+```
+
+The equality of the result with the final version can then be checked with ``ChangeDetection.equals(featuresFin, featuresIni);`` which returns ``true``.
 
 ## Documentation
 

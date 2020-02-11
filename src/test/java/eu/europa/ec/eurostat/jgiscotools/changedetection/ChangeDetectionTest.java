@@ -86,10 +86,10 @@ public class ChangeDetectionTest extends TestCase {
 		 */
 
 		//test equals function
-		assertFalse( ChangeDetection.equals(fsIni, fsFin, resolution) );
-		assertFalse( ChangeDetection.equals(fsFin, fsIni, resolution) );
-		assertTrue( ChangeDetection.equals(fsIni, fsIni, resolution) );
-		assertTrue( ChangeDetection.equals(fsFin, fsFin, resolution) );
+		assertFalse( ChangeDetection.equals(fsIni, fsFin) );
+		assertFalse( ChangeDetection.equals(fsFin, fsIni) );
+		assertTrue( ChangeDetection.equals(fsIni, fsIni) );
+		assertTrue( ChangeDetection.equals(fsFin, fsFin) );
 
 		//test change application
 		ChangeDetection.applyChanges(fsIni, cd.getChanges());
@@ -166,17 +166,16 @@ public class ChangeDetectionTest extends TestCase {
 		 */
 
 		//test equals function
-		assertFalse( ChangeDetection.equals(fsIni, fsFin, resolution) );
-		assertFalse( ChangeDetection.equals(fsFin, fsIni, resolution) );
-		assertTrue( ChangeDetection.equals(fsIni, fsIni, resolution) );
-		assertTrue( ChangeDetection.equals(fsFin, fsFin, resolution) );
+		assertFalse( ChangeDetection.equals(fsIni, fsFin) );
+		assertFalse( ChangeDetection.equals(fsFin, fsIni) );
+		assertTrue( ChangeDetection.equals(fsIni, fsIni) );
+		assertTrue( ChangeDetection.equals(fsFin, fsFin) );
 
 		//test change application
 		ChangeDetection.applyChanges(fsIni, cd.getChanges());
 		assertTrue( ChangeDetection.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPoint.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
-
 	}
 
 
@@ -243,10 +242,10 @@ public class ChangeDetectionTest extends TestCase {
 		 */
 
 		//test equals function
-		assertFalse( ChangeDetection.equals(fsIni, fsFin, resolution) );
-		assertFalse( ChangeDetection.equals(fsFin, fsIni, resolution) );
-		assertTrue( ChangeDetection.equals(fsIni, fsIni, resolution) );
-		assertTrue( ChangeDetection.equals(fsFin, fsFin, resolution) );
+		assertFalse( ChangeDetection.equals(fsIni, fsFin) );
+		assertFalse( ChangeDetection.equals(fsFin, fsIni) );
+		assertTrue( ChangeDetection.equals(fsIni, fsIni) );
+		assertTrue( ChangeDetection.equals(fsFin, fsFin) );
 
 		//test change application
 		ChangeDetection.applyChanges(fsIni, cd.getChanges());
