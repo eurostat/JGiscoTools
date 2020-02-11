@@ -14,6 +14,10 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 import junit.framework.TestCase;
 
+/**
+ * @author julien Gaffuri
+ *
+ */
 public class ChangeDetectionTest extends TestCase {
 
 	/*public static void main(String[] args) throws Exception {
@@ -22,7 +26,7 @@ public class ChangeDetectionTest extends TestCase {
 		//new ChangeDetectionTest().testPt();
 	}*/
 
-
+	/*** @throws Exception  **/
 	public void testSurf() throws Exception {
 		String path = "src/test/resources/change_detection/";
 
@@ -101,6 +105,7 @@ public class ChangeDetectionTest extends TestCase {
 
 
 
+	/*** @throws Exception  **/
 	public void testPt() throws Exception {
 		String path = "src/test/resources/change_detection/";
 
@@ -179,6 +184,7 @@ public class ChangeDetectionTest extends TestCase {
 	}
 
 
+	/*** @throws Exception  **/
 	public void testLin() throws Exception {
 		String path = "src/test/resources/change_detection/";
 
