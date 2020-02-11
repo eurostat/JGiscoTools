@@ -114,7 +114,7 @@ See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/).
 
 ### Components
 
-TODO: list here
+TODO: list component documentation here
 
 ## Support and contribution
 
