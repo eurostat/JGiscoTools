@@ -44,10 +44,12 @@ public class ChangeDetection {
 	private Collection<Feature> fsFin;
 
 	/**
-	 * The geometrical resolution of the dataset.
-	 * Geometrical changes below this value will be ignored.
+	 * The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
 	 */
 	private double resolution = -1;
+	/**
+	 * @return The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
+	 */
 	public double getResolution() { return resolution; }
 
 	/**
@@ -60,6 +62,10 @@ public class ChangeDetection {
 		this.fsFin = fsFin;
 		this.resolution = resolution;
 	}
+	/**
+	 * @param fsIni The dataset in its initial version.
+	 * @param fsFin The dataset in its final version.
+	 */
 	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin) {
 		this(fsIni, fsFin, -1);
 	}
@@ -90,7 +96,13 @@ public class ChangeDetection {
 	 * then the feature is condidered as unchanged. 
 	 */
 	private List<String> attributesToIgnore = null;
+	/**
+	 * @return
+	 */
 	public List<String> getAttributesToIgnore() { return attributesToIgnore; }
+	/**
+	 * @param attributesToIgnore
+	 */
 	public void setAttributesToIgnore(String... attributesToIgnore) { this.attributesToIgnore = Arrays.asList(attributesToIgnore); }
 
 	/**
@@ -222,24 +234,29 @@ public class ChangeDetection {
 
 
 
+	/** */
+	private Collection<Feature> hausdorffGeomChanges = null;
 	/**
 	 * A collection of features representing the geometrical changes.
 	 * For each feature whose geometry has changed, a segment
 	 * representing the hausdorff distance between the initial and
 	 * final geometries is created. This feature allows assessing the
 	 * magnitude of the geometrical change.
+	 * @return
 	 */
-	private Collection<Feature> hausdorffGeomChanges = null;
 	public Collection<Feature> getHausdorffGeomChanges() {
 		if(hausdorffGeomChanges==null) computeGeometryChanges();
 		return hausdorffGeomChanges;
 	}
 
-	/**
-	 * Feature representing the geometrical parts which have been
-	 * deleted/inserted between the two versions.
-	 */
+	/** */
 	private Collection<Feature> geomChanges = null;
+	/**
+	 * Features representing the geometrical parts which have been
+	 * deleted/inserted between the two versions.
+	 * 
+	 * @return
+	 */
 	public Collection<Feature> getGeomChanges() {
 		if(geomChanges==null) computeGeometryChanges();
 		return geomChanges;
