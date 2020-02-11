@@ -116,8 +116,8 @@ public class AccessibilityGrid {
 			logger.info("Index network sections");
 			networkSectionsInd = new STRtree();
 			for(Feature f : networkSections)
-				if(f.getDefaultGeometry() != null)
-					networkSectionsInd.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
+				if(f.getGeometry() != null)
+					networkSectionsInd.insert(f.getGeometry().getEnvelopeInternal(), f);
 		}
 		return networkSectionsInd;
 	}
@@ -129,7 +129,7 @@ public class AccessibilityGrid {
 			logger.info("Index POIs");
 			poisInd = new STRtree();
 			for(Feature f : pois)
-				poisInd.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
+				poisInd.insert(f.getGeometry().getEnvelopeInternal(), f);
 		}
 		return poisInd;
 	}
@@ -141,7 +141,7 @@ public class AccessibilityGrid {
 		public double distance(ItemBoundable item1, ItemBoundable item2) {
 			Feature f1 = (Feature) item1.getItem();
 			Feature f2 = (Feature) item2.getItem();
-			return f1.getDefaultGeometry().distance(f2.getDefaultGeometry());
+			return f1.getGeometry().distance(f2.getGeometry());
 		}
 	};
 
@@ -185,13 +185,13 @@ public class AccessibilityGrid {
 			}*/
 
 			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearestPOIs + " nearest POIs");
-			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
+			Envelope netEnv = cell.getGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
 			Object[] pois_ = getPoisInd().nearestNeighbour(netEnv, cell, itemDist, nbNearestPOIs);
 
 			//get an envelope around the cell and surrounding POIs
-			netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
+			netEnv = cell.getGeometry().getEnvelopeInternal();
 			for(Object poi_ : pois_)
-				netEnv.expandToInclude(((Feature)poi_).getDefaultGeometry().getEnvelopeInternal());
+				netEnv.expandToInclude(((Feature)poi_).getGeometry().getEnvelopeInternal());
 			netEnv.expandBy(10000);
 
 			//get network sections in the envelope around the cell and surrounding POIs
@@ -217,7 +217,7 @@ public class AccessibilityGrid {
 
 			//get cell centroid as origin point
 			//possible improvement: take another position depending on the network state inside the cell? Cell is supposed to be small enough?
-			Coordinate oC = cell.getDefaultGeometry().getCentroid().getCoordinate();
+			Coordinate oC = cell.getGeometry().getCentroid().getCoordinate();
 			Node oN = rt.getNode(oC);
 			if(oN == null) {
 				logger.error("Could not find graph node around cell center: " + oC);
@@ -244,7 +244,7 @@ public class AccessibilityGrid {
 			Path pMin = null; double durMin = Double.MAX_VALUE;
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
-				Coordinate dC = poi.getDefaultGeometry().getCentroid().getCoordinate();
+				Coordinate dC = poi.getGeometry().getCentroid().getCoordinate();
 				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
 				//pf.calculate();
 				Path p = null; double cost;
@@ -300,7 +300,7 @@ public class AccessibilityGrid {
 				f.setID(cellId);
 				f.setAttribute(cellIdAtt, cellId);
 				f.setAttribute("dur_min", durMin);
-				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getDefaultGeometry().getLength()/durMin, 2));
+				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/durMin, 2));
 				routes.add(f);
 			}
 

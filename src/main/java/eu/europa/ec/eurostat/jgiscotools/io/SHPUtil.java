@@ -249,7 +249,7 @@ public class SHPUtil {
 
 		System.out.print("clean all geometries...");
 		for(Feature f : fs)
-			f.setDefaultGeometry( JTSGeomUtil.toMulti(JTSGeomUtil.clean( f.getDefaultGeometry() )));
+			f.setGeometry( JTSGeomUtil.toMulti(JTSGeomUtil.clean( f.getGeometry() )));
 		System.out.println(" Done.");
 
 		System.out.println("Save data to "+outFile);
@@ -266,7 +266,7 @@ public class SHPUtil {
 			//build union
 			ArrayList<Geometry> geoms = new ArrayList<Geometry>();
 			for( Feature f : fs ) {
-				Geometry geom = f.getDefaultGeometry();
+				Geometry geom = f.getGeometry();
 				if((geom instanceof Polygon || geom instanceof MultiPolygon) && !geom.isValid()) {
 					geom = geom.buffer(0);
 				}
@@ -306,7 +306,7 @@ public class SHPUtil {
 		//get poly list
 		ArrayList<Geometry> polys = new ArrayList<Geometry>();
 		for( Feature f : fs )
-			polys.add(f.getDefaultGeometry());
+			polys.add(f.getGeometry());
 
 		//get union
 		Geometry union = new CascadedPolygonUnion(polys).union();
@@ -375,7 +375,7 @@ public class SHPUtil {
 				if(i<keys.size()-1) bw.write(","); i++;
 			}
 			bw.write(",");
-			bw.write(f.getDefaultGeometry().toText());
+			bw.write(f.getGeometry().toText());
 			bw.write("\n");
 		}
 
@@ -420,7 +420,7 @@ public class SHPUtil {
 			ArrayList<Feature> fs = getFeatures(inSHP);
 			if(crs == null) crs = getCRS(inSHP);
 			for(Feature f : fs) {
-				geoms.add(f.getDefaultGeometry());
+				geoms.add(f.getGeometry());
 			}
 			if(delete) {
 				new ShpFiles(new File(inSHP)).delete();

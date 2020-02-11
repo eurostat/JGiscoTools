@@ -41,19 +41,19 @@ public class FeatureUtil {
 	//spatial indexing
 	public static <T extends Feature> STRtree getSTRtree(Collection<T> fs) {
 		STRtree index = new STRtree();
-		for(Feature f : fs) index.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
+		for(Feature f : fs) index.insert(f.getGeometry().getEnvelopeInternal(), f);
 		return index;
 	}
 	public static <T extends Feature> Quadtree getQuadtree(Collection<T> fs) {
 		Quadtree index = new Quadtree();
-		for(Feature f : fs) index.insert(f.getDefaultGeometry().getEnvelopeInternal(), f);
+		for(Feature f : fs) index.insert(f.getGeometry().getEnvelopeInternal(), f);
 		return index;
 	}
 
 	public static <T extends Feature> STRtree getSTRtreeCoordinates(Collection<T> fs) {
 		STRtree index = new STRtree();
 		for(Feature f : fs) {
-			for(Coordinate c : f.getDefaultGeometry().getCoordinates())
+			for(Coordinate c : f.getGeometry().getCoordinates())
 				//TODO ensure no coordinate at same location ?
 				index.insert(new Envelope(c), c);
 		}
@@ -68,8 +68,8 @@ public class FeatureUtil {
 			LOGGER.warn("No features in partition - cannot compute envelope");
 			return null;
 		}
-		Envelope env = features.iterator().next().getDefaultGeometry().getEnvelopeInternal();
-		for(Feature f : features) env.expandToInclude(f.getDefaultGeometry().getEnvelopeInternal());
+		Envelope env = features.iterator().next().getGeometry().getEnvelopeInternal();
+		for(Feature f : features) env.expandToInclude(f.getGeometry().getEnvelopeInternal());
 		env.expandBy((enlargementFactor-1)*env.getWidth(), (enlargementFactor-1)*env.getHeight());
 		return env;
 	}
@@ -78,14 +78,14 @@ public class FeatureUtil {
 		Coordinate c = new Coordinate();
 		{
 			ArrayList<Double> s = new ArrayList<Double>(); double[] s_;
-			for(Feature f : fs) for(Coordinate c_ : f.getDefaultGeometry().getCoordinates()) s.add(c_.x);
+			for(Feature f : fs) for(Coordinate c_ : f.getGeometry().getCoordinates()) s.add(c_.x);
 			s_ = ArrayUtils.toPrimitive(s.toArray(new Double[s.size()]));
 			c.x = StatUtils.percentile(s_ ,50);
 			s_ = null;
 			s.clear();
 		}{
 			ArrayList<Double> s = new ArrayList<Double>(); double[] s_;
-			for(Feature f : fs) for(Coordinate c_ : f.getDefaultGeometry().getCoordinates()) s.add(c_.y);
+			for(Feature f : fs) for(Coordinate c_ : f.getGeometry().getCoordinates()) s.add(c_.y);
 			s_ = ArrayUtils.toPrimitive(s.toArray(new Double[s.size()]));
 			c.y = StatUtils.percentile(s_ ,50);
 			s_ = null;
@@ -143,11 +143,11 @@ public class FeatureUtil {
 	public static <T extends Feature> int getVerticesNumber(Collection<T> fs) {
 		int nb=0;
 		for(Feature f : fs) {
-			if(f.getDefaultGeometry() == null) {
+			if(f.getGeometry() == null) {
 				LOGGER.warn("Could not count the number of vertices of feature "+f.getID()+": Null geometry.");
 				continue;
 			}
-			nb += f.getDefaultGeometry().getNumPoints();
+			nb += f.getGeometry().getNumPoints();
 		}
 		return nb;
 	}
@@ -156,7 +156,7 @@ public class FeatureUtil {
 	public static <T extends Feature> ArrayList<Map<String, Object>> getInfoSmallPolygons(Collection<T> fs, double areaThreshold) {
 		ArrayList<Map<String, Object>> out = new ArrayList<Map<String, Object>>();
 		for(Feature f : fs) {
-			Collection<Geometry> polys = JTSGeomUtil.getGeometries( JTSGeomUtil.getPolygonal(f.getDefaultGeometry()) );
+			Collection<Geometry> polys = JTSGeomUtil.getGeometries( JTSGeomUtil.getPolygonal(f.getGeometry()) );
 			for(Geometry poly : polys) {
 				double area = poly.getArea();
 				if( area > areaThreshold ) continue;
@@ -172,22 +172,22 @@ public class FeatureUtil {
 
 	public static <T extends Feature> Collection<Geometry> getGeometries(Collection<T> fs) {
 		Collection<Geometry> gs = new ArrayList<Geometry>();
-		for(Feature f : fs) gs.add(f.getDefaultGeometry());
+		for(Feature f : fs) gs.add(f.getGeometry());
 		return gs ;
 	}
 	public static <T extends Feature> Collection<Geometry> getGeometriesSimple(Collection<T> fs) {
 		Collection<Geometry> gs = new ArrayList<Geometry>();
-		for(Feature f : fs) gs.addAll( JTSGeomUtil.getGeometries(f.getDefaultGeometry()) );
+		for(Feature f : fs) gs.addAll( JTSGeomUtil.getGeometries(f.getGeometry()) );
 		return gs ;
 	}
 	public static <T extends Feature> Collection<MultiLineString> getGeometriesMLS(ArrayList<T> fs) {
 		Collection<MultiLineString> gs = new ArrayList<MultiLineString>();
-		for(Feature f : fs) gs.add((MultiLineString) f.getDefaultGeometry());
+		for(Feature f : fs) gs.add((MultiLineString) f.getGeometry());
 		return gs ;
 	}
 	public static <T extends Feature> Collection<LineString> getGeometriesLS(ArrayList<T> fs) {
 		Collection<LineString> gs = new ArrayList<LineString>();
-		for(Feature f : fs) gs.add((LineString) f.getDefaultGeometry());
+		for(Feature f : fs) gs.add((LineString) f.getGeometry());
 		return gs ;
 	}
 
@@ -210,10 +210,10 @@ public class FeatureUtil {
 		for(List<Feature> col : ind.values()) {
 			if(col.size() == 1) continue;
 			Collection<MultiPolygon> polys = new ArrayList<MultiPolygon>();
-			for(Feature f : col) polys.add((MultiPolygon) f.getDefaultGeometry());
+			for(Feature f : col) polys.add((MultiPolygon) f.getGeometry());
 			MultiPolygon mp = (MultiPolygon) JTSGeomUtil.toMulti(CascadedPolygonUnion.union(polys));
 			for(int i=1; i<col.size(); i++) fs.remove(col.get(i));
-			col.get(0).setDefaultGeometry(mp);
+			col.get(0).setGeometry(mp);
 		}
 	}
 
@@ -236,9 +236,9 @@ public class FeatureUtil {
 			Feature f = new Feature();
 			f.setAttribute(propName, e.getKey());
 			Collection<MultiPolygon> polys = new ArrayList<MultiPolygon>();
-			for(Feature f_ : e.getValue()) polys.add((MultiPolygon) f_.getDefaultGeometry());
+			for(Feature f_ : e.getValue()) polys.add((MultiPolygon) f_.getGeometry());
 			MultiPolygon mp = (MultiPolygon) JTSGeomUtil.toMulti(CascadedPolygonUnion.union(polys));
-			f.setDefaultGeometry(mp);
+			f.setGeometry(mp);
 			out.add(f);
 		}
 		return out;
@@ -296,7 +296,7 @@ public class FeatureUtil {
 	//keep only features with non empty geometry
 	public static Collection<Feature> filterFeaturesWithNonEmptyGeometries(Collection<Feature> fs) {
 		HashSet<Feature> out = new HashSet<Feature>();
-		for(Feature f : fs) if(!f.getDefaultGeometry().isEmpty()) out.add(f);
+		for(Feature f : fs) if(!f.getGeometry().isEmpty()) out.add(f);
 		return out;
 	}
 
@@ -311,11 +311,11 @@ public class FeatureUtil {
 	//warning: the new features are not true copies.
 	public static <T extends Feature> ArrayList<Feature> getFeaturesWithSimpleGeometrie(T f) {
 		ArrayList<Feature> out = new ArrayList<Feature>();
-		if(f.getDefaultGeometry() == null || f.getDefaultGeometry().isEmpty()) return out;
-		for(Geometry g : JTSGeomUtil.getGeometries(f.getDefaultGeometry())) {
+		if(f.getGeometry() == null || f.getGeometry().isEmpty()) return out;
+		for(Geometry g : JTSGeomUtil.getGeometries(f.getGeometry())) {
 			Feature f2 = new Feature();
 			f2.getAttributes().putAll(f.getAttributes());
-			f2.setDefaultGeometry(g);
+			f2.setGeometry(g);
 			out.add(f2);
 		}
 		return out;
@@ -329,11 +329,11 @@ public class FeatureUtil {
 			ensureGeometryNotAGeometryCollection(f);
 	}
 	public static void ensureGeometryNotAGeometryCollection(Feature f) {
-		if(!(f.getDefaultGeometry() instanceof GeometryCollection)) return;
-		GeometryCollection gc = (GeometryCollection) f.getDefaultGeometry();
+		if(!(f.getGeometry() instanceof GeometryCollection)) return;
+		GeometryCollection gc = (GeometryCollection) f.getGeometry();
 		if(gc.getNumGeometries() != 1)
 			LOGGER.warn("Input geometries should not be a geometrycollection (" + gc.getClass().getSimpleName() + "). nb=" + gc.getNumGeometries() + " props=" + f.getAttributes());
-		f.setDefaultGeometry( JTSGeomUtil.toSimple(gc) );
+		f.setGeometry( JTSGeomUtil.toSimple(gc) );
 	}
 
 
@@ -357,20 +357,20 @@ public class FeatureUtil {
 		ArrayList<Feature> out = new ArrayList<Feature>();
 		Polygon envG = JTS.toGeometry(env);
 		for(Feature f : fs) {
-			if(!env.intersects(f.getDefaultGeometry().getEnvelopeInternal())) continue;
-			if(env.contains(f.getDefaultGeometry().getEnvelopeInternal())) {
+			if(!env.intersects(f.getGeometry().getEnvelopeInternal())) continue;
+			if(env.contains(f.getGeometry().getEnvelopeInternal())) {
 				out.add(f);
 				continue;
 			}
 			Geometry inter = null;
 			try {
-				inter = f.getDefaultGeometry().intersection(envG);
+				inter = f.getGeometry().intersection(envG);
 			} catch (Exception e) {
 				e.printStackTrace();
-				inter = f.getDefaultGeometry();
+				inter = f.getGeometry();
 			}
 			if(inter == null || inter.isEmpty()) continue;
-			f.setDefaultGeometry(inter);
+			f.setGeometry(inter);
 			out.add(f);
 		}
 		return out;
@@ -381,7 +381,7 @@ public class FeatureUtil {
 
 	public static <T extends Feature> Collection<Geometry> featuresToGeometries(Collection<T> fs) {
 		Collection<Geometry> gs = new HashSet<>();
-		for(T f : fs) gs.add(f.getDefaultGeometry());
+		for(T f : fs) gs.add(f.getGeometry());
 		return gs;
 	}
 
@@ -391,7 +391,7 @@ public class FeatureUtil {
 		for(T g : geoms) {
 			Feature f = new Feature();
 			f.setID(""+(i++));
-			f.setDefaultGeometry(g);
+			f.setGeometry(g);
 			fs.add(f);
 		}
 		return fs;
@@ -399,7 +399,7 @@ public class FeatureUtil {
 	public static Feature copy(Feature f) {
 		Feature f_ = new Feature();
 		f_.setID(f.getID());
-		f_.setDefaultGeometry(f.getDefaultGeometry());
+		f_.setGeometry(f.getGeometry());
 		f_.getAttributes().putAll(f.getAttributes());
 		return f_;
 	}

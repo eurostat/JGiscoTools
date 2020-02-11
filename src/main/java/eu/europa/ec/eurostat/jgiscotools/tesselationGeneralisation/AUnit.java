@@ -87,7 +87,7 @@ public class AUnit extends Agent {
 		} else
 			union = (MultiPolygon) JTSGeomUtil.toMulti(union);
 
-		getObject().setDefaultGeometry(union);
+		getObject().setGeometry(union);
 	}
 
 	public int getNumberOfNonDeletedFaces() {
@@ -132,7 +132,7 @@ public class AUnit extends Agent {
 	public boolean containPoints() {
 		if(points == null) return true;
 		for(Point pt : points)
-			if(! getObject().getDefaultGeometry().contains(pt)) return false;
+			if(! getObject().getGeometry().contains(pt)) return false;
 		return true;
 	}
 

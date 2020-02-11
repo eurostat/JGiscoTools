@@ -38,11 +38,11 @@ public class Feature {
 	/** The feature Geometry */
 	private Geometry geometry;
 
-	public Geometry getDefaultGeometry() {
+	public Geometry getGeometry() {
 		return geometry;
 	}
 
-	public void setDefaultGeometry(Geometry geometry) {
+	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
 	}
 

@@ -281,7 +281,7 @@ public class Routing {
 
 		//build feature
 		Feature f = new Feature();
-		f.setDefaultGeometry(geom);
+		f.setGeometry(geom);
 
 		return f;
 	}

@@ -48,13 +48,13 @@ public class GridUtil {
 		//index cells
 		STRtree index = new STRtree();
 		for(Feature cell : cells)
-			index.insert(cell.getDefaultGeometry().getEnvelopeInternal(), cell);
+			index.insert(cell.getGeometry().getEnvelopeInternal(), cell);
 
 		//get codes
 		for(Feature reg : regions) {
 
 			//get region cover and code
-			Geometry regCover = reg.getDefaultGeometry();
+			Geometry regCover = reg.getGeometry();
 			if(toleranceDistance != 0 ) regCover = regCover.buffer(toleranceDistance);
 			String regCode = reg.getAttribute(regionCodeAttribute).toString();
 
@@ -64,7 +64,7 @@ public class GridUtil {
 			//get grid cells around region envelope
 			for(Object cell_ : index.query(regCoverEnv)) {
 				Feature cell = (Feature)cell_;
-				Geometry cellGeom = cell.getDefaultGeometry();
+				Geometry cellGeom = cell.getGeometry();
 
 				if( ! regCoverEnv.intersects(cellGeom.getEnvelopeInternal()) ) continue;
 				if( ! regCover.intersects(cellGeom) ) continue;
@@ -111,7 +111,7 @@ public class GridUtil {
 	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, SpatialIndex landGeometries, SpatialIndex inlandWaterGeometriesIndex, int decimalNB) {
 
 		//compute cell area once
-		double cellArea = cells.iterator().next().getDefaultGeometry().getArea();
+		double cellArea = cells.iterator().next().getGeometry().getArea();
 
 		for(Feature cell : cells) {
 			logger.debug(cell.getAttribute("GRD_ID"));
@@ -138,7 +138,7 @@ public class GridUtil {
 	public static Geometry getLandCellGeometry(Feature cell, SpatialIndex landGeometries, SpatialIndex inlandWaterGeometriesIndex) {
 
 		//get cell geometry
-		Geometry cellGeom = cell.getDefaultGeometry();
+		Geometry cellGeom = cell.getGeometry();
 
 		//list of land patches
 		Collection<Geometry> patches = new ArrayList<>();
@@ -202,14 +202,14 @@ public class GridUtil {
 		for(Feature cell : cells) {
 
 			//get the lines that are nearby the cell
-			Envelope netEnv = cell.getDefaultGeometry().getEnvelopeInternal();
-			Object[] candidateLines = linesInd.nearestNeighbour(netEnv, cell.getDefaultGeometry(), itemDist, 10);
+			Envelope netEnv = cell.getGeometry().getEnvelopeInternal();
+			Object[] candidateLines = linesInd.nearestNeighbour(netEnv, cell.getGeometry(), itemDist, 10);
 
 			//find the closest line to the cell center and compute minimum distance
 			double minDist = -1;
 			for(Object line : candidateLines) {
 				Geometry lineG = (Geometry)line;
-				double dist = lineG.distance( cell.getDefaultGeometry().getCentroid() );
+				double dist = lineG.distance( cell.getGeometry().getCentroid() );
 				if(minDist<0 || dist<minDist) minDist = dist;
 			}
 

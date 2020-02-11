@@ -23,7 +23,7 @@ public class CUnitValidity  extends Constraint<AUnit> {
 	public void computeCurrentValue() {
 		//LOGGER.info("CUnitValid "+getAgent().getObject().id);
 		//valid = getAgent().getObject().getGeom().isValid();
-		IsValidOp ivo = new IsValidOp( getAgent().getObject().getDefaultGeometry() );
+		IsValidOp ivo = new IsValidOp( getAgent().getObject().getGeometry() );
 		error = ivo.getValidationError();
 	}
 

@@ -30,7 +30,7 @@ public class Test {
 		Coordinate lux = new Coordinate(4041252, 2951147);
 		ArrayList<Feature> out = new ArrayList<Feature>();
 		for(Feature f : fs) {
-			double dist = lux.distance( f.getDefaultGeometry().getCoordinate() );
+			double dist = lux.distance( f.getGeometry().getCoordinate() );
 			if(dist>100000) continue;
 			out.add(f);
 		}

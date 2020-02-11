@@ -44,7 +44,7 @@ public class SimpleFeatureUtil {
 		if(pg==null) pg = sf.getProperty("geometry");
 		if(pg==null) pg = sf.getProperty("geom");
 		if(pg==null) LOGGER.warn("Could not find geometry attribute for simple feature " + sf.getFeatureType());
-		f.setDefaultGeometry( (Geometry)pg.getValue() );
+		f.setGeometry( (Geometry)pg.getValue() );
 
 		//set attributes
 		for(String attName : attNames) f.setAttribute(attName, sf.getProperty(attName).getValue());
@@ -70,7 +70,7 @@ public class SimpleFeatureUtil {
 	public static SimpleFeature get(Feature f, SimpleFeatureType ft){
 		String[] attNames = getAttributeNames(ft);
 		Object[] atts = new Object[attNames.length+1];
-		atts[0] = f.getDefaultGeometry();
+		atts[0] = f.getGeometry();
 		for(int i=0; i<attNames.length; i++) atts[i+1] = f.getAttribute(attNames[i]);
 		return new SimpleFeatureBuilder(ft).buildFeature(f.getID(), atts);
 	}
@@ -90,7 +90,7 @@ public class SimpleFeatureUtil {
 			for(String attName : attNames)
 				sf.setAttribute(attName, f.getAttribute(attName));*/
 			Object[] data = new Object[attNames.length+1];
-			data[0] = f.getDefaultGeometry();
+			data[0] = f.getGeometry();
 			for(int i=0; i<attNames.length; i++)
 				data[i+1] = f.getAttribute(attNames[i]);
 			SimpleFeature sf = sfb.buildFeature(f.getID(), data);
@@ -128,7 +128,7 @@ public class SimpleFeatureUtil {
 			atts = new ArrayList<String>();
 			atts.addAll(f.getAttributes().keySet());
 		}
-		return getFeatureType( f.getDefaultGeometry().getGeometryType(), crs, atts );
+		return getFeatureType( f.getGeometry().getGeometryType(), crs, atts );
 	}
 
 	public static SimpleFeatureType getFeatureType(String geomType) {
@@ -200,7 +200,7 @@ public class SimpleFeatureUtil {
 		ArrayList<Feature> fs = new ArrayList<Feature>();
 		for(Geometry geom : geoms){
 			Feature f = new Feature();
-			f.setDefaultGeometry(geom);
+			f.setGeometry(geom);
 			fs.add(f);
 		}
 		return fs;

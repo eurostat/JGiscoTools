@@ -16,14 +16,14 @@ public class FeatureClusteringIndex implements ClusteringIndex<Feature>{
 		this.index = index;
 		//initialise spatial index
 		for(Feature f : fs){
-			Geometry g = f.getDefaultGeometry();
+			Geometry g = f.getGeometry();
 			if(g==null) continue;
 			index.insert(g.getEnvelopeInternal(), f);
 		}
 	}
 
 	public List<Feature> getCandidates(Feature f, double distance) {
-		Geometry g = f.getDefaultGeometry();
+		Geometry g = f.getGeometry();
 		if(g==null) return null;
 		Envelope env = g.getEnvelopeInternal();
 		env.expandBy(distance);

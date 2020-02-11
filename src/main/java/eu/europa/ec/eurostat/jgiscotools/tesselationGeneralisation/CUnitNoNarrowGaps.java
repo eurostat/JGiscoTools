@@ -46,13 +46,13 @@ public class CUnitNoNarrowGaps extends Constraint<AUnit> {
 	@Override
 	public void computeCurrentValue() {
 		//compute narrow gaps
-		ngs = MorphologicalAnalysis.getNarrowGaps(getAgent().getObject().getDefaultGeometry(), separationDistanceMeter, quad);
+		ngs = MorphologicalAnalysis.getNarrowGaps(getAgent().getObject().getGeometry(), separationDistanceMeter, quad);
 	}
 
 	@Override
 	public void computeSatisfaction() {
 		//depends on the size of the narrow gaps
-		double a = getAgent().getObject().getDefaultGeometry().getArea();
+		double a = getAgent().getObject().getGeometry().getArea();
 		if(a==0) { satisfaction = 10; return; }
 		double snga=0; for(Polygon ng : ngs) snga += ng.getArea();
 		satisfaction = 10*(1-snga/a);
@@ -85,7 +85,7 @@ public class CUnitNoNarrowGaps extends Constraint<AUnit> {
 				//union with unit geometry
 				Geometry newUnitGeom = null;
 				try {
-					newUnitGeom = unit.getDefaultGeometry().union(ng);
+					newUnitGeom = unit.getGeometry().union(ng);
 				} catch (Exception e1) {
 					LOGGER.warn("Could not make union of unit "+unit.getID()+" with gap around " + ng.getCentroid().getCoordinate() + " Exception: "+e1.getClass().getName());
 					continue;
@@ -96,36 +96,36 @@ public class CUnitNoNarrowGaps extends Constraint<AUnit> {
 				for(AUnit aui : uis) {
 					Feature ui = aui.getObject();
 					if(ui == unit) continue;
-					if(!ui.getDefaultGeometry().getEnvelopeInternal().intersects(ng.getEnvelopeInternal())) continue;
+					if(!ui.getGeometry().getEnvelopeInternal().intersects(ng.getEnvelopeInternal())) continue;
 
 					//store unit to fix noding in the end
 					unitsNoding.add(ui);
 
 					//compute the candidate geometry: the difference
-					Geometry geomC = ui.getDefaultGeometry().difference(ng);
+					Geometry geomC = ui.getGeometry().difference(ng);
 
 					//check not the whole unit has disappeared
 					if(preserveAllUnits && (geomC==null || geomC.isEmpty())) {
 						LOGGER.trace("Unit "+ui.getID()+" disappeared when removing gaps of unit "+unit.getID()+" around "+ng.getCentroid().getCoordinate());
-						newUnitGeom = newUnitGeom.difference(ui.getDefaultGeometry());
+						newUnitGeom = newUnitGeom.difference(ui.getGeometry());
 						continue;
 					}
 
 					//store current geom, and set new one
-					Geometry geomS = ui.getDefaultGeometry();
-					ui.setDefaultGeometry(JTSGeomUtil.toMulti(geomC));
+					Geometry geomS = ui.getGeometry();
+					ui.setGeometry(JTSGeomUtil.toMulti(geomC));
 
 					//check if point has left it
 					if(preserveIfPointsInIt && !getAgent().getAtesselation().getAUnit(ui).containPoints()) {
 						LOGGER.trace("Unit "+ui.getID()+" has lost some point in it when removing gaps of unit "+unit.getID()+" around "+ng.getCentroid().getCoordinate());
-						ui.setDefaultGeometry(JTSGeomUtil.toMulti(geomS));
-						newUnitGeom = newUnitGeom.difference(ui.getDefaultGeometry());
+						ui.setGeometry(JTSGeomUtil.toMulti(geomS));
+						newUnitGeom = newUnitGeom.difference(ui.getGeometry());
 						continue;
 					}
 				}
 
 				//set new geometry
-				unit.setDefaultGeometry(JTSGeomUtil.toMulti(newUnitGeom));
+				unit.setGeometry(JTSGeomUtil.toMulti(newUnitGeom));
 			}
 
 			LOGGER.trace("Ensure noding");

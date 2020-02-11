@@ -136,7 +136,7 @@ public class GraphBuilder {
 	public static Graph buildFromLinearFeaturesNonPlanar(Collection<Feature> sections) {
 		Graph g = new Graph();
 		for(Feature f : sections) {
-			MultiLineString mls = (MultiLineString) JTSGeomUtil.toMulti(f.getDefaultGeometry());
+			MultiLineString mls = (MultiLineString) JTSGeomUtil.toMulti(f.getGeometry());
 			for(int i=0; i<mls.getNumGeometries(); i++) {
 				//for each section, create edge and link it to nodes (if it exists) or create new
 				Coordinate[] cs = ((LineString) mls.getGeometryN(i)).getCoordinates();
@@ -188,13 +188,13 @@ public class GraphBuilder {
 		//STRtree si = FeatureUtil.getSTRtreeSpatialIndex(sections);
 
 		for(Feature f : sections) {
-			for(Edge e : g.getEdgesAt(f.getDefaultGeometry().getEnvelopeInternal())) {
+			for(Edge e : g.getEdgesAt(f.getGeometry().getEnvelopeInternal())) {
 				//for(Edge e : g.getEdges()) {
 				LineString eg = e.getGeometry();
 				//	for(Feature f : (Collection<Feature>)si.query(eg.getEnvelopeInternal())) {
-				if(!f.getDefaultGeometry().getEnvelopeInternal().intersects(eg.getEnvelopeInternal())) continue;
+				if(!f.getGeometry().getEnvelopeInternal().intersects(eg.getEnvelopeInternal())) continue;
 				//retrieve feature the edge is the closest to
-				Geometry inter = f.getDefaultGeometry().intersection(eg);
+				Geometry inter = f.getGeometry().intersection(eg);
 				if(inter.getLength() == 0) continue;
 				//if(!f.getGeom().contains(eg) && !f.getGeom().overlaps(eg)) continue;
 				if(e.obj != null) {
@@ -433,14 +433,14 @@ public class GraphBuilder {
 
 		//go through pairs of sections
 		for(Feature sec1 : secs) {
-			Geometry g1 = sec1.getDefaultGeometry();
+			Geometry g1 = sec1.getGeometry();
 			@SuppressWarnings("unchecked")
 			Collection<Feature> secs_ = (Collection<Feature>)si.query(g1.getEnvelopeInternal());
 			for(Feature sec2 : secs_) {
 				if(sec1==sec2) continue;
 				if(sec1.getID().compareTo(sec2.getID()) < 0) continue;
 
-				Geometry g2 = sec2.getDefaultGeometry();
+				Geometry g2 = sec2.getGeometry();
 				if(!g1.getEnvelopeInternal().intersects(g2.getEnvelopeInternal())) continue;
 
 				Geometry inter = g1.intersection(g2);
@@ -473,14 +473,14 @@ public class GraphBuilder {
 		//go through pairs of sections
 		for(Feature sec1 : secs) {
 			@SuppressWarnings("unchecked")
-			Collection<Feature> secs_ = (Collection<Feature>)si.query(sec1.getDefaultGeometry().getEnvelopeInternal());
+			Collection<Feature> secs_ = (Collection<Feature>)si.query(sec1.getGeometry().getEnvelopeInternal());
 			for(Feature sec2 : secs_) {
 				if(sec1 == sec2) continue;
 				if(sec1.getID().compareTo(sec2.getID()) < 0) continue;
 
-				Geometry g1 = sec1.getDefaultGeometry();
+				Geometry g1 = sec1.getGeometry();
 				if(g1.isEmpty()) { out.remove(sec1); break; }
-				Geometry g2 = sec2.getDefaultGeometry();
+				Geometry g2 = sec2.getGeometry();
 				if(g2.isEmpty()) { out.remove(sec2); continue; }
 				if( ! g1.getEnvelopeInternal().intersects(g2.getEnvelopeInternal()) ) continue;
 
@@ -497,9 +497,9 @@ public class GraphBuilder {
 					diff = g1.difference(g2);
 				}
 
-				boolean b = si.remove(sec.getDefaultGeometry().getEnvelopeInternal(), sec);
+				boolean b = si.remove(sec.getGeometry().getEnvelopeInternal(), sec);
 				if(!b) LOGGER.warn("Problem when trying to remove section from spatial index");
-				sec.setDefaultGeometry(diff);
+				sec.setGeometry(diff);
 				if(diff.isEmpty())
 					out.remove(sec);
 				else

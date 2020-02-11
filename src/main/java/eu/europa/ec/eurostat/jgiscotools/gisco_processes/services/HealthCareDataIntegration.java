@@ -47,7 +47,7 @@ public class HealthCareDataIntegration {
 	private static double getSimilarity(Feature hosp1, Feature hosp2) throws Exception {
 		double distThreshold = 1000;
 
-		double dist = hosp1.getDefaultGeometry().distance( hosp2.getDefaultGeometry() );
+		double dist = hosp1.getGeometry().distance( hosp2.getGeometry() );
 		if(dist>distThreshold) return Double.MAX_VALUE;
 
 		/*
@@ -90,7 +90,7 @@ public class HealthCareDataIntegration {
 			Feature f_ = new Feature();
 
 			//transform f into f_ according to target schema
-			f_.setDefaultGeometry( f.getDefaultGeometry() );
+			f_.setGeometry( f.getGeometry() );
 			f_.setAttribute("sourceID", f.getAttribute("inspireId"));
 			f_.setAttribute("source", "ERM");
 			f_.setAttribute("name", f.getAttribute("NAMA1"));
@@ -127,7 +127,7 @@ public class HealthCareDataIntegration {
 		for(Feature f : tom) {
 			Feature f_ = new Feature();
 			//transform f into f_ according to target schema
-			f_.setDefaultGeometry( f.getDefaultGeometry() );
+			f_.setGeometry( f.getGeometry() );
 			f_.setAttribute("sourceID", f.getAttribute("ID"));
 			f_.setAttribute("source", "mmpoi_pi");
 			f_.setAttribute("name", f.getAttribute("NAME"));

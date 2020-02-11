@@ -210,8 +210,8 @@ public class ChangeDetection {
 			}
 		}
 		//compare geometries
-		if( (res>0 && new HausdorffDistance(fIni.getDefaultGeometry(), fFin.getDefaultGeometry()).getDistance() > res)
-				|| (res<=0 && ! fIni.getDefaultGeometry().equalsTopo(fFin.getDefaultGeometry())))
+		if( (res>0 && new HausdorffDistance(fIni.getGeometry(), fFin.getGeometry()).getDistance() > res)
+				|| (res<=0 && ! fIni.getGeometry().equalsTopo(fFin.getGeometry())))
 			geomChanged = true;
 
 		//no change: return null
@@ -222,7 +222,7 @@ public class ChangeDetection {
 		change.setAttribute("ch_id", fFin.getID());
 
 		//set geometry
-		change.setDefaultGeometry(fFin.getDefaultGeometry());
+		change.setGeometry(fFin.getGeometry());
 
 		//set attribute on change
 		change.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
@@ -269,7 +269,7 @@ public class ChangeDetection {
 
 		hausdorffGeomChanges = new ArrayList<Feature>();
 		geomChanges = new ArrayList<Feature>();
-		int geomType = JTSGeomUtil.getGeomBigType(getChanges().iterator().next().getDefaultGeometry());
+		int geomType = JTSGeomUtil.getGeomBigType(getChanges().iterator().next().getGeometry());
 
 		for(Feature ch : getChanges()) {
 
@@ -279,13 +279,13 @@ public class ChangeDetection {
 
 			//get initial and final geometries
 			String id = ch.getID();
-			Geometry gIni = indIni.get(id).getDefaultGeometry();
-			Geometry gFin = indFin.get(id).getDefaultGeometry();
+			Geometry gIni = indIni.get(id).getGeometry();
+			Geometry gFin = indFin.get(id).getGeometry();
 
 			//hausdorff distance
 			HausdorffDistance hd = new HausdorffDistance(gIni, gFin);
 			Feature hdf = new Feature();
-			hdf.setDefaultGeometry(hd.toGeom());
+			hdf.setGeometry(hd.toGeom());
 			hdf.setAttribute("ch_id", id);
 			hdf.setAttribute("hdist", hd.getDistance());
 			hausdorffGeomChanges.add(hdf);
@@ -300,7 +300,7 @@ public class ChangeDetection {
 				}
 				if(gD!=null && !gD.isEmpty()) {
 					Feature f = new Feature();
-					f.setDefaultGeometry(JTSGeomUtil.extract(gD, geomType));
+					f.setGeometry(JTSGeomUtil.extract(gD, geomType));
 					f.setAttribute("ch_id", id);
 					f.setAttribute("type", "D");
 					geomChanges.add(f);
@@ -317,7 +317,7 @@ public class ChangeDetection {
 				}
 				if(gI!=null && !gI.isEmpty()) {
 					Feature f = new Feature();
-					f.setDefaultGeometry(JTSGeomUtil.extract(gI, geomType));
+					f.setGeometry(JTSGeomUtil.extract(gI, geomType));
 					f.setAttribute("ch_id", id);
 					f.setAttribute("type", "I");
 					geomChanges.add(f);
@@ -358,7 +358,7 @@ public class ChangeDetection {
 		while(chs.size()>0) {
 			//get first element
 			Feature ch = chs.get(0);
-			Geometry g = ch.getDefaultGeometry();
+			Geometry g = ch.getGeometry();
 			chs.remove(0);
 			boolean b = ind.remove(g.getEnvelopeInternal(), ch);
 			if(!b) LOGGER.warn("Pb");
@@ -371,7 +371,7 @@ public class ChangeDetection {
 			Envelope env = g.getEnvelopeInternal(); env.expandBy(2*resolution);
 			for(Object cho_ : ind.query(env)) {
 				Feature ch_ = (Feature) cho_;
-				Geometry g_ = ch_.getDefaultGeometry();
+				Geometry g_ = ch_.getGeometry();
 
 				//check change type: it as to be different
 				if(ct.equals(ch_.getAttribute("change").toString())) continue;
@@ -389,7 +389,7 @@ public class ChangeDetection {
 
 			//remove
 			chs.remove(ch2);
-			b = ind.remove(ch.getDefaultGeometry().getEnvelopeInternal(), ch2);
+			b = ind.remove(ch.getGeometry().getEnvelopeInternal(), ch2);
 			if(!b) LOGGER.warn("Pb");
 
 			out.add(ch);
@@ -498,7 +498,7 @@ public class ChangeDetection {
 
 		//case of geometry change
 		if(ct.contains("G"))
-			f.setDefaultGeometry(ch.getDefaultGeometry());
+			f.setGeometry(ch.getGeometry());
 
 		//if no attribute change, continue
 		if(!ct.contains("A")) return;

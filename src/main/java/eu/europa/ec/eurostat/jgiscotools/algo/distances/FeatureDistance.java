@@ -18,8 +18,8 @@ public class FeatureDistance implements Distance<Feature> {
 	public FeatureDistance(boolean projected){ this.projected = projected; }
 
 	public double get(Feature f1, Feature f2) {
-		Geometry g1 = f1.getDefaultGeometry();
-		Geometry g2 = f2.getDefaultGeometry();
+		Geometry g1 = f1.getGeometry();
+		Geometry g2 = f2.getGeometry();
 		if(!projected){
 			g1 = ProjectionUtil.toWebMercator(g1, ProjectionUtil.getWGS_84_CRS());
 			g2 = ProjectionUtil.toWebMercator(g2, ProjectionUtil.getWGS_84_CRS());

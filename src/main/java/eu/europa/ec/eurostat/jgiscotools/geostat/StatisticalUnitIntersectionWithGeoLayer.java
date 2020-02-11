@@ -59,7 +59,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
 
 				//get all geo features intersecting the stat unit (with spatial index)
-				Geometry StatUnitGeom = statUnit.getDefaultGeometry();
+				Geometry StatUnitGeom = statUnit.getGeometry();
 				List<?> geos_ = indGeo.query(StatUnitGeom.getEnvelopeInternal());
 
 				//compute stat on geo features: total area/volume, number, building size distribution
@@ -69,7 +69,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 					try {
 						nbGeo++;
 
-						Geometry geoGeom = (Geometry) geo.getDefaultGeometry();
+						Geometry geoGeom = (Geometry) geo.getGeometry();
 						if(!geoGeom.intersects(StatUnitGeom)) continue;
 
 						Geometry inter = geoGeom.intersection(StatUnitGeom);
@@ -143,7 +143,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 				System.out.println(geoId + " " + (geoCounter++) + "/" + nbGeo + " " + (Math.round(10000.0*geoCounter/nbGeo)*0.01) + "%");
 
 				//get all stat units intersecting the geo (with spatial index)
-				Geometry geoGeom = (Geometry) geoUnit.getDefaultGeometry();
+				Geometry geoGeom = (Geometry) geoUnit.getGeometry();
 				List<?> statUnits_ = indStat.query(geoGeom.getEnvelopeInternal());
 
 				int nbStat = 0;
@@ -155,7 +155,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 						String statId = stat.getAttribute(statUnitsIdField).toString();
 
 						//get stat unit geometry
-						Geometry statUnitGeom = (Geometry) stat.getDefaultGeometry();
+						Geometry statUnitGeom = (Geometry) stat.getGeometry();
 						if(!geoGeom.intersects(statUnitGeom)) continue;
 
 						nbStat++;
@@ -215,7 +215,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 				System.out.println(statUnitId + " " + (statCounter++) + "/" + nbStats + " " + (Math.round(10000*statCounter/nbStats))*0.01 + "%");
 
 				//get all geos intersecting the stat unit (with spatial index)
-				Geometry statGeom = (Geometry) statUnit.getDefaultGeometry();
+				Geometry statGeom = (Geometry) statUnit.getGeometry();
 				List<?> geos_ = indGeo.query(statGeom.getEnvelopeInternal());
 
 				int nbGeos = 0;
@@ -227,7 +227,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 						String geoId = geo.getAttribute(geoIdField).toString();
 
 						//get geo feature geometry
-						Geometry geoGeom = (Geometry) geo.getDefaultGeometry();
+						Geometry geoGeom = (Geometry) geo.getGeometry();
 						if(!geoGeom.intersects(statGeom)) continue;
 
 						nbGeos++;

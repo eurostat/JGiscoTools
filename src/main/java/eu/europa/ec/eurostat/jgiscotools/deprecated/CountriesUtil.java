@@ -47,7 +47,7 @@ public class CountriesUtil {
 
 
 	public static Geometry getEurope(boolean withOST) {
-		return SHPUtil.getFeatures("./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp").iterator().next().getDefaultGeometry();
+		return SHPUtil.getFeatures("./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp").iterator().next().getGeometry();
 	}
 
 	//build Europe geometry as a union of the country geometries
@@ -55,10 +55,10 @@ public class CountriesUtil {
 		//generate europe geometry as union of country geometries
 		Collection<Geometry> polys = new ArrayList<>();
 		for(Feature f : CountriesUtil.getEuropeanCountries(withOST))
-			polys.add( f.getDefaultGeometry().buffer(0) );
+			polys.add( f.getGeometry().buffer(0) );
 		Geometry mask = CascadedPolygonUnion.union(polys);
 
-		Feature f = new Feature(); f.setDefaultGeometry(mask);
+		Feature f = new Feature(); f.setGeometry(mask);
 		ArrayList<Feature> fs = new ArrayList<Feature>(); fs.add(f);
 		SHPUtil.save(fs, "./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp", CRS.decode("EPSG:3035"));
 	}

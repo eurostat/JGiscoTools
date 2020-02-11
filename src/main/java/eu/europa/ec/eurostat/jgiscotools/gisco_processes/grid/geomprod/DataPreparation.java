@@ -50,7 +50,7 @@ public class DataPreparation {
 		Collection<Feature> bn = GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA.gpkg");
 		logger.info(bn.size());
 		bn = Decomposer.decomposeFeature(bn, 5000, 200, GeomType.ONLY_LINES, 0);
-		for(Feature f : bn) f.setDefaultGeometry( JTSGeomUtil.toMulti(f.getDefaultGeometry()) );
+		for(Feature f : bn) f.setGeometry( JTSGeomUtil.toMulti(f.getGeometry()) );
 		logger.info(bn.size());
 		GeoPackageUtil.save(bn, path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CRS.decode("EPSG:3035"), true);
 
@@ -67,7 +67,7 @@ public class DataPreparation {
 
 		for(Feature f : fs) {
 			logger.info(f.getAttribute("CNTR_ID"));
-			Geometry geom = (Geometry) f.getDefaultGeometry();
+			Geometry geom = (Geometry) f.getGeometry();
 			Collection<Geometry> geoms = getGeometries(geom);
 			logger.info(geoms.size() + " components");
 			logger.info("Compute buffers");
@@ -77,7 +77,7 @@ public class DataPreparation {
 			logger.info("Compute union of buffers");
 			Geometry buff = new CascadedPolygonUnion(buffs ).union();
 			if(buff instanceof Polygon) buff = buff.getFactory().createMultiPolygon(new Polygon[] {(Polygon)buff});
-			f.setDefaultGeometry(buff);
+			f.setGeometry(buff);
 		}
 
 		logger.info("Save");
@@ -114,7 +114,7 @@ public class DataPreparation {
 
 				Geometry cntGeomV;
 				try {
-					cntGeomV = CountriesUtil.getEuropeanCountry(cntC, path+"CNTR_RG_100K_"+version+"_LAEA.shp").getDefaultGeometry();
+					cntGeomV = CountriesUtil.getEuropeanCountry(cntC, path+"CNTR_RG_100K_"+version+"_LAEA.shp").getGeometry();
 				} catch (Exception e) {
 					logger.warn("Not found");
 					continue;
@@ -131,7 +131,7 @@ public class DataPreparation {
 			Feature cnt = new Feature();
 			cnt.setAttribute("CNTR_ID", cntC);
 			if(cntGeom instanceof Polygon) cntGeom = cntGeom.getFactory().createMultiPolygon(new Polygon[] {(Polygon)cntGeom});
-			cnt.setDefaultGeometry(cntGeom);
+			cnt.setGeometry(cntGeom);
 			cnts.add(cnt);
 		}
 		logger.info("Save");

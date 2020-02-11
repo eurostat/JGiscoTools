@@ -35,7 +35,7 @@ public class GraphToFeature {
 	//node
 	public static Feature asFeature(Node n){
 		Feature f = new Feature();
-		f.setDefaultGeometry(n.getGeometry());
+		f.setGeometry(n.getGeometry());
 		f.setID(n.getId());
 		f.setAttribute("id", n.getId());
 		f.setAttribute("value", n.value);
@@ -59,7 +59,7 @@ public class GraphToFeature {
 	//edge
 	public static Feature asFeature(Edge e){
 		Feature f = new Feature();
-		f.setDefaultGeometry(e.getGeometry());
+		f.setGeometry(e.getGeometry());
 		f.setID(e.getId());
 		f.setAttribute("id", e.getId());
 		f.setAttribute("value", e.value);
@@ -76,11 +76,11 @@ public class GraphToFeature {
 	public static Feature asFeature(Face face) {
 		Feature f = new Feature();
 
-		f.setDefaultGeometry(face.getGeom());
-		if(f.getDefaultGeometry()==null) {
+		f.setGeometry(face.getGeom());
+		if(f.getGeometry()==null) {
 			LOGGER.warn("NB: null geom for face "+face.getId());
 		}
-		else if(!f.getDefaultGeometry().isValid()) {
+		else if(!f.getGeometry().isValid()) {
 			LOGGER.warn("NB: non valide geometry for face "+face.getId());
 		}
 
@@ -145,11 +145,11 @@ public class GraphToFeature {
 			ArrayList<LineString> ml = (ArrayList<LineString>) lm.getMergedLineStrings();
 
 			if(ml.size() == 0)
-				f.setDefaultGeometry( new GeometryFactory().createLineString() );
+				f.setGeometry( new GeometryFactory().createLineString() );
 			else if(ml.size() == 1)
-				f.setDefaultGeometry(ml.iterator().next());
+				f.setGeometry(ml.iterator().next());
 			else
-				f.setDefaultGeometry( new GeometryFactory().createMultiLineString( (LineString[])ml.toArray(new LineString[ml.size()])) );
+				f.setGeometry( new GeometryFactory().createMultiLineString( (LineString[])ml.toArray(new LineString[ml.size()])) );
 		}
 	}
 

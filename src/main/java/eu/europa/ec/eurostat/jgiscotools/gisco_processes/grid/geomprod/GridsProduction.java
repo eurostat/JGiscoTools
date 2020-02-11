@@ -202,9 +202,9 @@ public class GridsProduction {
 			}
 
 			logger.info("Set cell geometries as points...");
-			GeometryFactory gf = cells.iterator().next().getDefaultGeometry().getFactory();
+			GeometryFactory gf = cells.iterator().next().getGeometry().getFactory();
 			for(Feature cell : cells)
-				cell.setDefaultGeometry( gf.createPoint(new Coordinate((Integer)cell.getAttribute("X_LLC")+resKM*500, (Integer)cell.getAttribute("Y_LLC")+resKM*500)) );
+				cell.setGeometry( gf.createPoint(new Coordinate((Integer)cell.getAttribute("X_LLC")+resKM*500, (Integer)cell.getAttribute("Y_LLC")+resKM*500)) );
 
 			logger.info("Save cells (point) as GPKG...");
 			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km_point.gpkg", ftPoint, true);

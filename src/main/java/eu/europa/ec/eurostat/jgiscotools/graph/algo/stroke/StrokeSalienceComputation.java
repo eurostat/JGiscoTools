@@ -17,7 +17,7 @@ public class StrokeSalienceComputation {
 
 	//between 0 (not salient) and 1 (very salient)
 	public double getSalience(Stroke s) {
-		double sal = s.getDefaultGeometry().getLength();
+		double sal = s.getGeometry().getLength();
 		//TODO should be based on 1.length and 2.attribute value "representative"
 		return sal;
 	};

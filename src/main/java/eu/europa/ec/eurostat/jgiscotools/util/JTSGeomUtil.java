@@ -339,7 +339,7 @@ public class JTSGeomUtil {
 	 */
 	public static <T extends Geometry> boolean checkGeometry(Collection<Feature> fs, boolean checkValidity, Class<T> cl) {
 		for(Feature f : fs) {
-			Geometry g = f.getDefaultGeometry();
+			Geometry g = f.getGeometry();
 			if(g == null) return false;
 			if(g.isEmpty()) return false;
 			if(checkValidity && !g.isValid()) return false;

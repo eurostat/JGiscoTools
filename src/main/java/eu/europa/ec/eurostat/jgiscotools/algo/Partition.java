@@ -76,7 +76,7 @@ public class Partition {
 		coordinatesNumber = 0;
 		maxEltCN = 0;
 		for(Feature f : features) {
-			for(Geometry poly : JTSGeomUtil.getGeometries(f.getDefaultGeometry())) {
+			for(Geometry poly : JTSGeomUtil.getGeometries(f.getGeometry())) {
 				int fcn = poly.getNumPoints();
 				coordinatesNumber += fcn;
 				maxEltCN = Math.max(maxEltCN, fcn);
@@ -148,7 +148,7 @@ public class Partition {
 		Polygon extend = null;
 
 		for(Feature f : inFeatures) {
-			Geometry g = f.getDefaultGeometry();
+			Geometry g = f.getGeometry();
 			Envelope env_ = g.getEnvelopeInternal();
 			if(!this.env.intersects(env_)) continue;
 
@@ -171,7 +171,7 @@ public class Partition {
 			if(geomType.equals(GeomType.ONLY_AREAS)) inter = JTSGeomUtil.getPolygonal(inter);
 			if(geomType.equals(GeomType.ONLY_LINES)) inter = JTSGeomUtil.getLinear(inter);
 			if(geomType.equals(GeomType.ONLY_POINTS)) inter = JTSGeomUtil.getPuntual(inter);
-			f_.setDefaultGeometry(inter);
+			f_.setGeometry(inter);
 			f_.getAttributes().putAll(f.getAttributes());
 			f_.setID( f.getID() );
 			features.add(f_);
@@ -196,7 +196,7 @@ public class Partition {
 					col = new ArrayList<Geometry>();
 					index.put(f.getID(), col);
 				}
-				col.add(f.getDefaultGeometry());
+				col.add(f.getGeometry());
 			}
 
 		//get features with pieces together
@@ -209,7 +209,7 @@ public class Partition {
 				features.add(f);
 				Collection<Geometry> pieces = index.get(f.getID());
 				if(pieces.size()==1)
-					f.setDefaultGeometry(pieces.iterator().next());
+					f.setGeometry(pieces.iterator().next());
 				else {
 					Geometry union = null;
 					if(geomType.equals(GeomType.ONLY_AREAS)) union = Union.polygonsUnionAll(pieces);
@@ -217,7 +217,7 @@ public class Partition {
 					else if(geomType.equals(GeomType.ONLY_POINTS)) ; //TODO
 					else ; //TODO
 
-					f.setDefaultGeometry(union);
+					f.setGeometry(union);
 				}
 			}
 		index.clear();
@@ -259,7 +259,7 @@ public class Partition {
 				LOGGER.info(p.toString());
 				double area = p.env.getArea();
 				Feature f = new Feature();
-				f.setDefaultGeometry(p.getExtend(null));
+				f.setGeometry(p.getExtend(null));
 				f.setAttribute("code", p.code);
 				f.setAttribute("f_nb", p.features.size());
 				f.setAttribute("c_nb", p.coordinatesNumber);
