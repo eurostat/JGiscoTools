@@ -427,6 +427,16 @@ public class ChangeDetection {
 		return new ChangeDetection(fs1, fs2, resolution).getChanges().size() == 0;
 	}
 
+	/**
+	 * Analyse the differences between two datasets to check wether they are identical.
+	 * 
+	 * @param fs1 The first dataset
+	 * @param fs2 The second dataset
+	 * @return
+	 */
+	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2) {
+		return equals(fs1, fs2, -1);
+	}
 
 	/**
 	 * Apply changes to features.
