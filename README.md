@@ -7,7 +7,7 @@ JGiscoTools allows:
 - Generalisation of geographical tesselations.
 - Routing and accessibility computation.
 - [Production of gridded datasets](https://github.com/eurostat/JGiscoTools/tree/master/src/site/gridmaker) in various GIS formats.
-- Change detection between two version of a same dataset.
+- [Change detection between two version of a same dataset](https://github.com/eurostat/JGiscoTools/tree/master/src/site/changedetection).
 - Automatic production statistical maps (with a focus on maps based on Eurostat data and NUTS regions).
 - Various analyses based on NUTS regions and NUTS codes.
 - Some experiments on the combined use of geographical and statistical data such as
@@ -18,22 +18,6 @@ JGiscoTools allows:
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) is mainly based on [GeoTools](http://www.geotools.org/), [JTS Topology Suite](https://locationtech.github.io/jts/) and [java4eurostat](https://github.com/eurostat/java4eurostat) libraries.
 
 ## Quick start
-
-### Setup
-
-[JGiscoTools](https://github.com/eurostat/JGiscoTools) uses [Apache Maven](http://maven.apache.org/). To use JGiscoTools, add it as a dependency to the *pom.xml* file:
-
-```
-<dependency>
-	<groupId>eu.europa.ec.eurostat</groupId>
-	<artifactId>JGiscoTools</artifactId>
-	<version>X.Y.Z</version>
-</dependency>
-```
-
-Where *X.Y.Z* is the current version number, as available [Maven central repository](https://search.maven.org/artifact/eu.europa.ec.eurostat/JGiscoTools).
-
-For more information on how to setup a coding environment based on Eclipse, see [this page](https://github.com/eurostat/README/blob/master/docs/howto/java_eclipse_maven_git_quick_guide.md).
 
 ### Load
 
@@ -106,9 +90,31 @@ CoordinateReferenceSystem crsSHP = SHPUtil.getCRS("C:/myFile.shp");
 CoordinateReferenceSystem crsEPSG = CRS.decode("EPSG:3035")
 ```
 
-## Documentation
+### More information
+
+### Setup
+
+[JGiscoTools](https://github.com/eurostat/JGiscoTools) uses [Apache Maven](http://maven.apache.org/). To use JGiscoTools, add it as a dependency to the *pom.xml* file:
+
+```
+<dependency>
+	<groupId>eu.europa.ec.eurostat</groupId>
+	<artifactId>JGiscoTools</artifactId>
+	<version>X.Y.Z</version>
+</dependency>
+```
+
+Where *X.Y.Z* is the current version number, as available [Maven central repository](https://search.maven.org/artifact/eu.europa.ec.eurostat/JGiscoTools).
+
+For more information on how to setup a coding environment based on Eclipse, see [this page](https://github.com/eurostat/README/blob/master/docs/howto/java_eclipse_maven_git_quick_guide.md).
+
+### Documentation
 
 See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/).
+
+### Components
+
+TODO: list here
 
 ## Support and contribution
 
