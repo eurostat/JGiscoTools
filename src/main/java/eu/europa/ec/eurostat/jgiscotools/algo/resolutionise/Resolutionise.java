@@ -29,6 +29,10 @@ public class Resolutionise {
 	public Lineal lineal = null;
 	public Polygonal polygonal = null;*/
 
+	
+	//TODO use GeometryPrecisionReducer.reduce() instead
+	//See https://github.com/locationtech/jts/issues/324
+	
 	public static  Geometry getSimple(Geometry g, double resolution) {
 		GeometryFactory gf = g.getFactory();
 
