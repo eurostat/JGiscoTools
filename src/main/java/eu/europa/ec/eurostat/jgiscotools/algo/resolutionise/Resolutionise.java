@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.precision.GeometryPrecisionReducer;
 
@@ -18,22 +19,48 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  *
  */
 public class Resolutionise {
-	/*public Puntal puntal = null;
-	public Lineal lineal = null;
-	public Polygonal polygonal = null;*/
-
 
 	public static Geometry get(Geometry g, double resolution) {
-		//See https://github.com/locationtech/jts/issues/324
-		//MinimumClearance.getDistance
-		//snap-rounding
 		PrecisionModel pm = new PrecisionModel(1/resolution);
 		Geometry g2 = GeometryPrecisionReducer.reduce(g, pm);
 		while(!g2.isValid())
 			g2 = GeometryPrecisionReducer.reduce(g2, pm);
 		return g2;
+		//See https://github.com/locationtech/jts/issues/324
+		//MinimumClearance.getDistance
+		//snap-rounding
 	}
 
+
+	public static Collection<LineString> getLine(LineString line, double resolution) {
+		Geometry line2 = get(line, resolution);
+		return JTSGeomUtil.getLineStrings(line2);
+	}
+
+	public static Collection<LineString> getLine(Collection<LineString> lines, double resolution) {
+		Collection<LineString> out = new ArrayList<>();
+		for(LineString line : lines)
+			out.addAll( getLine(line, resolution) );
+		return out;
+	}
+
+	public static Collection<Polygon> getPoly(Polygon poly, double resolution) {
+		Geometry poly2 = get(poly, resolution);
+		return JTSGeomUtil.getPolygons(poly2);
+	}
+
+	public static Collection<Polygon> getPoly(Collection<Polygon> polys, double resolution) {
+		Collection<Polygon> out = new ArrayList<>();
+		for(Polygon poly : polys)
+			out.addAll( getPoly(poly, resolution) );
+		return out;
+	}
+
+	
+	
+	/*public Puntal puntal = null;
+	public Lineal lineal = null;
+	public Polygonal polygonal = null;*/
 
 	/*
 	public static void main(String[] args) throws Exception {
@@ -231,14 +258,7 @@ public class Resolutionise {
 
 	//case of linear geometries
 
-	public static Collection<LineString> get(Collection<LineString> lines, double resolution) {
-		Collection<LineString> out = new ArrayList<>();
-		for(LineString line : lines) {
-			Geometry line2 = get(line, resolution);
-			out.addAll( JTSGeomUtil.getLineStrings(line2) );
-		}
-		return out;
-	}
+
 	/*
 	public static Collection<LineString> resRemoveDuplicateCoordsLinear(LineString line) {
 		if(line.getLength() == 0) return new HashSet<>();
