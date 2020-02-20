@@ -15,7 +15,9 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.operation.linemerge.LineMerger;
+import org.locationtech.jts.precision.GeometryPrecisionReducer;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
@@ -29,10 +31,22 @@ public class Resolutionise {
 	public Lineal lineal = null;
 	public Polygonal polygonal = null;*/
 
-	
+
 	//TODO use GeometryPrecisionReducer.reduce() instead
+	//check if is valid - run it several times until it is valid
 	//See https://github.com/locationtech/jts/issues/324
-	
+	//MinimumClearance.getDistance
+	//snap-rounding
+
+	public Geometry get2(Geometry g, double resolution) {
+		PrecisionModel pm = new PrecisionModel(1/resolution);
+		Geometry g2 = GeometryPrecisionReducer.reduce(g, pm);
+		while(!g2.isValid())
+			g2 = GeometryPrecisionReducer.reduce(g2, pm);
+		return g2;
+	}
+
+
 	public static  Geometry getSimple(Geometry g, double resolution) {
 		GeometryFactory gf = g.getFactory();
 
