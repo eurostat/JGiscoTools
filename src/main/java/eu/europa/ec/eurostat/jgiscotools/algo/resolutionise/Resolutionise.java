@@ -3,23 +3,14 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.algo.resolutionise;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
-import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.locationtech.jts.precision.GeometryPrecisionReducer;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
@@ -32,13 +23,10 @@ public class Resolutionise {
 	public Polygonal polygonal = null;*/
 
 
-	//TODO use GeometryPrecisionReducer.reduce() instead
-	//check if is valid - run it several times until it is valid
-	//See https://github.com/locationtech/jts/issues/324
-	//MinimumClearance.getDistance
-	//snap-rounding
-
-	public Geometry get2(Geometry g, double resolution) {
+	public static Geometry get(Geometry g, double resolution) {
+		//See https://github.com/locationtech/jts/issues/324
+		//MinimumClearance.getDistance
+		//snap-rounding
 		PrecisionModel pm = new PrecisionModel(1/resolution);
 		Geometry g2 = GeometryPrecisionReducer.reduce(g, pm);
 		while(!g2.isValid())
@@ -47,6 +35,37 @@ public class Resolutionise {
 	}
 
 
+	/*
+	public static void main(String[] args) throws Exception {
+		System.out.println("start");
+		WKTReader rdr = new WKTReader();
+		for(String ds : new String[] {"africa","europe","world","uk"}) {
+			System.out.println("*** "+ds);
+			WKTFileReader wfr = new WKTFileReader("src/test/resources/testdata/"+ds+".wkt", rdr);
+			Collection<?> gs = wfr.read();
+			Collection<Feature> fs = new ArrayList<>();
+			for(Object g_ : gs) {
+				Geometry g = (Geometry)g_;
+				System.out.println(g.getGeometryType() + " " + g.getCoordinates().length);
+				for(double res : new double[] {0.001, 0.01, 0.1, 0.5, 1}) {
+					System.out.println(res);
+					Geometry g2 = get2(g, res);
+					System.out.println(g2.getGeometryType() + " " + g2.getCoordinates().length);
+					Feature f = new Feature();
+					g2 = JTSGeomUtil.toMulti(g2);
+					f.setGeometry(g2);
+					f.setAttribute("res", res);
+					fs.add(f);
+				}
+			}
+			GeoPackageUtil.save(fs, "target/"+ds+".gpkg", CRS.decode("EPSG:3035"), true);
+		}
+		System.out.println("end");
+	}
+	 */
+
+
+	/*
 	public static  Geometry getSimple(Geometry g, double resolution) {
 		GeometryFactory gf = g.getFactory();
 
@@ -101,8 +120,7 @@ public class Resolutionise {
 		System.out.println("Resolutionise non implemented yet for geometry type: "+g.getGeometryType());
 		return null;
 	}
-
-
+	 */
 
 	/*
 	public Resolutionise(Geometry g, double resolution){
@@ -213,11 +231,15 @@ public class Resolutionise {
 
 	//case of linear geometries
 
-	public static Collection<LineString> applyLinear(LineString line, double resolution) {
-		apply(line, resolution);
-		return resRemoveDuplicateCoordsLinear(line);
+	public static Collection<LineString> get(Collection<LineString> lines, double resolution) {
+		Collection<LineString> out = new ArrayList<>();
+		for(LineString line : lines) {
+			Geometry line2 = get(line, resolution);
+			out.addAll( JTSGeomUtil.getLineStrings(line2) );
+		}
+		return out;
 	}
-
+	/*
 	public static Collection<LineString> resRemoveDuplicateCoordsLinear(LineString line) {
 		if(line.getLength() == 0) return new HashSet<>();
 		Collection<LineString> line_ = new HashSet<>(); line_.add(line);
@@ -225,13 +247,11 @@ public class Resolutionise {
 		return JTSGeomUtil.getLineStrings(u);
 	}
 
-	public static Collection<LineString> applyLinear(Collection<LineString> lines, double resolution) {
-		Collection<LineString> out = new HashSet<>();
-		for(LineString line : lines)
-			out.addAll(applyLinear(line, resolution));
-		return out;
+	public static Collection<LineString> applyLinear(LineString line, double resolution) {
+		//apply(line, resolution);
+		//return resRemoveDuplicateCoordsLinear(line);
 	}
-
+	 */
 
 
 
@@ -251,7 +271,7 @@ public class Resolutionise {
 		for(int i=0; i<cs.length; i++) cs_[i] = get(cs[i], resolution);
 		return cs_;
 	}*/
-
+	/*
 	public static void apply(Collection<Geometry> gs, double resolution) {
 		for(Geometry g : gs) apply(g, resolution);
 	}
@@ -268,7 +288,7 @@ public class Resolutionise {
 	public static void apply(Coordinate[] cs, double resolution) {
 		for(Coordinate c : cs) apply(c, resolution);
 	}
-
+	 */
 
 
 	/*
