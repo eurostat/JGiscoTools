@@ -21,9 +21,10 @@ import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
  * @author clemoki
  *
  */
-public class HealthCareDataIntegration {
+public class HealthCareDataIntegrationERMTomTomOSM {
 
 
+	HealthCareDataFormattingGeocoding g;
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
