@@ -7,15 +7,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.commons.csv.CSVFormat;
 import org.locationtech.jts.geom.Coordinate;
-
-import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 /**
  * Some function to geocode data based on addresses
@@ -24,7 +17,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
  * @author clemoki
  *
  */
-public class GISCOGeocoding {
+public class GISCOGeocoder {
 
 	/**
 	 * Make geocoding from query text.
@@ -55,12 +48,8 @@ public class GISCOGeocoding {
 
 			if(ad.city != null)
 				query += "&city="+ad.city;
-			if(ad.county != null)
-				query += "&county="+ad.county;
-			if(ad.state != null)
-				query += "&state="+ad.state;
-			if(ad.country != null)
-				query += "&country="+ad.country;
+			if(ad.countryCode != null)
+				query += "&country="+ad.getCountryName();
 			if(ad.postalcode != null)
 				query += "&postalcode="+ad.postalcode;
 
@@ -86,30 +75,33 @@ public class GISCOGeocoding {
 			return null;
 		}
 	}
-	public static class Address {
-		public String street, housenumber, streetname, city, county, state, country, postalcode;
 
-		public Address(String street, String housenumber, String streetname, String city, String county, String state, String country, String postalcode) {
+	public static class Address {
+		public String street, housenumber, streetname, city, countryCode, postalcode;
+
+		public Address(String street, String housenumber, String streetname, String city, String countryCode, String postalcode) {
 			this.street = street;
 			this.housenumber = housenumber;
 			this.streetname = streetname;
 			this.city = city;
-			this.county = county;
-			this.state = state;
-			this.country = country;
+			this.countryCode = countryCode;
 			this.postalcode = postalcode;
+		}
+
+		public String getCountryName() {
+			return HealthCareDataFormattingGeocoding.getCountryName(this.countryCode);
 		}
 	}
 
-//	public static class NamePlace {
-//		public String country, city, name;
-//
-//		public NamePlace(String country, String city, String name) {
-//			this.name = name;
-//			this.city = city;
-//			this.country = country;
-//		}
-//	}
+	//	public static class NamePlace {
+	//		public String country, city, name;
+	//
+	//		public NamePlace(String country, String city, String name) {
+	//			this.name = name;
+	//			this.city = city;
+	//			this.country = country;
+	//		}
+	//	}
 
 	/**
 	 * Geocode from URL.
@@ -145,44 +137,44 @@ public class GISCOGeocoding {
 		}
 	}
 
-//	public static void geocodeMT() {
-//	geocode(new NamePlace(""))
-//	}
+	//	public static void geocodeMT() {
+	//	geocode(new NamePlace(""))
+	//	}
 
 
-	
+
 	public static void main(String[] args) {
 
-		
+
 		//Works:
 		//https://europa.eu/webtools/rest/gisco/nominatim/search?q=Rue%20Alphonse%20Weicker+5%+2721+Luxembourg&polygon=0&viewbox=&format=json&limit=1
-		
+
 		//https://nominatim.openstreetmap.org/search?q=Malta%20Victoria&polygon=0&format=json&limit=1
 		//https://nominatim.openstreetmap.org/search?q=University%20of%20Amsterdam&polygon=0&format=json&limit=1
-		
+
 		//Doesn't work: 
 		//https://europa.eu/webtools/rest/gisco/nominatim/search?q=Malta%20Victoria&polygon=0&format=json&limit=1
 		//Address ad = new Address(null, "5", "Rue Alphonse Weicker", "Luxembourg", null, null, "Luxembourg", "2721");
-		
-		
+
+
 
 		//1. Doesn't work
 		//case sensitive
 		System.out.println("1. Deconstructed Address");
-		System.out.println( geocode( new Address(null, null, "Rue Alphonse Weicker", "Luxembourg", "", "", "Luxembourg", null)) );
-		
+		System.out.println( geocode( new Address(null, null, "Rue Alphonse Weicker", "Luxembourg", "Luxembourg", null)) );
+
 		System.out.println("2. Full Address");
 		//2. works only if in the right order
 		//works with & without special characters and country, not without postcode 
 		System.out.println( geocode("30 rue alphonse münchen luxembourg 2171") );
 		//Doesn't work
 		System.out.println( geocode("San Segundo,  7") );
-		
+
 		System.out.println("3. Place Names");
 		System.out.println( geocode("Berlin") );
 		System.out.println( geocode("Victoria, Malta") );
 		System.out.println( geocode("Malta") );
-		
+
 		//Higher education institutions seem to be included but not others
 		//System.out.println("4. Institution Names");
 		//System.out.println(geocode("University of Amsterdam"));

@@ -22,7 +22,6 @@ public class HealthCareDataFormattingGeocoding {
 		// ...
 
 		
-
 		geocode("AT/AT_formatted.csv", "AT/AT_geolocated.csv", false);
 		// geocodeLU();
 		// ...
@@ -56,7 +55,7 @@ public class HealthCareDataFormattingGeocoding {
 			address += getCountryName(hospital.get("country"));
 			System.out.println(address);
 
-			Coordinate c = GISCOGeocoding.geocode(address);
+			Coordinate c = GISCOGeocoder.geocode(address);
 			System.out.println(c);
 			if(c.getX()==0 && c.getY()==0) fails++;
 
@@ -250,7 +249,7 @@ public class HealthCareDataFormattingGeocoding {
 
 
 	//TODO
-	private static String getCountryName(String countryCode2letters) {
+	public static String getCountryName(String countryCode2letters) {
 		switch (countryCode2letters) {
 		case "AT": return "Austria";
 		case "LU": return "Luxembourg";
