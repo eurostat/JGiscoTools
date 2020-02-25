@@ -25,11 +25,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ProxySetter;
 
 public class GWebServices {
 	final static Logger logger = Logger.getLogger(GWebServices.class.getName());
 
-	public static String gKey = "AIzaSyCF4q7hHA7eDkBvXh9tEVPAHPLsapmnRbE";
+	public static String gKey = ProxySetter.get("google_API_key");
 	public static String cs = "003544372238783521660:3gsprhbvfy0";
 
 	//get url of the first website returned by a query
