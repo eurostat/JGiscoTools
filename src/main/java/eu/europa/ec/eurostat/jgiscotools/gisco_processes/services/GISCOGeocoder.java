@@ -21,6 +21,11 @@ import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
  */
 public class GISCOGeocoder {
 
+	//TODO
+	//check ESRI geocoder
+	//https://developers.arcgis.com/rest/geocode/api-reference/overview-world-geocoding-service.htm
+	
+	
 	/**
 	 * Make geocoding from query text.
 	 * 
