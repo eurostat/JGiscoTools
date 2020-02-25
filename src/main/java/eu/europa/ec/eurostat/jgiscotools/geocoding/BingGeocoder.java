@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
+package eu.europa.ec.eurostat.jgiscotools.geocoding;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,7 +10,7 @@ import java.net.URLEncoder;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.GISCOGeocoder.Address;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 
 /**
  * @author clemoki
@@ -18,7 +18,7 @@ import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.GISCOGeocoder.
  */
 public class BingGeocoder {
 
-	private static String key = "";
+	private static String key = LocalParameters.get("bing_map_api_key");
 
 	//https://docs.microsoft.com/en-us/bingmaps/rest-services/locations/find-a-location-by-address
 
@@ -30,7 +30,7 @@ public class BingGeocoder {
 	//http://dev.virtualearth.net/REST/v1/Locations/{locationQuery}?includeNeighborhood={includeNeighborhood}&maxResults={maxResults}&include={includeValue}&key={BingMapsAPIKey}
 
 
-	public static Coordinate geocode(Address ad) {
+	public static Coordinate geocode(GeocodingAddress ad) {
 		try {
 			String query = "";
 
@@ -98,10 +98,11 @@ public class BingGeocoder {
 	}
 
 
-
+/*
 	public static void main(String[] args) {
-		ProxySetter.loadProxySettings();
-		System.out.println( geocode( new Address(null, null, "Rue Alphonse Weicker", "Luxembourg", "LU", null)) );
+		LocalParameters.loadProxySettings();
+		System.out.println( geocode( new GeocodingAddress(null, null, "Rue Alphonse Weicker", "Luxembourg", "LU", null)) );
 	}
+*/
 
 }

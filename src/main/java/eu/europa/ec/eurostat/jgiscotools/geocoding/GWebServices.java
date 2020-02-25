@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.io;
+package eu.europa.ec.eurostat.jgiscotools.geocoding;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -17,7 +17,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ProxySetter;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
+import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
 import eu.europa.ec.eurostat.jgiscotools.io.web.HTTPUtil;
 
 /**
@@ -29,8 +30,8 @@ public class GWebServices {
 
 	//https://developers.google.com/maps/documentation/geocoding/start
 
-	public static String gKey = ProxySetter.get("google_API_key");
-	public static String cs = ProxySetter.get("google_API_cx");
+	public static String gKey = LocalParameters.get("google_API_key");
+	public static String cs = LocalParameters.get("google_API_cx");
 
 	/**
 	 * Get the URL of the first website returned by a query

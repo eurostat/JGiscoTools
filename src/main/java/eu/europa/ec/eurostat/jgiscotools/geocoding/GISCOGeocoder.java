@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
+package eu.europa.ec.eurostat.jgiscotools.geocoding;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -9,8 +9,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.locationtech.jts.geom.Coordinate;
-
-import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 
 /**
  * Some function to geocode data based on addresses
@@ -49,7 +47,7 @@ public class GISCOGeocoder {
 	 * 
 	 * @return The position, as proposed by the geocoder.
 	 */
-	public static Coordinate geocode(Address ad) {
+	public static Coordinate geocode(GeocodingAddress ad) {
 		try {
 			String query = "";
 
@@ -83,22 +81,6 @@ public class GISCOGeocoder {
 		}
 	}
 
-	public static class Address {
-		public String street, housenumber, streetname, city, countryCode, postalcode;
-
-		public Address(String street, String housenumber, String streetname, String city, String countryCode, String postalcode) {
-			this.street = street;
-			this.housenumber = housenumber;
-			this.streetname = streetname;
-			this.city = city;
-			this.countryCode = countryCode;
-			this.postalcode = postalcode;
-		}
-
-		public String getCountryName() {
-			return NUTSUtils.getName(this.countryCode);
-		}
-	}
 
 	//	public static class NamePlace {
 	//		public String country, city, name;
@@ -168,7 +150,7 @@ public class GISCOGeocoder {
 		//1. Doesn't work
 		//case sensitive
 		System.out.println("1. Deconstructed Address");
-		System.out.println( geocode( new Address(null, null, "Rue Alphonse Weicker", "Luxembourg", "Luxembourg", null)) );
+		System.out.println( geocode( new GeocodingAddress(null, null, "Rue Alphonse Weicker", "Luxembourg", "Luxembourg", null)) );
 
 		System.out.println("2. Full Address");
 		//2. works only if in the right order

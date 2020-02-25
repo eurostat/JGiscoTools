@@ -9,7 +9,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.GISCOGeocoder.Address;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 public class HealthCareDataFormattingGeocoding {
 
@@ -18,26 +21,27 @@ public class HealthCareDataFormattingGeocoding {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
 
-		ProxySetter.loadProxySettings();
-		
+		//
+
 		// formatAT();
 		// formatCH();
 		// formatLU();
 		// ...
 
-		
-		//geocodeUnstructured("AT/AT_formatted.csv", "AT/AT_geolocated.csv", false);
-		geocodeStructured("AT/AT_formatted.csv", "AT/AT_geolocated_.csv", false);
-		// geocodeLU();
-		// ...
+		//AT
+		System.out.println("load");
+		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path+"AT/AT_formatted.csv", CSVFormat.DEFAULT.withFirstRecordAsHeader());
+		geocodeGISCO(hospitals, false);
+		LocalParameters.loadProxySettings(); //TODO fix that - GISCO geocoder does not work with proxy
+		geocodeBing(hospitals, false);
+		System.out.println("save");
+		CSVUtil.save(hospitals,path+"AT/AT_geolocated.csv");
+
 
 		System.out.println("End");
 	}
 
-	private static void geocodeUnstructured(String inFile, String outFile, boolean usePostcode) {
-		String filePath = path+inFile;
-		ArrayList<Map<String,String>> hospitals = CSVUtil.load(filePath, CSVFormat.DEFAULT.withFirstRecordAsHeader());
-
+	private static void geocodeGISCO(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
 		//int count = 0;
 		int fails = 0;
 		for(Map<String,String> hospital : hospitals) {
@@ -61,25 +65,20 @@ public class HealthCareDataFormattingGeocoding {
 			if(c.getX()==0 && c.getY()==0) fails++;
 
 			//if(count > 10) break;
-			hospital.put("lat", "" + c.y);
-			hospital.put("lon", "" + c.x);
+			hospital.put("latGISCO", "" + c.y);
+			hospital.put("lonGISCO", "" + c.x);
 		}
 
 		System.out.println("Failures: "+fails+"/"+hospitals.size());
-		System.out.println("save");
-		CSVUtil.save(hospitals,path+outFile);
 	}
 
-	
-	private static void geocodeStructured(String inFile, String outFile, boolean usePostcode) {
-		String filePath = path+inFile;
-		ArrayList<Map<String,String>> hospitals = CSVUtil.load(filePath, CSVFormat.DEFAULT.withFirstRecordAsHeader());
 
+	private static void geocodeBing(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
 		//int count = 0;
 		int fails = 0;
 		for(Map<String,String> hospital : hospitals) {
 			//count++;
-			Address address = new Address(
+			GeocodingAddress address = new GeocodingAddress(
 					null,
 					hospital.get("house_number"),
 					hospital.get("street"),
@@ -93,16 +92,14 @@ public class HealthCareDataFormattingGeocoding {
 			if(c.getX()==0 && c.getY()==0) fails++;
 
 			//if(count > 10) break;
-			hospital.put("lat", "" + c.y);
-			hospital.put("lon", "" + c.x);
+			hospital.put("latBing", "" + c.y);
+			hospital.put("lonBing", "" + c.x);
 		}
 
 		System.out.println("Failures: "+fails+"/"+hospitals.size());
-		System.out.println("save");
-		CSVUtil.save(hospitals,path+outFile);
 	}
 
-	
+
 
 	/**
 	 * Fotmat AT
