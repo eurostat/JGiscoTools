@@ -10,6 +10,8 @@ import java.net.URLEncoder;
 
 import org.locationtech.jts.geom.Coordinate;
 
+import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
+
 /**
  * Some function to geocode data based on addresses
  * using GISCO geocoder.
@@ -89,7 +91,7 @@ public class GISCOGeocoder {
 		}
 
 		public String getCountryName() {
-			return HealthCareDataFormattingGeocoding.getCountryName(this.countryCode);
+			return NUTSUtils.getName(this.countryCode);
 		}
 	}
 

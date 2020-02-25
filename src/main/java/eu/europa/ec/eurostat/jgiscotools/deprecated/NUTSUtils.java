@@ -13,6 +13,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
+import eu.europa.ec.eurostat.java4eurostat.io.DicUtil;
 import eu.europa.ec.eurostat.java4eurostat.io.EurobaseIO;
 import eu.europa.ec.eurostat.java4eurostat.io.EurostatTSV;
 
@@ -158,6 +159,21 @@ public class NUTSUtils {
 		if(nc == null) return null;
 		if("".equals(nc.codeFin)) return null;
 		return nc.codeFin;
+	}
+
+
+	//private static void load2010_2013(){
+
+
+	public static String getName(String nutsCode) {
+		return getGeoDic().get(nutsCode);
+	}
+
+	private static HashMap<String, String> geoDic = null;
+	private static HashMap<String, String> getGeoDic() {
+		if(geoDic == null)
+			geoDic = DicUtil.load("src/main/resources/geo.dic");
+		return geoDic;
 	}
 
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.csv.CSVFormat;
 import org.locationtech.jts.geom.Coordinate;
 
+import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 public class HealthCareDataFormattingGeocoding {
 
@@ -52,7 +53,7 @@ public class HealthCareDataFormattingGeocoding {
 			}
 			address += hospital.get("city");
 			address += " ";
-			address += getCountryName(hospital.get("country"));
+			address += NUTSUtils.getName(hospital.get("country"));
 			System.out.println(address);
 
 			Coordinate c = GISCOGeocoder.geocode(address);
@@ -242,22 +243,6 @@ public class HealthCareDataFormattingGeocoding {
 		// save
 		CSVUtil.save(hospitalsFormatted,
 				"E:\\dissemination\\shared-data\\MS_data\\Service - Health\\CH/CH_formatted.csv");
-	}
-
-
-
-
-
-	//TODO
-	public static String getCountryName(String countryCode2letters) {
-		switch (countryCode2letters) {
-		case "AT": return "Austria";
-		case "LU": return "Luxembourg";
-		case "FR": return "France";
-		default:
-			System.err.println("Non handled country code: " + countryCode2letters);
-			return null;
-		}
 	}
 
 }
