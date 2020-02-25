@@ -201,7 +201,6 @@ public class GWebServices {
 
 		String url = strb.toString();
 		if(LOGGER.isTraceEnabled()) LOGGER.trace(url);
-		System.out.println(url);
 
 		InputStream data = null;
 		try {
@@ -300,11 +299,21 @@ public class GWebServices {
 
 
 
+
+	/*
 	public static void main(String[] args) {
+		System.out.println("Start");
+
 		ProxySetter.loadProxySettings();
+		//System.out.println( getElevationSingle(49.64984, 6.2242173) );
+		//https://developers.google.com/maps/documentation/geocoding/intro
 
-		System.out.println( getElevationSingle(49.6495684, 6.2242173) );
+		GGeocodingResult out = getLocationFromAddress("12 rue des maraichers 75020 paris");
+		System.out.println(out.status);
+		System.out.println(out.pos);
 
+		System.out.println("End");
 	}
+	 */
 
 }
