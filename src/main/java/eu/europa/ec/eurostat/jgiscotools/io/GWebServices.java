@@ -1,19 +1,14 @@
 package eu.europa.ec.eurostat.jgiscotools.io;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,14 +21,24 @@ import org.w3c.dom.NodeList;
 
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ProxySetter;
+import eu.europa.ec.eurostat.jgiscotools.io.web.HTTPUtil;
 
+/**
+ * @author julien Gaffuri
+ *
+ */
 public class GWebServices {
-	final static Logger logger = Logger.getLogger(GWebServices.class.getName());
+	final static Logger LOGGER = LogManager.getLogger(GWebServices.class.getName());
 
 	public static String gKey = ProxySetter.get("google_API_key");
-	public static String cs = "003544372238783521660:3gsprhbvfy0";
+	public static String cs = ProxySetter.get("google_API_cx");
 
-	//get url of the first website returned by a query
+	/**
+	 * Get the URL of the first website returned by a query
+	 * 
+	 * @param searchQuery
+	 * @return
+	 */
 	public static String getURL(String searchQuery) {
 		try {
 			URLConnection conn = new URL("https://www.googleapis.com/customsearch/v1?key="+gKey+"&cx="+cs+"&q="+URIUtil.encodeQuery(searchQuery)).openConnection();
@@ -42,7 +47,7 @@ public class GWebServices {
 			JSONArray res = (JSONArray) jsonObject.get("items");
 
 			if(res.size()==0){
-				System.out.println("   No site found for: "+searchQuery);
+				LOGGER.warn("   No site found for: "+searchQuery);
 				return null;
 			}
 
@@ -55,8 +60,12 @@ public class GWebServices {
 
 
 
-	//result from a location query
-	public static class LocationResult {
+	/**
+	 * Result of a geocoding query
+	 * 
+	 * @author Julien Gaffuri
+	 */
+	public static class GMapGeocodingResult {
 		//OK,OVER_QUERY_LIMIT,ZERO_RESULTS
 		public String status;
 		//lon,lat
@@ -64,14 +73,19 @@ public class GWebServices {
 		public boolean severalFound=false;
 	}
 
-	//return location from a query
-	public static LocationResult getLocation(String searchQuery) {
+	/**
+	 * return geocoding from a query
+	 * 
+	 * @param searchQuery
+	 * @return
+	 */
+	public static GMapGeocodingResult getLocation(String searchQuery) {
 		try {
 			URLConnection conn = new URL( "https://maps.googleapis.com/maps/api/place/textsearch/json?sensor=false&key="+gKey+"&query="+URIUtil.encodeQuery(searchQuery)).openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			JSONObject jsonObject = (JSONObject) new JSONParser().parse(in);
 
-			LocationResult lres = new LocationResult();
+			GMapGeocodingResult lres = new GMapGeocodingResult();
 			lres.status = (String) jsonObject.get("status");
 			if(!"OK".equals(lres.status))
 				return lres;
@@ -92,15 +106,19 @@ public class GWebServices {
 		}
 	}
 
-	//return location from an address query
-	public static LocationResult getLocationFromAddress(String addressQuery) {
+	/**
+	 * return geocoding from an address query
+	 * 
+	 * @param addressQuery
+	 * @return
+	 */
+	public static GMapGeocodingResult getLocationFromAddress(String addressQuery) {
 		try {
-			JSONObject jsonObject;
 			URLConnection conn = new URL("http://maps.googleapis.com/maps/api/geocode/json?sensor=true&address="+URIUtil.encodeQuery(addressQuery)).openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			jsonObject = (JSONObject) new JSONParser().parse(in);
+			JSONObject jsonObject = (JSONObject) new JSONParser().parse(in);
 
-			LocationResult lres = new LocationResult();
+			GMapGeocodingResult lres = new GMapGeocodingResult();
 			lres.status = (String) jsonObject.get("status");
 			if(!"OK".equals(lres.status))
 				return lres;
@@ -120,33 +138,6 @@ public class GWebServices {
 			return null;
 		}
 	}
-
-
-	public static InputStream executeQuery(String url) throws MalformedURLException, IOException{
-		InputStream data = null;
-		try {
-			data = (new URL(url)).openStream();
-		} catch (UnknownHostException e) {
-			logger.log(Level.WARNING, "Impossible to execute query from "+url);
-		}
-		return data;
-	}
-
-	public static Document parse (InputStream stream) {
-		Document XMLDoc = null;
-		DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
-		fact.setValidating(false);
-		fact.setNamespaceAware(false);
-		try {
-			XMLDoc = fact.newDocumentBuilder().parse(stream);
-		} catch (Exception e) { e.printStackTrace(); }
-		return XMLDoc;
-	}
-
-
-
-
-
 
 
 
@@ -208,16 +199,16 @@ public class GWebServices {
 	 */
 	public static double[] getElevation(double[] lats, double[] lons, boolean sensor) {
 		if( lats == null || lons == null ) {
-			logger.severe("Null latitude or longitude table");
+			LOGGER.error("Null latitude or longitude table");
 			return null;
 		}
 		if( lats.length != lons.length ) {
-			logger.severe("Latitude and longitude tables have different sizes: " + lats.length + " and " + lons.length);
+			LOGGER.error("Latitude and longitude tables have different sizes: " + lats.length + " and " + lons.length);
 			return null;
 		}
 		if( lats.length == 0 ) return new double[0];
 		if( lats.length > GMAP_QUOTA ) {
-			logger.severe("Quota exceeded - limit value is " + GMAP_QUOTA);
+			LOGGER.error("Quota exceeded - limit value is " + GMAP_QUOTA);
 			return new double[0];
 		}
 
@@ -234,23 +225,23 @@ public class GWebServices {
 		strb.append(sensor);
 
 		String url = strb.toString();
-		if(logger.isLoggable(Level.FINEST)) logger.log(Level.FINEST, url);
+		if(LOGGER.isTraceEnabled()) LOGGER.trace(url);
 
 		InputStream data = null;
 		try {
-			data = executeQuery(url);
+			data = HTTPUtil.executeQuery(url);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		if(data==null) {
-			logger.log(Level.WARNING, "GMap query returned a null object");
+			LOGGER.warn("GMap query returned a null object");
 			return null;
 		}
 
-		Document XMLdoc = parse(data);
+		Document XMLdoc = XMLUtils.parse(data);
 		if (XMLdoc == null) {
-			logger.log(Level.WARNING, "Failed to get altitude from google map web service: returned data is not XML.");
+			LOGGER.warn("Failed to get altitude from google map web service: returned data is not XML.");
 			return null;
 		}
 
@@ -284,13 +275,13 @@ public class GWebServices {
 
 		Element elevationResponseElt = (Element)XMLdoc.getElementsByTagName("ElevationResponse").item(0);
 		if (elevationResponseElt == null) {
-			logger.log(Level.WARNING, "Failed to get altitude from google map web service: bad XML format.");
+			LOGGER.warn("Failed to get altitude from google map web service: bad XML format.");
 			return null;
 		}
 
 		Element statusElt = (Element)elevationResponseElt.getElementsByTagName("status").item(0);
 		if (statusElt == null) {
-			logger.log(Level.WARNING, "Failed to get altitude from google map web service: bad XML format.");
+			LOGGER.warn("Failed to get altitude from google map web service: bad XML format.");
 			return null;
 		}
 
@@ -299,15 +290,15 @@ public class GWebServices {
 			//wait a while
 			//try { Thread.sleep(101); } catch (InterruptedException e) {}
 			//return getElevation(lats, lons, sensor);
-			logger.log(Level.WARNING, "Failed to get altitude from google map web service: quota exceeded - " + url);
+			LOGGER.warn("Failed to get altitude from google map web service: quota exceeded - " + url);
 			return null;
 		}
 		else if( "INVALID_REQUEST".equalsIgnoreCase( status ) ) {
-			logger.log(Level.WARNING, "Failed to get altitude from google map web service: invalid request - " + url);
+			LOGGER.warn("Failed to get altitude from google map web service: invalid request - " + url);
 			return null;
 		}
 		else if( ! "OK".equalsIgnoreCase( status ) ) {
-			logger.log(Level.WARNING, "Failed to get altitude from google map web service (status = " + status + " )");
+			LOGGER.warn("Failed to get altitude from google map web service (status = " + status + " )");
 			return null;
 		}
 
@@ -333,12 +324,12 @@ public class GWebServices {
 
 
 
-	public static LocationResult findLocation(SimpleFeature f, String query) {
+	public static GMapGeocodingResult findLocation(SimpleFeature f, String query) {
 		return findLocation(f, query, null, null);
 	}
-	public static LocationResult findLocation(SimpleFeature f, String query, String xAtt, String yAtt) {
+	public static GMapGeocodingResult findLocation(SimpleFeature f, String query, String xAtt, String yAtt) {
 		try {
-			LocationResult lres = getLocationFromAddress(query);
+			GMapGeocodingResult lres = getLocationFromAddress(query);
 			//LocationResult lres = getLocation(query);
 			if("OK".equals(lres.status)) {
 				if(xAtt != null) f.setAttribute(xAtt, lres.pos[0]);
@@ -348,16 +339,21 @@ public class GWebServices {
 				if(xAtt != null) f.setAttribute(xAtt, -1);
 				if(yAtt != null) f.setAttribute(yAtt, -1);
 			} else if("OVER_QUERY_LIMIT".equals(lres.status)) {
-				System.out.println("   "+lres.status+" pause...");
+				LOGGER.info("   "+lres.status+" pause...");
 				Thread.sleep(10000);
 			} else {
-				System.out.println("Not found: " + lres.status);
+				LOGGER.info("Not found: " + lres.status);
 			}
 			return lres;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+
+	public static void main(String[] args) {
+		ProxySetter.loadProxySettings();
 	}
 
 }

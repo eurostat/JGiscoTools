@@ -3,6 +3,7 @@ package eu.europa.ec.eurostat.jgiscotools.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -52,6 +53,22 @@ public class XMLUtils {
 			e.printStackTrace();
 		}
 		return ns;
+	}
+
+
+	/**
+	 * @param stream
+	 * @return
+	 */
+	public static Document parse(InputStream stream) {
+		Document XMLDoc = null;
+		DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+		fact.setValidating(false);
+		fact.setNamespaceAware(false);
+		try {
+			XMLDoc = fact.newDocumentBuilder().parse(stream);
+		} catch (Exception e) { e.printStackTrace(); }
+		return XMLDoc;
 	}
 
 }
