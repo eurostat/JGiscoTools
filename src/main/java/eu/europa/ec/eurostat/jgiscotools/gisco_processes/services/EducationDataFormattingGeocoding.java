@@ -1,11 +1,17 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.apache.commons.csv.CSVFormat;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
@@ -20,8 +26,9 @@ public class EducationDataFormattingGeocoding {
 		System.out.println("Start");
 
 	//	formatMT();
-		formatES();
+	//	formatES();
 	//  formatHU();
+		formatBE();
 		
 //		geocodeMT();
 
@@ -179,4 +186,60 @@ public static void formatES() {
 	System.out.println("End save");
 }
 
+	public static void formatBE() throws Exception {
+
+		try {
+		/*
+		 * String url = "http://infrastructura-sanatate.ms.ro/harta/extractSpitaleGPS";
+		 * System.out.println(url); BufferedReader in = new BufferedReader(new
+		 * InputStreamReader(new URL(url).openStream())); String line = in.readLine();
+		 * System.out.println(line); //String[] parts = line.split(",");
+		 */
+		System.out.println("new scanner");
+		Scanner scanner = new Scanner(new File(path + "BE/Flanders/universities.json"));
+		String line = scanner.nextLine();
+		scanner.close();
+		System.out.println(line);
+		System.out.println("scanner close");
+
+		JSONObject data = (JSONObject) new JSONParser().parse(line);
+		//print names of keys: meta, content
+		System.out.println(data.keySet());
+		JSONArray data_ = (JSONArray) data.get("content");
+			Collection<Map<String, String>> unisFormatted = new ArrayList<Map<String,String>>();
+			for(Object U : data_) {
+				JSONObject u = (JSONObject)U;	
+				//id, name, shortName, street, houseNumber, busNumber, city, postalCode, email, telephoneNumber, type, url,
+				//admissionAndFurtherStudiesUrl, reviewStatus, startDateReview, endDateReview, associations
+
+
+				//new formatted hospital
+				HashMap<String, String> uf = new HashMap<String, String>();
+				uf.put("country", "Belgium");
+				uf.put("cc", "BE");
+				uf.put("id", u.get("id").toString());
+				uf.put("name", u.get("name").toString());
+				uf.put("house_number", u.get("houseNumber").toString());
+				uf.put("city", u.get("city").toString());
+				uf.put("postcode", u.get("postalCode").toString());
+			//	uf.put("email", u.get("email").toString());
+				uf.put("tel", u.get("telephoneNumber").toString());
+				uf.put("url", u.get("url").toString());
+				uf.put("school_type", u.get("type").toString());
+				uf.put("published_date", "09-19"); //TODO check
+				uf.put("retrieval_date", "26-02-20"); //TODO check
+
+
+
+				unisFormatted.add(uf);
+			}
+			//save
+			CSVUtil.save(unisFormatted, path+"BE/BE_geolocated.csv");
+
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+	}
 }
