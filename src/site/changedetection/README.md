@@ -104,3 +104,7 @@ This extracts the change features representing these superflous (deletion, inser
 ## Documentation
 
 See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/eu/europa/ec/eurostat/jgiscotools/changedetection/ChangeDetection.html).
+
+## Program
+
+See [GeoDiff](https://github.com/eurostat/GeoDiff).
