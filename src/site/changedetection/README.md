@@ -70,7 +70,7 @@ For an overview of the geometrical changes use:
 Collection<Feature> hfgeoms = cd.getHausdorffGeomChanges();
 ```
 
-This produces a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical change between the two versions is maximum. Its length is the good measure of the change magnitude.
+This produces a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical change between the two versions is maximum. Its length is a good measure for the change magnitude.
 
 <kbd><img src="img/hausdorf_segment.png" /></kbd>
 
