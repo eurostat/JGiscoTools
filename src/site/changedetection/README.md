@@ -89,7 +89,7 @@ This produces a set of features representing the spatial gains and losses betwee
 
 ### Identifier stability issues
 
-The stability of the identifier between two versions of a feature might not respected, by mistake. This leads to the detection of superfluous pairs (deletion, insertion) of the same feature, which do not reflect genuine changes of the dataset. In general, a pair (deletion, insertion) is not considered as pertinent when both feature versions are the same (or have very similar geometries), but their identifier has changed. To detect such issues, use:
+The stability of the identifier between two versions of a feature might not be respected, by mistake. This leads to the detection of superfluous pairs (deletion, insertion) of the same feature, which do not reflect genuine changes of the dataset. In general, a pair (deletion, insertion) is not considered as pertinent when both feature versions are the same (or have very similar geometries), but their identifier has changed. To detect such issues, use:
 
 ```java
 Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 500);
