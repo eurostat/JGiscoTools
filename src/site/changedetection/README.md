@@ -1,6 +1,6 @@
 # Change detection
 
-To analyse the changes between two versions of a datasets, use:
+To analyse the changes between two versions of a dataset, use:
 
 ```java
 ChangeDetection cd = new ChangeDetection(featuresIni, featuresFin);
