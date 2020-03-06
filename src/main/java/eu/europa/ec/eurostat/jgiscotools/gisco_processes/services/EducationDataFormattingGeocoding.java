@@ -230,7 +230,6 @@ public static void formatES() {
 				uf.put("retrieval_date", "26-02-20"); //TODO check
 
 
-
 				unisFormatted.add(uf);
 			}
 			//save
