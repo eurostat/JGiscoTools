@@ -1,5 +1,7 @@
 # Change detection
 
+NB: To setup a coding environment, see [here](https://github.com/eurostat/README/blob/master/docs/howto/java_eclipse_maven_git_quick_guide.md) and [there](https://github.com/eurostat/JGiscoTools#setup).
+
 To analyse the changes between two versions of a dataset, use:
 
 ```java
@@ -104,3 +106,7 @@ This extracts the change features representing these superflous (deletion, inser
 ## Documentation
 
 See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/eu/europa/ec/eurostat/jgiscotools/changedetection/ChangeDetection.html).
+
+## Use it as program
+
+See [GeoDiff](https://github.com/eurostat/GeoDiff).
