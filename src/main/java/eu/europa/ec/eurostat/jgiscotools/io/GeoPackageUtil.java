@@ -92,6 +92,7 @@ public class GeoPackageUtil {
 
 	//write
 
+	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs) { save(fs,outFile,crs,true); }
 	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, boolean withSpatialIndex) { save(fs,outFile,crs,null, withSpatialIndex); }
 	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs, List<String> atts, boolean withSpatialIndex) { save(fs, outFile, SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts), withSpatialIndex); }
 	public static void save(Collection<? extends Feature> fs, String outFile, SimpleFeatureType ft, boolean withSpatialIndex) { save(SimpleFeatureUtil.get(fs, ft), outFile, withSpatialIndex); }

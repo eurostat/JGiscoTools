@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.io.FilenameUtils;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -40,19 +41,22 @@ public class GeoData {
 		}
 	}
 
-	public static CoordinateReferenceSystem getCRS(String filePath) throws Exception {
+	public static SimpleFeatureType getSchema(String filePath) throws Exception {
 		String format = FilenameUtils.getExtension(filePath).toLowerCase();
 		switch(format) {
 		case "shp":
-			return SHPUtil.getCRS(filePath);
+			return SHPUtil.getSchema(filePath);
 		case "geojson":
-			//TODO
-			return null;
+			return GeoJSONUtil.getSchema(filePath);
 		case "gpkg":
-			return GeoPackageUtil.getCRS(filePath);
+			return GeoPackageUtil.getSchema(filePath);
 		default:
-			throw new Exception("Could not retrieve CRS from data source: "+filePath);
+			throw new Exception("Could not retrieve schema from data source: "+filePath);
 		}
+	}
+
+	public static CoordinateReferenceSystem getCRS(String filePath) throws Exception {
+		return getSchema(filePath).getCoordinateReferenceSystem();
 	}
 
 	public static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs) throws Exception {
@@ -66,7 +70,7 @@ public class GeoData {
 			GeoJSONUtil.save(fs, filePath, crs);
 			break;
 		case "gpkg":
-			GeoPackageUtil.save(fs, filePath, crs, true);
+			GeoPackageUtil.save(fs, filePath, crs);
 			break;
 		default:
 			throw new Exception("Unsuported output format: " + format);

@@ -48,6 +48,10 @@ public class GeoJSONUtil {
 		return null;
 	}
 
+	public static SimpleFeatureType getSchema(String filePath) {
+		return loadFC(filePath).getSchema();
+	}
+
 	public static CoordinateReferenceSystem loadCRS(String filePath) {
 		try {
 			InputStream input = new FileInputStream(new File(filePath));
@@ -162,12 +166,5 @@ public class GeoJSONUtil {
 		}
 		return true;
 	}
-
-
-	/*public static void main(String[] args) {
-		ArrayList<Feature> fs = load("/home/juju/Bureau/workspace/searoute/resources/marnet/marnet_working.geojson");
-		System.out.println(fs.size());
-		save(fs, "/home/juju/Bureau/workspace/searoute/resources/marnet/marnet_working_____.geojson", null);
-	}*/
 
 }
