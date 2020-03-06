@@ -4,6 +4,11 @@
 package eu.europa.ec.eurostat.jgiscotools.util;
 
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 
 import javax.measure.Unit;
@@ -14,6 +19,7 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.util.CRSUtilities;
 import org.locationtech.jts.geom.Geometry;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -94,7 +100,7 @@ public class ProjectionUtil {
 			Geometry outGeom = JTS.transform(geom, CRS.findMathTransform(sourceCRS, targetCRS, true));
 			return outGeom;
 		} catch (Exception e) {
-			System.err.println("Error while reprojecting.");
+			LOGGER.error("Error while reprojecting.");
 			e.printStackTrace();
 		}
 		return null;
@@ -360,6 +366,41 @@ public class ProjectionUtil {
 		//LOGGER.warn("Could not find EPSG code for CRS: "+crs.toWKT());
 		return -1;
 	}
+
+
+
+	//http://epsg.io/3035.wkt
+	//https://epsg.io/3035.wkt
+	private static CoordinateReferenceSystem getFromEPSGIOWKT(String epsgCode) {
+
+		//get wkt from epsg.io
+		//String url_ = "https://epsg.io/"+epsgCode+".wkt";
+		String url_ = "https://epsg.io/"+epsgCode+".esriwkt";
+		String wkt = null;
+		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url_).openStream()));
+			wkt = in.readLine();
+		} catch (MalformedURLException e) {
+			LOGGER.error("Could not parse URL " + url_);
+			return null;
+		} catch (IOException e) {
+			LOGGER.error("Could not get WKT for CRS " + epsgCode + " from URL " + url_);
+			return null;
+		}
+
+		//parse
+		CoordinateReferenceSystem crs = null;
+		try {
+			crs = CRS.parseWKT(wkt);
+		} catch (FactoryException e) {
+			LOGGER.error("Could not parse WKT for CRS " + epsgCode);
+			LOGGER.error(wkt);
+			return null;
+		}
+		return crs;
+	}
+
+
 
 	/*
 	public static void main(String[] args) {

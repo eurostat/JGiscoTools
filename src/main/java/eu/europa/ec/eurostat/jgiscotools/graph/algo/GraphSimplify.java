@@ -118,7 +118,7 @@ public class GraphSimplify {
 		//***
 		lines = lineMerge(lines);
 		if(withRDPFiltering) lines = DouglasPeuckerRamerFilter.get(lines, res);
-		lines = Resolutionise.applyLinear(lines, res);
+		lines = Resolutionise.getLine(lines, res);
 		lines = planifyLines(lines);
 
 		int sI=1,sF=0;
@@ -129,7 +129,7 @@ public class GraphSimplify {
 			//***
 			lines = lineMerge(lines);
 			if(withRDPFiltering) lines = DouglasPeuckerRamerFilter.get(lines, res);
-			lines = Resolutionise.applyLinear(lines, res);
+			lines = Resolutionise.getLine(lines, res);
 			lines = planifyLines(lines);
 
 			sF = lines.size();
