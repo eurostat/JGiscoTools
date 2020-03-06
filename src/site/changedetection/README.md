@@ -1,5 +1,7 @@
 # Change detection
 
+NB: To setup a coding environment, see [here](https://github.com/eurostat/README/blob/master/docs/howto/java_eclipse_maven_git_quick_guide.md) and [there](https://github.com/eurostat/JGiscoTools#setup).
+
 To analyse the changes between two versions of a dataset, use:
 
 ```java
