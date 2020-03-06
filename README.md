@@ -1,19 +1,6 @@
 # JGiscoTools
 
-[JGiscoTools](https://github.com/eurostat/JGiscoTools) is a Java library for the manipulation of geographical and statistical data, with a focus on European data produced by [Eurostat](http://ec.europa.eu/eurostat).
-
-JGiscoTools allows:
-- Manipulation and transformation of vector geographical data such as clustering, generalisation, deformation, filtering, edge matching and partitionning.
-- Generalisation of geographical tesselations.
-- Routing and accessibility computation.
-- [Production of gridded datasets](/src/site/gridmaker) in various GIS formats.
-- [Change detection between two versions of a same dataset](/src/site/changedetection).
-- Automatic production statistical maps (with a focus on maps based on Eurostat data and NUTS regions).
-- Various analyses based on NUTS regions and NUTS codes.
-- Some experiments on the combined use of geographical and statistical data such as
-  - Statistical data disaggregation based on [dasymetric mapping](https://en.wikipedia.org/wiki/Dasymetric_map).
-  - The computation of the intersection matrix between two statistical units datasets.
-- ...
+[JGiscoTools](https://github.com/eurostat/JGiscoTools) is a Java library for the manipulation of geospatial and statistical data, with a focus on European data produced by [Eurostat](http://ec.europa.eu/eurostat) and [Eurostat-GISCO](https://ec.europa.eu/eurostat/web/gisco). The main functionalities are listed [here](#components)
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) is mainly based on [GeoTools](http://www.geotools.org/), [JTS Topology Suite](https://locationtech.github.io/jts/) and [java4eurostat](https://github.com/eurostat/java4eurostat) libraries.
 
@@ -21,13 +8,12 @@ JGiscoTools allows:
 
 ### Load
 
-To load geographical features from a [GeoPackage](https://www.geopackage.org/) or a [Shapefile](https://en.wikipedia.org/wiki/Shapefile) file, use:
+To load geographical features from a [GeoPackage](https://www.geopackage.org/), a [Shapefile](https://en.wikipedia.org/wiki/Shapefile) or a [GeoJSON](https://geojson.org/) file, use:
 
 ```java
-//load gpkg file
 Collection<Feature> featuresGPKG = GeoPackageUtil.getFeatures("C:/myFile.gpkg");
-//load shp file
 Collection<Feature> featuresSHP = SHPUtil.getFeatures("C:/myFile.shp");
+Collection<Feature> featuresGEOJSON = GeoJSONUtil.getFeatures("C:/myFile.geojson");
 ```
 
 ### Read
@@ -114,7 +100,20 @@ See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/).
 
 ### Components
 
-TODO: list component documentation here
+JGiscoTools allows:
+- Manipulation and transformation of vector geographical data such as clustering, generalisation, deformation, filtering, edge matching and partitionning.
+- [Generalisation of geographical tesselations](/src/site/regionsimplify) such as administrative units.
+- [Production of gridded datasets](/src/site/gridmaker) in various GIS formats.
+- [Change detection between two versions of a same dataset](/src/site/changedetection).
+- Routing and accessibility computation. (TODO document)
+- Automatic production statistical maps (with a focus on maps based on Eurostat data and NUTS regions). (TODO document)
+- Various analyses based on NUTS regions and NUTS codes. (TODO document)
+- Some experiments on the combined use of geographical and statistical data such as
+  - Statistical data disaggregation based on [dasymetric mapping](https://en.wikipedia.org/wiki/Dasymetric_map). (TODO document)
+  - The computation of the intersection matrix between two statistical units datasets. (TODO document)
+- ...
+
+See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/).
 
 ## Support and contribution
 
