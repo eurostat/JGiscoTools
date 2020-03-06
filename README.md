@@ -90,7 +90,7 @@ CoordinateReferenceSystem crsSHP = SHPUtil.getCRS("C:/myFile.shp");
 CoordinateReferenceSystem crsEPSG = CRS.decode("EPSG:3035")
 ```
 
-### More information
+## More information
 
 ### Setup
 
