@@ -3,6 +3,6 @@
 TODO example of code
 
 
-## Program
+## Use it as program
 
 See [RegionSimplify](https://github.com/eurostat/RegionSimplify).
