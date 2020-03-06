@@ -1,6 +1,8 @@
 # Change detection
 
-To analyse the changes between two versions of a datasets, use:
+NB: To setup a coding environment, see [here](https://github.com/eurostat/README/blob/master/docs/howto/java_eclipse_maven_git_quick_guide.md) and [there](https://github.com/eurostat/JGiscoTools#setup).
+
+To analyse the changes between two versions of a dataset, use:
 
 ```java
 ChangeDetection cd = new ChangeDetection(featuresIni, featuresFin);
@@ -70,7 +72,7 @@ For an overview of the geometrical changes use:
 Collection<Feature> hfgeoms = cd.getHausdorffGeomChanges();
 ```
 
-This produces a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical change between the two versions is maximum. Its length is the good measure of the change magnitude.
+This produces a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical change between the two versions is maximum. Its length is a good measure for the change magnitude.
 
 <kbd><img src="img/hausdorf_segment.png" /></kbd>
 
@@ -89,7 +91,7 @@ This produces a set of features representing the spatial gains and losses betwee
 
 ### Identifier stability issues
 
-The stability of the identifier between two versions of a feature might not respected, by mistake. This leads to the detection of superfluous pairs (deletion, insertion) of the same feature, which do not reflect genuine changes of the dataset. In general, a pair (deletion, insertion) is not considered as pertinent when both feature versions are the same (or have very similar geometries), but their identifier has changed. To detect such issues, use:
+The stability of the identifier between two versions of a feature might not be respected, by mistake. This leads to the detection of superfluous pairs (deletion, insertion) of the same feature, which do not reflect genuine changes of the dataset. In general, a pair (deletion, insertion) is not considered as pertinent when both feature versions are the same (or have very similar geometries), but their identifier has changed. To detect such issues, use:
 
 ```java
 Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 500);
@@ -104,3 +106,7 @@ This extracts the change features representing these superflous (deletion, inser
 ## Documentation
 
 See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/eu/europa/ec/eurostat/jgiscotools/changedetection/ChangeDetection.html).
+
+## Use it as program
+
+See [GeoDiff](https://github.com/eurostat/GeoDiff).

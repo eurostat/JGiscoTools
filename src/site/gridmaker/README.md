@@ -1,6 +1,8 @@
 # Grid maker
 
-This instruction creates a 10m resolution grid over 1km² starting at point (0,0):
+**NB:** To setup a coding environment, follow the instructions [here](https://github.com/eurostat/README/blob/master/docs/howto/java_eclipse_maven_git_quick_guide.md) and [there](https://github.com/eurostat/JGiscoTools#setup).
+
+To create a 10m resolution grid over 1km² starting at point (0,0):
 
 ```java
 
@@ -31,4 +33,10 @@ SHPUtil.saveSHP(grid.getCells(), "path_to_my/file.shp", CRS.decode("EPSG:3035"))
 
 Input geometries can be loaded from [*GeoPackage*](https://www.geopackage.org/), [*Shapefile*](https://en.wikipedia.org/wiki/Shapefile) or [*GeoJSON*](https://geojson.org/) files or simply specified as rectangular extent. The grid cell geometries can be squared surfaces or points located at the center of these cells. Each grid cell is identified with a standard code such as *CRS3035RES200mN1453400E1452800*. The output grid cells can be saved as [*GeoPackage*](https://www.geopackage.org/), [*Shapefile*](https://en.wikipedia.org/wiki/Shapefile) or [*GeoJSON*](https://geojson.org/) files.
 
-For further utilisation, see the [Javadoc](https://eurostat.github.io/JGiscoTools/src/site/apidocs/eu/europa/ec/eurostat/jgiscotools/grid/package-summary.html).
+## Documentation
+
+See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/eu/europa/ec/eurostat/jgiscotools/grid/package-summary.html).
+
+## Use it as program
+
+See [GridMaker](https://github.com/eurostat/GridMaker).
