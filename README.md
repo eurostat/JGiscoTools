@@ -1,6 +1,6 @@
 # JGiscoTools
 
-[JGiscoTools](https://github.com/eurostat/JGiscoTools) is a Java library for the manipulation of geospatial and statistical data, with a focus on European data produced by [Eurostat](http://ec.europa.eu/eurostat) and [Eurostat-GISCO](https://ec.europa.eu/eurostat/web/gisco).
+[JGiscoTools](https://github.com/eurostat/JGiscoTools) is a Java library for the manipulation of geospatial and statistical data, with a focus on European data produced by [Eurostat](http://ec.europa.eu/eurostat) and [Eurostat-GISCO](https://ec.europa.eu/eurostat/web/gisco). The main functionalities are listed [here](#components)
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) is mainly based on [GeoTools](http://www.geotools.org/), [JTS Topology Suite](https://locationtech.github.io/jts/) and [java4eurostat](https://github.com/eurostat/java4eurostat) libraries.
 
@@ -8,13 +8,12 @@
 
 ### Load
 
-To load geographical features from a [GeoPackage](https://www.geopackage.org/) or a [Shapefile](https://en.wikipedia.org/wiki/Shapefile) file, use:
+To load geographical features from a [GeoPackage](https://www.geopackage.org/), a [Shapefile](https://en.wikipedia.org/wiki/Shapefile) or a [GeoJSON](https://geojson.org/) file, use:
 
 ```java
-//load gpkg file
 Collection<Feature> featuresGPKG = GeoPackageUtil.getFeatures("C:/myFile.gpkg");
-//load shp file
 Collection<Feature> featuresSHP = SHPUtil.getFeatures("C:/myFile.shp");
+Collection<Feature> featuresGEOJSON = GeoJSONUtil.getFeatures("C:/myFile.geojson");
 ```
 
 ### Read
