@@ -58,7 +58,7 @@ public class GeoJSONUtil {
 		return null;
 	}
 
-	public static ArrayList<Feature>  load(String filePath) {
+	public static ArrayList<Feature>  getFeatures(String filePath) {
 		SimpleFeatureCollection sfc = loadFC(filePath);
 		if(sfc == null) return null;
 		return SimpleFeatureUtil.get(sfc);

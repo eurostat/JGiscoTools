@@ -27,12 +27,12 @@ public class GeoData {
 	 * @throws Exception
 	 */
 	public static ArrayList<Feature> getFeatures(String filePath) throws Exception {
-		String inpuat = FilenameUtils.getExtension(filePath).toLowerCase();
-		switch(inpuat) {
+		String input = FilenameUtils.getExtension(filePath).toLowerCase();
+		switch(input) {
 		case "shp":
 			return SHPUtil.getFeatures(filePath);
 		case "geojson":
-			return GeoJSONUtil.load(filePath);
+			return GeoJSONUtil.getFeatures(filePath);
 		case "gpkg":
 			return GeoPackageUtil.getFeatures(filePath);
 		default:
