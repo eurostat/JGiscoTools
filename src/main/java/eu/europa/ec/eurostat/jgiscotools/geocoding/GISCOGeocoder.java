@@ -101,6 +101,7 @@ public class GISCOGeocoder {
 	private static Coordinate geocodeURL(String URLquery) {
 		try {
 			String url = "https://europa.eu/webtools/rest/gisco/nominatim/search?" + URLquery + "&polygon=0&viewbox=&format=json&limit=2";
+//			String url = "http(s)://europa.eu/webtools/rest/gisco/api?q=";
 			System.out.println(url);
 			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
 			String line = in.readLine();
@@ -149,20 +150,20 @@ public class GISCOGeocoder {
 
 		//1. Doesn't work
 		//case sensitive
-		System.out.println("1. Deconstructed Address");
-		System.out.println( geocode( new GeocodingAddress(null, null, "Rue Alphonse Weicker", "Luxembourg", "Luxembourg", null)) );
+//		System.out.println("1. Deconstructed Address");
+//		System.out.println( geocode( new GeocodingAddress(null, null, "Rue Alphonse Weicker", "Luxembourg", "Luxembourg", null)) );
 
-		System.out.println("2. Full Address");
+//		System.out.println("2. Full Address");
 		//2. works only if in the right order
 		//works with & without special characters and country, not without postcode 
-		System.out.println( geocode("30 rue alphonse münchen luxembourg 2171") );
+//		System.out.println( geocode("30 rue alphonse münchen luxembourg 2171") );
 		//Doesn't work
-		System.out.println( geocode("San Segundo,  7") );
+//		System.out.println( geocode("San Segundo,  7") );
 
 		System.out.println("3. Place Names");
-		System.out.println( geocode("Berlin") );
-		System.out.println( geocode("Victoria, Malta") );
-		System.out.println( geocode("Malta") );
+		System.out.println( geocode("ANTEQUER-STA ANA") );
+//		System.out.println( geocode("Victoria, Malta") );
+//		System.out.println( geocode("Malta") );
 
 		//Higher education institutions seem to be included but not others
 		//System.out.println("4. Institution Names");
