@@ -83,7 +83,6 @@ public class GeoPackageUtil {
 			}
 			store.dispose();
 			return fs;
-
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}

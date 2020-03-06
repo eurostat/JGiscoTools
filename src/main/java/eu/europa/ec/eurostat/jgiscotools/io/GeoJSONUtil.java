@@ -38,21 +38,11 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  */
 public class GeoJSONUtil {
 
-	public static SimpleFeatureCollection loadFC(String filePath) {
-		try {
-			InputStream input = new FileInputStream(new File(filePath));
-			FeatureCollection<?,?> fc = new FeatureJSON().readFeatureCollection(input);
-			input.close();
-			return (SimpleFeatureCollection)fc;
-		} catch (Exception e) { e.printStackTrace(); }
-		return null;
-	}
-
 	public static SimpleFeatureType getSchema(String filePath) {
 		return loadFC(filePath).getSchema();
 	}
 
-	public static CoordinateReferenceSystem loadCRS(String filePath) {
+	public static CoordinateReferenceSystem getCRS(String filePath) {
 		try {
 			InputStream input = new FileInputStream(new File(filePath));
 			CoordinateReferenceSystem crs = new FeatureJSON().readCRS(input);
@@ -62,6 +52,16 @@ public class GeoJSONUtil {
 		return null;
 	}
 
+
+	public static SimpleFeatureCollection loadFC(String filePath) {
+		try {
+			InputStream input = new FileInputStream(new File(filePath));
+			FeatureCollection<?,?> fc = new FeatureJSON().readFeatureCollection(input);
+			input.close();
+			return (SimpleFeatureCollection)fc;
+		} catch (Exception e) { e.printStackTrace(); }
+		return null;
+	}
 	public static ArrayList<Feature>  getFeatures(String filePath) {
 		SimpleFeatureCollection sfc = loadFC(filePath);
 		if(sfc == null) return null;
