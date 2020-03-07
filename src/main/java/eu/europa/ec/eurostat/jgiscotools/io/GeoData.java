@@ -62,7 +62,10 @@ public class GeoData {
 			return;
 		}
 		this.format = FilenameUtils.getExtension(filePath).toLowerCase();
-		//TODO warnings
+		if(!"shp".equals(this.format) && !"geojson".equals(this.format) && !"gpkg".equals(this.format)) {
+			LOGGER.error("Unsupported data format '" + this.format + "' for data source:" + filePath + " not found.");
+			return;
+		}
 	}
 
 
