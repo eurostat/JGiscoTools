@@ -10,6 +10,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 import junit.framework.TestCase;
@@ -50,7 +51,7 @@ public class ChangeDetectionTest extends TestCase {
 
 		//build change detection object
 		double resolution = 1;
-		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
+		DifferenceDetection cd = new DifferenceDetection(fsIni, fsFin, resolution);
 		//cd.setAttributesToIgnore("id","name");
 
 		//check unchanged
@@ -74,7 +75,7 @@ public class ChangeDetectionTest extends TestCase {
 		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomChanges(), null).size());
 
 		//check id stability issues
-		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(cd.getChanges(), 50);
+		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getChanges(), 50);
 		assertEquals(4, sus.size());
 		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiPolygon.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
@@ -90,14 +91,14 @@ public class ChangeDetectionTest extends TestCase {
 		 */
 
 		//test equals function
-		assertFalse( ChangeDetection.equals(fsIni, fsFin) );
-		assertFalse( ChangeDetection.equals(fsFin, fsIni) );
-		assertTrue( ChangeDetection.equals(fsIni, fsIni) );
-		assertTrue( ChangeDetection.equals(fsFin, fsFin) );
+		assertFalse( DifferenceDetection.equals(fsIni, fsFin) );
+		assertFalse( DifferenceDetection.equals(fsFin, fsIni) );
+		assertTrue( DifferenceDetection.equals(fsIni, fsIni) );
+		assertTrue( DifferenceDetection.equals(fsFin, fsFin) );
 
 		//test change application
-		ChangeDetection.applyChanges(fsIni, cd.getChanges());
-		assertTrue( ChangeDetection.equals(fsIni, fsFin, resolution) );
+		DifferenceDetection.applyChanges(fsIni, cd.getChanges());
+		assertTrue( DifferenceDetection.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPolygon.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
 	}
@@ -131,7 +132,7 @@ public class ChangeDetectionTest extends TestCase {
 
 		//build change detection object
 		double resolution = 1;
-		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
+		DifferenceDetection cd = new DifferenceDetection(fsIni, fsFin, resolution);
 		//cd.setAttributesToIgnore("id","name");
 
 		//check unchanged
@@ -155,7 +156,7 @@ public class ChangeDetectionTest extends TestCase {
 		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomChanges(), null).size());
 
 		//check id stability issues
-		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(cd.getChanges(), 50);
+		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getChanges(), 50);
 		assertEquals(2, sus.size());
 		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiPoint.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
@@ -171,14 +172,14 @@ public class ChangeDetectionTest extends TestCase {
 		 */
 
 		//test equals function
-		assertFalse( ChangeDetection.equals(fsIni, fsFin) );
-		assertFalse( ChangeDetection.equals(fsFin, fsIni) );
-		assertTrue( ChangeDetection.equals(fsIni, fsIni) );
-		assertTrue( ChangeDetection.equals(fsFin, fsFin) );
+		assertFalse( DifferenceDetection.equals(fsIni, fsFin) );
+		assertFalse( DifferenceDetection.equals(fsFin, fsIni) );
+		assertTrue( DifferenceDetection.equals(fsIni, fsIni) );
+		assertTrue( DifferenceDetection.equals(fsFin, fsFin) );
 
 		//test change application
-		ChangeDetection.applyChanges(fsIni, cd.getChanges());
-		assertTrue( ChangeDetection.equals(fsIni, fsFin, resolution) );
+		DifferenceDetection.applyChanges(fsIni, cd.getChanges());
+		assertTrue( DifferenceDetection.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPoint.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
 	}
@@ -208,7 +209,7 @@ public class ChangeDetectionTest extends TestCase {
 
 		//build change detection object
 		double resolution = 1;
-		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
+		DifferenceDetection cd = new DifferenceDetection(fsIni, fsFin, resolution);
 		//cd.setAttributesToIgnore("id","name");
 
 		//check unchanged
@@ -232,7 +233,7 @@ public class ChangeDetectionTest extends TestCase {
 		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomChanges(), null).size());
 
 		//check id stability issues
-		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(cd.getChanges(), 50);
+		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getChanges(), 50);
 		assertEquals(2, sus.size());
 		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiLineString.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
@@ -248,14 +249,14 @@ public class ChangeDetectionTest extends TestCase {
 		 */
 
 		//test equals function
-		assertFalse( ChangeDetection.equals(fsIni, fsFin) );
-		assertFalse( ChangeDetection.equals(fsFin, fsIni) );
-		assertTrue( ChangeDetection.equals(fsIni, fsIni) );
-		assertTrue( ChangeDetection.equals(fsFin, fsFin) );
+		assertFalse( DifferenceDetection.equals(fsIni, fsFin) );
+		assertFalse( DifferenceDetection.equals(fsFin, fsIni) );
+		assertTrue( DifferenceDetection.equals(fsIni, fsIni) );
+		assertTrue( DifferenceDetection.equals(fsFin, fsFin) );
 
 		//test change application
-		ChangeDetection.applyChanges(fsIni, cd.getChanges());
-		assertTrue( ChangeDetection.equals(fsIni, fsFin, resolution) );
+		DifferenceDetection.applyChanges(fsIni, cd.getChanges());
+		assertTrue( DifferenceDetection.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiLineString.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
 	}
