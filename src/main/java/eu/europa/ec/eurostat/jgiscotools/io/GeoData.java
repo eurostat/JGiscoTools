@@ -79,7 +79,7 @@ public class GeoData {
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
 			case "geojson":
-				schema = GeoJSONUtil.getSchema(filePath);
+				schema = getFeaturesFC().getSchema();
 				break;
 			case "gpkg":
 				try {
@@ -106,6 +106,12 @@ public class GeoData {
 		return ProjectionUtil.getCRSType(getCRS());
 	}
 
+
+
+	private SimpleFeatureCollection getFeaturesFC() {
+		//TODO
+		return null;
+	}
 
 
 	ArrayList<Feature> features = null;
