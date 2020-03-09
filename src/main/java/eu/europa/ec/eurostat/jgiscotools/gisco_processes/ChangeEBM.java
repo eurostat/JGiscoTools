@@ -7,9 +7,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.jgiscotools.changedetection.ChangeDetection;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 
 public class ChangeEBM {
@@ -33,7 +33,7 @@ public class ChangeEBM {
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsFin, "inspireId") );
 
 		LOGGER.info("change detection");
-		ChangeDetection cd = new ChangeDetection(fsIni, fsFin);
+		DifferenceDetection cd = new DifferenceDetection(fsIni, fsFin);
 		cd.setAttributesToIgnore("OBJECTID");
 
 		Collection<Feature> unchanged = cd.getUnchanged();
@@ -44,7 +44,7 @@ public class ChangeEBM {
 		LOGGER.info("hfgeoms = "+hfgeoms.size());
 		Collection<Feature> geomch = cd.getGeomChanges();
 		LOGGER.info("geomch = "+geomch.size());
-		Collection<Feature> sus = ChangeDetection.findIdStabilityIssues(changes, 500);
+		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(changes, 500);
 		LOGGER.info("suspect changes = "+sus.size());
 
 		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"EBM_2019_LAEA/EBM_A.gpkg");

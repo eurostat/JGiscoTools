@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.changedetection;
+package eu.europa.ec.eurostat.jgiscotools.geodiff;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,9 +30,11 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
  * @author julien Gaffuri
  *
  */
-public class ChangeDetection {
-	private final static Logger LOGGER = LogManager.getLogger(ChangeDetection.class.getName());
+public class DifferenceDetection {
+	private final static Logger LOGGER = LogManager.getLogger(DifferenceDetection.class.getName());
 
+	//TODO change - difference
+	
 	/**
 	 * The dataset in its initial version.
 	 */
@@ -57,7 +59,7 @@ public class ChangeDetection {
 	 * @param fsFin The dataset in its final version.
 	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
 	 */
-	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
+	public DifferenceDetection(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
 		this.fsIni = fsIni;
 		this.fsFin = fsFin;
 		this.resolution = resolution;
@@ -66,7 +68,7 @@ public class ChangeDetection {
 	 * @param fsIni The dataset in its initial version.
 	 * @param fsFin The dataset in its final version.
 	 */
-	public ChangeDetection(Collection<Feature> fsIni, Collection<Feature> fsFin) {
+	public DifferenceDetection(Collection<Feature> fsIni, Collection<Feature> fsFin) {
 		this(fsIni, fsFin, -1);
 	}
 
@@ -157,7 +159,7 @@ public class ChangeDetection {
 			Feature f = indIni.get(id);
 			Feature ch = FeatureUtil.copy(f);
 			ch.setAttribute("ch_id", f.getID());
-			ch.setAttribute("change", "D");
+			ch.setAttribute("GeoDiff", "D");
 			changes.add(ch);
 		}
 
@@ -172,7 +174,7 @@ public class ChangeDetection {
 			Feature f = indFin.get(id);
 			Feature ch = FeatureUtil.copy(f);
 			ch.setAttribute("ch_id", f.getID());
-			ch.setAttribute("change", "I");
+			ch.setAttribute("GeoDiff", "I");
 			changes.add(ch);
 		}
 
@@ -224,7 +226,7 @@ public class ChangeDetection {
 		change.setGeometry(fFin.getGeometry());
 
 		//set attribute on change
-		change.setAttribute("change", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
+		change.setAttribute("GeoDiff", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
 
 		return change;
 	}
@@ -273,7 +275,7 @@ public class ChangeDetection {
 		for(Feature ch : getChanges()) {
 
 			//consider only geometry changes
-			String ct = ch.getAttribute("change").toString();
+			String ct = ch.getAttribute("GeoDiff").toString();
 			if(!ct.contains("G")) continue;
 
 			//get initial and final geometries
@@ -301,7 +303,7 @@ public class ChangeDetection {
 					Feature f = new Feature();
 					f.setGeometry(JTSGeomUtil.extract(gD, geomType));
 					f.setAttribute("ch_id", id);
-					f.setAttribute("change", "D");
+					f.setAttribute("GeoDiff", "D");
 					geomChanges.add(f);
 				}
 			}
@@ -318,7 +320,7 @@ public class ChangeDetection {
 					Feature f = new Feature();
 					f.setGeometry(JTSGeomUtil.extract(gI, geomType));
 					f.setAttribute("ch_id", id);
-					f.setAttribute("change", "I");
+					f.setAttribute("GeoDiff", "I");
 					geomChanges.add(f);
 				}
 			}
@@ -346,7 +348,7 @@ public class ChangeDetection {
 		//copy list of changes, keeping only deletions and insertions.
 		ArrayList<Feature> chs = new ArrayList<>();
 		for(Feature ch : changes) {
-			String ct = ch.getAttribute("change").toString();
+			String ct = ch.getAttribute("GeoDiff").toString();
 			if("I".equals(ct) || "D".equals(ct)) chs.add(ch);
 		}
 
@@ -363,7 +365,7 @@ public class ChangeDetection {
 			if(!b) LOGGER.warn("Pb");
 
 			//get change type
-			String ct = ch.getAttribute("change").toString();
+			String ct = ch.getAttribute("GeoDiff").toString();
 
 			//get try to find other change
 			Feature ch2 = null;
@@ -373,7 +375,7 @@ public class ChangeDetection {
 				Geometry g_ = ch_.getGeometry();
 
 				//check change type: it as to be different
-				if(ct.equals(ch_.getAttribute("change").toString())) continue;
+				if(ct.equals(ch_.getAttribute("GeoDiff").toString())) continue;
 
 				//check geometry similarity
 				if( (resolution>0 && new HausdorffDistance(g, g_).getDistance() <= resolution)
@@ -411,7 +413,7 @@ public class ChangeDetection {
 	 * @return The changes
 	 */
 	public static Collection<Feature> getChanges(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
-		return new ChangeDetection(fsIni, fsFin, resolution).getChanges();
+		return new DifferenceDetection(fsIni, fsFin, resolution).getChanges();
 	}
 
 	/**
@@ -423,7 +425,7 @@ public class ChangeDetection {
 	 * @return
 	 */
 	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2, double resolution) {
-		return new ChangeDetection(fs1, fs2, resolution).getChanges().size() == 0;
+		return new DifferenceDetection(fs1, fs2, resolution).getChanges().size() == 0;
 	}
 
 	/**
@@ -434,7 +436,7 @@ public class ChangeDetection {
 	 * @return
 	 */
 	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2) {
-		return new ChangeDetection(fs1, fs2).getChanges().size() == 0;
+		return new DifferenceDetection(fs1, fs2).getChanges().size() == 0;
 	}
 
 	/**
@@ -452,14 +454,14 @@ public class ChangeDetection {
 		for(Feature ch : changes) {
 
 			//retrieve type of change and change/feature id
-			String ct = ch.getAttribute("change").toString();
+			String ct = ch.getAttribute("GeoDiff").toString();
 			String id = ch.getAttribute("ch_id").toString();
 
 			//new feature insertion
 			if("I".equals(ct)) {
 				LOGGER.info("New feature inserted. id=" + id);
 				Feature f = FeatureUtil.copy(ch);
-				f.getAttributes().remove("change");
+				f.getAttributes().remove("GeoDiff");
 				f.getAttributes().remove("ch_id");
 				fs.add(f);
 				continue;
@@ -497,7 +499,7 @@ public class ChangeDetection {
 	public static void applyChange(Feature f, Feature ch, String ct) {
 
 		//retrieve change type if necessary
-		if(ct==null || ct.isEmpty()) ct = ch.getAttribute("change").toString();
+		if(ct==null || ct.isEmpty()) ct = ch.getAttribute("GeoDiff").toString();
 
 		//check change type
 		if("I".equals(ct) || "D".equals(ct)) {
@@ -519,7 +521,7 @@ public class ChangeDetection {
 		int nbAtt_ = 0;
 		for(Entry<String,Object> att : ch.getAttributes().entrySet()) {
 
-			if("change".equals(att.getKey())) continue;
+			if("GeoDiff".equals(att.getKey())) continue;
 			if("ch_id".equals(att.getKey())) continue;
 			if(att.getValue() == null) continue;
 
