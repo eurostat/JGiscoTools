@@ -100,6 +100,11 @@ public class GeoData {
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
 			case "geojson":
+				try {
+					InputStream input = new FileInputStream(new File(filePath));
+					this.schema = new FeatureJSON().readFeatureCollectionSchema(input, true);
+					input.close();
+				} catch (Exception e) { e.printStackTrace(); }
 				break;
 			case "gpkg":
 				try {
@@ -146,8 +151,6 @@ public class GeoData {
 						for(Feature f : SimpleFeatureUtil.get(fc))
 							if(this.filter.evaluate(f)) this.features.add(f);
 					}
-					if(this.features.size() > 0)
-						this.schema = SimpleFeatureUtil.getFeatureType(getFeatures().get(0), new FeatureJSON().readCRS(input));
 					input.close();
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
