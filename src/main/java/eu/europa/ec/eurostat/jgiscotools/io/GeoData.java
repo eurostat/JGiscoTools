@@ -4,7 +4,9 @@
 package eu.europa.ec.eurostat.jgiscotools.io;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +27,7 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureReader;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geopkg.FeatureEntry;
 import org.geotools.geopkg.GeoPackage;
 import org.geotools.geopkg.GeoPkgDataStoreFactory;
@@ -39,7 +42,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 
 /**
- * Some generic function to load data from a variety of data sources
+ * Some generic function to load data from mainstream data formats: gpkg, shp, geojson.
  * 
  * @author julien Gaffuri
  *
@@ -52,7 +55,19 @@ public class GeoData {
 	private File file = null;
 	private String format;
 
+	/**
+	 * Build a GeoData from a file.
+	 * 
+	 * @param filePath
+	 */
 	public GeoData(String filePath) { this(filePath, null); }
+
+	/**
+	 * Build a GeoData from a file.
+	 * 
+	 * @param filePath
+	 * @param filter
+	 */
 	public GeoData(String filePath, Filter filter) {
 		this.filePath = filePath;
 		this.filter = filter;
@@ -69,27 +84,29 @@ public class GeoData {
 	}
 
 
-	SimpleFeatureType schema = null;
+	private SimpleFeatureType schema = null;
+
+	/**
+	 * @return The schema
+	 */
 	public SimpleFeatureType getSchema() {
 		if(schema == null) 
 			switch(format) {
 			case "shp":
 				try {
-					schema = FileDataStoreFinder.getDataStore(this.file).getSchema();
+					this.schema = FileDataStoreFinder.getDataStore(this.file).getSchema();
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
 			case "geojson":
-				schema = getFeaturesFC().getSchema();
 				break;
 			case "gpkg":
 				try {
 					GeoPackage gp = new GeoPackage(file);
 					FeatureEntry fe = gp.features().get(0);
 					SimpleFeatureReader fr = gp.reader(fe, null, new DefaultTransaction());
-					SimpleFeatureType ft = fr.getFeatureType();
+					this.schema = fr.getFeatureType();
 					fr.close();
 					gp.close();
-					return ft;
 				} catch (IOException e) { e.printStackTrace(); }
 				break;
 			default:
@@ -98,23 +115,11 @@ public class GeoData {
 		return schema;
 	}
 
-	public CoordinateReferenceSystem getCRS() {
-		return getSchema().getCoordinateReferenceSystem();
-	}
+	private ArrayList<Feature> features = null;
 
-	public CRSType getCRSType(String shpFilePath) {
-		return ProjectionUtil.getCRSType(getCRS());
-	}
-
-
-
-	private SimpleFeatureCollection getFeaturesFC() {
-		//TODO
-		return null;
-	}
-
-
-	ArrayList<Feature> features = null;
+	/**
+	 * @return The feature
+	 */
 	public ArrayList<Feature> getFeatures() {
 		if(features == null) 
 			switch(format) {
@@ -129,7 +134,20 @@ public class GeoData {
 				}
 				break;
 			case "geojson":
-				features = GeoJSONUtil.getFeatures(filePath);
+				try {
+					InputStream input = new FileInputStream(new File(filePath));
+					SimpleFeatureCollection fc = (SimpleFeatureCollection) new FeatureJSON().readFeatureCollection(input);
+					if(this.filter == null)
+						this.features = SimpleFeatureUtil.get(fc);
+					else {
+						this.features = new ArrayList<Feature>();
+						for(Feature f : SimpleFeatureUtil.get(fc))
+							if(this.filter.evaluate(f)) this.features.add(f);
+					}
+					if(this.features.size() > 0)
+						this.schema = SimpleFeatureUtil.getFeatureType(getFeatures().get(0), new FeatureJSON().readCRS(input));
+					input.close();
+				} catch (Exception e) { e.printStackTrace(); }
 				break;
 			case "gpkg":
 				try {
@@ -138,15 +156,14 @@ public class GeoData {
 					params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
 					DataStore store = DataStoreFinder.getDataStore(params);
 
-					ArrayList<Feature> fs = new ArrayList<Feature>();
+					this.features = new ArrayList<Feature>();
 					String[] names = store.getTypeNames();
 					for (String name : names) {
 						LOGGER.debug(name);
 						SimpleFeatureCollection features = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
-						fs.addAll( SimpleFeatureUtil.get(features) );
+						this.features.addAll( SimpleFeatureUtil.get(features) );
 					}
 					store.dispose();
-					this.features = fs;
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
 			default:
@@ -156,6 +173,19 @@ public class GeoData {
 	}
 
 
+	/**
+	 * @return The coordinate reference system
+	 */
+	public CoordinateReferenceSystem getCRS() {
+		return getSchema().getCoordinateReferenceSystem();
+	}
+
+	/**
+	 * @return The coordinate reference system type
+	 */
+	public CRSType getCRSType() {
+		return ProjectionUtil.getCRSType(getCRS());
+	}
 
 
 
@@ -170,20 +200,47 @@ public class GeoData {
 	 * 
 	 * @param filePath
 	 * @return
-	 * @throws Exception
 	 */
-	public static ArrayList<Feature> getFeatures(String filePath) throws Exception {
+	public static ArrayList<Feature> getFeatures(String filePath)  {
 		return new GeoData(filePath).getFeatures();
 	}
 
-	public static SimpleFeatureType getSchema(String filePath) throws Exception {
+	/**
+	 * Get features
+	 * 
+	 * @param filePath
+	 * @param filter 
+	 * @return
+	 * @throws Exception
+	 */
+	public static ArrayList<Feature> getFeatures(String filePath, Filter filter)  {
+		return new GeoData(filePath, filter).getFeatures();
+	}
+
+	/**
+	 * @param filePath
+	 * @return
+	 * @throws Exception
+	 */
+	public static SimpleFeatureType getSchema(String filePath) {
 		return new GeoData(filePath).getSchema();
 	}
 
-	public static CoordinateReferenceSystem getCRS(String filePath) throws Exception {
+	/**
+	 * @param filePath
+	 * @return
+	 */
+	public static CoordinateReferenceSystem getCRS(String filePath) {
 		return getSchema(filePath).getCoordinateReferenceSystem();
 	}
 
+
+
+	/**
+	 * @param fs
+	 * @param filePath
+	 * @param crs
+	 */
 	public static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs) {
 		List<String> atts = null;
 		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts);

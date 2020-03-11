@@ -56,9 +56,9 @@ public class GeoJSONUtil {
 	public static SimpleFeatureCollection loadFC(String filePath) {
 		try {
 			InputStream input = new FileInputStream(new File(filePath));
-			FeatureCollection<?,?> fc = new FeatureJSON().readFeatureCollection(input);
+			SimpleFeatureCollection fc = (SimpleFeatureCollection)new FeatureJSON().readFeatureCollection(input);
 			input.close();
-			return (SimpleFeatureCollection)fc;
+			return fc;
 		} catch (Exception e) { e.printStackTrace(); }
 		return null;
 	}
