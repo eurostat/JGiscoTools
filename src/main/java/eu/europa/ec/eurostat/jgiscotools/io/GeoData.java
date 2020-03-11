@@ -50,6 +50,8 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 public class GeoData {
 	private final static Logger LOGGER = LogManager.getLogger(GeoData.class);
 
+	//TODO add wkt format?
+
 	private String filePath;
 	private Filter filter;
 	private File file = null;
