@@ -33,6 +33,8 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 public class DifferenceDetection {
 	private final static Logger LOGGER = LogManager.getLogger(DifferenceDetection.class.getName());
 
+	//TODO handle case when no common identifier exists ?
+
 	/**
 	 * The dataset in its initial version.
 	 */
