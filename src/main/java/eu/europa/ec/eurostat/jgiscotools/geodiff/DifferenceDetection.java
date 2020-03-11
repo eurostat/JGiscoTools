@@ -33,8 +33,6 @@ import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 public class DifferenceDetection {
 	private final static Logger LOGGER = LogManager.getLogger(DifferenceDetection.class.getName());
 
-	//TODO change - difference
-
 	/**
 	 * The dataset in its initial version.
 	 */
@@ -46,18 +44,18 @@ public class DifferenceDetection {
 	private Collection<Feature> fsFin;
 
 	/**
-	 * The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
+	 * The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
 	 */
 	private double resolution = -1;
 	/**
-	 * @return The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
+	 * @return The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
 	 */
 	public double getResolution() { return resolution; }
 
 	/**
 	 * @param fsIni The dataset in its initial version.
 	 * @param fsFin The dataset in its final version.
-	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
+	 * @param resolution The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
 	 */
 	public DifferenceDetection(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
 		this.fsIni = fsIni;
@@ -72,30 +70,30 @@ public class DifferenceDetection {
 		this(fsIni, fsFin, -1);
 	}
 
-	private Collection<Feature> changes = null;
-	private Collection<Feature> unchanged = null;
+	private Collection<Feature> differences = null;
+	private Collection<Feature> identical = null;
 
 	/**
-	 * @return The changes between the initial and final versions.
+	 * @return The differences between the initial and final versions.
 	 */
-	public Collection<Feature> getChanges() {
-		if(this.changes == null) compare();
-		return this.changes;
+	public Collection<Feature> getDifferences() {
+		if(this.differences == null) compare();
+		return this.differences;
 	}
 
 	/**
-	 * @return The features that have not changed.
+	 * @return The features that have are identical.
 	 */
-	public Collection<Feature> getUnchanged() {
-		if(this.unchanged == null) compare();
-		return this.unchanged;
+	public Collection<Feature> getIdentical() {
+		if(this.identical == null) compare();
+		return this.identical;
 	}
 
 
 	/**
-	 * The attributes to ignore when comparing the changes of a feature.
-	 * If one or several values of these attributes only change,
-	 * then the feature is condidered as unchanged. 
+	 * The attributes to ignore when comparing the differences of a feature.
+	 * If one or several values of these attributes only is different,
+	 * then the feature is condidered has identical. 
 	 */
 	private List<String> attributesToIgnore = null;
 	/**
@@ -113,11 +111,11 @@ public class DifferenceDetection {
 	private HashMap<String,Feature> indIni, indFin;
 
 	/**
-	 * Compare both datasets. Populate the changes.
+	 * Compare both datasets. Populate the differences.
 	 */
 	private void compare() {
-		this.changes = new ArrayList<>();
-		this.unchanged = new ArrayList<>();
+		this.differences = new ArrayList<>();
+		this.identical = new ArrayList<>();
 
 		//list id values
 		Collection<String> idsIni = FeatureUtil.getIdValues(fsIni, null);
@@ -138,14 +136,14 @@ public class DifferenceDetection {
 			Feature fIni = indIni.get(id);
 			Feature fFin = indFin.get(id);
 
-			//compute change between them
+			//compute differences between them
 			Feature ch = compare(fIni, fFin, getResolution(), attributesToIgnore );
 
-			//both versions identical. No change detected.
-			if(ch == null) unchanged.add(fFin);
+			//both versions identical. No difference detected.
+			if(ch == null) identical.add(fFin);
 
-			//change
-			else changes.add(ch);
+			//difference
+			else differences.add(ch);
 		}
 
 		//find deleted features
@@ -160,7 +158,7 @@ public class DifferenceDetection {
 			Feature ch = FeatureUtil.copy(f);
 			ch.setAttribute("ch_id", f.getID());
 			ch.setAttribute("GeoDiff", "D");
-			changes.add(ch);
+			differences.add(ch);
 		}
 
 		//find inserted features
@@ -175,7 +173,7 @@ public class DifferenceDetection {
 			Feature ch = FeatureUtil.copy(f);
 			ch.setAttribute("ch_id", f.getID());
 			ch.setAttribute("GeoDiff", "I");
-			changes.add(ch);
+			differences.add(ch);
 		}
 
 	}
@@ -184,17 +182,17 @@ public class DifferenceDetection {
 	 * Compare two versions of the same feature.
 	 * Both features are expected to have the same identifier and the same
 	 * structure (list of attributes).
-	 * The changes can be either on the attribute values, or on the geometry.
+	 * The differences can be either on the attribute values, or on the geometry.
 	 * 
 	 * @param fIni The initial version
 	 * @param fFin The final version
 	 * @param attributesToIgnore
-	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
-	 * @return A feature representing the changes.
+	 * @param resolution The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
+	 * @return A feature representing the difference.
 	 */
 	public static Feature compare(Feature fIni, Feature fFin, double resolution, List<String> attributesToIgnore) {
-		boolean attChanged = false, geomChanged = false;
-		Feature change = new Feature();
+		boolean attDifference = false, geomDifference = false;
+		Feature difference = new Feature();
 
 		//compare attribute values
 		int nb = 0;
@@ -203,32 +201,32 @@ public class DifferenceDetection {
 			Object attFin = fFin.getAttribute(att);
 			if((attributesToIgnore!=null && attributesToIgnore.contains(att))
 					|| attIni.equals(attFin)) {
-				change.setAttribute(att, null);
+				difference.setAttribute(att, null);
 			} else {
-				attChanged = true;
-				change.setAttribute(att, attFin);
+				attDifference = true;
+				difference.setAttribute(att, attFin);
 				nb++;
 			}
 		}
 		//compare geometries
 		if( (resolution>0 && new HausdorffDistance(fIni.getGeometry(), fFin.getGeometry()).getDistance() > resolution)
 				|| (resolution<=0 && ! fIni.getGeometry().equalsTopo(fFin.getGeometry())))
-			geomChanged = true;
+			geomDifference = true;
 
-		//no change: return null
-		if(!attChanged && !geomChanged) return null;
+		//no difference: return null
+		if(!attDifference && !geomDifference) return null;
 
 		//set id
-		change.setID(fFin.getID());
-		change.setAttribute("ch_id", fFin.getID());
+		difference.setID(fFin.getID());
+		difference.setAttribute("ch_id", fFin.getID());
 
 		//set geometry
-		change.setGeometry(fFin.getGeometry());
+		difference.setGeometry(fFin.getGeometry());
 
-		//set attribute on change
-		change.setAttribute("GeoDiff", (geomChanged?"G":"") + (attChanged?"A"+nb:""));
+		//set attribute on difference
+		difference.setAttribute("GeoDiff", (geomDifference?"G":"") + (attDifference?"A"+nb:""));
 
-		return change;
+		return difference;
 	}
 
 
@@ -236,45 +234,45 @@ public class DifferenceDetection {
 
 
 	/** */
-	private Collection<Feature> hausdorffGeomChanges = null;
+	private Collection<Feature> hausdorffGeomDifferences = null;
 	/**
-	 * A collection of features representing the geometrical changes.
-	 * For each feature whose geometry has changed, a segment
+	 * A collection of features representing the geometrical differences.
+	 * For each feature whose geometry is different, a segment
 	 * representing the hausdorff distance between the initial and
 	 * final geometries is created. This feature allows assessing the
-	 * magnitude of the geometrical change.
+	 * magnitude of the geometrical difference.
 	 * @return
 	 */
-	public Collection<Feature> getHausdorffGeomChanges() {
-		if(hausdorffGeomChanges==null) computeGeometryChanges();
-		return hausdorffGeomChanges;
+	public Collection<Feature> getHausdorffGeomDifferences() {
+		if(hausdorffGeomDifferences==null) computeGeometryDifferences();
+		return hausdorffGeomDifferences;
 	}
 
 	/** */
-	private Collection<Feature> geomChanges = null;
+	private Collection<Feature> geomDifferences = null;
 	/**
 	 * Features representing the geometrical parts which have been
 	 * deleted/inserted between the two versions.
 	 * 
 	 * @return
 	 */
-	public Collection<Feature> getGeomChanges() {
-		if(geomChanges==null) computeGeometryChanges();
-		return geomChanges;
+	public Collection<Feature> getGeomDifferences() {
+		if(geomDifferences==null) computeGeometryDifferences();
+		return geomDifferences;
 	}
 
 	/**
-	 * Create the features representing the geometrical changes.
+	 * Create the features representing the geometrical differences.
 	 */
-	private void computeGeometryChanges() {
+	private void computeGeometryDifferences() {
 
-		hausdorffGeomChanges = new ArrayList<Feature>();
-		geomChanges = new ArrayList<Feature>();
-		int geomType = JTSGeomUtil.getGeomBigType(getChanges().iterator().next().getGeometry());
+		hausdorffGeomDifferences = new ArrayList<Feature>();
+		geomDifferences = new ArrayList<Feature>();
+		int geomType = JTSGeomUtil.getGeomBigType(getDifferences().iterator().next().getGeometry());
 
-		for(Feature ch : getChanges()) {
+		for(Feature ch : getDifferences()) {
 
-			//consider only geometry changes
+			//consider only geometry differences
 			String ct = ch.getAttribute("GeoDiff").toString();
 			if(!ct.contains("G")) continue;
 
@@ -289,7 +287,7 @@ public class DifferenceDetection {
 			hdf.setGeometry(hd.toGeom());
 			hdf.setAttribute("ch_id", id);
 			hdf.setAttribute("hdist", hd.getDistance());
-			hausdorffGeomChanges.add(hdf);
+			hausdorffGeomDifferences.add(hdf);
 
 			//compute added parts
 			{
@@ -304,7 +302,7 @@ public class DifferenceDetection {
 					f.setGeometry(JTSGeomUtil.extract(gD, geomType));
 					f.setAttribute("ch_id", id);
 					f.setAttribute("GeoDiff", "D");
-					geomChanges.add(f);
+					geomDifferences.add(f);
 				}
 			}
 
@@ -321,7 +319,7 @@ public class DifferenceDetection {
 					f.setGeometry(JTSGeomUtil.extract(gI, geomType));
 					f.setAttribute("ch_id", id);
 					f.setAttribute("GeoDiff", "I");
-					geomChanges.add(f);
+					geomDifferences.add(f);
 				}
 			}
 
@@ -335,24 +333,24 @@ public class DifferenceDetection {
 
 
 	/**
-	 * Detect among some changes the ones are are unecessary:
+	 * Detect among some differences the ones are are unecessary:
 	 * The deletion and insertion of features with very similar geometries.
 	 * This happen when id stability is not strictly followed.
 	 * 
-	 * @param changes The changes to check.
+	 * @param differences The differences to check.
 	 * @param resolution The spatial resolution value to consider two geometries as similar.
-	 * @return The collection of unecessary changes.
+	 * @return The collection of unecessary differences.
 	 */
-	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> changes, double resolution) {
+	public static Collection<Feature> findIdStabilityIssues(Collection<Feature> differences, double resolution) {
 
-		//copy list of changes, keeping only deletions and insertions.
+		//copy list of differences, keeping only deletions and insertions.
 		ArrayList<Feature> chs = new ArrayList<>();
-		for(Feature ch : changes) {
+		for(Feature ch : differences) {
 			String ct = ch.getAttribute("GeoDiff").toString();
 			if("I".equals(ct) || "D".equals(ct)) chs.add(ch);
 		}
 
-		//build spatial index of the selected changes
+		//build spatial index of the selected differences
 		Quadtree ind = FeatureUtil.getQuadtree(chs);
 
 		Collection<Feature> out = new ArrayList<>();
@@ -364,17 +362,17 @@ public class DifferenceDetection {
 			boolean b = ind.remove(g.getEnvelopeInternal(), ch);
 			if(!b) LOGGER.warn("Pb");
 
-			//get change type
+			//get difference type
 			String ct = ch.getAttribute("GeoDiff").toString();
 
-			//get try to find other change
+			//try to find other difference
 			Feature ch2 = null;
 			Envelope env = g.getEnvelopeInternal(); env.expandBy(2*resolution);
 			for(Object cho_ : ind.query(env)) {
 				Feature ch_ = (Feature) cho_;
 				Geometry g_ = ch_.getGeometry();
 
-				//check change type: it as to be different
+				//check difference type: it as to be different
 				if(ct.equals(ch_.getAttribute("GeoDiff").toString())) continue;
 
 				//check geometry similarity
@@ -385,7 +383,7 @@ public class DifferenceDetection {
 				}
 			}
 
-			//no other similar change found: go to next
+			//no other similar difference found: go to next
 			if(ch2 == null) continue;
 
 			//remove
@@ -405,15 +403,15 @@ public class DifferenceDetection {
 
 
 	/**
-	 * Return the changes from a version of a dataset to another one.
+	 * Return the differences from a version of a dataset to another one.
 	 * 
 	 * @param fsIni The initial dataset
 	 * @param fsFin The final dataset
-	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
-	 * @return The changes
+	 * @param resolution The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
+	 * @return The differences
 	 */
-	public static Collection<Feature> getChanges(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
-		return new DifferenceDetection(fsIni, fsFin, resolution).getChanges();
+	public static Collection<Feature> getDifferences(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
+		return new DifferenceDetection(fsIni, fsFin, resolution).getDifferences();
 	}
 
 	/**
@@ -421,11 +419,11 @@ public class DifferenceDetection {
 	 * 
 	 * @param fs1 The first dataset
 	 * @param fs2 The second dataset
-	 * @param resolution The geometrical resolution of the dataset. Geometrical changes below this value will be ignored.
+	 * @param resolution The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
 	 * @return
 	 */
 	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2, double resolution) {
-		return new DifferenceDetection(fs1, fs2, resolution).getChanges().size() == 0;
+		return new DifferenceDetection(fs1, fs2, resolution).getDifferences().size() == 0;
 	}
 
 	/**
@@ -436,24 +434,24 @@ public class DifferenceDetection {
 	 * @return
 	 */
 	public static boolean equals(Collection<Feature> fs1, Collection<Feature> fs2) {
-		return new DifferenceDetection(fs1, fs2).getChanges().size() == 0;
+		return new DifferenceDetection(fs1, fs2).getDifferences().size() == 0;
 	}
 
 	/**
 	 * Apply changes to features.
 	 * 
 	 * @param fs The features to change, in their initial state.
-	 * @param changes The changes to apply.
+	 * @param differences The changes to apply.
 	 */
-	public static void applyChanges(Collection<Feature> fs, Collection<Feature> changes) {
+	public static void applyChanges(Collection<Feature> fs, Collection<Feature> differences) {
 
 		//index input features
 		HashMap<String, Feature> index = FeatureUtil.index(fs, null);
 
-		//go through changes
-		for(Feature ch : changes) {
+		//go through differences
+		for(Feature ch : differences) {
 
-			//retrieve type of change and change/feature id
+			//retrieve type of difference and change/feature id
 			String ct = ch.getAttribute("GeoDiff").toString();
 			String id = ch.getAttribute("ch_id").toString();
 
@@ -493,13 +491,13 @@ public class DifferenceDetection {
 	 * Apply a change to a feature.
 	 * 
 	 * @param f The feature to change, in its initial state.
-	 * @param ch The change. NB: this change cannot be a deletion or an insertion
+	 * @param diff The change. NB: this change cannot be a deletion or an insertion
 	 * @param ct The type of change, if known.
 	 */
-	public static void applyChange(Feature f, Feature ch, String ct) {
+	public static void applyChange(Feature f, Feature diff, String ct) {
 
 		//retrieve change type if necessary
-		if(ct==null || ct.isEmpty()) ct = ch.getAttribute("GeoDiff").toString();
+		if(ct==null || ct.isEmpty()) ct = diff.getAttribute("GeoDiff").toString();
 
 		//check change type
 		if("I".equals(ct) || "D".equals(ct)) {
@@ -509,7 +507,7 @@ public class DifferenceDetection {
 
 		//case of geometry change
 		if(ct.contains("G"))
-			f.setGeometry(ch.getGeometry());
+			f.setGeometry(diff.getGeometry());
 
 		//if no attribute change, continue
 		if(!ct.contains("A")) return;
@@ -519,7 +517,7 @@ public class DifferenceDetection {
 
 		//change attributes
 		int nbAtt_ = 0;
-		for(Entry<String,Object> att : ch.getAttributes().entrySet()) {
+		for(Entry<String,Object> att : diff.getAttributes().entrySet()) {
 
 			if("GeoDiff".equals(att.getKey())) continue;
 			if("ch_id".equals(att.getKey())) continue;

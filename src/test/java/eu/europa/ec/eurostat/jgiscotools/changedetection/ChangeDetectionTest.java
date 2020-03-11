@@ -55,27 +55,27 @@ public class ChangeDetectionTest extends TestCase {
 		//cd.setAttributesToIgnore("id","name");
 
 		//check unchanged
-		assertEquals(6, cd.getUnchanged().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getUnchanged(), true, MultiPolygon.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getUnchanged(), null).size());
+		assertEquals(6, cd.getIdentical().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getIdentical(), true, MultiPolygon.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getIdentical(), null).size());
 
 		//check changes
-		assertEquals(12, cd.getChanges().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getChanges(), true, MultiPolygon.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getChanges(), null).size());
+		assertEquals(12, cd.getDifferences().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getDifferences(), true, MultiPolygon.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getDifferences(), null).size());
 
 		//check hausdorf geom changes
-		assertEquals(2, cd.getHausdorffGeomChanges().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getHausdorffGeomChanges(), true, LineString.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getHausdorffGeomChanges(), null).size());
+		assertEquals(2, cd.getHausdorffGeomDifferences().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getHausdorffGeomDifferences(), true, LineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getHausdorffGeomDifferences(), null).size());
 
 		//check  geometry changes
-		assertEquals(4, cd.getGeomChanges().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getGeomChanges(), true, MultiPolygon.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomChanges(), null).size());
+		assertEquals(4, cd.getGeomDifferences().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getGeomDifferences(), true, MultiPolygon.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomDifferences(), null).size());
 
 		//check id stability issues
-		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getChanges(), 50);
+		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getDifferences(), 50);
 		assertEquals(4, sus.size());
 		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiPolygon.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
@@ -97,7 +97,7 @@ public class ChangeDetectionTest extends TestCase {
 		assertTrue( DifferenceDetection.equals(fsFin, fsFin) );
 
 		//test change application
-		DifferenceDetection.applyChanges(fsIni, cd.getChanges());
+		DifferenceDetection.applyChanges(fsIni, cd.getDifferences());
 		assertTrue( DifferenceDetection.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPolygon.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
@@ -136,27 +136,27 @@ public class ChangeDetectionTest extends TestCase {
 		//cd.setAttributesToIgnore("id","name");
 
 		//check unchanged
-		assertEquals(2, cd.getUnchanged().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getUnchanged(), true, MultiPoint.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getUnchanged(), null).size());
+		assertEquals(2, cd.getIdentical().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getIdentical(), true, MultiPoint.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getIdentical(), null).size());
 
 		//check changes
-		assertEquals(11, cd.getChanges().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getChanges(), true, MultiPoint.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getChanges(), null).size());
+		assertEquals(11, cd.getDifferences().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getDifferences(), true, MultiPoint.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getDifferences(), null).size());
 
 		//check hausdorf geom changes
-		assertEquals(4, cd.getHausdorffGeomChanges().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getHausdorffGeomChanges(), true, LineString.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getHausdorffGeomChanges(), null).size());
+		assertEquals(4, cd.getHausdorffGeomDifferences().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getHausdorffGeomDifferences(), true, LineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getHausdorffGeomDifferences(), null).size());
 
 		//check  geometry changes
-		assertEquals(8, cd.getGeomChanges().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getGeomChanges(), true, MultiPoint.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomChanges(), null).size());
+		assertEquals(8, cd.getGeomDifferences().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getGeomDifferences(), true, MultiPoint.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomDifferences(), null).size());
 
 		//check id stability issues
-		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getChanges(), 50);
+		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getDifferences(), 50);
 		assertEquals(2, sus.size());
 		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiPoint.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
@@ -178,7 +178,7 @@ public class ChangeDetectionTest extends TestCase {
 		assertTrue( DifferenceDetection.equals(fsFin, fsFin) );
 
 		//test change application
-		DifferenceDetection.applyChanges(fsIni, cd.getChanges());
+		DifferenceDetection.applyChanges(fsIni, cd.getDifferences());
 		assertTrue( DifferenceDetection.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPoint.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
@@ -213,27 +213,27 @@ public class ChangeDetectionTest extends TestCase {
 		//cd.setAttributesToIgnore("id","name");
 
 		//check unchanged
-		assertEquals(3, cd.getUnchanged().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getUnchanged(), true, MultiLineString.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getUnchanged(), null).size());
+		assertEquals(3, cd.getIdentical().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getIdentical(), true, MultiLineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getIdentical(), null).size());
 
 		//check changes
-		assertEquals(10, cd.getChanges().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getChanges(), true, MultiLineString.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getChanges(), null).size());
+		assertEquals(10, cd.getDifferences().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getDifferences(), true, MultiLineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getDifferences(), null).size());
 
 		//check hausdorf geom changes
-		assertEquals(2, cd.getHausdorffGeomChanges().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getHausdorffGeomChanges(), true, LineString.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getHausdorffGeomChanges(), null).size());
+		assertEquals(2, cd.getHausdorffGeomDifferences().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getHausdorffGeomDifferences(), true, LineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getHausdorffGeomDifferences(), null).size());
 
 		//check  geometry changes
-		assertEquals(4, cd.getGeomChanges().size());
-		assertTrue(JTSGeomUtil.checkGeometry(cd.getGeomChanges(), true, MultiLineString.class));
-		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomChanges(), null).size());
+		assertEquals(4, cd.getGeomDifferences().size());
+		assertTrue(JTSGeomUtil.checkGeometry(cd.getGeomDifferences(), true, MultiLineString.class));
+		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomDifferences(), null).size());
 
 		//check id stability issues
-		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getChanges(), 50);
+		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getDifferences(), 50);
 		assertEquals(2, sus.size());
 		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiLineString.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
@@ -255,7 +255,7 @@ public class ChangeDetectionTest extends TestCase {
 		assertTrue( DifferenceDetection.equals(fsFin, fsFin) );
 
 		//test change application
-		DifferenceDetection.applyChanges(fsIni, cd.getChanges());
+		DifferenceDetection.applyChanges(fsIni, cd.getDifferences());
 		assertTrue( DifferenceDetection.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiLineString.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());

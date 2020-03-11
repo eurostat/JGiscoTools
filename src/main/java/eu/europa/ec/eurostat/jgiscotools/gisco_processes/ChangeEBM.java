@@ -36,13 +36,13 @@ public class ChangeEBM {
 		DifferenceDetection cd = new DifferenceDetection(fsIni, fsFin);
 		cd.setAttributesToIgnore("OBJECTID");
 
-		Collection<Feature> unchanged = cd.getUnchanged();
+		Collection<Feature> unchanged = cd.getIdentical();
 		LOGGER.info("unchanged = "+unchanged.size());
-		Collection<Feature> changes = cd.getChanges();
+		Collection<Feature> changes = cd.getDifferences();
 		LOGGER.info("changes = "+changes.size());
-		Collection<Feature> hfgeoms = cd.getHausdorffGeomChanges();
+		Collection<Feature> hfgeoms = cd.getHausdorffGeomDifferences();
 		LOGGER.info("hfgeoms = "+hfgeoms.size());
-		Collection<Feature> geomch = cd.getGeomChanges();
+		Collection<Feature> geomch = cd.getGeomDifferences();
 		LOGGER.info("geomch = "+geomch.size());
 		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(changes, 500);
 		LOGGER.info("suspect changes = "+sus.size());

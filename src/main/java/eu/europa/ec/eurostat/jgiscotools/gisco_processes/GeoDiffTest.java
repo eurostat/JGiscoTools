@@ -25,7 +25,7 @@ public class GeoDiffTest {
 
 		DifferenceDetection dd = new DifferenceDetection(ini, fin);
 
-		Collection<Feature> gd = dd.getChanges();
+		Collection<Feature> gd = dd.getDifferences();
 
 		System.out.println("End");
 	}
