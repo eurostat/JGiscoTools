@@ -22,15 +22,9 @@ public class GeoDataTest extends TestCase {
 
 	private static final String path = "src/test/resources/io/";
 
-	public void testLoadGPKG() throws Exception {
-		testLoad("gpkg");
-	}
-	public void testLoadSHP() throws Exception {
-		testLoad("shp");
-	}
-	public void testLoadGeoJSON() throws Exception {
-		testLoad("geojson");
-	}
+	public void testLoadGPKG() throws Exception { testLoad("gpkg"); }
+	public void testLoadSHP() throws Exception { testLoad("shp"); }
+	public void testLoadGeoJSON() throws Exception { testLoad("geojson"); }
 
 	private void testLoad(String format) throws Exception {
 		System.out.println(format);
@@ -38,6 +32,8 @@ public class GeoDataTest extends TestCase {
 		GeoData gd = new GeoData(path + "test." + format);
 		ArrayList<Feature> fs = gd.getFeatures();
 		assertEquals("CARTO", gd.getCRSType().toString());
+
+		//TODO ensure schemas are the same
 
 		assertEquals(13, fs.size());
 		for(Feature f : fs) {
@@ -51,8 +47,16 @@ public class GeoDataTest extends TestCase {
 			assertTrue(f.getAttribute("temp") instanceof Double);
 			assertTrue(f.getAttribute("name") instanceof String);
 			//System.out.println(f.getAttribute("name") + " " + f.getID() + " " + f.getAttribute("fid"));
+			//TODO ensure ids are the same
 		}
+	}
 
+	public void testSaveGPKG() throws Exception { testSave("gpkg"); }
+	public void testSaveSHP() throws Exception { testSave("shp"); }
+	public void testSaveGeoJSON() throws Exception { testSave("geojson"); }
+
+	private void testSave(String format) throws Exception {
+		//TODO load files, save them, reload them and compare.
 	}
 
 }
