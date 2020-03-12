@@ -153,6 +153,11 @@ public class GeoData {
 						for(Feature f : SimpleFeatureUtil.get(fc))
 							if(this.filter.evaluate(f)) this.features.add(f);
 					}
+					//remove 'geometry' attribute
+					for(Feature f : this.features) {
+						Object o = f.getAttributes().remove("geometry");
+						if(o == null) LOGGER.warn("Could not remove geometry attribute when loading GeoJSON data.");
+					}
 					input.close();
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
