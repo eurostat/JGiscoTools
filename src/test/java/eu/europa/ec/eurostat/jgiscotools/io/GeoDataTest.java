@@ -4,10 +4,12 @@
 package eu.europa.ec.eurostat.jgiscotools.io;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
 import junit.framework.TestCase;
 
 /**
@@ -22,9 +24,9 @@ public class GeoDataTest extends TestCase {
 
 	private static final String path = "src/test/resources/io/";
 
-	//public void testLoadGPKG() throws Exception { testLoad("gpkg"); }
-	//public void testLoadSHP() throws Exception { testLoad("shp"); }
-	//public void testLoadGeoJSON() throws Exception { testLoad("geojson"); }
+	public void testLoadGPKG() throws Exception { testLoad("gpkg"); }
+	public void testLoadSHP() throws Exception { testLoad("shp"); }
+	public void testLoadGeoJSON() throws Exception { testLoad("geojson"); }
 
 	private void testLoad(String format) throws Exception {
 		//System.out.println(format);
@@ -38,6 +40,9 @@ public class GeoDataTest extends TestCase {
 		//System.out.println(gd.getSchema().isIdentified()); //all true
 		//System.out.println(gd.getSchema().getAttributeDescriptors());
 		//System.out.println(fs.get(0).getAttributes().keySet());
+
+		//TODO check index by id
+		//TODO load data - specify id column
 
 		assertEquals(13, fs.size());
 		for(Feature f : fs) {
@@ -73,15 +78,24 @@ public class GeoDataTest extends TestCase {
 		//reload data
 		GeoData gd2 = new GeoData(out);
 
+		//check same number of features
 		assertEquals(gd.getFeatures().size(), gd2.getFeatures().size());
+		//check same CRS
+		assertEquals(gd.getCRS(), gd2.getCRS());
 
 		//System.out.println(gd.getSchema());
 		//System.out.println(gd2.getSchema());
-		//System.out.println(gd.getSchema().getCoordinateReferenceSystem());
-		//System.out.println(gd2.getSchema().getCoordinateReferenceSystem());
-		//TODO check CRS
 
-		//TODO gpkg check features have same ids
+		//compare both datasets
+		//FeatureUtil.setId(gd.getFeatures(), "fid");
+		//FeatureUtil.setId(gd2.getFeatures(), "fid");
+		Collection<Feature> diffs = DifferenceDetection.getDifferences(gd.getFeatures(), gd2.getFeatures(), -1);
+		//System.out.println(diffs.size());
+		for(Feature diff : diffs) {
+			System.out.println(diff.getAttribute("GeoDiff"));
+		}
+		//TODO: problem. ID not preserved
+		//TODO: set IDs properly when loading/saving
 	}
 
 }
