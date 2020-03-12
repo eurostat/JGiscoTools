@@ -25,11 +25,8 @@ import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureReader;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.geojson.feature.FeatureJSON;
-import org.geotools.geopkg.FeatureEntry;
-import org.geotools.geopkg.GeoPackage;
 import org.geotools.geopkg.GeoPkgDataStoreFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -50,7 +47,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 public class GeoData {
 	private final static Logger LOGGER = LogManager.getLogger(GeoData.class);
 
-	//TODO add wkt format?
+	//TODO handle additional formats? WKT/WKB?
 
 	private String filePath;
 	private Filter filter;
@@ -108,12 +105,17 @@ public class GeoData {
 				break;
 			case "gpkg":
 				try {
-					GeoPackage gp = new GeoPackage(file);
-					FeatureEntry fe = gp.features().get(0);
-					SimpleFeatureReader fr = gp.reader(fe, null, new DefaultTransaction());
-					this.schema = fr.getFeatureType();
-					fr.close();
-					gp.close();
+					HashMap<String, Object> params = new HashMap<>();
+					params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
+					params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
+					DataStore store = DataStoreFinder.getDataStore(params);
+					String[] names = store.getTypeNames();
+					if(names.length >1 )
+						LOGGER.warn("Several types found in GPKG " + filePath + ". Only " + names[0] + " will be considered.");
+					String name = names[0];
+					LOGGER.debug(name);
+					this.schema = store.getSchema(name);
+					store.dispose();
 				} catch (IOException e) { e.printStackTrace(); }
 				break;
 			default:
@@ -160,14 +162,14 @@ public class GeoData {
 					params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
 					params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
 					DataStore store = DataStoreFinder.getDataStore(params);
-
-					this.features = new ArrayList<Feature>();
 					String[] names = store.getTypeNames();
-					for (String name : names) {
-						LOGGER.debug(name);
-						SimpleFeatureCollection features = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
-						this.features.addAll( SimpleFeatureUtil.get(features) );
-					}
+					if(names.length >1 )
+						LOGGER.warn("Several types found in GPKG " + filePath + ". Only " + names[0] + " will be considered.");
+					String name = names[0];
+					LOGGER.debug(name);
+					SimpleFeatureCollection sfc = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
+					this.schema = store.getSchema(name);
+					this.features = SimpleFeatureUtil.get(sfc);
 					store.dispose();
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
