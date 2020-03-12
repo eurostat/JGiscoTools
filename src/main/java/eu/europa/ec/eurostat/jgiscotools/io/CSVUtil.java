@@ -12,10 +12,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.locationtech.jts.geom.Coordinate;
+
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 /**
  * @author julien Gaffuri
@@ -120,4 +124,30 @@ public class CSVUtil {
 		save(data_, outFile, keys);
 	}
 
+
+
+
+	/**
+	 * Transform CSV data into a feature collection, with point geometry.
+	 * 
+	 * @param csvData
+	 * @param xCol
+	 * @param yCol
+	 * @return
+	 */
+	public static Collection<Feature> CSVToFeatures(Collection<Map<String, String>> csvData, String xCol, String yCol) {
+		Collection<Feature> out = new ArrayList<Feature>();
+		for (Map<String, String> h : csvData) {
+			Feature f = new Feature();
+			Coordinate c = new Coordinate(0,0);
+			for(Entry<String,String> e : h.entrySet()) {
+				if(xCol.equals(e.getKey())) c.x = Double.parseDouble(e.getValue());
+				if(yCol.equals(e.getKey())) c.y = Double.parseDouble(e.getValue());
+				f.setAttribute(e.getKey(), e.getValue());
+			}
+			out.add(f);
+		}
+		return out;
+	}
+	
 }
