@@ -35,8 +35,8 @@ public class SimpleFeatureUtil {
 		Feature f = new Feature();
 
 		//set id
-		String id = sf.getID();
-		if(id != null && !"".equals(id)) f.setID(id);
+		if(sf.getID() != null && !"".equals(sf.getID())) f.setID(sf.getID());
+		else if(sf.getAttribute("id") != null && !"".equals(sf.getAttribute("id").toString())) f.setID(sf.getAttribute("id").toString());
 
 		//set geometry
 		Property pg = sf.getProperty( sf.getFeatureType().getGeometryDescriptor().getName() );
@@ -55,8 +55,9 @@ public class SimpleFeatureUtil {
 
 	public static ArrayList<Feature> get(SimpleFeatureCollection sfs) {
 		SimpleFeatureIterator it = sfs.features();
+		SimpleFeatureType sh = sfs.getSchema();
+		String[] attNames = getAttributeNames(sh);
 		ArrayList<Feature> fs = new ArrayList<Feature>();
-		String[] attNames = getAttributeNames(sfs.getSchema());
 		while( it.hasNext()  )
 			fs.add(get(it.next(), attNames));
 		it.close();
