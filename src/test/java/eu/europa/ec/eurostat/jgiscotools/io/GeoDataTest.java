@@ -96,6 +96,7 @@ public class GeoDataTest extends TestCase {
 		}
 		//TODO: problem. ID not preserved
 		//TODO: set IDs properly when loading/saving
+
 	}
 
 }
