@@ -22,7 +22,7 @@ public class GeocodingValidation {
 		
 		//load hospitals
 		System.out.println("load");
-		ArrayList<Map<String,String>> hospitals = CSVUtil.load(HealthCareDataFormattingGeocoding.path+"AT/AT_geolocated.csv", CSVFormat.DEFAULT.withFirstRecordAsHeader());
+		ArrayList<Map<String,String>> hospitals = CSVUtil.load(HealthCareDataFormattingGeocoding.path+"IT/IT_geolocated.csv", CSVFormat.DEFAULT.withFirstRecordAsHeader());
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
 		
 		//build linear features
@@ -40,7 +40,7 @@ public class GeocodingValidation {
 		}
 		
 		//save linear feature
-		GeoPackageUtil.save(errors, HealthCareDataFormattingGeocoding.path+"AT/geocoding_validation.gpkg", crs, true);
+		GeoPackageUtil.save(errors, HealthCareDataFormattingGeocoding.path+"IT/geocoding_validation.gpkg", crs, true);
 		
 		System.out.println("End");
 	}

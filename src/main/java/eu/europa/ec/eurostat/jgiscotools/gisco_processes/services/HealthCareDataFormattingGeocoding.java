@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,8 +12,17 @@ import org.apache.commons.csv.CSVFormat;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.locationtech.jts.geom.Coordinate;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
 
 public class HealthCareDataFormattingGeocoding {
 
@@ -29,8 +39,12 @@ public class HealthCareDataFormattingGeocoding {
 		// LocalParameters.loadProxySettings();
 		// formatRO();
 		// formatFI();
-		formatIT();
+		//formatIT();
+		formatDE();
 		// ...
+
+		//geocodeIT();
+
 
 		/*
 		 * /AT System.out.println("load"); ArrayList<Map<String,String>> hospitals =
@@ -42,8 +56,82 @@ public class HealthCareDataFormattingGeocoding {
 		 * CSVUtil.save(hospitals,path+"AT/AT_geolocated.csv");
 		 */
 
+		/*/IT geocoding
+		System.out.println("load");
+		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path+"IT/IT_formatted.csv", CSVFormat.DEFAULT.withFirstRecordAsHeader());
+		geocodeGISCO(hospitals, false);
+		LocalParameters.loadProxySettings(); //TODO fix that - GISCO geocoder does not work with proxy
+		geocodeBing(hospitals, false);
+		System.out.println("save");
+		CSVUtil.save(hospitals,path+"IT/IT_geolocated.csv");
+*/
+		
+		//TODO null pointer
+		//GeoPackageUtil.save(CSVUtil.CSVToFeatures(hospitals, "lonBing", "latBing"), "E:\\\\dissemination\\\\shared-data\\\\MS_data\\\\Service - Health\\\\IT/IT_geolocated.gpkg", ProjectionUtil.getWGS_84_CRS());
+
 		System.out.println("End");
 	}
+
+	private static void geocodeGISCO(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
+		//int count = 0;
+		int fails = 0;
+		for(Map<String,String> hospital : hospitals) {
+			//count++;
+			String address = "";
+			if(hospital.get("house_number")!=null) address += hospital.get("house_number") + " ";
+			address += hospital.get("street");
+			address += " ";
+			if(usePostcode) {
+				address += hospital.get("postcode");
+				address += " ";
+			}
+			address += hospital.get("city");
+			address += " ";
+			address += hospital.get("country");
+			System.out.println(address);
+
+			Coordinate c = GISCOGeocoder.geocode(address);
+			System.out.println(c);
+			if(c.getX()==0 && c.getY()==0) fails++;
+
+			//if(count > 10) break;
+			hospital.put("latGISCO", "" + c.y);
+			hospital.put("lonGISCO", "" + c.x);
+		}
+
+		System.out.println("Failures: "+fails+"/"+hospitals.size());
+	}
+
+
+	private static void geocodeBing(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
+		//int count = 0;
+		int fails = 0;
+		for(Map<String,String> hospital : hospitals) {
+			//count++;
+			GeocodingAddress address = new GeocodingAddress(
+					null,
+					hospital.get("house_number"),
+					hospital.get("street"),
+					hospital.get("city"),
+					hospital.get("cc"),
+					hospital.get("postcode")
+					);
+
+			Coordinate c = BingGeocoder.geocode(address);
+			System.out.println(c);
+			if(c.getX()==0 && c.getY()==0) fails++;
+
+			//if(count > 10) break;
+			hospital.put("latBing", "" + c.y);
+			hospital.put("lonBing", "" + c.x);
+		}
+
+		System.out.println("Failures: "+fails+"/"+hospitals.size());
+	}
+
+
+
+
 
 	/**
 	 * Format RO
@@ -312,14 +400,14 @@ public class HealthCareDataFormattingGeocoding {
 				"E:\\dissemination\\shared-data\\MS_data\\Service - Health\\FI/FI_formatted.csv");
 
 	}
-	
+
 	public static void formatIT() {
 
 		String filePath = path + "IT/C_17_dataset_96_0_upFile.csv";
 		ArrayList<Map<String, String>> hospitals = CSVUtil.load(filePath,
 				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(';'));
 		System.out.println(hospitals.size());
-		
+
 		Collection<Map<String, String>> hospitalsFormatted = new ArrayList<Map<String, String>>();
 		for (Map<String, String> h : hospitals) {
 
@@ -329,27 +417,60 @@ public class HealthCareDataFormattingGeocoding {
 			HashMap<String, String> hf = new HashMap<String, String>();
 			hf.put("cc", "IT");
 			hf.put("country", "Italy");
-			hf.put("id", h.get("Codice Azienda") + "-" + h.get("Codice struttura") + "-" + h.get("Subcodice"));
-			hf.put("hospital_name", h.get("Denominazione Struttura/Stabilimento"));
-			hf.put("street", h.get("Indirizzo"));
-			hf.put("city", h.get("Comune"));
-			hf.put("cap_beds", h.get("Totale posti letto"));
-			hf.put("facility_type", h.get("Descrizione tipo struttura"));
-			hf.put("year", h.get("Anno"));
+			hf.put("id", h.get("Codice Azienda").trim() + "-" + h.get("Codice struttura").trim() + "-" + h.get("Subcodice").trim());
+			hf.put("hospital_name", h.get("Denominazione Struttura/Stabilimento").trim());
+			hf.put("street", h.get("Indirizzo").trim());
+			hf.put("city", h.get("Comune").trim());
+			hf.put("cap_beds", h.get("Totale posti letto").trim());
+			hf.put("facility_type", h.get("Descrizione tipo struttura").trim());
+			hf.put("year", h.get("Anno").trim());
 
 			// add to list
 			hospitalsFormatted.add(hf);
 		}
+		System.out.println(hospitalsFormatted.size());
 
+		//compact the hospitals
+		Map<String, Map<String, String>> hospitalsCompacted = new HashMap<>();
 		for (Map<String, String> h : hospitalsFormatted) {
-			//TODO shrink hospitals, summing number of beds
+			//get hospital compacted
+			Map<String, String> hC = hospitalsCompacted.get(h.get("id"));
+			if(hC==null) {
+				hospitalsCompacted.put(h.get("id"), h);
+			} else {
+				hC.put("cap_beds", ""+(Integer.parseInt(hC.get("cap_beds")) + Integer.parseInt(h.get("cap_beds"))));
+			}
 		}
+		hospitalsFormatted = hospitalsCompacted.values();
+		System.out.println(hospitalsFormatted.size());
 
-		
-		
+
 		// save
-		CSVUtil.save(hospitalsFormatted,
-				"E:\\dissemination\\shared-data\\MS_data\\Service - Health\\IT/IT_formatted.csv");
-
+		CSVUtil.save(hospitalsFormatted, path + "IT/IT_formatted.csv");
 	}
+
+	public static void formatDE() {
+		try {
+			String filePath = path + "DE/dkgev_indented.xml";
+			Document doc = XMLUtils.parse(new FileInputStream(filePath));
+
+			Element root = doc.getDocumentElement();
+			System.out.println( root.getNodeName() );
+			
+			NodeList elts = root.getChildNodes();
+			//System.out.println(elts.getLength());
+			for(int i=0; i<elts.getLength(); i++) {
+				Node elt = elts.item(i);
+				System.out.println(elt.getNodeName());
+			}
+			
+			
+			//NamedNodeMap atts = doc.getAttributes();
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
