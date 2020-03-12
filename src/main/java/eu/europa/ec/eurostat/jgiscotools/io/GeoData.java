@@ -137,7 +137,7 @@ public class GeoData {
 					FileDataStore store = FileDataStoreFinder.getDataStore(this.file);
 					SimpleFeatureCollection features = filter==null? store.getFeatureSource().getFeatures() : store.getFeatureSource().getFeatures(filter);
 					store.dispose();
-					this.features = SimpleFeatureUtil.get(features);
+					this.features = SimpleFeatureUtil.get(features, null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -147,10 +147,10 @@ public class GeoData {
 					InputStream input = new FileInputStream(new File(filePath));
 					SimpleFeatureCollection fc = (SimpleFeatureCollection) new FeatureJSON().readFeatureCollection(input);
 					if(this.filter == null)
-						this.features = SimpleFeatureUtil.get(fc);
+						this.features = SimpleFeatureUtil.get(fc, "id");
 					else {
 						this.features = new ArrayList<Feature>();
-						for(Feature f : SimpleFeatureUtil.get(fc))
+						for(Feature f : SimpleFeatureUtil.get(fc, "id"))
 							if(this.filter.evaluate(f)) this.features.add(f);
 					}
 					//remove 'geometry' attribute
@@ -158,6 +158,7 @@ public class GeoData {
 						Object o = f.getAttributes().remove("geometry");
 						if(o == null) LOGGER.warn("Could not remove geometry attribute when loading GeoJSON data.");
 					}
+
 					input.close();
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
@@ -174,7 +175,7 @@ public class GeoData {
 					LOGGER.debug(name);
 					SimpleFeatureCollection sfc = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
 					this.schema = store.getSchema(name);
-					this.features = SimpleFeatureUtil.get(sfc);
+					this.features = SimpleFeatureUtil.get(sfc, null);
 					store.dispose();
 				} catch (Exception e) { e.printStackTrace(); }
 				break;

@@ -115,7 +115,7 @@ public class SHPUtil {
 	public static ArrayList<Feature> getFeatures(String shpFilePath) { return getFeatures(shpFilePath, null); }
 	public static ArrayList<Feature> getFeatures(String shpFilePath, Filter f) {
 		SimpleFeatureCollection sfs = getSimpleFeatures(shpFilePath, f);
-		return SimpleFeatureUtil.get(sfs);
+		return SimpleFeatureUtil.get(sfs, null);
 	}
 
 

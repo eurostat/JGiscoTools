@@ -79,7 +79,7 @@ public class GeoPackageUtil {
 			for (String name : names) {
 				LOGGER.debug(name);
 				SimpleFeatureCollection features = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
-				fs.addAll( SimpleFeatureUtil.get(features) );
+				fs.addAll( SimpleFeatureUtil.get(features, null) );
 			}
 			store.dispose();
 			return fs;

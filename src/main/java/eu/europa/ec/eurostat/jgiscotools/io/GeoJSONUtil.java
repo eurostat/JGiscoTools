@@ -65,7 +65,7 @@ public class GeoJSONUtil {
 	public static ArrayList<Feature>  getFeatures(String filePath) {
 		SimpleFeatureCollection sfc = loadFC(filePath);
 		if(sfc == null) return null;
-		return SimpleFeatureUtil.get(sfc);
+		return SimpleFeatureUtil.get(sfc, "id");
 	}
 
 	public static void save(Collection<? extends Feature> fs, String outFile, CoordinateReferenceSystem crs) { save(SimpleFeatureUtil.get(fs, crs), outFile); }

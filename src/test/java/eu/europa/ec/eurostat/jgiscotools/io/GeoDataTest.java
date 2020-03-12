@@ -18,6 +18,8 @@ import junit.framework.TestCase;
  */
 public class GeoDataTest extends TestCase {
 
+	//TODO test on geojson with and without id
+	
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(GeoDataTest.class);
 	}

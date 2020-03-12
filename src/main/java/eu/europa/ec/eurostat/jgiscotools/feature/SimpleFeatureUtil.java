@@ -31,12 +31,13 @@ public class SimpleFeatureUtil {
 	private final static Logger LOGGER = LogManager.getLogger(SimpleFeatureUtil.class);
 
 	//SimpleFeature to feature
-	public static Feature get(SimpleFeature sf, String[] attNames){
+	public static Feature get(SimpleFeature sf, String attId, String[] attNames){
 		Feature f = new Feature();
 
 		//set id
-		if(sf.getID() != null && !"".equals(sf.getID())) f.setID(sf.getID());
-		else if(sf.getAttribute("id") != null && !"".equals(sf.getAttribute("id").toString())) f.setID(sf.getAttribute("id").toString());
+		if(attId != null && sf.getAttribute(attId) != null && !"".equals(sf.getAttribute(attId)))
+			f.setID(sf.getAttribute(attId).toString());
+		else if(sf.getID() != null && !"".equals(sf.getID())) f.setID(sf.getID());
 
 		//set geometry
 		Property pg = sf.getProperty( sf.getFeatureType().getGeometryDescriptor().getName() );
@@ -51,15 +52,15 @@ public class SimpleFeatureUtil {
 
 		return f;
 	}
-	public static Feature get(SimpleFeature sf){ return get(sf, getAttributeNames(sf.getFeatureType())); }
+	public static Feature get(SimpleFeature sf, String attId){ return get(sf, attId, getAttributeNames(sf.getFeatureType())); }
 
-	public static ArrayList<Feature> get(SimpleFeatureCollection sfs) {
+	public static ArrayList<Feature> get(SimpleFeatureCollection sfs, String attId) {
 		SimpleFeatureIterator it = sfs.features();
 		SimpleFeatureType sh = sfs.getSchema();
 		String[] attNames = getAttributeNames(sh);
 		ArrayList<Feature> fs = new ArrayList<Feature>();
 		while( it.hasNext()  )
-			fs.add(get(it.next(), attNames));
+			fs.add(get(it.next(), attId, attNames));
 		it.close();
 		return fs;
 	}
