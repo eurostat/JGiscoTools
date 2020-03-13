@@ -11,9 +11,9 @@
 To load geographical features from a [GeoPackage](https://www.geopackage.org/), a [Shapefile](https://en.wikipedia.org/wiki/Shapefile) or a [GeoJSON](https://geojson.org/) file, use:
 
 ```java
-Collection<Feature> featuresGPKG = GeoPackageUtil.getFeatures("C:/myFile.gpkg");
-Collection<Feature> featuresSHP = SHPUtil.getFeatures("C:/myFile.shp");
-Collection<Feature> featuresGEOJSON = GeoJSONUtil.getFeatures("C:/myFile.geojson");
+Collection<Feature> featuresGPKG = GeoData.getFeatures("C:/myFile.gpkg");
+Collection<Feature> featuresSHP = GeoData.getFeatures("C:/myFile.shp");
+Collection<Feature> featuresGEOJSON = GeoData.getFeatures("C:/myFile.geojson");
 ```
 
 ### Read
@@ -59,20 +59,18 @@ f.setGeometry( f.getGeometry().buffer(10) );
 
 ### Save
 
-To save data as [GeoPackage](https://www.geopackage.org/) or [Shapefile](https://en.wikipedia.org/wiki/Shapefile) file, use:
+To save data as a [GeoPackage](https://www.geopackage.org/), a [Shapefile](https://en.wikipedia.org/wiki/Shapefile) or a [GeoJSON](https://geojson.org/) file, use:
 
 ```java
-//save as gpkg file
-GeoPackageUtil.save(features, "C:/myFile.gpkg", crs, true);
-//save as shp file
-SHPUtil.save(features, "C:/myFile.shp", crs, true);
+GeoData.save(features, "C:/myFile.gpkg", crs);
+GeoData.save(features, "C:/myFile.shp", crs);
+GeoData.save(features, "C:/myFile.geojson", crs);
 ```
 
 The CRS (Coordinate Reference System) has to be specified, either from an input dataset, or from its EPSG code:
 
 ```java
-CoordinateReferenceSystem crsGPKG = GeoPackageUtil.getCRS("C:/myFile.gpkg");
-CoordinateReferenceSystem crsSHP = SHPUtil.getCRS("C:/myFile.shp");
+CoordinateReferenceSystem crs = GeoData.getCRS("C:/myFile.gpkg");
 CoordinateReferenceSystem crsEPSG = CRS.decode("EPSG:3035")
 ```
 
