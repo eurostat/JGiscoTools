@@ -11,13 +11,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
@@ -274,8 +274,8 @@ public class GeoData {
 	public static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
 
 		//create GT feature collection
-		//TODO support attribute typing
-		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, crs);
+		SimpleFeatureType ft = getFeatureType(fs, crs);
+		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, ft);
 		if(sfc.size() == 0){
 			//file.createNewFile();
 			LOGGER.warn("Could not save file " + filePath + " - collection of features is empty");
@@ -348,6 +348,16 @@ public class GeoData {
 		default:
 			LOGGER.error("Unsuported output format: " + format);
 		}
+	}
+
+	private static SimpleFeatureType getFeatureType(Collection<Feature> fs, CoordinateReferenceSystem crs) {
+		//TODO support attribute typing
+		//TODO use stringbuffer
+		String st = "";
+		st = "the_geom:" + getGeometryType(fs); //TODO with f.getGeometry().getGeometryType()
+		if(data!=null) st += "," + data;
+		SimpleFeatureType sc = DataUtilities.createType("type", st);
+		return DataUtilities.createSubType(sc, null, crs);
 	}
 
 	/**

@@ -22,13 +22,15 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Conversion functions from GT SimpleFeatures from/to OC features
+ * Conversion functions from GT SimpleFeatures from/to Feature
  * 
  * @author julien Gaffuri
  *
  */
 public class SimpleFeatureUtil {
 	private final static Logger LOGGER = LogManager.getLogger(SimpleFeatureUtil.class);
+
+
 
 	//SimpleFeature to feature
 	public static Feature get(SimpleFeature sf, String attId, String[] attNames){
@@ -198,6 +200,10 @@ public class SimpleFeatureUtil {
 	}*/
 
 
+
+
+
+
 	public static <T extends Geometry> Collection<Feature> getFeaturesFromGeometries(Collection<T> geoms) {
 		ArrayList<Feature> fs = new ArrayList<Feature>();
 		for(Geometry geom : geoms){
@@ -207,25 +213,5 @@ public class SimpleFeatureUtil {
 		}
 		return fs;
 	}
-
-
-
-
-	/*public static void main(String[] args) {
-
-		SimpleFeatureType sch = SHPUtil.loadSHP("/home/juju/Bureau/nuts_gene_data/test/test.shp").ft;
-
-		for(int i=0; i<sch.getAttributeCount(); i++){
-			System.out.println(sch.getDescriptor(i).getLocalName());
-			System.out.println(sch.getDescriptor(i).getType());
-		}
-
-		Feature f = new Feature(); f = new Feature(); f = new Feature();
-		f.props.put("type", "lalala");
-		f.props.put("truc", "pspsps");
-		f.setGeom(new GeometryFactory().createPoint(new Coordinate(15,48)));
-		System.out.println(f.id);
-		System.out.println(getFeatureType(f));
-	}*/
 
 }
