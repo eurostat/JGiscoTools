@@ -24,11 +24,11 @@ public class GeoDataTest extends TestCase {
 	private static final String path = "src/test/resources/io/";
 
 	/***/
-	//public void testLoadGPKG() { testLoad("gpkg"); }
+	public void testLoadGPKG() { testLoad("gpkg"); }
 	/***/
-	//public void testLoadSHP() { testLoad("shp"); }
+	public void testLoadSHP() { testLoad("shp"); }
 	/***/
-	//public void testLoadGeoJSON() { testLoad("geojson"); }
+	public void testLoadGeoJSON() { testLoad("geojson"); }
 
 	private void testLoad(String format) {
 		//System.out.println(format);
@@ -77,7 +77,7 @@ public class GeoDataTest extends TestCase {
 	public void testSaveGeoJSON() { testSave(".geojson"); }
 
 	private void testSave(String format) {
-		System.out.println(format);
+		//System.out.println(format);
 		boolean gjs = format.contains("geojson");
 		boolean shp = format.contains("shp");
 
@@ -113,11 +113,10 @@ public class GeoDataTest extends TestCase {
 
 			assertTrue(f.getAttribute("name") instanceof String);
 
-			if(gjs) assertTrue(f.getAttribute("temp") instanceof String); //TODO should be double
-			else assertTrue(f.getAttribute("temp") instanceof Double);
+			assertTrue(f.getAttribute("temp") instanceof Double);
 
 			if(shp) assertTrue(f.getAttribute("allowed") instanceof Long);
-			else if(gjs) assertTrue(f.getAttribute("allowed") instanceof String); //TODO should be boolean
+			else if(gjs) assertTrue(f.getAttribute("allowed") instanceof Boolean);
 			else assertTrue(f.getAttribute("allowed") instanceof Integer); //TODO should be boolean
 
 			assertNull(f.getAttribute("sdfdsfkjsfh"));
@@ -125,9 +124,9 @@ public class GeoDataTest extends TestCase {
 		}
 
 		//compare both datasets
-		//Collection<Feature> diffs = DifferenceDetection.getDifferences(gd.getFeatures(), gd2.getFeatures(), -1);
-		//System.out.println(diffs.size());
-		//for(Feature diff : diffs) System.out.println(diff.getAttribute("GeoDiff"));
+		/*Collection<Feature> diffs = DifferenceDetection.getDifferences(gd.getFeatures(), gd2.getFeatures(), -1);
+		System.out.println(diffs.size());
+		for(Feature diff : diffs) System.out.println(diff.getAttribute("GeoDiff"));*/
 
 	}
 }
