@@ -20,7 +20,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Conversion functions from GT SimpleFeatures from/to Feature
+ * Conversion functions from GeoTools SimpleFeatures from/to Feature
  * 
  * @author julien Gaffuri
  *
@@ -29,8 +29,15 @@ public class SimpleFeatureUtil {
 	private final static Logger LOGGER = LogManager.getLogger(SimpleFeatureUtil.class);
 
 
-	//SimpleFeature to feature
-	public static Feature get(SimpleFeature sf, String attId, String[] attNames){
+	/**
+	 * Convert GeoTools SimpleFeature into feature
+	 * 
+	 * @param sf
+	 * @param attId
+	 * @param attNames
+	 * @return
+	 */
+	private static Feature get(SimpleFeature sf, String attId, String[] attNames){
 		Feature f = new Feature();
 
 		//set id
@@ -47,15 +54,25 @@ public class SimpleFeatureUtil {
 		f.setGeometry( (Geometry)pg.getValue() );
 
 		//set attributes
-		for(String attName : attNames) f.setAttribute(attName, sf.getProperty(attName).getValue());
+		for(String attName : attNames) {
+			Object attValue = sf.getProperty(attName).getValue();
+			f.setAttribute(attName, attValue);
+		}
 
 		return f;
 	}
 
+	/**
+	 * Convert GeoTools SimpleFeatures into features
+	 * 
+	 * @param sfs
+	 * @param attId
+	 * @return
+	 */
 	public static ArrayList<Feature> get(SimpleFeatureCollection sfs, String attId) {
 		SimpleFeatureIterator it = sfs.features();
-		SimpleFeatureType sh = sfs.getSchema();
-		String[] attNames = getAttributeNames(sh);
+		SimpleFeatureType ft = sfs.getSchema();
+		String[] attNames = getAttributeNames(ft);
 		ArrayList<Feature> fs = new ArrayList<Feature>();
 		while( it.hasNext()  )
 			fs.add(get(it.next(), attId, attNames));
@@ -63,6 +80,13 @@ public class SimpleFeatureUtil {
 		return fs;
 	}
 
+	/**
+	 * Convert features into GeoTools SimpleFeature
+	 * 
+	 * @param fs
+	 * @param ft
+	 * @return
+	 */
 	public static SimpleFeatureCollection get(Collection<? extends Feature> fs, SimpleFeatureType ft) {
 		DefaultFeatureCollection sfc = new DefaultFeatureCollection(null, ft);
 		SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(ft);
@@ -82,7 +106,7 @@ public class SimpleFeatureUtil {
 		return sfc;
 	}
 
-	public static String[] getAttributeNames(SimpleFeatureType ft){
+	private static String[] getAttributeNames(SimpleFeatureType ft){
 		ArrayList<String> atts = new ArrayList<String>();
 		for(int i=0; i<ft.getAttributeCount(); i++){
 			String att = ft.getDescriptor(i).getLocalName();
@@ -97,6 +121,9 @@ public class SimpleFeatureUtil {
 
 
 	/**
+	 * Get GeoTools FeatureType from features.
+	 * NB: All features are assumed to have the same attributes names/types and geometry types.
+	 * 
 	 * @param <T>
 	 * @param fs
 	 * @param crs
@@ -104,7 +131,7 @@ public class SimpleFeatureUtil {
 	 */
 	public static <T extends Feature> SimpleFeatureType getFeatureType(Collection<T> fs, CoordinateReferenceSystem crs) {
 		SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
-		Feature f = fs.iterator().next(); //TODO
+		Feature f = fs.iterator().next(); //TODO get common elements - or check all of them have same structure
 		sftb.setCRS(crs);
 		sftb.setName( "type" );
 		sftb.setNamespaceURI("http://geotools.org");
@@ -119,6 +146,8 @@ public class SimpleFeatureUtil {
 
 
 	/**
+	 * Create features from geometries
+	 * 
 	 * @param <T>
 	 * @param geoms
 	 * @return
