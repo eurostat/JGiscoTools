@@ -158,7 +158,6 @@ public class GWebServices {
 	 * 
 	 * @param lat the latitude of the point
 	 * @param lon the longitude of the point
-	 * @param sensor true if the data comes from a sensor
 	 * @return the elevation value (returns NO_VALUE_RETURNED in case of problem)
 	 */
 	public static double getElevationSingle(double lat, final double lon) {
