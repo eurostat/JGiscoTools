@@ -16,7 +16,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculator;
 
@@ -46,7 +46,7 @@ public class BasicServiceAccessibility {
 		int resKM = 10;
 		logger.info("Load grid cells " + resKM + "km ...");
 		String cellIdAtt = "GRD_ID";
-		ArrayList<Feature> cells = GeoPackageUtil.getFeatures(basePath + "grid/grid_"+resKM+"km.gpkg" , cnt==null?null:CQL.toFilter("CNTR_ID = '"+cnt+"'"));
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grid/grid_"+resKM+"km.gpkg",null, cnt==null?null:CQL.toFilter("CNTR_ID = '"+cnt+"'"));
 		logger.info(cells.size() + " cells");
 
 
@@ -56,7 +56,7 @@ public class BasicServiceAccessibility {
 		//TODO add other transport networks (ferry, etc?)
 		//EXS Existence Category - RST Road Surface Type
 		Filter fil = CQL.toFilter("((EXS=28 OR EXS=0) AND (RST=1 OR RST=0))" + (cnt==null?"":" AND (ICC = '"+cnt+"')") );
-		Collection<Feature> networkSections = GeoPackageUtil.getFeatures(egPath+ "ERM/gpkg/ERM_2019.1_LAEA/RoadL.gpkg", fil);
+		Collection<Feature> networkSections = GeoData.getFeatures(egPath+ "ERM/gpkg/ERM_2019.1_LAEA/RoadL.gpkg", null, fil);
 		//Collection<Feature> networkSections = SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
 		//networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil) );
 		//networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil) );
@@ -121,7 +121,7 @@ public class BasicServiceAccessibility {
 		}) {
 
 			logger.info("Load POIs " + c.label + "...");
-			ArrayList<Feature> pois = GeoPackageUtil.getFeatures(egPath+"ERM/gpkg/ERM_2019.1_LAEA/GovservP.gpkg", CQL.toFilter("("+c.filter +")"+ (cnt==null?"":" AND (ICC = '"+cnt+"')") ));
+			ArrayList<Feature> pois = GeoData.getFeatures(egPath+"ERM/gpkg/ERM_2019.1_LAEA/GovservP.gpkg", null, CQL.toFilter("("+c.filter +")"+ (cnt==null?"":" AND (ICC = '"+cnt+"')") ));
 			logger.info(pois.size() + " POIs");
 
 
@@ -135,7 +135,7 @@ public class BasicServiceAccessibility {
 			logger.info("Save data...");
 			CSVUtil.save(ag.getCellData(), outPath + "accessibility_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".csv");
 			logger.info("Save routes... Nb=" + ag.getRoutes().size());
-			GeoPackageUtil.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".gpkg", crs, true);
+			GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".gpkg", crs, true);
 
 		}
 

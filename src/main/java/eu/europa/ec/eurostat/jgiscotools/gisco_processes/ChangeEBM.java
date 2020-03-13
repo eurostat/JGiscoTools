@@ -8,9 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 public class ChangeEBM {
 	private final static Logger LOGGER = LogManager.getLogger(ChangeEBM.class.getName());
@@ -20,13 +19,10 @@ public class ChangeEBM {
 		String path = "E:/dissemination/shared-data/EBM/gpkg/";
 		String outpath = "E:/workspace/EBM_2019_2020_comparison/comparison/";
 
-		ArrayList<Feature> fsIni = GeoPackageUtil.getFeatures(path+"EBM_2019_LAEA/EBM_A.gpkg");
+		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"EBM_2019_LAEA/EBM_A.gpkg", "inspireId");
 		LOGGER.info("Ini="+fsIni.size());
-		ArrayList<Feature> fsFin = GeoPackageUtil.getFeatures(path+"EBM_2020_LAEA/EBM_A.gpkg");
+		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"EBM_2020_LAEA/EBM_A.gpkg", "inspireId");
 		LOGGER.info("Fin="+fsFin.size());
-
-		FeatureUtil.setId(fsIni, "inspireId");
-		FeatureUtil.setId(fsFin, "inspireId");
 
 		//LOGGER.info("check ids:");
 		//LOGGER.info( FeatureUtil.checkIdentfier(fsIni, "inspireId") );
@@ -47,12 +43,12 @@ public class ChangeEBM {
 		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(changes, 500);
 		LOGGER.info("suspect changes = "+sus.size());
 
-		CoordinateReferenceSystem crs = GeoPackageUtil.getCRS(path+"EBM_2019_LAEA/EBM_A.gpkg");
-		GeoPackageUtil.save(changes, outpath+"changes.gpkg", crs, true);
-		GeoPackageUtil.save(unchanged, outpath+"unchanged.gpkg", crs, true);
-		GeoPackageUtil.save(hfgeoms, outpath+"hfgeoms.gpkg", crs, true);
-		GeoPackageUtil.save(geomch, outpath+"geomch.gpkg", crs, true);
-		GeoPackageUtil.save(sus, outpath+"suspects.gpkg", crs, true);
+		CoordinateReferenceSystem crs = GeoData.getCRS(path+"EBM_2019_LAEA/EBM_A.gpkg");
+		GeoData.save(changes, outpath+"changes.gpkg", crs, true);
+		GeoData.save(unchanged, outpath+"unchanged.gpkg", crs, true);
+		GeoData.save(hfgeoms, outpath+"hfgeoms.gpkg", crs, true);
+		GeoData.save(geomch, outpath+"geomch.gpkg", crs, true);
+		GeoData.save(sus, outpath+"suspects.gpkg", crs, true);
 
 		LOGGER.info("End");
 	}

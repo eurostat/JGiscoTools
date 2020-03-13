@@ -238,6 +238,18 @@ public class GeoData {
 	 * 
 	 * @param filePath
 	 * @param idAtt 
+	 * @return
+	 * @throws Exception
+	 */
+	public static ArrayList<Feature> getFeatures(String filePath, String idAtt)  {
+		return new GeoData(filePath, idAtt).getFeatures();
+	}
+
+	/**
+	 * Get features
+	 * 
+	 * @param filePath
+	 * @param idAtt 
 	 * @param filter 
 	 * @return
 	 * @throws Exception

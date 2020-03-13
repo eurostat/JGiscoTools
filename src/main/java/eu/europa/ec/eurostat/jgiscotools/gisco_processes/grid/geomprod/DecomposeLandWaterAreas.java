@@ -13,7 +13,7 @@ import org.geotools.referencing.CRS;
 import eu.europa.ec.eurostat.jgiscotools.algo.Decomposer;
 import eu.europa.ec.eurostat.jgiscotools.algo.Partition.GeomType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
  * @author julien Gaffuri
@@ -30,7 +30,7 @@ public class DecomposeLandWaterAreas {
 
 		logger.info("Load data...");
 		//Collection<Feature> fs = GeoPackageUtil.getFeatures(path+"CNTR_RG_100K_union_LAEA.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
-		Collection<Feature> fs = GeoPackageUtil.getFeatures(path+"LAKE_EURO_PL_100K_2019.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
+		Collection<Feature> fs = GeoData.getFeatures(path+"LAKE_EURO_PL_100K_2019.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
 		logger.info(fs.size());
 
 		logger.info("Buffer 0...");
@@ -46,7 +46,7 @@ public class DecomposeLandWaterAreas {
 		logger.info("Save...");
 		//GeoPackageUtil.saveGeoms(landGeometries, path + "land_areas.gpkg", CRS.decode("EPSG:3035"));
 		//GeoPackageUtil.saveGeoms(landGeometries, path + "inland_water_areas.gpkg", CRS.decode("EPSG:3035"), true);
-		GeoPackageUtil.save(landFeatures, path + "inland_water_areas___.gpkg", CRS.decode("EPSG:3035"), true);
+		GeoData.save(landFeatures, path + "inland_water_areas___.gpkg", CRS.decode("EPSG:3035"), true);
 
 		logger.info("End");
 

@@ -16,7 +16,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
@@ -24,11 +23,10 @@ import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 /**
  * Examples to produce European grids based on ETRS89-LAEA coordinate reference system (EPSG:3035)
@@ -69,7 +67,7 @@ public class GridsProduction {
 		int bufferDistance = 1500;
 
 		logger.info("Get European countries (buffer) ...");
-		ArrayList<Feature> cntsBuff = GeoPackageUtil.getFeatures(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.gpkg");
+		ArrayList<Feature> cntsBuff = GeoData.getFeatures(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.gpkg");
 
 		logger.info("Sort countries by id...");
 		Comparator<Feature> cntComp = new Comparator<Feature>(){
@@ -79,7 +77,7 @@ public class GridsProduction {
 		cntsBuff.sort(cntComp);
 
 		logger.info("Get land area...");
-		Collection<Geometry> landGeometries = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"land_areas.gpkg") );
+		Collection<Geometry> landGeometries = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(path+"land_areas.gpkg") );
 
 		logger.info("Index land area...");
 		SpatialIndex landGeometriesIndex = new STRtree();
@@ -87,7 +85,7 @@ public class GridsProduction {
 		landGeometries = null;
 
 		logger.info("Get inland water area...");
-		Collection<Geometry> inlandWaterGeometries = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"inland_water_areas.gpkg") );
+		Collection<Geometry> inlandWaterGeometries = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(path+"inland_water_areas.gpkg") );
 
 		logger.info("Index inland water area...");
 		SpatialIndex inlandWaterGeometriesIndex = new STRtree();
@@ -95,10 +93,10 @@ public class GridsProduction {
 		inlandWaterGeometries = null;
 
 		logger.info("Load NUTS regions...");
-		ArrayList<Feature> nuts0 = GeoPackageUtil.getFeatures(path+"NUTS_RG_100K_2016.gpkg", CQL.toFilter("STAT_LEVL_ = '0'"));
-		ArrayList<Feature> nuts1 = GeoPackageUtil.getFeatures(path+"NUTS_RG_100K_2016.gpkg", CQL.toFilter("STAT_LEVL_ = '1'"));
-		ArrayList<Feature> nuts2 = GeoPackageUtil.getFeatures(path+"NUTS_RG_100K_2016.gpkg", CQL.toFilter("STAT_LEVL_ = '2'"));
-		ArrayList<Feature> nuts3 = GeoPackageUtil.getFeatures(path+"NUTS_RG_100K_2016.gpkg", CQL.toFilter("STAT_LEVL_ = '3'"));
+		ArrayList<Feature> nuts0 = GeoData.getFeatures(path+"NUTS_RG_100K_2016.gpkg", null, CQL.toFilter("STAT_LEVL_ = '0'"));
+		ArrayList<Feature> nuts1 = GeoData.getFeatures(path+"NUTS_RG_100K_2016.gpkg", null, CQL.toFilter("STAT_LEVL_ = '1'"));
+		ArrayList<Feature> nuts2 = GeoData.getFeatures(path+"NUTS_RG_100K_2016.gpkg", null, CQL.toFilter("STAT_LEVL_ = '2'"));
+		ArrayList<Feature> nuts3 = GeoData.getFeatures(path+"NUTS_RG_100K_2016.gpkg", null, CQL.toFilter("STAT_LEVL_ = '3'"));
 
 		logger.info("Sort nuts regions by id...");
 		Comparator<Feature> nutsComp = new Comparator<Feature>(){
@@ -113,7 +111,7 @@ public class GridsProduction {
 
 
 		logger.info("Load coastlines...");
-		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CQL.toFilter("COAS_FLAG = 'T'") ));
+		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG = 'T'") ));
 
 		logger.info("Index coastlines...");
 		STRtree coastlineIndex = new STRtree();
@@ -121,7 +119,7 @@ public class GridsProduction {
 		coastLines = null;
 
 		logger.info("Load country boundaries...");
-		Collection<Geometry> cntBn = FeatureUtil.getGeometriesSimple( GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CQL.toFilter("COAS_FLAG='F'") ));
+		Collection<Geometry> cntBn = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG='F'") ));
 
 		logger.info("Index country boundaries...");
 		STRtree cntbnIndex = new STRtree();
@@ -131,9 +129,10 @@ public class GridsProduction {
 
 
 
-		logger.info("Define output feature type...");
-		SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
-		SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
+		//TODO check that
+		//logger.info("Define output feature type...");
+		//SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
+		//SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
 
 
 		//build pan-European grids
@@ -193,12 +192,12 @@ public class GridsProduction {
 			}
 
 			logger.info("Save cells as GPKG...");
-			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km_surf.gpkg", ftPolygon, true);
+			GeoData.save(cells, outpath+"grid_"+resKM+"km_surf.gpkg", ProjectionUtil.getETRS89_LAEA_CRS(), true);
 
 			//do not save as shapefile for smaller resolution, because the file size limit is reached
 			if(resKM>3) {
 				logger.info("Save cells as SHP...");
-				SHPUtil.save(cells, outpath + "grid_"+resKM+"km_surf_shp" + "/grid_"+resKM+"km.shp", ftPolygon);
+				GeoData.save(cells, outpath + "grid_"+resKM+"km_surf_shp" + "/grid_"+resKM+"km.shp", ProjectionUtil.getETRS89_LAEA_CRS());
 			}
 
 			logger.info("Set cell geometries as points...");
@@ -207,11 +206,11 @@ public class GridsProduction {
 				cell.setGeometry( gf.createPoint(new Coordinate((Integer)cell.getAttribute("X_LLC")+resKM*500, (Integer)cell.getAttribute("Y_LLC")+resKM*500)) );
 
 			logger.info("Save cells (point) as GPKG...");
-			GeoPackageUtil.save(cells, outpath+"grid_"+resKM+"km_point.gpkg", ftPoint, true);
+			GeoData.save(cells, outpath+"grid_"+resKM+"km_point.gpkg", ProjectionUtil.getETRS89_LAEA_CRS(), true);
 
 			if(resKM>3) {
 				logger.info("Save cells (point) as SHP...");
-				SHPUtil.save(cells, outpath + "grid_"+resKM+"km_point_shp" + "/grid_"+resKM+"km_point.shp", ftPoint);
+				GeoData.save(cells, outpath + "grid_"+resKM+"km_point_shp" + "/grid_"+resKM+"km_point.shp", ProjectionUtil.getETRS89_LAEA_CRS());
 			}
 
 		}

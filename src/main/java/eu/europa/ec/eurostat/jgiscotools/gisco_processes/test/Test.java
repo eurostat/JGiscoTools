@@ -9,7 +9,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 public class Test {
@@ -37,7 +37,7 @@ public class Test {
 		logger.debug(out.size() + " kept");
 
 		logger.info("Save as gpkg file");
-		GeoPackageUtil.save(out, "C:\\Users\\clemoki\\Desktop\\hospi_lux.gpkg", crs, true);
+		GeoData.save(out, "C:\\Users\\clemoki\\Desktop\\hospi_lux.gpkg", crs, true);
 
 		logger.info("End");
 	}

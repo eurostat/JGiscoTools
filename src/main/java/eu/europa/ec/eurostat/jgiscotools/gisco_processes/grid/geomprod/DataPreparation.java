@@ -17,7 +17,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.Partition.GeomType;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.deprecated.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
@@ -47,12 +47,12 @@ public class DataPreparation {
 		//TODO remove country holes ?
 
 		logger.info("Decompose boundaries");
-		Collection<Feature> bn = GeoPackageUtil.getFeatures(path+"CNTR_BN_100K_2016_LAEA.gpkg");
+		Collection<Feature> bn = GeoData.getFeatures(path+"CNTR_BN_100K_2016_LAEA.gpkg");
 		logger.info(bn.size());
 		bn = Decomposer.decomposeFeature(bn, 5000, 200, GeomType.ONLY_LINES, 0);
 		for(Feature f : bn) f.setGeometry( JTSGeomUtil.toMulti(f.getGeometry()) );
 		logger.info(bn.size());
-		GeoPackageUtil.save(bn, path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CRS.decode("EPSG:3035"), true);
+		GeoData.save(bn, path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CRS.decode("EPSG:3035"), true);
 
 		logger.info("End");
 	}

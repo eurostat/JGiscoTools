@@ -7,7 +7,6 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**
@@ -48,7 +47,7 @@ public class TestGDBRead {
 		System.out.println(sfc.size());
 
 		System.out.println("save");
-		GeoPackageUtil.save(sfc, "E:/workspace/gridstat/data/RoadL.gpkg", true);
+		//GeoData.save(sfc, "E:/workspace/gridstat/data/RoadL.gpkg", true);
 
 		System.out.println("end");
 	}
