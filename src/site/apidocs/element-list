@@ -16,9 +16,10 @@ eu.europa.ec.eurostat.jgiscotools.algo.noding
 eu.europa.ec.eurostat.jgiscotools.algo.polygon
 eu.europa.ec.eurostat.jgiscotools.algo.resolutionise
 eu.europa.ec.eurostat.jgiscotools.algo.triangulation
-eu.europa.ec.eurostat.jgiscotools.changedetection
 eu.europa.ec.eurostat.jgiscotools.deprecated
 eu.europa.ec.eurostat.jgiscotools.feature
+eu.europa.ec.eurostat.jgiscotools.geocoding
+eu.europa.ec.eurostat.jgiscotools.geodiff
 eu.europa.ec.eurostat.jgiscotools.geostat
 eu.europa.ec.eurostat.jgiscotools.gisco_processes
 eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid
