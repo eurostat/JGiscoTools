@@ -1,0 +1,421 @@
+
+·         For web mapping applications in European LAEA projection, such as the statistical atlas and some other commission web mapping applications:
+
+Zoom level
+
+Scale
+
+(around projection center 52N,10E)
+
+Resolution in screen pixel / map mm
+
+Ground resolution
+
+(around projection center 52N,10E)
+
+12
+
+1:25 000
+
+1pix / 0.26mm
+
+6.6 m
+
+11
+
+1:50 000
+
+1pix / 0.26mm
+
+13.2 m
+
+10
+
+1:100 000
+
+1pix / 0.26mm
+
+26.5 m
+
+9
+
+1:250 000
+
+1pix / 0.26mm
+
+66.1 m
+
+8
+
+1:500 000
+
+1pix / 0.26mm
+
+132 m
+
+7
+
+1:1 000 000
+
+1pix / 0.26mm
+
+264 m
+
+6
+
+1:2 500 000
+
+1pix / 0.26mm
+
+661 m
+
+5
+
+1:5 000 000
+
+1pix / 0.26mm
+
+1 323 m
+
+4
+
+1:10 000 000
+
+1pix / 0.26mm
+
+2 646 m
+
+3
+
+1:25 000 000
+
+1pix / 0.26mm
+
+6 615 m
+
+2
+
+1:50 000 000
+
+1pix / 0.26mm
+
+13 229 m
+
+1
+
+1:100 000 000
+
+1pix / 0.26mm
+
+26 458 m
+
+0
+
+1:250 000 000
+
+1pix / 0.26mm
+
+66 146 m
+
+·         For web mapping applications in web mercator projection:
+
+Zoom level
+
+Scale
+
+(at equator)
+
+Resolution in screen pixel / map mm
+
+Ground resolution
+
+(at equator)
+
+18
+
+1:2256
+
+1pix / 0.26mm
+
+0.597 m
+
+17
+
+1:4513
+
+1pix / 0.26mm
+
+1.194 m
+
+16
+
+1:9027
+
+1pix / 0.26mm
+
+2.39 m
+
+15
+
+1:18 055
+
+1pix / 0.26mm
+
+4.78 m
+
+14
+
+1:36 111
+
+1pix / 0.26mm
+
+9.55 m
+
+13
+
+1:72 223
+
+1pix / 0.26mm
+
+19.11 m
+
+12
+
+1:144 447
+
+1pix / 0.26mm
+
+38.21 m
+
+11
+
+1:288 895
+
+1pix / 0.26mm
+
+76.4 m
+
+10
+
+1:577 790
+
+1pix / 0.26mm
+
+152.9 m
+
+9
+
+1:1 155 581
+
+1pix / 0.26mm
+
+305.7 m
+
+8
+
+1:2 311 162
+
+1pix / 0.26mm
+
+611 m
+
+7
+
+1:4 622 324
+
+1pix / 0.26mm
+
+1 222 m
+
+6
+
+1:9 244 649
+
+1pix / 0.26mm
+
+2 445 m
+
+5
+
+1:18 489 298
+
+1pix / 0.26mm
+
+4 891 m
+
+4
+
+1:36 978 596
+
+1pix / 0.26mm
+
+9 783 m
+
+3
+
+1:73 957 193
+
+1pix / 0.26mm
+
+19 567 m
+
+2
+
+1:147 914 387
+
+1pix / 0.26mm
+
+39 135 m
+
+1
+
+1:295 828 775
+
+1pix / 0.26mm
+
+78 271 m
+
+0
+
+1:591 657 550
+
+1pix / 0.26mm
+
+156 543 m
+
+NB: For detailed zoom levels for which the corresponding resolution is lower than the input dataset resolution, no generalisation is needed of course.
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Data model
+
+The input is a statistical units dataset (NUTS regions or communes). The units have multiplolygonal geometries composing a tesselation (no overlap, no gap).
+
+A graph structure is produced from these units. Each unit is decomposed into one or several graph faces (with a simple polygonal geometry). Neighbour faces share common edges. Edges are connected with common nodes.
+
+The generalisation constraints are defined on those graph elements (units, faces, edges) and the generalisation operations are also applied on these elements.
+
+Cartographic generalisation constraints
+
+The generalisation requirements are formalised as cartographic constraints the target dataset has to satisfy as much as possible. The following constraints are considered:
+
+·         Topological relations preservation: The tessellation structure should be preserved. Graph faces and edges should keep valid geometries and not overlap. No gap should be created between neighbour faces.
+
+·         Edge granularity: The shape of the edges should be simple enough.
+
+·         Graph face size constraint:
+
+·         The faces should not be smaller than the perception threshold. Too small faces should be enlarged or removed/aggregated. This applies especially to small islands and small holes/lakes.
+
+·         The size of the large enough faces should be preserved.
+
+·         Unit presence preservation: All units initially represented should remain, even if their size violates some face size constraint.
+
+·         Narrow parts and gaps presence: Too narrow gaps between graph faces should be enlarged or filled. Too narrow parts should be enlarged or erased.
+
+·         No triangular island: Too ensure minimum island shape preservation, no triangular shapes are allowed for small islands.
+
+·         Edge size: Graph edges should not be shorter than the perception threshold. To short edges should either be lengthened or collapsed.
+
+·         Other?
+
+This list of constraints could be altered and/or enriched depending on user's feedback.
+
+Generalisation measures
+
+Generalisation measures are spatial analysis methods used to automatically assess the satisfaction level of the constraint . The following measures are currently used:
+
+·         Topological constraints are simply measured with topological queries on the graph structure. Polygons and line validity is measured by detecting the presence of self overlaps. Potential faces overlaps detected using usual spatial queries, which are based on a quadtree spatial index to improve the efficiency.
+
+·         Edge granularity is measured using statistical indicators on the edge segments length. The granularity measure currently used is the average length of the segments smaller than the perception threshold.
+
+·         Face size is simply measured as the area of the face's polygonal geometry.
+
+·         Edge size is simply measured as the length of the edge's lineal geometry.
+
+·         Edge triangular shape is measured by simply checking if the geometry is closed and counting its points number.
+
+·         Unit too narrow parts/gaps are detected using morphological operations (closure, erosion, buffering).
+
+Generalisation operations
+
+·         Edge simplification: These simplification operations do not change the initial/final points of the edge, which ensures they remain connected to the graph. Three typical line simplification operations are currently available:
+
+·         Visvalingam-Whyatt filter (VW filter).
+
+·         Ramer-Douglass-Peucker filter (RDP filter).
+
+·         Gaussian smoothing.
+
+The operations used are a combination of one filtering operation (VW or RDP), followed by a Gaussian smoothing and a scaling operation (for closed edges only). This last scaling operation is used for closed edges too ensure the corresponding face size (usually an island or a hole) is preserved.
+
+·         Face aggregation: This operation aggregates touching faces into one of them. Usually, a too small face is aggregated with one of its neighbor face.
+
+·         Unit narrow parts/gaps handling: Too narrow parts and gaps are added (respectively removed) to units' geometry using union (respectively symmetric difference) operations. Currently, only narrow gaps for coastal units are handled.
+
+·         Face scaling: This operation is a typical scaling operation. The scaling center is the center of the initial geometry. 
+
+·         Edge scaling: Same as for faces.
+
+·         Other?
+
+Generalisation engine
+
+A generic "agent-based" generalisation process is used. Each object to generalise (unit, face, edge) is modeled as an autonomous agent whose life cycle is the following:
+
+1.    Compute agent's satisfaction, which is the average of its constraint's satisfactions.
+
+2.    Satisfaction test: If the satisfaction is perfect (that is if all constraints are satisfied), then no generalisation is required. End the process.
+
+3.    Get a list of generalisation operators to test. This list depends on which constraints are violated, and their degree of violation. The list is ordered by priority.
+
+4.    If the list is empty, end the process. In such case, the process could not produce a perfectly generalised state.
+
+5.    Remove the first operator of the list and apply it.
+
+6.    Compute new agent's satisfaction value and test it:
+
+a.    If the new satisfaction value is perfect, the generalisation successfully completed: End the process.
+
+b.    If the satisfaction is higher but still not perfect, go back to step 3.
+
+c.     If the satisfaction is lower, cancel operator by going back to previous state and continue to step 4 with the next operator in the list.
+
+In the current implementation, this generalisation process is applied successively to:
+
+1.    All units to start handling the presence of narrow parts and gaps. 
+
+2.    All faces to remove/aggregate too small faces.
+
+3.    All edges to simplify them.
+
+4.    Another time to all faces.
+
+5.    Another time to all edges.
+
+At the end of the process, the tool produces a report giving for each single object:
+
+·         The chronology of generalisation operators and associated parameters, which were applied to the object, and their positive or negative effect on the object's satisfaction evolution.
+
+·         Its final state, decomposed by constraint. With such report, it is thus possible to easily check the remaining generalisation issues and find new solutions to fix them.
+
+This outcome leads future improvements.
+
