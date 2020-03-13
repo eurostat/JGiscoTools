@@ -10,7 +10,7 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**
@@ -35,7 +35,7 @@ public class HealthCareDataIntegrationERMTomTomOSM {
 		//https://en.wikipedia.org/wiki/Levenshtein_distance
 
 		//load hospitals
-		ArrayList<Feature> hosps = GeoPackageUtil.getFeatures(path+"healthcare_services1.gpkg");
+		ArrayList<Feature> hosps = GeoData.getFeatures(path+"healthcare_services1.gpkg");
 		System.out.println(hosps.size());
 
 		//MinimumSpanningTree
@@ -112,7 +112,7 @@ public class HealthCareDataIntegrationERMTomTomOSM {
 		System.out.println("Load TomTom");
 
 		//load tomtom dataset
-		ArrayList<Feature> tom = GeoPackageUtil.getFeatures("E:/workspace/gridstat/hospitals/mmpoi_pi_healthcare.gpkg", CQL.toFilter("FEATTYP = '7321' OR FEATTYP = '7391'"));
+		ArrayList<Feature> tom = GeoData.getFeatures("E:/workspace/gridstat/hospitals/mmpoi_pi_healthcare.gpkg", null, CQL.toFilter("FEATTYP = '7321' OR FEATTYP = '7391'"));
 		System.out.println(tom.size());
 		//Documentation K:\gridstat\hospitals\
 		//System.out.println(tom.size()); 28645
@@ -148,7 +148,7 @@ public class HealthCareDataIntegrationERMTomTomOSM {
 
 
 		System.out.println("save output");
-		GeoPackageUtil.save(out, path+"healthcare_services1.gpkg", crs, true);
+		GeoData.save(out, path+"healthcare_services1.gpkg", crs, true);
 	}
 
 

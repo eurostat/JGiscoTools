@@ -13,7 +13,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 public class GeocodingValidation {
 
@@ -40,7 +40,7 @@ public class GeocodingValidation {
 		}
 		
 		//save linear feature
-		GeoPackageUtil.save(errors, HealthCareDataFormattingGeocoding.path+"IT/geocoding_validation.gpkg", crs, true);
+		GeoData.save(errors, HealthCareDataFormattingGeocoding.path+"IT/geocoding_validation.gpkg", crs, true);
 		
 		System.out.println("End");
 	}
