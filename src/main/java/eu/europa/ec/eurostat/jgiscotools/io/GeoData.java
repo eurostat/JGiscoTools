@@ -188,8 +188,8 @@ public class GeoData {
 					this.features = SimpleFeatureUtil.get(sfc, this.idAtt);
 					//remove 'geometry' attribute
 					for(Feature f : this.features) {
-						Object o = f.getAttributes().remove("geometry");
-						if(o == null) LOGGER.warn("Could not remove geometry attribute when loading " + format + " data.");
+						/*Object o = */f.getAttributes().remove("geometry");
+						//if(o == null) LOGGER.warn("Could not remove geometry attribute when loading data from " + this.filePath);
 					}
 					store.dispose();
 				} catch (Exception e) { e.printStackTrace(); }
@@ -269,14 +269,16 @@ public class GeoData {
 	 * @param fs
 	 * @param filePath
 	 * @param crs
+	 * @param createSpatialIndex
 	 */
-	public static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs) {
-		List<String> atts = null;
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(fs.iterator().next(), crs, atts);
-		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, ft);
+	public static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
+
+		//create GT feature collection
+		//TODO support attribute typing
+		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, crs);
 		if(sfc.size() == 0){
 			//file.createNewFile();
-			LOGGER.warn("Could not save file "+filePath+" - collection of features is empty");
+			LOGGER.warn("Could not save file " + filePath + " - collection of features is empty");
 			return;
 		}
 
@@ -290,7 +292,7 @@ public class GeoData {
 				//create feature store
 				HashMap<String, Serializable> params = new HashMap<String, Serializable>();
 				params.put("url", file.toURI().toURL());
-				params.put("create spatial index", Boolean.TRUE);
+				params.put("create spatial index", createSpatialIndex);
 				ShapefileDataStore ds = (ShapefileDataStore) new ShapefileDataStoreFactory().createNewDataStore(params);
 
 				ds.createSchema(sfc.getSchema());
@@ -322,7 +324,7 @@ public class GeoData {
 				params.put("url", file.toURI().toURL());
 				params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
 				params.put(GeoPkgDataStoreFactory.DATABASE.key, filePath);
-				params.put("create spatial index", Boolean.TRUE);
+				params.put("create spatial index", createSpatialIndex);
 				DataStore ds = DataStoreFinder.getDataStore(params);
 
 				ds.createSchema(sfc.getSchema());
@@ -348,8 +350,24 @@ public class GeoData {
 		}
 	}
 
-	public static <T extends Geometry> void saveGeoms(Collection<T> geoms, String outFile, CoordinateReferenceSystem crs) {
-		save(SimpleFeatureUtil.getFeaturesFromGeometries(geoms), outFile, crs);
+	/**
+	 * @param fs
+	 * @param filePath
+	 * @param crs
+	 */
+	public static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs) {
+		save(fs, filePath, crs, true);
+	}
+
+	/**
+	 * @param <T>
+	 * @param geoms
+	 * @param outFile
+	 * @param crs
+	 * @param createSpatialIndex
+	 */
+	public static <T extends Geometry> void saveGeoms(Collection<T> geoms, String outFile, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
+		save(SimpleFeatureUtil.getFeaturesFromGeometries(geoms), outFile, crs, createSpatialIndex);
 	}
 
 }
