@@ -11,7 +11,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**
  * 
@@ -79,7 +78,7 @@ public class HealthCareDataIntegrationERMTomTomOSM {
 
 		System.out.println("Load ERM");
 		//load ERM dataset
-		ArrayList<Feature> erm = SHPUtil.getFeatures("E:/dissemination/shared-data/ERM/shp/ERM_2019.1_LAEA/Data/GovservP.shp", CQL.toFilter("F_CODE = 'AX502' OR F_CODE = 'AX503'"));
+		ArrayList<Feature> erm = GeoData.getFeatures("E:/dissemination/shared-data/ERM/shp/ERM_2019.1_LAEA/Data/GovservP.shp", null, CQL.toFilter("F_CODE = 'AX502' OR F_CODE = 'AX503'"));
 		System.out.println(erm.size());
 		//46876 features
 		//print all attribut labels/keys

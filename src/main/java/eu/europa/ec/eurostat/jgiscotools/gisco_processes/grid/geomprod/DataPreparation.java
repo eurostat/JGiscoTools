@@ -18,7 +18,6 @@ import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.deprecated.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 public class DataPreparation {
@@ -63,7 +62,7 @@ public class DataPreparation {
 	public static void buffer(String inFile, String outFile, double bufferDistance, int quadrantSegments, int endCapStyle){
 
 		//load data
-		ArrayList<Feature> fs = SHPUtil.getFeatures(inFile);
+		ArrayList<Feature> fs = GeoData.getFeatures(inFile);
 
 		for(Feature f : fs) {
 			logger.info(f.getAttribute("CNTR_ID"));
@@ -81,7 +80,7 @@ public class DataPreparation {
 		}
 
 		logger.info("Save");
-		SHPUtil.save(fs, outFile, SHPUtil.getCRS(inFile));
+		GeoData.save(fs, outFile, GeoData.getCRS(inFile));
 	}
 
 	//return list of geometries that are not GeometryCollection
@@ -135,7 +134,7 @@ public class DataPreparation {
 			cnts.add(cnt);
 		}
 		logger.info("Save");
-		SHPUtil.save(cnts, path+"CNTR_RG_100K_union_LAEA.shp", crs);
+		GeoData.save(cnts, path+"CNTR_RG_100K_union_LAEA.shp", crs);
 	}
 
 }

@@ -6,28 +6,18 @@ package eu.europa.ec.eurostat.jgiscotools.io.web;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.Map.Entry;
 
-import org.geotools.feature.DefaultFeatureCollection;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-
-import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
 
 /**
  * @author julien Gaffuri
@@ -95,7 +85,7 @@ public class ArcGISRest {
 	}
 
 
-
+/*
 	public static void toSHP(String dataFile, String shpFile) {
 		try {
 			//read file
@@ -182,7 +172,9 @@ public class ArcGISRest {
 			e.printStackTrace();
 		}
 	}
-
+*/
+	
+/*
 	public static void toSHP2(String dataFile, String shpFile) {
 		try {
 			SimpleFeatureType ft = null;
@@ -245,7 +237,7 @@ public class ArcGISRest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	private static Geometry getGeometry(String geomType, JSONObject geom) {
 		if("Point".equals(geomType)){
@@ -274,12 +266,12 @@ public class ArcGISRest {
 		return null;
 	}
 
-
+/*
 	public static void main(String[] args) {
 		System.out.println("Start");
 		//download("http://maratlas.discomap.eea.europa.eu/arcgis/rest/services/Maratlas/AccidentDensity/MapServer/", "E:/gaffuju/Desktop/test.json", 0, "json");
 		toSHP("E:/gaffuju/Desktop/test.json", "E:/gaffuju/Desktop/test.shp");
 		System.out.println("Done");
 	}
-
+*/
 }

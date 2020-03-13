@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Point;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AEdge;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AFace;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.ATesselation;
@@ -100,7 +100,7 @@ public class MainGenNUTSPlusXM {
 			};
 
 			LOGGER.info("Load data for "+((int)s)+"M generalisation");
-			Collection<Feature> units = SHPUtil.getFeatures(inFile);
+			Collection<Feature> units = GeoData.getFeatures(inFile);
 			for(Feature f : units) if(f.getAttribute("NUTS_P_ID") != null) f.setID( ""+f.getAttribute("NUTS_P_ID") );
 
 			LOGGER.info("Launch generalisation for "+((int)s)+"M");
@@ -108,7 +108,7 @@ public class MainGenNUTSPlusXM {
 			units = TesselationGeneralisation.runGeneralisation(units, ptsData, specs, roundNb, 1000000, 1000);
 
 			LOGGER.info("Save output data");
-			SHPUtil.save(units, basePath + "out/NUTS_PLUS_"+((int)s)+"M.shp", SHPUtil.getCRS(inFile));
+			GeoData.save(units, basePath + "out/NUTS_PLUS_"+((int)s)+"M.shp", GeoData.getCRS(inFile));
 		}
 		LOGGER.info("End");
 	}
@@ -116,7 +116,7 @@ public class MainGenNUTSPlusXM {
 	private static HashMap<String,Collection<Point>> loadPoints(String basePath) {
 		HashMap<String,Collection<Point>> index = new HashMap<String,Collection<Point>>();
 		for(String file : new String[] {"GISCO.CNTR_CAPT_PT_2013","NUTS_PLUS_01M_1904_Points"})
-			for(Feature f : SHPUtil.getFeatures(basePath+file+".shp")) {
+			for(Feature f : GeoData.getFeatures(basePath+file+".shp")) {
 				String id = (String)f.getAttribute("CNTR_ID");
 				if(id == null) id = (String)f.getAttribute("NUTS_P_ID");
 				if("".equals(id)) continue;

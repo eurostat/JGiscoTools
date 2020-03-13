@@ -22,7 +22,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Engine;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
@@ -106,7 +106,7 @@ public class TesselationQuality {
 		return fs;
 	}
 	public static void makeMultiPolygonValid(String inputFile, String outputFile) {
-		SHPUtil.save(makeMultiPolygonValid(SHPUtil.getFeatures(inputFile)), outputFile, SHPUtil.getCRS(inputFile));
+		GeoData.save(makeMultiPolygonValid(GeoData.getFeatures(inputFile)), outputFile, GeoData.getCRS(inputFile));
 	}
 
 

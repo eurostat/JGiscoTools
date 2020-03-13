@@ -12,7 +12,7 @@ import org.opengis.filter.Filter;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
  * @author julien Gaffuri
@@ -28,7 +28,7 @@ public class MainRailwayQuality {
 		String inFile = basePath+"out/EM/RailwayLinkEM.shp";
 		//String inFile = basePath+"out/quality/railway.shp";
 		Filter fil = null; //CQL.toFilter( "CNTR = 'ES'" );
-		Collection<Feature> secs = SHPUtil.getFeatures(inFile, fil);
+		Collection<Feature> secs = GeoData.getFeatures(inFile, null, fil);
 
 		//check identifier
 		//HashMap<String, Integer> out = FeatureUtil.checkIdentfier(secs, "id");
@@ -47,7 +47,7 @@ public class MainRailwayQuality {
 		//System.out.println("ok!!!");
 
 		LOGGER.info("Save - nb=" + secs.size());
-		SHPUtil.save(secs, basePath+"out/quality/railway.shp", SHPUtil.getCRS(inFile));
+		GeoData.save(secs, basePath+"out/quality/railway.shp", GeoData.getCRS(inFile));
 
 		LOGGER.info("End");
 	}

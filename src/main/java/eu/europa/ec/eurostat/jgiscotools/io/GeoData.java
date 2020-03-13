@@ -5,8 +5,10 @@ package eu.europa.ec.eurostat.jgiscotools.io;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -272,7 +274,15 @@ public class GeoData {
 	 * @return
 	 */
 	public static CoordinateReferenceSystem getCRS(String filePath) {
-		return getSchema(filePath).getCoordinateReferenceSystem();
+		return new GeoData(filePath).getCRS();
+	}
+
+	/**
+	 * @param filePath
+	 * @return
+	 */
+	public static CRSType getCRSType(String filePath) {
+		return new GeoData(filePath).getCRSType();
 	}
 
 
@@ -283,7 +293,7 @@ public class GeoData {
 	 * @param crs
 	 * @param createSpatialIndex
 	 */
-	public static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
+	public static <T extends Feature> void save(Collection<T> fs, String filePath, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
 
 		//create GT feature collection
 		SimpleFeatureType ft = getFeatureType(fs, crs);
@@ -327,7 +337,11 @@ public class GeoData {
 			}
 			break;
 		case "geojson":
-			GeoJSONUtil.save(fs, filePath, crs);
+			try {
+				OutputStream output = new FileOutputStream(file);
+				new FeatureJSON().writeFeatureCollection(sfc, output);
+				output.close();
+			} catch (Exception e) { e.printStackTrace(); }
 			break;
 		case "gpkg":
 			try {
@@ -362,7 +376,7 @@ public class GeoData {
 		}
 	}
 
-	private static SimpleFeatureType getFeatureType(Collection<Feature> fs, CoordinateReferenceSystem crs) {
+	private static <T extends Feature> SimpleFeatureType getFeatureType(Collection<T> fs, CoordinateReferenceSystem crs) {
 		SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
 		Feature f = fs.iterator().next(); //TODO
 		sftb.setCRS(crs);
@@ -382,7 +396,7 @@ public class GeoData {
 	 * @param filePath
 	 * @param crs
 	 */
-	public static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs) {
+	public static <T extends Feature> void save(Collection<T> fs, String filePath, CoordinateReferenceSystem crs) {
 		save(fs, filePath, crs, true);
 	}
 

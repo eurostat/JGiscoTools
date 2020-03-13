@@ -19,7 +19,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.algo.EdgeCollapse;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke.Stroke;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke.StrokeAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
  * @author julien Gaffuri
@@ -58,7 +58,7 @@ public class MainRailwayGeneralisation {
 		String basePath = "/home/juju/Bureau/gisco_rail/";
 		String inFile = basePath+"out/quality/railway.shp";
 		Filter fil = CQL.toFilter( "CNTR = 'NL'" );
-		Collection<Feature> secs = SHPUtil.getFeatures(inFile, fil);
+		Collection<Feature> secs = GeoData.getFeatures(inFile, null, fil);
 		for(Feature f : secs) f.setID( f.getAttribute("id").toString() );
 		LOGGER.info(secs.size()+" sections - " + FeatureUtil.getVerticesNumber(secs)+" vertices.");
 
@@ -77,7 +77,7 @@ public class MainRailwayGeneralisation {
 		//TODO define selection procedure based on their salience
 
 		LOGGER.info("Strokes: " + sts.size());
-		SHPUtil.save(sts, basePath+"out/strokes/strokes.shp", SHPUtil.getCRS(inFile));
+		GeoData.save(sts, basePath+"out/strokes/strokes.shp", GeoData.getCRS(inFile));
 
 		/*/TODO define and use importance criteria. Use it in salience definition (for both connections and strokes (representative))
 		Comparator<Feature> comp = new Comparator<Feature>() {

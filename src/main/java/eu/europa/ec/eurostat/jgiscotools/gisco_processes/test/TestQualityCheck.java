@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationQuality;
 
 /**
@@ -20,7 +20,7 @@ public class TestQualityCheck {
 		System.out.println("Start");
 
 		LOGGER.info("Load data");
-		Collection<Feature> units = SHPUtil.getFeatures("src/test/resources/testTesselationGeneralisation.shp");
+		Collection<Feature> units = GeoData.getFeatures("src/test/resources/testTesselationGeneralisation.shp");
 		for(Feature unit : units) unit.setID( unit.getAttribute("id").toString() );
 
 		LOGGER.info("Run quality check");

@@ -16,7 +16,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.matching.LevenshteinMatching.Match
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 public class MapNiger {
 	private final static Logger LOGGER = LogManager.getLogger(MapNiger.class.getName());
@@ -32,7 +32,7 @@ public class MapNiger {
 		Collection<Feature> ps = FeatureUtil.toFeatures( CSVUtil.load(basePath_+"base_donnee.csv") );
 
 		LOGGER.info("Load commune data");
-		Collection<Feature> locs = SHPUtil.getFeatures(basePath+"commune_niger.shp");
+		Collection<Feature> locs = GeoData.getFeatures(basePath+"commune_niger.shp");
 		for(Feature f : locs) f.setID( ""+f.getAttribute("CODECOMMUN") );
 		//Collection<Feature> locs = SHPUtil.loadSHP(basePath+"renacom.shp").fs;
 		//for(Feature f : locs) f.id = ""+f.get("CODE_LOCAL");
@@ -141,7 +141,7 @@ public class MapNiger {
 		//CSVUtil.save(cs.values(), basePath_+"projets_par_commune.csv", atts);
 		Collection<Feature> projectsByComm = FeatureUtil.toFeatures(cs.values());
 		for(Feature f : projectsByComm) f.setGeometry((Geometry)f.getAttribute("geom"));
-		SHPUtil.save(projectsByComm, basePath_+"commune_projects.shp", SHPUtil.getCRS(basePath+"commune_niger.shp"), atts);
+		GeoData.save(projectsByComm, basePath_+"commune_projects.shp", GeoData.getCRS(basePath+"commune_niger.shp"));
 
 
 

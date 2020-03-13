@@ -6,7 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.graph;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
  * @author julien Gaffuri
@@ -21,15 +21,15 @@ public class GraphSHPUtil {
 	}
 
 	public static void exportFacesAsSHP(Graph g, String outFile, CoordinateReferenceSystem crs){
-		SHPUtil.save(GraphToFeature.asFeature(g.getFaces()), outFile, crs);
+		GeoData.save(GraphToFeature.asFeature(g.getFaces()), outFile, crs);
 	}
 
 	public static void exportEdgesAsSHP(Graph g, String outFile, CoordinateReferenceSystem crs){
-		SHPUtil.save(GraphToFeature.asFeature(g.getEdges()), outFile, crs);
+		GeoData.save(GraphToFeature.asFeature(g.getEdges()), outFile, crs);
 	}
 
 	public static void exportNodesAsSHP(Graph g, String outFile, CoordinateReferenceSystem crs){
-		SHPUtil.save(GraphToFeature.asFeature(g.getNodes()), outFile, crs);
+		GeoData.save(GraphToFeature.asFeature(g.getNodes()), outFile, crs);
 	}
 
 	/*

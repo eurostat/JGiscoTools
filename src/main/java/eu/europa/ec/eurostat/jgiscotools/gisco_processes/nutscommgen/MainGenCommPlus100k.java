@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AEdge;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AFace;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.ATesselation;
@@ -53,7 +53,7 @@ public class MainGenCommPlus100k {
 
 		LOGGER.info("Load data");
 		String rep="100k_1M/commplus"; String inFile = basePath+"commplus/COMM_PLUS.shp";
-		Collection<Feature> units = SHPUtil.getFeatures(inFile);
+		Collection<Feature> units = GeoData.getFeatures(inFile);
 		for(Feature f : units) for(String id : new String[] {"NUTS_ID","COMM_ID","idgene","GISCO_ID"}) if(f.getAttribute(id) != null) f.setID( ""+f.getAttribute(id) );
 
 		for(int i=1; i<=100; i++) {
@@ -91,7 +91,7 @@ public class MainGenCommPlus100k {
 			System.gc();
 
 			LOGGER.info("Save output data");
-			SHPUtil.save(units, basePath+"out/"+ rep+"/COMM_PLUS_WM_1M_"+i+".shp", SHPUtil.getCRS(inFile));
+			GeoData.save(units, basePath+"out/"+ rep+"/COMM_PLUS_WM_1M_"+i+".shp", GeoData.getCRS(inFile));
 		}
 
 		LOGGER.info("End");

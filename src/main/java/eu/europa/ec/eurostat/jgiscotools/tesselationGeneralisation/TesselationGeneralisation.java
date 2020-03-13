@@ -19,7 +19,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Engine;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
@@ -93,7 +93,7 @@ public class TesselationGeneralisation {
 	//
 	public static HashMap<String,Collection<Point>> loadPoints(String filePath, String idProp) {
 		HashMap<String,Collection<Point>> index = new HashMap<String,Collection<Point>>();
-		for(Feature f : SHPUtil.getFeatures(filePath)) {
+		for(Feature f : GeoData.getFeatures(filePath)) {
 			String id = f.getAttribute(idProp).toString();
 			if(id == null) {
 				LOGGER.warn("Could not find id "+idProp+" in file "+filePath);

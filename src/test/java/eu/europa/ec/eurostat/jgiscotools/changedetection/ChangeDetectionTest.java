@@ -11,7 +11,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 import junit.framework.TestCase;
 
@@ -32,9 +32,9 @@ public class ChangeDetectionTest extends TestCase {
 		String path = "src/test/resources/change_detection/";
 
 		//load datasets
-		ArrayList<Feature> fsIni = GeoPackageUtil.getFeatures(path+"ini_surf.gpkg");
+		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_surf.gpkg");
 		assertEquals(13, fsIni.size());
-		ArrayList<Feature> fsFin = GeoPackageUtil.getFeatures(path+"fin_surf.gpkg");
+		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"fin_surf.gpkg");
 		assertEquals(14, fsFin.size());
 
 		//set identifiers
@@ -111,9 +111,9 @@ public class ChangeDetectionTest extends TestCase {
 		String path = "src/test/resources/change_detection/";
 
 		//load datasets
-		ArrayList<Feature> fsIni = GeoPackageUtil.getFeatures(path+"ini_pt.gpkg");
+		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_pt.gpkg");
 		assertEquals(10, fsIni.size());
-		ArrayList<Feature> fsFin = GeoPackageUtil.getFeatures(path+"fin_pt.gpkg");
+		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"fin_pt.gpkg");
 		assertEquals(10, fsFin.size());
 
 		//set identifiers
@@ -190,9 +190,9 @@ public class ChangeDetectionTest extends TestCase {
 		String path = "src/test/resources/change_detection/";
 
 		//load datasets
-		ArrayList<Feature> fsIni = GeoPackageUtil.getFeatures(path+"ini_lin.gpkg");
+		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_lin.gpkg");
 		assertEquals(9, fsIni.size());
-		ArrayList<Feature> fsFin = GeoPackageUtil.getFeatures(path+"fin_lin.gpkg");
+		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"fin_lin.gpkg");
 		assertEquals(10, fsFin.size());
 
 		//set identifiers

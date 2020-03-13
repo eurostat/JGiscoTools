@@ -9,7 +9,7 @@ import java.util.HashMap;
 import eu.europa.ec.eurostat.jgiscotools.algo.edgematching.NetworkEdgeMatching;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphToFeature;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
  * @author julien Gaffuri
@@ -61,7 +61,7 @@ public class MainRailwayEdgeMatching {
 		System.out.println("Load input sections");
 		String basePath = "/home/juju/Bureau/gisco_rail/";
 		//Filter fil = CQL.toFilter( "CNTR <> 'RO' AND CNTR <> 'EL' AND CNTR <> 'DK' AND CNTR <> 'EE'" );
-		ArrayList<Feature> secs = SHPUtil.getFeatures(basePath+"MS_data/RailwayLinkClean.shp");
+		ArrayList<Feature> secs = GeoData.getFeatures(basePath+"MS_data/RailwayLinkClean.shp");
 		System.out.println(secs.size());
 
 		//compute edge matching
@@ -70,10 +70,10 @@ public class MainRailwayEdgeMatching {
 		nem.makeEdgeMatching();
 
 		System.out.println("Save matching edges " + nem.getMatchingEdges().size());
-		SHPUtil.save(GraphToFeature.asFeature(nem.getMatchingEdges()), basePath+"out/EM/matching_edges.shp", SHPUtil.getCRS(basePath+"MS_data/RailwayLink.shp"));
+		GeoData.save(GraphToFeature.asFeature(nem.getMatchingEdges()), basePath+"out/EM/matching_edges.shp", GeoData.getCRS(basePath+"MS_data/RailwayLink.shp"));
 
 		System.out.println("Save output " + nem.getSections().size());
-		SHPUtil.save(nem.getSections(), basePath+"out/EM/RailwayLinkEM.shp", SHPUtil.getCRS(basePath+"MS_data/RailwayLink.shp"));
+		GeoData.save(nem.getSections(), basePath+"out/EM/RailwayLinkEM.shp", GeoData.getCRS(basePath+"MS_data/RailwayLink.shp"));
 
 		System.out.println("End");
 	}

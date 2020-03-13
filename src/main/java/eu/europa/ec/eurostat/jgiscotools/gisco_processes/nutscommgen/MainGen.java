@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisation;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 
@@ -38,7 +38,7 @@ public class MainGen {
 		//load data
 
 		LOGGER.info("Load data from "+in);
-		Collection<Feature> units = SHPUtil.getFeatures(in);
+		Collection<Feature> units = GeoData.getFeatures(in);
 		LOGGER.info("Set ID");
 		for(Feature f : units) f.setID( ""+f.getAttribute(idCol) );
 
@@ -68,11 +68,11 @@ public class MainGen {
 		LOGGER.info("Launch generalisation");
 		double scaleDenominator = 1.0*1e6;
 		int roundNb = 5;
-		CRSType crsType = SHPUtil.getCRSType(in);
+		CRSType crsType = GeoData.getCRSType(in);
 		units = TesselationGeneralisation.runGeneralisation(units, null, crsType, scaleDenominator, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);
 
 		LOGGER.info("Save output data in "+out);
-		SHPUtil.save(units, out, SHPUtil.getCRS(in));
+		GeoData.save(units, out, GeoData.getCRS(in));
 		 
 
 

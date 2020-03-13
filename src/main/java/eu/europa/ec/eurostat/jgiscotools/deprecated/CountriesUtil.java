@@ -12,7 +12,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
  * @author julien Gaffuri
@@ -25,7 +25,7 @@ public class CountriesUtil {
 
 
 	public static ArrayList<Feature> getEuropeanCountries(String filePath) {
-		return SHPUtil.getFeatures(filePath);
+		return GeoData.getFeatures(filePath);
 	}
 	public static ArrayList<Feature> getEuropeanCountries(boolean withOST) {
 		return getEuropeanCountries("./src/main/resources/CNTR/CNTR_RG_01M_2016"+(withOST?"":"_no_ost")+".shp");
@@ -33,7 +33,7 @@ public class CountriesUtil {
 
 	public static Feature getEuropeanCountry(String countryCode, String filePath) {
 		try {
-			ArrayList<Feature> fs = SHPUtil.getFeatures(filePath, CQL.toFilter("CNTR_ID = '"+countryCode+"'"));
+			ArrayList<Feature> fs = GeoData.getFeatures(filePath, null, CQL.toFilter("CNTR_ID = '"+countryCode+"'"));
 			if(fs.size() != 1) throw new Exception("Problem finding country with code: "+countryCode+". nb found="+fs.size());
 			return fs.iterator().next();
 		} catch (Exception e) { e.printStackTrace(); }
@@ -47,7 +47,7 @@ public class CountriesUtil {
 
 
 	public static Geometry getEurope(boolean withOST) {
-		return SHPUtil.getFeatures("./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp").iterator().next().getGeometry();
+		return GeoData.getFeatures("./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp").iterator().next().getGeometry();
 	}
 
 	//build Europe geometry as a union of the country geometries
@@ -60,7 +60,7 @@ public class CountriesUtil {
 
 		Feature f = new Feature(); f.setGeometry(mask);
 		ArrayList<Feature> fs = new ArrayList<Feature>(); fs.add(f);
-		SHPUtil.save(fs, "./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp", CRS.decode("EPSG:3035"));
+		GeoData.save(fs, "./src/main/resources/CNTR/Europe_RG_01M_2016"+(withOST?"":"_no_ost")+".shp", CRS.decode("EPSG:3035"));
 	}
 
 	/*public static void main(String[] args) throws Exception {

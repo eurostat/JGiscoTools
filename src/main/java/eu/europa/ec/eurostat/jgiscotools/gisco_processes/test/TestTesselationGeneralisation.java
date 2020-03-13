@@ -11,8 +11,9 @@ import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Point;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisation;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 
 /**
@@ -37,17 +38,17 @@ public class TestTesselationGeneralisation {
 
 		LOGGER.info("Load data");
 		String in = "src/test/resources/testTesselationGeneralisation.shp";
-		Collection<Feature> units = SHPUtil.getFeatures(in);
+		Collection<Feature> units = GeoData.getFeatures(in);
 		for(Feature unit : units) unit.setID( unit.getAttribute("id").toString() );
 		HashMap<String, Collection<Point>> points = TesselationGeneralisation.loadPoints("src/test/resources/testTesselationGeneralisationPoints.shp", "id");
 
 		LOGGER.info("Launch generalisation");
 		double scaleDenominator = 1e6; int roundNb = 10;
-		CRSType crsType = SHPUtil.getCRSType(in);
+		CRSType crsType = ProjectionUtil.getCRSType(GeoData.getCRS(in));
 		units = TesselationGeneralisation.runGeneralisation(units, points, crsType, scaleDenominator, roundNb, 1000000, 1000);
 
 		LOGGER.info("Save output data");
-		SHPUtil.save(units, "target/testTesselationGeneralisation_out.shp", SHPUtil.getCRS(in));
+		GeoData.save(units, "target/testTesselationGeneralisation_out.shp", GeoData.getCRS(in));
 
 		LOGGER.info("End");
 	}
