@@ -18,55 +18,56 @@ import junit.framework.TestCase;
  */
 public class GeoDataTest extends TestCase {
 
-	//TODO test on geojson with and without id
-	
+	/** @param args */
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(GeoDataTest.class);
 	}
 
 	private static final String path = "src/test/resources/io/";
 
-	public void testLoadGPKG() throws Exception { testLoad("gpkg"); }
-	public void testLoadSHP() throws Exception { testLoad("shp"); }
-	public void testLoadGeoJSON() throws Exception { testLoad("geojson"); }
+	/***/
+	//public void testLoadGPKG() { testLoad(".gpkg", null); }
+	/***/
+	//public void testLoadSHP() { testLoad(".shp", null); }
+	/***/
+	//public void testLoadGeoJSON() { testLoad(".geojson", null); }
+	/***/
+	//public void testLoadGeoJSONID() { testLoad("_with_id.geojson", "id"); }
 
-	private void testLoad(String format) throws Exception {
+	private void testLoad(String format, String idAtt) {
 		//System.out.println(format);
 
-		GeoData gd = new GeoData(path + "test." + format);
+		GeoData gd = new GeoData(path + "test" + format, idAtt);
 		ArrayList<Feature> fs = gd.getFeatures();
-		assertEquals("CARTO", gd.getCRSType().toString());
 
-		//TODO ensure schemas are the same/similar ?
+		assertEquals("CARTO", gd.getCRSType().toString());
+		assertEquals(3, fs.size());
+
 		//System.out.println(gd.getSchema());
-		//System.out.println(gd.getSchema().isIdentified()); //all true
-		//System.out.println(gd.getSchema().getAttributeDescriptors());
 		//System.out.println(fs.get(0).getAttributes().keySet());
 
-		//TODO check index by id
-		//TODO load data - specify id column
-
-		assertEquals(13, fs.size());
 		for(Feature f : fs) {
 			Geometry g = f.getGeometry();
 			assertEquals("MultiPolygon", g.getGeometryType());
 			assertFalse(g.isEmpty());
 			assertTrue(g.isValid());
 			assertTrue(g.getArea() > 0);
-			//fid temp name
-			//System.out.println(f.getAttributes().keySet());
 			assertTrue(f.getAttribute("temp") instanceof Double);
 			assertTrue(f.getAttribute("name") instanceof String);
-			//System.out.println(f.getAttribute("name") + "   ***" + f.getID() + "***   " + f.getAttribute("fid"));
-			//TODO ensure ids are the same
+			assertNotNull(f.getAttribute("allowed"));
+			assertNull(f.getAttribute("sdfdsfkjsfh"));
+			//System.out.println(f.getAttribute("name") + "   ***" + f.getID() + "***   ");
 		}
 	}
 
-	public void testSaveGPKG() throws Exception { testSave("gpkg"); }
-	public void testSaveSHP() throws Exception { testSave("shp"); }
-	public void testSaveGeoJSON() throws Exception { testSave("geojson"); }
+	/***/
+	public void testSaveGPKG() { testSave("gpkg"); }
+	/***/
+	public void testSaveSHP() { testSave("shp"); }
+	/***/
+	public void testSaveGeoJSON() { testSave("geojson"); }
 
-	private void testSave(String format) throws Exception {
+	private void testSave(String format) {
 
 		System.out.println(format);
 

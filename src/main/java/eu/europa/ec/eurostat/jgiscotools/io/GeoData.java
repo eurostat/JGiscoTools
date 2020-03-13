@@ -50,6 +50,7 @@ public class GeoData {
 	//TODO handle additional formats? WKT/WKB?
 
 	private String filePath;
+	private String idAtt;
 	private Filter filter;
 	private File file = null;
 	private String format;
@@ -59,16 +60,26 @@ public class GeoData {
 	 * 
 	 * @param filePath
 	 */
-	public GeoData(String filePath) { this(filePath, null); }
+	public GeoData(String filePath) { this(filePath, null, null); }
 
 	/**
 	 * Build a GeoData from a file.
 	 * 
 	 * @param filePath
+	 * @param idAtt 
+	 */
+	public GeoData(String filePath, String idAtt) { this(filePath, idAtt, null); }
+
+	/**
+	 * Build a GeoData from a file.
+	 * 
+	 * @param filePath
+	 * @param idAtt 
 	 * @param filter
 	 */
-	public GeoData(String filePath, Filter filter) {
+	public GeoData(String filePath, String idAtt, Filter filter) {
 		this.filePath = filePath;
+		this.idAtt = idAtt;
 		this.filter = filter;
 		this.file = new File(filePath);
 		if(!this.file.exists()) {
@@ -107,7 +118,7 @@ public class GeoData {
 				try {
 					HashMap<String, Object> params = new HashMap<>();
 					params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
-					params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
+					params.put(GeoPkgDataStoreFactory.DATABASE.key, this.file);
 					DataStore store = DataStoreFinder.getDataStore(params);
 					String[] names = store.getTypeNames();
 					if(names.length >1 )
@@ -137,7 +148,7 @@ public class GeoData {
 					FileDataStore store = FileDataStoreFinder.getDataStore(this.file);
 					SimpleFeatureCollection features = filter==null? store.getFeatureSource().getFeatures() : store.getFeatureSource().getFeatures(filter);
 					store.dispose();
-					this.features = SimpleFeatureUtil.get(features, null);
+					this.features = SimpleFeatureUtil.get(features, this.idAtt);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -147,18 +158,17 @@ public class GeoData {
 					InputStream input = new FileInputStream(new File(filePath));
 					SimpleFeatureCollection fc = (SimpleFeatureCollection) new FeatureJSON().readFeatureCollection(input);
 					if(this.filter == null)
-						this.features = SimpleFeatureUtil.get(fc, "id");
+						this.features = SimpleFeatureUtil.get(fc, this.idAtt);
 					else {
 						this.features = new ArrayList<Feature>();
-						for(Feature f : SimpleFeatureUtil.get(fc, "id"))
+						for(Feature f : SimpleFeatureUtil.get(fc, this.idAtt))
 							if(this.filter.evaluate(f)) this.features.add(f);
 					}
 					//remove 'geometry' attribute
 					for(Feature f : this.features) {
 						Object o = f.getAttributes().remove("geometry");
-						if(o == null) LOGGER.warn("Could not remove geometry attribute when loading GeoJSON data.");
+						if(o == null) LOGGER.warn("Could not remove geometry attribute when loading " + format + " data.");
 					}
-
 					input.close();
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
@@ -166,7 +176,7 @@ public class GeoData {
 				try {
 					HashMap<String, Object> params = new HashMap<>();
 					params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
-					params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
+					params.put(GeoPkgDataStoreFactory.DATABASE.key, this.file);
 					DataStore store = DataStoreFinder.getDataStore(params);
 					String[] names = store.getTypeNames();
 					if(names.length >1 )
@@ -175,7 +185,12 @@ public class GeoData {
 					LOGGER.debug(name);
 					SimpleFeatureCollection sfc = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
 					this.schema = store.getSchema(name);
-					this.features = SimpleFeatureUtil.get(sfc, null);
+					this.features = SimpleFeatureUtil.get(sfc, this.idAtt);
+					//remove 'geometry' attribute
+					for(Feature f : this.features) {
+						Object o = f.getAttributes().remove("geometry");
+						if(o == null) LOGGER.warn("Could not remove geometry attribute when loading " + format + " data.");
+					}
 					store.dispose();
 				} catch (Exception e) { e.printStackTrace(); }
 				break;
@@ -222,12 +237,13 @@ public class GeoData {
 	 * Get features
 	 * 
 	 * @param filePath
+	 * @param idAtt 
 	 * @param filter 
 	 * @return
 	 * @throws Exception
 	 */
-	public static ArrayList<Feature> getFeatures(String filePath, Filter filter)  {
-		return new GeoData(filePath, filter).getFeatures();
+	public static ArrayList<Feature> getFeatures(String filePath, String idAtt, Filter filter)  {
+		return new GeoData(filePath, idAtt, filter).getFeatures();
 	}
 
 	/**
