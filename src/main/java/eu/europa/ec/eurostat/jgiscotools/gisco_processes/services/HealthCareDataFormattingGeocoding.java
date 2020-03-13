@@ -451,22 +451,54 @@ public class HealthCareDataFormattingGeocoding {
 
 	public static void formatDE() {
 		try {
-			String filePath = path + "DE/dkgev_indented.xml";
+			String filePath = path + "DE/20200308_Verzeichnisabruf_aktuell.xml";
 			Document doc = XMLUtils.parse(new FileInputStream(filePath));
 
 			Element root = doc.getDocumentElement();
-			System.out.println( root.getNodeName() );
+			//System.out.println( root.getNodeName() );
 			
 			NodeList elts = root.getChildNodes();
 			//System.out.println(elts.getLength());
+			Collection<Map<String, String>> hospitalsFormatted = new ArrayList<Map<String, String>>();
 			for(int i=0; i<elts.getLength(); i++) {
-				Node elt = elts.item(i);
-				System.out.println(elt.getNodeName());
+				if(!elts.item(i).getNodeName().equals("Standort")) continue;
+				Element elt = (Element) elts.item(i);
+				String name = elt.getElementsByTagName("Bezeichnung").item(0).getTextContent();
+				String id = elt.getElementsByTagName("StandortId").item(0).getTextContent();
+				Element geoAdr = (Element) elt.getElementsByTagName("GeoAdresse").item(0);
+				String lon = geoAdr.getElementsByTagName("Längengrad").item(0).getTextContent();
+				String lat = geoAdr.getElementsByTagName("Breitengrad").item(0).getTextContent();
+				String housenb = geoAdr.getElementsByTagName("Hausnummer").item(0).getTextContent();
+				String street = geoAdr.getElementsByTagName("Straße").item(0).getTextContent();
+				String postcode = geoAdr.getElementsByTagName("PLZ").item(0).getTextContent();
+				String city = geoAdr.getElementsByTagName("Ort").item(0).getTextContent();
+
+				
+				HashMap<String, String> hf = new HashMap<String, String>();
+				hf.put("cc", "DE");
+				hf.put("country", "Germany");
+				hf.put("id", id);
+				hf.put("hospital_name", name);
+				hf.put("house_number", housenb);
+				hf.put("street", street);
+				hf.put("postcode", postcode);
+				hf.put("city", city);
+				hf.put("year", "2020");				
+				hf.put("lon", lon);
+				hf.put("lat", lat);
+				hf.put("type", "standort");
+				hospitalsFormatted.add(hf);
+				
+				//TODO get all einrichtungen
+				NodeList einrichtungen = elt.getElementsByTagName("GeoAdresse");
+				for(int j=0; j<einrichtungen.getLength(); j++) {
+					Element einrichtung = (Element) einrichtungen.item(j);
+				//TODO
+				}
 			}
 			
-			
-			//NamedNodeMap atts = doc.getAttributes();
-			
+			// save
+			CSVUtil.save(hospitalsFormatted, path + "DE/DE_formatted.csv");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
