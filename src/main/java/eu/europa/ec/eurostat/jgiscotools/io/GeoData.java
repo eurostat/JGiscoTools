@@ -27,7 +27,6 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geopkg.GeoPkgDataStoreFactory;
 import org.locationtech.jts.geom.Geometry;
@@ -296,7 +295,7 @@ public class GeoData {
 	public static <T extends Feature> void save(Collection<T> fs, String filePath, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
 
 		//create GT feature collection
-		SimpleFeatureType ft = getFeatureType(fs, crs);
+		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(fs, crs);
 		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, ft);
 		if(sfc.size() == 0){
 			//file.createNewFile();
@@ -374,21 +373,6 @@ public class GeoData {
 		default:
 			LOGGER.error("Unsuported output format: " + format);
 		}
-	}
-
-	private static <T extends Feature> SimpleFeatureType getFeatureType(Collection<T> fs, CoordinateReferenceSystem crs) {
-		SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
-		Feature f = fs.iterator().next(); //TODO
-		sftb.setCRS(crs);
-		sftb.setName( "type" );
-		sftb.setNamespaceURI("http://geotools.org");
-		sftb.add("the_geom", f.getGeometry().getClass());
-		sftb.setDefaultGeometry("the_geom");
-		for(String att : f.getAttributes().keySet()) {
-			sftb.add(att, f.getAttribute(att).getClass());
-		}
-		SimpleFeatureType sc = sftb.buildFeatureType();
-		return sc;
 	}
 
 	/**

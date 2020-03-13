@@ -163,7 +163,7 @@ public class AccessibilityGrid {
 		getNetworkSectionsInd();
 
 		//make network sections feat
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections.iterator().next(), null);
+		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections, null);
 
 		logger.info("Compute cell data...");
 		for(Feature cell : cells) {
