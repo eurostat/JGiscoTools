@@ -17,7 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
-import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
@@ -26,7 +25,7 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geopkg.GeoPkgDataStoreFactory;
 import org.locationtech.jts.geom.Geometry;
@@ -352,17 +351,18 @@ public class GeoData {
 	}
 
 	private static SimpleFeatureType getFeatureType(Collection<Feature> fs, CoordinateReferenceSystem crs) {
-		//TODO support attribute typing
-		//TODO use stringbuffer
-		String st = "";
-		//st = "the_geom:" + getGeometryType(fs); //TODO with f.getGeometry().getGeometryType()
-		//if(data!=null) st += "," + data;
-		SimpleFeatureType sc;
-		try {
-			sc = DataUtilities.createType("type", st);
-			return DataUtilities.createSubType(sc, null, crs);
-		} catch (SchemaException e) { e.printStackTrace(); }
-		return null;
+		SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+		Feature f = fs.iterator().next(); //TODO
+		sftb.setCRS(crs);
+		sftb.setName( "type" );
+		sftb.setNamespaceURI("http://geotools.org");
+		sftb.add("the_geom", f.getGeometry().getClass());
+		sftb.setDefaultGeometry("the_geom");
+		for(String att : f.getAttributes().keySet()) {
+			sftb.add(att, f.getAttribute(att).getClass());
+		}
+		SimpleFeatureType sc = sftb.buildFeatureType();
+		return sc;
 	}
 
 	/**

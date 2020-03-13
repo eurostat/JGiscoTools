@@ -26,18 +26,19 @@ public class GeoDataTest extends TestCase {
 	private static final String path = "src/test/resources/io/";
 
 	/***/
-	//public void testLoadGPKG() { testLoad(".gpkg", null); }
+	public void testLoadGPKG() { testLoad("gpkg"); }
 	/***/
-	//public void testLoadSHP() { testLoad(".shp", null); }
+	public void testLoadSHP() { testLoad("shp"); }
 	/***/
-	//public void testLoadGeoJSON() { testLoad(".geojson", null); }
-	/***/
-	//public void testLoadGeoJSONID() { testLoad("_with_id.geojson", "id"); }
+	public void testLoadGeoJSON() { testLoad("geojson"); }
 
-	private void testLoad(String format, String idAtt) {
+	private void testLoad(String format) {
 		//System.out.println(format);
 
-		GeoData gd = new GeoData(path + "test" + format, idAtt);
+		boolean gjs = format.contains("geojson");
+		boolean shp = format.contains("shp");
+
+		GeoData gd = new GeoData(path + "test." + format, "id");
 		ArrayList<Feature> fs = gd.getFeatures();
 
 		assertEquals("CARTO", gd.getCRSType().toString());
@@ -54,23 +55,28 @@ public class GeoDataTest extends TestCase {
 			assertTrue(g.getArea() > 0);
 			assertTrue(f.getAttribute("temp") instanceof Double);
 			assertTrue(f.getAttribute("name") instanceof String);
-			assertNotNull(f.getAttribute("allowed"));
+			//if(gjs) assertTrue(f.getAttribute("allowed") instanceof String);
+			if(shp) assertTrue(f.getAttribute("allowed") instanceof Long);
+			else if(gjs) assertTrue(f.getAttribute("allowed") instanceof Boolean);
+			else assertTrue(f.getAttribute("allowed") instanceof Boolean);
 			assertNull(f.getAttribute("sdfdsfkjsfh"));
 			//System.out.println(f.getAttribute("name") + "   ***" + f.getID() + "***   ");
 		}
 	}
 
 	/***/
-	public void testSaveGPKG() { testSave(".gpkg", null); }
+	//public void testSaveGPKG() { testSave(".gpkg", null); }
 	/***/
-	public void testSaveSHP() { testSave(".shp", null); }
+	//public void testSaveSHP() { testSave(".shp", null); }
 	/***/
-	public void testSaveGeoJSON() { testSave(".geojson", null); }
+	//public void testSaveGeoJSON() { testSave(".geojson", null); }
 	/***/
-	public void testSaveGeoJSONID() { testSave("_with_id.geojson", "id"); }
+	//public void testSaveGeoJSONID() { testSave("_with_id.geojson", "id"); }
 
 	private void testSave(String format, String idAtt) {
 		System.out.println(format);
+		boolean gjs = format.contains("geojson");
+		boolean shp = format.contains("shp");
 
 		//load data
 		GeoData gd = new GeoData(path + "test" + format, idAtt);
@@ -87,10 +93,10 @@ public class GeoDataTest extends TestCase {
 		//check same CRS
 		assertEquals(gd.getCRS(), gd2.getCRS());
 
-		//System.out.println(gd.getSchema());
-		//System.out.println(gd2.getSchema());
-		//System.out.println(gd.getFeatures().get(0).getAttributes().keySet());
-		//System.out.println(gd2.getFeatures().get(0).getAttributes().keySet());
+		/*System.out.println(gd.getSchema());
+		System.out.println(gd2.getSchema());
+		System.out.println(gd.getFeatures().get(0).getAttributes().keySet());
+		System.out.println(gd2.getFeatures().get(0).getAttributes().keySet());*/
 
 		//TODO fix attribute datatype when saving
 		for(Feature f : gd2.getFeatures()) {
@@ -99,9 +105,16 @@ public class GeoDataTest extends TestCase {
 			assertFalse(g.isEmpty());
 			assertTrue(g.isValid());
 			assertTrue(g.getArea() > 0);
-			//TODO assertTrue(f.getAttribute("temp") instanceof Double);
-			//TODO assertTrue(f.getAttribute("name") instanceof String);
-			assertNotNull(f.getAttribute("allowed"));
+
+			assertTrue(f.getAttribute("name") instanceof String);
+
+			if(gjs) assertTrue(f.getAttribute("temp") instanceof String);
+			else assertTrue(f.getAttribute("temp") instanceof Double);
+
+			if(shp) assertTrue(f.getAttribute("allowed") instanceof Long);
+			else if(gjs) assertTrue(f.getAttribute("allowed") instanceof String); //TODO should be booleans
+			else assertTrue(f.getAttribute("allowed") instanceof Integer); //TODO should be booleans
+
 			assertNull(f.getAttribute("sdfdsfkjsfh"));
 			//System.out.println(f.getAttribute("name") + "   ***" + f.getID() + "***   ");
 		}
