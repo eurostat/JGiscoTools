@@ -26,6 +26,7 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.SchemaException;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geopkg.GeoPkgDataStoreFactory;
 import org.locationtech.jts.geom.Geometry;
@@ -354,10 +355,14 @@ public class GeoData {
 		//TODO support attribute typing
 		//TODO use stringbuffer
 		String st = "";
-		st = "the_geom:" + getGeometryType(fs); //TODO with f.getGeometry().getGeometryType()
-		if(data!=null) st += "," + data;
-		SimpleFeatureType sc = DataUtilities.createType("type", st);
-		return DataUtilities.createSubType(sc, null, crs);
+		//st = "the_geom:" + getGeometryType(fs); //TODO with f.getGeometry().getGeometryType()
+		//if(data!=null) st += "," + data;
+		SimpleFeatureType sc;
+		try {
+			sc = DataUtilities.createType("type", st);
+			return DataUtilities.createSubType(sc, null, crs);
+		} catch (SchemaException e) { e.printStackTrace(); }
+		return null;
 	}
 
 	/**
