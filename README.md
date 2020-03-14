@@ -111,8 +111,6 @@ JGiscoTools allows:
   - The computation of the intersection matrix between two statistical units datasets. (TODO document)
 - ...
 
-See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/).
-
 ## Support and contribution
 
 Feel free to [ask support](https://github.com/eurostat/JGiscoTools/issues/new), fork the project or simply star it (it's always a pleasure).
