@@ -4,11 +4,6 @@
 package eu.europa.ec.eurostat.jgiscotools.util;
 
 import java.awt.Toolkit;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 
 import javax.measure.Unit;
@@ -19,7 +14,6 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.util.CRSUtilities;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -371,7 +365,7 @@ public class ProjectionUtil {
 
 	//http://epsg.io/3035.wkt
 	//https://epsg.io/3035.wkt
-	private static CoordinateReferenceSystem getFromEPSGIOWKT(String epsgCode) {
+	/*	private static CoordinateReferenceSystem getFromEPSGIOWKT(String epsgCode) {
 
 		//get wkt from epsg.io
 		//String url_ = "https://epsg.io/"+epsgCode+".wkt";
@@ -398,17 +392,6 @@ public class ProjectionUtil {
 			return null;
 		}
 		return crs;
-	}
-
-
-
-	/*
-	public static void main(String[] args) {
-		for(int epsg : new int[]{3035,4326,4258,3857}) {
-			//System.out.println(getCRSType(epsg));
-			CoordinateReferenceSystem crs = getCRS(epsg);
-			System.out.println(epsg+" = "+getEPSGCode(crs));
-		}
 	}
 	 */
 
