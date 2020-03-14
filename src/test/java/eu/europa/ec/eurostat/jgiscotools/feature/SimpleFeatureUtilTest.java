@@ -18,7 +18,12 @@ public class SimpleFeatureUtilTest extends TestCase {
 
 	/***/
 	public void test1() {
+		
+		Feature f;
+		f = new Feature();
+		f.setGeometry(null);
 
+		//TODO
 	}
 
 }
