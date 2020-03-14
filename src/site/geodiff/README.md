@@ -11,16 +11,11 @@ DifferenceDetection geoDiff = new DifferenceDetection(featuresIni, featuresFin);
 where `featuresIni` and `featuresFin` are the two datasets to compare, in the initial and final versions. This input data can be loaded, for example, from a [GeoPackage](https://www.geopackage.org/) source with:
 
 ```java
-Collection<Feature> featuresIni = GeoPackageUtil.getFeatures("C:/myDatasetVersion2015.gpkg");
-Collection<Feature> featuresFin = GeoPackageUtil.getFeatures("C:/myDatasetVersion2020.gpkg");
+Collection<Feature> featuresIni = GeoData.getFeatures("C:/myDatasetVersion2015.gpkg", "id");
+Collection<Feature> featuresFin = GeoData.getFeatures("C:/myDatasetVersion2020.gpkg", "id");
 ```
 
-The difference detection is based on an identifier, which is expected to be stable between the two versions (corresponding features in both versions should have the same identifier). The identifier attribute should be specified on both dataset versions with:
-
-```java
-FeatureUtil.setId(featuresIni, "identifierAttribute");
-FeatureUtil.setId(featuresFin, "identifierAttribute");
-```
+where *id* is the dataset column where the dataset identifier is defined. This identifier is expected to be stable between the two versions (corresponding features in both versions should have the same identifier). Both dataset versions are assumed to have the exact same structure (attribute names and types, geometry type).
 
 ## Get differences
 
