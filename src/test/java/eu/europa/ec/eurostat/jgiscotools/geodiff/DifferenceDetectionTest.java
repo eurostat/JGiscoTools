@@ -29,7 +29,7 @@ public class DifferenceDetectionTest extends TestCase {
 		//new ChangeDetectionTest().testPt();
 	}*/
 
-	private String path = "src/test/resources/change_detection/";
+	private String path = "src/test/resources/difference_detection/";
 
 	/*** @throws Exception  **/
 	public void testSurf() throws Exception {
