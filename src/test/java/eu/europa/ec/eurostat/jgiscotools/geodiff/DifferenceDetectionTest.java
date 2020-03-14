@@ -1,8 +1,10 @@
-package eu.europa.ec.eurostat.jgiscotools.changedetection;
+package eu.europa.ec.eurostat.jgiscotools.geodiff;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
@@ -19,7 +21,7 @@ import junit.framework.TestCase;
  * @author julien Gaffuri
  *
  */
-public class ChangeDetectionTest extends TestCase {
+public class DifferenceDetectionTest extends TestCase {
 
 	/*public static void main(String[] args) throws Exception {
 		junit.textui.TestRunner.run(ChangeDetectionTest.class);
@@ -27,9 +29,11 @@ public class ChangeDetectionTest extends TestCase {
 		//new ChangeDetectionTest().testPt();
 	}*/
 
+	private String path = "src/test/resources/change_detection/";
+
 	/*** @throws Exception  **/
 	public void testSurf() throws Exception {
-		String path = "src/test/resources/change_detection/";
+		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 
 		//load datasets
 		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_surf.gpkg");
@@ -108,7 +112,7 @@ public class ChangeDetectionTest extends TestCase {
 
 	/*** @throws Exception  **/
 	public void testPt() throws Exception {
-		String path = "src/test/resources/change_detection/";
+		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 
 		//load datasets
 		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_pt.gpkg");
@@ -187,7 +191,7 @@ public class ChangeDetectionTest extends TestCase {
 
 	/*** @throws Exception  **/
 	public void testLin() throws Exception {
-		String path = "src/test/resources/change_detection/";
+		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 
 		//load datasets
 		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_lin.gpkg");
