@@ -38,7 +38,7 @@ See below an example of differences on a test dataset:
 Identical features can also be retrieved with:
 
 ```java
-Collection<Feature> identical = geoDiff.getIdentical();
+Collection<Feature> identicals = geoDiff.getIdentical();
 ```
 
 ## Apply incremental changes
