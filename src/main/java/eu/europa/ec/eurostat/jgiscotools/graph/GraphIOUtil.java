@@ -12,23 +12,23 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
  * @author julien Gaffuri
  *
  */
-public class GraphSHPUtil {
+public class GraphIOUtil {
 
-	public static void exportAsSHP(Graph g, String outPath, CoordinateReferenceSystem crs){
-		GraphSHPUtil.exportFacesAsSHP(g, outPath+"faces.shp", crs);
-		GraphSHPUtil.exportEdgesAsSHP(g, outPath+"edges.shp", crs);
-		GraphSHPUtil.exportNodesAsSHP(g, outPath+"nodes.shp", crs);
+	public static void exportAsSHP(Graph g, String outPath, String format, CoordinateReferenceSystem crs){
+		GraphIOUtil.exportFaces(g, outPath+"faces."+format, crs);
+		GraphIOUtil.exportEdges(g, outPath+"edges."+format, crs);
+		GraphIOUtil.exportNodes(g, outPath+"nodes."+format, crs);
 	}
 
-	public static void exportFacesAsSHP(Graph g, String outFile, CoordinateReferenceSystem crs){
+	public static void exportFaces(Graph g, String outFile, CoordinateReferenceSystem crs){
 		GeoData.save(GraphToFeature.asFeature(g.getFaces()), outFile, crs);
 	}
 
-	public static void exportEdgesAsSHP(Graph g, String outFile, CoordinateReferenceSystem crs){
+	public static void exportEdges(Graph g, String outFile, CoordinateReferenceSystem crs){
 		GeoData.save(GraphToFeature.asFeature(g.getEdges()), outFile, crs);
 	}
 
-	public static void exportNodesAsSHP(Graph g, String outFile, CoordinateReferenceSystem crs){
+	public static void exportNodes(Graph g, String outFile, CoordinateReferenceSystem crs){
 		GeoData.save(GraphToFeature.asFeature(g.getNodes()), outFile, crs);
 	}
 
