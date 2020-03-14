@@ -16,6 +16,7 @@ import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -171,6 +172,7 @@ public class SimpleFeatureUtil {
 	 */
 	private static <T extends Feature> HashMap<String, Class<?>> getAttributeGeomTypes(Set<String> atts, Collection<T> fs) {
 		HashMap<String, Class<?>> out = new HashMap<>();
+		//attribute types
 		for(String att : atts) {
 			Class<?> attClass = null;
 			for(Feature f : fs) {
@@ -187,6 +189,21 @@ public class SimpleFeatureUtil {
 			if(attClass == null) attClass = String.class;
 			out.put(att, attClass);
 		}
+		//geometry type
+		Class<?> gClass = null;
+		for(Feature f : fs) {
+			Geometry o = f.getGeometry();
+			if(o==null || o.isEmpty()) continue;
+			Class<? extends Object> kl = o.getClass();
+			if(gClass==null) { gClass=kl; continue; }
+			if(kl != gClass) {
+				LOGGER.warn("Inconsistant geometry type. Store it as Point type.");
+				gClass = Point.class;
+				break;
+			}
+		}
+		if(gClass == null) gClass = String.class;
+		out.put("the_geom", gClass);
 		return out;
 	}
 
