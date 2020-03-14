@@ -48,12 +48,9 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 public class GeoData {
 	private final static Logger LOGGER = LogManager.getLogger(GeoData.class);
 
-	//TODO handle additional formats? WKT/WKB?
-
-	private String filePath;
+	private File file = null;
 	private String idAtt;
 	private Filter filter;
-	private File file = null;
 	private String format;
 
 	/**
@@ -79,7 +76,6 @@ public class GeoData {
 	 * @param filter
 	 */
 	public GeoData(String filePath, String idAtt, Filter filter) {
-		this.filePath = filePath;
 		this.idAtt = idAtt;
 		this.filter = filter;
 		this.file = new File(filePath);
@@ -88,52 +84,10 @@ public class GeoData {
 			return;
 		}
 		this.format = FilenameUtils.getExtension(filePath).toLowerCase();
-		if(!"shp".equals(this.format) && !"geojson".equals(this.format) && !"gpkg".equals(this.format)) {
+		if(!HANDLERS.keySet().contains(this.format)) {
 			LOGGER.error("Unsupported data format '" + this.format + "' for data source:" + filePath + " not found.");
 			return;
 		}
-	}
-
-
-	private SimpleFeatureType schema = null;
-
-	/**
-	 * @return The schema
-	 */
-	public SimpleFeatureType getSchema() {
-		if(schema == null) 
-			switch(format) {
-			case "shp":
-				try {
-					this.schema = FileDataStoreFinder.getDataStore(this.file).getSchema();
-				} catch (Exception e) { e.printStackTrace(); }
-				break;
-			case "geojson":
-				try {
-					InputStream input = new FileInputStream(new File(filePath));
-					this.schema = new FeatureJSON().readFeatureCollectionSchema(input, true);
-					input.close();
-				} catch (Exception e) { e.printStackTrace(); }
-				break;
-			case "gpkg":
-				try {
-					HashMap<String, Object> params = new HashMap<>();
-					params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
-					params.put(GeoPkgDataStoreFactory.DATABASE.key, this.file);
-					DataStore store = DataStoreFinder.getDataStore(params);
-					String[] names = store.getTypeNames();
-					if(names.length >1 )
-						LOGGER.warn("Several types found in GPKG " + filePath + ". Only " + names[0] + " will be considered.");
-					String name = names[0];
-					LOGGER.debug(name);
-					this.schema = store.getSchema(name);
-					store.dispose();
-				} catch (IOException e) { e.printStackTrace(); }
-				break;
-			default:
-				LOGGER.error("Could not retrieve schema from data source: " + filePath);
-			}
-		return schema;
 	}
 
 	private ArrayList<Feature> features = null;
@@ -142,65 +96,31 @@ public class GeoData {
 	 * @return The feature
 	 */
 	public ArrayList<Feature> getFeatures() {
-		if(features == null) 
-			switch(format) {
-			case "shp":
-				try {
-					FileDataStore store = FileDataStoreFinder.getDataStore(this.file);
-					SimpleFeatureCollection features = filter==null? store.getFeatureSource().getFeatures() : store.getFeatureSource().getFeatures(filter);
-					store.dispose();
-					this.features = SimpleFeatureUtil.get(features, this.idAtt);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				break;
-			case "geojson":
-				try {
-					InputStream input = new FileInputStream(new File(filePath));
-					SimpleFeatureCollection fc = (SimpleFeatureCollection) new FeatureJSON().readFeatureCollection(input);
-					if(this.filter == null)
-						this.features = SimpleFeatureUtil.get(fc, this.idAtt);
-					else {
-						this.features = new ArrayList<Feature>();
-						for(Feature f : SimpleFeatureUtil.get(fc, this.idAtt))
-							if(this.filter.evaluate(f)) this.features.add(f);
-					}
-					//remove 'geometry' attribute
-					for(Feature f : this.features) {
-						Object o = f.getAttributes().remove("geometry");
-						if(o == null) LOGGER.warn("Could not remove geometry attribute when loading " + format + " data.");
-					}
-					input.close();
-				} catch (Exception e) { e.printStackTrace(); }
-				break;
-			case "gpkg":
-				try {
-					HashMap<String, Object> params = new HashMap<>();
-					params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
-					params.put(GeoPkgDataStoreFactory.DATABASE.key, this.file);
-					DataStore store = DataStoreFinder.getDataStore(params);
-					String[] names = store.getTypeNames();
-					if(names.length >1 )
-						LOGGER.warn("Several types found in GPKG " + filePath + ". Only " + names[0] + " will be considered.");
-					String name = names[0];
-					LOGGER.debug(name);
-					SimpleFeatureCollection sfc = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
-					this.schema = store.getSchema(name);
-					this.features = SimpleFeatureUtil.get(sfc, this.idAtt);
-					//remove 'geometry' attribute
-					for(Feature f : this.features) {
-						/*Object o = */f.getAttributes().remove("geometry");
-						//if(o == null) LOGGER.warn("Could not remove geometry attribute when loading data from " + this.filePath);
-					}
-					store.dispose();
-				} catch (Exception e) { e.printStackTrace(); }
-				break;
-			default:
-				LOGGER.error("Could not retrieve features from data source: " + filePath);
-			}
+		if(features == null) {
+			GeoDataFormatHandler dfh = HANDLERS.get(format);
+			if(dfh != null)
+				this.features = dfh.getFeatures(file, filter, idAtt);
+			else
+				LOGGER.error("Could not retrieve features from data source: " + this.file.getAbsolutePath());
+		}
 		return features;
 	}
 
+	private SimpleFeatureType schema = null;
+
+	/**
+	 * @return The schema
+	 */
+	public SimpleFeatureType getSchema() {
+		if(schema == null) {
+			GeoDataFormatHandler dfh = HANDLERS.get(format);
+			if(dfh != null)
+				this.schema = dfh.getSchema(file);
+			else
+				LOGGER.error("Could not retrieve schema from data source: " + this.file.getAbsolutePath());
+		}
+		return schema;
+	}
 
 	/**
 	 * @return The coordinate reference system
@@ -215,6 +135,203 @@ public class GeoData {
 	public CRSType getCRSType() {
 		return ProjectionUtil.getCRSType(getCRS());
 	}
+
+
+
+
+
+
+
+	//TODO handle additional formats? WKT/WKB?
+	private static final HashMap<String, GeoDataFormatHandler> HANDLERS;
+	static {
+		HANDLERS = new HashMap<String, GeoDataFormatHandler>();
+		HANDLERS.put("gpkg", new GPKGHandler());
+		HANDLERS.put("geojson", new GeoJSONHandler());
+		HANDLERS.put("shp", new SHPHandler());
+	}
+
+	private abstract interface GeoDataFormatHandler {
+		SimpleFeatureType getSchema(File file);
+		ArrayList<Feature> getFeatures(File file, Filter filter, String idAtt);
+		void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex);
+	}
+
+	private static class GPKGHandler implements GeoDataFormatHandler {
+		@Override
+		public ArrayList<Feature> getFeatures(File file, Filter filter, String idAtt) {
+			try {
+				HashMap<String, Object> params = new HashMap<>();
+				params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
+				params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
+				DataStore store = DataStoreFinder.getDataStore(params);
+				String[] names = store.getTypeNames();
+				if(names.length >1 )
+					LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + names[0] + " will be considered.");
+				String name = names[0];
+				LOGGER.debug(name);
+				SimpleFeatureCollection sfc = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
+				ArrayList<Feature> fs = SimpleFeatureUtil.get(sfc, idAtt);
+				//remove 'geometry' attribute
+				for(Feature f : fs) {
+					/*Object o = */f.getAttributes().remove("geometry");
+					//if(o == null) LOGGER.warn("Could not remove geometry attribute when loading data from " + this.filePath);
+				}
+				store.dispose();
+				return fs;
+			} catch (Exception e) { e.printStackTrace(); }
+			return null;
+		}
+
+		@Override
+		public SimpleFeatureType getSchema(File file) {
+			try {
+				HashMap<String, Object> params = new HashMap<>();
+				params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
+				params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
+				DataStore store = DataStoreFinder.getDataStore(params);
+				String[] names = store.getTypeNames();
+				if(names.length >1 )
+					LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + names[0] + " will be considered.");
+				String name = names[0];
+				LOGGER.debug(name);
+				SimpleFeatureType schema = store.getSchema(name);
+				store.dispose();
+				return schema;
+			} catch (IOException e) { e.printStackTrace(); }
+			return null;
+		}
+
+		@Override
+		public void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
+			try {
+				//create feature store
+				HashMap<String, Serializable> params = new HashMap<String, Serializable>();
+				params.put("url", file.toURI().toURL());
+				params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
+				params.put(GeoPkgDataStoreFactory.DATABASE.key, file.getAbsolutePath());
+				params.put("create spatial index", createSpatialIndex);
+				DataStore ds = DataStoreFinder.getDataStore(params);
+
+				ds.createSchema(sfc.getSchema());
+				SimpleFeatureStore fst = (SimpleFeatureStore)ds.getFeatureSource(ds.getTypeNames()[0]);
+
+				//creation transaction
+				Transaction tr = new DefaultTransaction("create");
+				fst.setTransaction(tr);
+				try {
+					fst.addFeatures(sfc);
+					tr.commit();
+				} catch (Exception e) {
+					e.printStackTrace();
+					tr.rollback();
+				} finally {
+					tr.close();
+					ds.dispose();
+				}
+			} catch (IOException e) { e.printStackTrace(); }
+		}		
+	};
+
+	private static class GeoJSONHandler implements GeoDataFormatHandler {
+		@Override
+		public ArrayList<Feature> getFeatures(File file, Filter filter, String idAtt) {
+			try {
+				InputStream input = new FileInputStream(file);
+				SimpleFeatureCollection fc = (SimpleFeatureCollection) new FeatureJSON().readFeatureCollection(input);
+				ArrayList<Feature> fs = null;
+				if(filter == null)
+					fs  = SimpleFeatureUtil.get(fc, idAtt);
+				else {
+					fs = new ArrayList<Feature>();
+					for(Feature f : SimpleFeatureUtil.get(fc, idAtt))
+						if(filter.evaluate(f)) fs.add(f);
+				}
+				//remove 'geometry' attribute
+				for(Feature f : fs) {
+					Object o = f.getAttributes().remove("geometry");
+					if(o == null) LOGGER.warn("Could not remove geometry attribute when loading GeoJSON data.");
+				}
+				input.close();
+				return fs;
+			} catch (Exception e) { e.printStackTrace(); }
+			return null;
+		}
+
+		@Override
+		public SimpleFeatureType getSchema(File file) {
+			try {
+				InputStream input = new FileInputStream(file);
+				SimpleFeatureType schema = new FeatureJSON().readFeatureCollectionSchema(input, true);
+				input.close();
+				return schema;
+			} catch (Exception e) { e.printStackTrace(); }
+			return null;
+		}		
+
+		@Override
+		public void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
+			try {
+				OutputStream output = new FileOutputStream(file);
+				new FeatureJSON().writeFeatureCollection(sfc, output);
+				output.close();
+			} catch (Exception e) { e.printStackTrace(); }
+		}		
+	};
+
+	private static class SHPHandler implements GeoDataFormatHandler {
+		@Override
+		public ArrayList<Feature> getFeatures(File file, Filter filter, String idAtt) {
+			try {
+				FileDataStore store = FileDataStoreFinder.getDataStore(file);
+				SimpleFeatureCollection features = filter==null? store.getFeatureSource().getFeatures() : store.getFeatureSource().getFeatures(filter);
+				store.dispose();
+				return SimpleFeatureUtil.get(features, idAtt);
+			} catch (Exception e) { e.printStackTrace(); }
+			return null;
+		}
+
+		@Override
+		public SimpleFeatureType getSchema(File file) {
+			try {
+				return FileDataStoreFinder.getDataStore(file).getSchema();
+			} catch (Exception e) { e.printStackTrace(); }
+			return null;
+		}		
+
+		@Override
+		public void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
+			try {
+				//create feature store
+				HashMap<String, Serializable> params = new HashMap<String, Serializable>();
+				params.put("url", file.toURI().toURL());
+				params.put("create spatial index", createSpatialIndex);
+				ShapefileDataStore ds = (ShapefileDataStore) new ShapefileDataStoreFactory().createNewDataStore(params);
+
+				ds.createSchema(sfc.getSchema());
+				SimpleFeatureStore fst = (SimpleFeatureStore)ds.getFeatureSource(ds.getTypeNames()[0]);
+
+				//creation transaction
+				Transaction tr = new DefaultTransaction("create");
+				fst.setTransaction(tr);
+				try {
+					fst.addFeatures(sfc);
+					tr.commit();
+				} catch (Exception e) {
+					e.printStackTrace();
+					tr.rollback();
+				} finally {
+					tr.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}		
+	};
+
+
+
+
 
 
 
@@ -306,73 +423,13 @@ public class GeoData {
 		//create output file
 		File file = FileUtil.getFile(filePath, true, true);
 
+		//save with relevant handler
 		String format = FilenameUtils.getExtension(filePath).toLowerCase();
-		switch(format) {
-		case "shp":
-			try {
-				//create feature store
-				HashMap<String, Serializable> params = new HashMap<String, Serializable>();
-				params.put("url", file.toURI().toURL());
-				params.put("create spatial index", createSpatialIndex);
-				ShapefileDataStore ds = (ShapefileDataStore) new ShapefileDataStoreFactory().createNewDataStore(params);
-
-				ds.createSchema(sfc.getSchema());
-				SimpleFeatureStore fst = (SimpleFeatureStore)ds.getFeatureSource(ds.getTypeNames()[0]);
-
-				//creation transaction
-				Transaction tr = new DefaultTransaction("create");
-				fst.setTransaction(tr);
-				try {
-					fst.addFeatures(sfc);
-					tr.commit();
-				} catch (Exception e) {
-					e.printStackTrace();
-					tr.rollback();
-				} finally {
-					tr.close();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			break;
-		case "geojson":
-			try {
-				OutputStream output = new FileOutputStream(file);
-				new FeatureJSON().writeFeatureCollection(sfc, output);
-				output.close();
-			} catch (Exception e) { e.printStackTrace(); }
-			break;
-		case "gpkg":
-			try {
-				//create feature store
-				HashMap<String, Serializable> params = new HashMap<String, Serializable>();
-				params.put("url", file.toURI().toURL());
-				params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
-				params.put(GeoPkgDataStoreFactory.DATABASE.key, filePath);
-				params.put("create spatial index", createSpatialIndex);
-				DataStore ds = DataStoreFinder.getDataStore(params);
-
-				ds.createSchema(sfc.getSchema());
-				SimpleFeatureStore fst = (SimpleFeatureStore)ds.getFeatureSource(ds.getTypeNames()[0]);
-
-				//creation transaction
-				Transaction tr = new DefaultTransaction("create");
-				fst.setTransaction(tr);
-				try {
-					fst.addFeatures(sfc);
-					tr.commit();
-				} catch (Exception e) {
-					e.printStackTrace();
-					tr.rollback();
-				} finally {
-					tr.close();
-					ds.dispose();
-				}
-			} catch (IOException e) { e.printStackTrace(); }
-			break;
-		default:
+		GeoDataFormatHandler dfh = HANDLERS.get(format);
+		if(dfh != null)
+			dfh.save(sfc, file, crs, createSpatialIndex);
+		else
 			LOGGER.error("Unsuported output format: " + format);
-		}
 	}
 
 	/**
