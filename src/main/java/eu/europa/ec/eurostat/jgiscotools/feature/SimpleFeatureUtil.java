@@ -5,6 +5,8 @@ package eu.europa.ec.eurostat.jgiscotools.feature;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -131,19 +133,62 @@ public class SimpleFeatureUtil {
 	 */
 	public static <T extends Feature> SimpleFeatureType getFeatureType(Collection<T> fs, CoordinateReferenceSystem crs) {
 		SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
-		Feature f = fs.iterator().next(); //TODO get common elements - or check all of them have same structure
+		Set<String> atts = fs.iterator().next().getAttributes().keySet();
+		HashMap<String,Class<?>> types = getAttributeGeomTypes(atts, fs);
 		sftb.setCRS(crs);
 		sftb.setName( "type" );
 		sftb.setNamespaceURI("http://geotools.org");
-		sftb.add("the_geom", f.getGeometry().getClass());
+		sftb.add("the_geom", types.get("the_geom"));
 		sftb.setDefaultGeometry("the_geom");
-		for(String att : f.getAttributes().keySet()) {
-			sftb.add(att, f.getAttribute(att).getClass());
+		for(String att : atts) {
+			sftb.add(att, types.get(att));
 		}
 		SimpleFeatureType sc = sftb.buildFeatureType();
 		return sc;
 	}
 
+	/**
+	 * Get GeoTools FeatureType from features.
+	 * 
+	 * @param <T>
+	 * @param f
+	 * @param crs
+	 * @return
+	 */
+	public static <T extends Feature> SimpleFeatureType getFeatureType(T f, CoordinateReferenceSystem crs) {
+		ArrayList<T> fs = new ArrayList<T>();
+		fs.add(f);
+		return getFeatureType(fs, crs);
+	}
+
+	/**
+	 * Get attribute and geometry types for a list of features.
+	 * 
+	 * @param <T>
+	 * @param atts
+	 * @param fs
+	 * @return
+	 */
+	private static <T extends Feature> HashMap<String, Class<?>> getAttributeGeomTypes(Set<String> atts, Collection<T> fs) {
+		HashMap<String, Class<?>> out = new HashMap<>();
+		for(String att : atts) {
+			Class<?> attClass = null;
+			for(Feature f : fs) {
+				Object o = f.getAttribute(att);
+				if(o==null) continue;
+				Class<? extends Object> kl = o.getClass();
+				if(attClass==null) { attClass=kl; continue; }
+				if(kl != attClass) {
+					LOGGER.warn("Inconsistant attribute type for " + att + ". Store it as String type.");
+					attClass = String.class;
+					break;
+				}
+			}
+			if(attClass == null) attClass = String.class;
+			out.put(att, attClass);
+		}
+		return out;
+	}
 
 	/**
 	 * Create features from geometries
