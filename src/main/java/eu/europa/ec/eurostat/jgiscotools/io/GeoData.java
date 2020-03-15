@@ -411,14 +411,14 @@ public class GeoData {
 	 */
 	public static <T extends Feature> void save(Collection<T> fs, String filePath, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
 
-		//create GT feature collection
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(fs, crs);
-		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, ft);
-		if(sfc.size() == 0){
-			//file.createNewFile();
+		if(fs.size() == 0) {
 			LOGGER.warn("Could not save file " + filePath + " - collection of features is empty");
 			return;
 		}
+
+		//create GT feature collection
+		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(fs, crs);
+		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, ft);
 
 		//create output file
 		File file = FileUtil.getFile(filePath, true, true);

@@ -31,7 +31,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class SimpleFeatureUtil {
 	private final static Logger LOGGER = LogManager.getLogger(SimpleFeatureUtil.class);
 
-
 	/**
 	 * Convert GeoTools SimpleFeature into feature
 	 * 
@@ -135,17 +134,22 @@ public class SimpleFeatureUtil {
 	public static <T extends Feature> SimpleFeatureType getFeatureType(Collection<T> fs, CoordinateReferenceSystem crs) {
 		SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
 		Set<String> atts = fs.iterator().next().getAttributes().keySet();
-		HashMap<String,Class<?>> types = getAttributeGeomTypes(atts, fs);
 		sftb.setCRS(crs);
 		sftb.setName( "type" );
 		sftb.setNamespaceURI("http://geotools.org");
-		sftb.add("the_geom", types.get("the_geom"));
 		sftb.setDefaultGeometry("the_geom");
-		for(String att : atts) {
-			sftb.add(att, types.get(att));
+
+		if(fs.size() == 0) {
+			LOGGER.warn("Creating SimpleFeatureType from empty list of features.");
+			sftb.add("the_geom", Point.class);
+			return sftb.buildFeatureType();
 		}
-		SimpleFeatureType sc = sftb.buildFeatureType();
-		return sc;
+
+		HashMap<String,Class<?>> types = getAttributeGeomTypes(atts, fs);
+		sftb.add("the_geom", types.get("the_geom"));
+		for(String att : atts)
+			sftb.add(att, types.get(att));
+		return sftb.buildFeatureType();
 	}
 
 	/**
