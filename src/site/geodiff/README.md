@@ -5,14 +5,14 @@ NB: To setup a coding environment, see [here](https://github.com/eurostat/README
 To analyse the differences between two versions of a dataset, use:
 
 ```java
-DifferenceDetection geoDiff = new DifferenceDetection(featuresIni, featuresFin);
+DifferenceDetection geoDiff = new DifferenceDetection(features1, features2);
 ```
 
-where `featuresIni` and `featuresFin` are the two datasets to compare, in the initial and final versions. This input data can be loaded, for example, from a [GeoPackage](https://www.geopackage.org/) source with:
+where `features1` and `features2` are the two datasets to compare, in two different versions. This input data can be loaded, for example, from a [GeoPackage](https://www.geopackage.org/) source with:
 
 ```java
-Collection<Feature> featuresIni = GeoData.getFeatures("C:/myDatasetVersion2015.gpkg", "id");
-Collection<Feature> featuresFin = GeoData.getFeatures("C:/myDatasetVersion2020.gpkg", "id");
+Collection<Feature> features1 = GeoData.getFeatures("C:/myDatasetVersion2015.gpkg", "id");
+Collection<Feature> features2 = GeoData.getFeatures("C:/myDatasetVersion2020.gpkg", "id");
 ```
 
 where *id* is the dataset column where the dataset identifier is defined. This identifier is expected to be stable between the two versions (corresponding features in both versions should have the same identifier). Both dataset versions are assumed to have the exact same structure (attribute names and types, geometry type).
@@ -43,13 +43,13 @@ Collection<Feature> identicals = geoDiff.getIdentical();
 
 ## Apply incremental changes
 
-The differences returned by the ``geoDiff.getDifferences()`` method capture the entire information needed to transform the dataset from its initial version to the final one. The final version can thus be obtained by applying the changes to the initial version with:
+The differences returned by the ``geoDiff.getDifferences()`` method capture the entire information needed to transform the dataset from an initial version to a final one. The final version can thus be obtained by applying the changes to the initial version with:
 
 ```java
-DifferenceDetection.applyChanges(featuresIni, geoDiff.getDifferences());
+DifferenceDetection.applyChanges(features1, geoDiff.getDifferences());
 ```
 
-The equality of the result with the final version can then be checked with ``DifferenceDetection.equals(featuresFin, featuresIni);`` which returns ``true``.
+The equality of the result with the final version can then be checked with ``DifferenceDetection.equals(features2, features1);`` which returns ``true``.
 
 ## Analyse differences
 
@@ -65,7 +65,7 @@ This produces a set of linear features representing the [Hausdorf segments](http
 
 <kbd><img src="img/hausdorf_segment.png" /></kbd>
 
-(Initial version in gray - Final version blue outline - Corresponding Hausdorf segment in purple)
+(First version in gray - Second version blue outline - Corresponding Hausdorf segment in purple)
 
 For a more detailled overview of the geometrical differences, use:
 
