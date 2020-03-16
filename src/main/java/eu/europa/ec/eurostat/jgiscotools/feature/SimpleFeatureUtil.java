@@ -6,6 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.feature;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -133,7 +134,6 @@ public class SimpleFeatureUtil {
 	 */
 	public static <T extends Feature> SimpleFeatureType getFeatureType(Collection<T> fs, CoordinateReferenceSystem crs) {
 		SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
-		Set<String> atts = fs.iterator().next().getAttributes().keySet();
 		sftb.setCRS(crs);
 		sftb.setName( "type" );
 		sftb.setNamespaceURI("http://geotools.org");
@@ -145,9 +145,9 @@ public class SimpleFeatureUtil {
 			return sftb.buildFeatureType();
 		}
 
-		HashMap<String,Class<?>> types = getAttributeGeomTypes(atts, fs);
+		HashMap<String,Class<?>> types = getAttributeGeomTypes(fs);
 		sftb.add("the_geom", types.get("the_geom"));
-		for(String att : atts)
+		for(String att : types.keySet())
 			sftb.add(att, types.get(att));
 		return sftb.buildFeatureType();
 	}
@@ -170,12 +170,18 @@ public class SimpleFeatureUtil {
 	 * Get attribute and geometry types for a list of features.
 	 * 
 	 * @param <T>
-	 * @param atts
 	 * @param fs
 	 * @return
 	 */
-	private static <T extends Feature> HashMap<String, Class<?>> getAttributeGeomTypes(Set<String> atts, Collection<T> fs) {
+	public static <T extends Feature> HashMap<String, Class<?>> getAttributeGeomTypes(Collection<T> fs) {
 		HashMap<String, Class<?>> out = new HashMap<>();
+		if(fs.size()==0) return out;
+
+		//get all attributes
+		Set<String> atts = new HashSet<>();
+		for(Feature f : fs)
+			atts.addAll(f.getAttributes().keySet());
+
 		//attribute types
 		for(String att : atts) {
 			Class<?> attClass = null;

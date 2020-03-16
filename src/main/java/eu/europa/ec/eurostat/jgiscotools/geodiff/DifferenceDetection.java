@@ -19,12 +19,13 @@ import org.locationtech.jts.index.quadtree.Quadtree;
 import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * 
  * Analyse the differences between two versions of a dataset.
- * Compute the difference.
+ * Compute the difference in GeoDiff format.
  * Note: both datasets are suppose to have a shared stable identifier.
  * 
  * @author julien Gaffuri
@@ -36,14 +37,14 @@ public class DifferenceDetection {
 	//TODO handle case when no common identifier exists ?
 
 	/**
-	 * The dataset in its initial version.
+	 * The dataset in the first version.
 	 */
-	private Collection<Feature> fsIni;
+	private Collection<Feature> fs1;
 
 	/**
-	 * The dataset in its final version.
+	 * The dataset in the second version.
 	 */
-	private Collection<Feature> fsFin;
+	private Collection<Feature> fs2;
 
 	/**
 	 * The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
@@ -55,28 +56,38 @@ public class DifferenceDetection {
 	public double getResolution() { return resolution; }
 
 	/**
-	 * @param fsIni The dataset in its initial version.
-	 * @param fsFin The dataset in its final version.
+	 * @param fs1 The dataset in the first version.
+	 * @param fs2 The dataset in the second version.
 	 * @param resolution The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
 	 */
-	public DifferenceDetection(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
-		this.fsIni = fsIni;
-		this.fsFin = fsFin;
+	public DifferenceDetection(Collection<Feature> fs1, Collection<Feature> fs2, double resolution) {
+		this.fs1 = fs1;
+		this.fs2 = fs2;
+
+		if(this.fs1.size() == 0)
+			LOGGER.warn("Dataset in first version is empty");
+		if(this.fs2.size() == 0)
+			LOGGER.warn("Dataset in second version is empty");
+
+		//TODO check attributes in common
+		HashMap<String, Class<?>> attsCom = getCommonAttributes(this.fs1, this.fs2);
+		//TODO
+
 		this.resolution = resolution;
 	}
 	/**
-	 * @param fsIni The dataset in its initial version.
-	 * @param fsFin The dataset in its final version.
+	 * @param fs1 The dataset in the first version.
+	 * @param fs2 The dataset in the second version.
 	 */
-	public DifferenceDetection(Collection<Feature> fsIni, Collection<Feature> fsFin) {
-		this(fsIni, fsFin, -1);
+	public DifferenceDetection(Collection<Feature> fs1, Collection<Feature> fs2) {
+		this(fs1, fs2, -1);
 	}
 
 	private Collection<Feature> differences = null;
 	private Collection<Feature> identical = null;
 
 	/**
-	 * @return The differences between the initial and final versions.
+	 * @return The differences between the two versions.
 	 */
 	public Collection<Feature> getDifferences() {
 		if(this.differences == null) compare();
@@ -110,7 +121,7 @@ public class DifferenceDetection {
 	/**
 	 * Indexed structure to speedup the retrieval of features by id.
 	 */
-	private HashMap<String,Feature> indIni, indFin;
+	private HashMap<String,Feature> ind1, ind2;
 
 	/**
 	 * Compare both datasets. Populate the differences.
@@ -120,29 +131,29 @@ public class DifferenceDetection {
 		this.identical = new ArrayList<>();
 
 		//list id values
-		Collection<String> idsIni = FeatureUtil.getIdValues(fsIni, null);
-		Collection<String> idsFin = FeatureUtil.getIdValues(fsFin, null);
+		Collection<String> ids1 = FeatureUtil.getIdValues(fs1, null);
+		Collection<String> ids2 = FeatureUtil.getIdValues(fs2, null);
 
 		//index features by ids
-		indIni = FeatureUtil.index(fsIni, null);
-		indFin = FeatureUtil.index(fsFin, null);
+		ind1 = FeatureUtil.index(fs1, null);
+		ind2 = FeatureUtil.index(fs2, null);
 
 		//find features present in both datasets and compare them
 
 		//compute intersection of id sets
-		Collection<String> idsInter = new ArrayList<>(idsIni);
-		idsInter.retainAll(idsFin);
+		Collection<String> idsInter = new ArrayList<>(ids1);
+		idsInter.retainAll(ids2);
 
 		for(String id : idsInter) {
 			//get two corresponding features
-			Feature fIni = indIni.get(id);
-			Feature fFin = indFin.get(id);
+			Feature f1 = ind1.get(id);
+			Feature f2 = ind2.get(id);
 
 			//compute differences between them
-			Feature ch = compare(fIni, fFin, getResolution(), attributesToIgnore );
+			Feature ch = compare(f1, f2, getResolution(), attributesToIgnore );
 
 			//both versions identical. No difference detected.
-			if(ch == null) identical.add(fFin);
+			if(ch == null) identical.add(f2);
 
 			//difference
 			else differences.add(ch);
@@ -150,13 +161,13 @@ public class DifferenceDetection {
 
 		//find deleted features
 
-		//compute difference: ini - fin
-		Collection<String> idsDiff = new ArrayList<>(idsIni);
-		idsDiff.removeAll(idsFin);
+		//compute difference: 1 - 2
+		Collection<String> idsDiff = new ArrayList<>(ids1);
+		idsDiff.removeAll(ids2);
 
 		//retrieve deleted features
 		for(String id : idsDiff) {
-			Feature f = indIni.get(id);
+			Feature f = ind1.get(id);
 			Feature ch = FeatureUtil.copy(f);
 			ch.setAttribute("ch_id", f.getID());
 			ch.setAttribute("GeoDiff", "D");
@@ -165,13 +176,13 @@ public class DifferenceDetection {
 
 		//find inserted features
 
-		//compute difference: fin - ini
-		idsDiff = new ArrayList<>(idsFin);
-		idsDiff.removeAll(idsIni);
+		//compute difference: 2 - 1
+		idsDiff = new ArrayList<>(ids2);
+		idsDiff.removeAll(ids1);
 
 		//retrieve inserted features
 		for(String id : idsDiff) {
-			Feature f = indFin.get(id);
+			Feature f = ind2.get(id);
 			Feature ch = FeatureUtil.copy(f);
 			ch.setAttribute("ch_id", f.getID());
 			ch.setAttribute("GeoDiff", "I");
@@ -186,44 +197,44 @@ public class DifferenceDetection {
 	 * structure (list of attributes).
 	 * The differences can be either on the attribute values, or on the geometry.
 	 * 
-	 * @param fIni The initial version
-	 * @param fFin The final version
+	 * @param fs1 The dataset in the first version
+	 * @param fs2 The dataset in the second version
 	 * @param attributesToIgnore
 	 * @param resolution The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
 	 * @return A feature representing the difference.
 	 */
-	public static Feature compare(Feature fIni, Feature fFin, double resolution, List<String> attributesToIgnore) {
+	public static Feature compare(Feature fs1, Feature fs2, double resolution, List<String> attributesToIgnore) {
 		boolean attDifference = false, geomDifference = false;
 		Feature difference = new Feature();
 
 		//compare attribute values
 		int nb = 0;
-		for(String att : fIni.getAttributes().keySet()) {
-			Object attIni = fIni.getAttribute(att);
-			Object attFin = fFin.getAttribute(att);
+		for(String att : fs1.getAttributes().keySet()) {
+			Object att1 = fs1.getAttribute(att);
+			Object att2 = fs2.getAttribute(att);
 			if((attributesToIgnore!=null && attributesToIgnore.contains(att))
-					|| attIni.equals(attFin)) {
+					|| att1.equals(att2)) {
 				difference.setAttribute(att, null);
 			} else {
 				attDifference = true;
-				difference.setAttribute(att, attFin);
+				difference.setAttribute(att, att2);
 				nb++;
 			}
 		}
 		//compare geometries
-		if( (resolution>0 && new HausdorffDistance(fIni.getGeometry(), fFin.getGeometry()).getDistance() > resolution)
-				|| (resolution<=0 && ! fIni.getGeometry().equalsTopo(fFin.getGeometry())))
+		if( (resolution>0 && new HausdorffDistance(fs1.getGeometry(), fs2.getGeometry()).getDistance() > resolution)
+				|| (resolution<=0 && ! fs1.getGeometry().equalsTopo(fs2.getGeometry())))
 			geomDifference = true;
 
 		//no difference: return null
 		if(!attDifference && !geomDifference) return null;
 
 		//set id
-		difference.setID(fFin.getID());
-		difference.setAttribute("ch_id", fFin.getID());
+		difference.setID(fs2.getID());
+		difference.setAttribute("ch_id", fs2.getID());
 
 		//set geometry
-		difference.setGeometry(fFin.getGeometry());
+		difference.setGeometry(fs2.getGeometry());
 
 		//set attribute on difference
 		difference.setAttribute("GeoDiff", (geomDifference?"G":"") + (attDifference?"A"+nb:""));
@@ -240,8 +251,8 @@ public class DifferenceDetection {
 	/**
 	 * A collection of features representing the geometrical differences.
 	 * For each feature whose geometry is different, a segment
-	 * representing the hausdorff distance between the initial and
-	 * final geometries is created. This feature allows assessing the
+	 * representing the hausdorff distance between the first and
+	 * second version geometries is created. This feature allows assessing the
 	 * magnitude of the geometrical difference.
 	 * @return
 	 */
@@ -278,13 +289,13 @@ public class DifferenceDetection {
 			String ct = ch.getAttribute("GeoDiff").toString();
 			if(!ct.contains("G")) continue;
 
-			//get initial and final geometries
+			//get first and second version geometries
 			String id = ch.getID();
-			Geometry gIni = indIni.get(id).getGeometry();
-			Geometry gFin = indFin.get(id).getGeometry();
+			Geometry g1 = ind1.get(id).getGeometry();
+			Geometry g2 = ind2.get(id).getGeometry();
 
 			//hausdorff distance
-			HausdorffDistance hd = new HausdorffDistance(gIni, gFin);
+			HausdorffDistance hd = new HausdorffDistance(g1, g2);
 			Feature hdf = new Feature();
 			hdf.setGeometry(hd.toGeom());
 			hdf.setAttribute("ch_id", id);
@@ -295,7 +306,7 @@ public class DifferenceDetection {
 			{
 				Geometry gD = null;
 				try {
-					gD = gIni.difference(gFin);
+					gD = g1.difference(g2);
 				} catch (Exception e) {
 					LOGGER.warn(e.getMessage());
 				}
@@ -312,7 +323,7 @@ public class DifferenceDetection {
 			{
 				Geometry gI = null;
 				try {
-					gI = gFin.difference(gIni);
+					gI = g2.difference(g1);
 				} catch (Exception e) {
 					LOGGER.warn(e.getMessage());
 				}
@@ -407,13 +418,13 @@ public class DifferenceDetection {
 	/**
 	 * Return the differences from a version of a dataset to another one.
 	 * 
-	 * @param fsIni The initial dataset
-	 * @param fsFin The final dataset
+	 * @param fs1 The dataset first version
+	 * @param fs2 The dataset second version
 	 * @param resolution The geometrical resolution of the dataset. Geometrical differences below this value will be ignored.
 	 * @return The differences
 	 */
-	public static Collection<Feature> getDifferences(Collection<Feature> fsIni, Collection<Feature> fsFin, double resolution) {
-		return new DifferenceDetection(fsIni, fsFin, resolution).getDifferences();
+	public static Collection<Feature> getDifferences(Collection<Feature> fs1, Collection<Feature> fs2, double resolution) {
+		return new DifferenceDetection(fs1, fs2, resolution).getDifferences();
 	}
 
 	/**
@@ -442,7 +453,7 @@ public class DifferenceDetection {
 	/**
 	 * Apply changes to features.
 	 * 
-	 * @param fs The features to change, in their initial state.
+	 * @param fs The features to change, in their initial version.
 	 * @param differences The changes to apply.
 	 */
 	public static void applyChanges(Collection<Feature> fs, Collection<Feature> differences) {
@@ -492,7 +503,7 @@ public class DifferenceDetection {
 	/**
 	 * Apply a change to a feature.
 	 * 
-	 * @param f The feature to change, in its initial state.
+	 * @param f The feature to change, in its initial version.
 	 * @param diff The change. NB: this change cannot be a deletion or an insertion
 	 * @param ct The type of change, if known.
 	 */
@@ -532,6 +543,23 @@ public class DifferenceDetection {
 		//check number of attributes changed is as expected
 		if(nbAtt != nbAtt_)
 			LOGGER.warn("Unexpected number of attribute changes ("+nbAtt_+" instead of "+nbAtt+") for feature id="+f.getID()+".");		
+	}
+
+	public static HashMap<String,Class<?>> getCommonAttributes(Collection<Feature> fs1, Collection<Feature> fs2) {
+		//get schemas of both collections
+		HashMap<String,Class<?>> types1 = SimpleFeatureUtil.getAttributeGeomTypes(fs1);
+		HashMap<String,Class<?>> types2 = SimpleFeatureUtil.getAttributeGeomTypes(fs1);
+
+		//get intersection
+		HashMap<String, Class<?>> out = new HashMap<>();
+		for(Entry<String, Class<?>> e1 : types1.entrySet()) {
+			Class<?> v2 = types2.get(e1.getKey());
+			if(v2 == null) continue;
+			if(v2 != e1.getValue()) continue;
+			out.put(e1.getKey(), e1.getValue());
+		}
+
+		return out;
 	}
 
 }
