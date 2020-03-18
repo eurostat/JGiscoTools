@@ -155,6 +155,7 @@ public class GeoData {
 		SimpleFeatureType getSchema(File file);
 		ArrayList<Feature> getFeatures(File file, Filter filter, String idAtt);
 		void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex);
+		String getGeomColName();
 	}
 
 	private static class GPKGHandler implements GeoDataFormatHandler {
@@ -230,7 +231,10 @@ public class GeoData {
 					ds.dispose();
 				}
 			} catch (IOException e) { e.printStackTrace(); }
-		}		
+		}
+
+		@Override
+		public String getGeomColName() { return "geometry"; }		
 	};
 
 	private static class GeoJSONHandler implements GeoDataFormatHandler {
@@ -247,11 +251,11 @@ public class GeoData {
 					for(Feature f : SimpleFeatureUtil.get(fc, idAtt))
 						if(filter.evaluate(f)) fs.add(f);
 				}
-				//remove 'geometry' attribute
+				/*/remove 'geometry' attribute
 				for(Feature f : fs) {
 					Object o = f.getAttributes().remove("geometry");
 					if(o == null) LOGGER.warn("Could not remove geometry attribute when loading GeoJSON data.");
-				}
+				}*/
 				input.close();
 				return fs;
 			} catch (Exception e) { e.printStackTrace(); }
@@ -276,7 +280,10 @@ public class GeoData {
 				new FeatureJSON().writeFeatureCollection(sfc, output);
 				output.close();
 			} catch (Exception e) { e.printStackTrace(); }
-		}		
+		}
+
+		@Override
+		public String getGeomColName() { return "geometry"; }		
 	};
 
 	private static class SHPHandler implements GeoDataFormatHandler {
@@ -326,7 +333,10 @@ public class GeoData {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}		
+		}
+
+		@Override
+		public String getGeomColName() { return "the_geom"; }		
 	};
 
 
@@ -416,20 +426,23 @@ public class GeoData {
 			return;
 		}
 
+		//get format handler
+		String format = FilenameUtils.getExtension(filePath).toLowerCase();
+		GeoDataFormatHandler dfh = HANDLERS.get(format);
+		if(dfh == null) {
+			LOGGER.error("Unsuported output format: " + format);
+			return;
+		}
+
 		//create GT feature collection
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(fs, crs);
+		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(fs, dfh.getGeomColName(), crs);
 		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, ft);
 
 		//create output file
 		File file = FileUtil.getFile(filePath, true, true);
 
-		//save with relevant handler
-		String format = FilenameUtils.getExtension(filePath).toLowerCase();
-		GeoDataFormatHandler dfh = HANDLERS.get(format);
-		if(dfh != null)
-			dfh.save(sfc, file, crs, createSpatialIndex);
-		else
-			LOGGER.error("Unsuported output format: " + format);
+		//save
+		dfh.save(sfc, file, crs, createSpatialIndex);
 	}
 
 	/**

@@ -113,6 +113,8 @@ public class SimpleFeatureUtil {
 		ArrayList<String> atts = new ArrayList<String>();
 		for(int i=0; i<ft.getAttributeCount(); i++){
 			String att = ft.getDescriptor(i).getLocalName();
+			String geomColName = ft.getGeometryDescriptor().getName().toString();
+			if(geomColName != null && geomColName.equals(att)) continue;
 			if("the_geom".equals(att)) continue;
 			if("GEOM".equals(att)) continue;
 			if("geom".equals(att)) continue;
@@ -129,26 +131,29 @@ public class SimpleFeatureUtil {
 	 * 
 	 * @param <T>
 	 * @param fs
+	 * @param geomColName
 	 * @param crs
 	 * @return
 	 */
-	public static <T extends Feature> SimpleFeatureType getFeatureType(Collection<T> fs, CoordinateReferenceSystem crs) {
+	public static <T extends Feature> SimpleFeatureType getFeatureType(Collection<T> fs, String geomColName, CoordinateReferenceSystem crs) {
 		SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
 		sftb.setCRS(crs);
-		sftb.setName( "type" );
+		sftb.setName("type");
 		sftb.setNamespaceURI("http://geotools.org");
-		sftb.setDefaultGeometry("the_geom");
+		sftb.setDefaultGeometry(geomColName);
 
 		if(fs.size() == 0) {
 			LOGGER.warn("Creating SimpleFeatureType from empty list of features.");
-			sftb.add("the_geom", Point.class);
+			sftb.add(geomColName, Point.class);
 			return sftb.buildFeatureType();
 		}
 
-		HashMap<String,Class<?>> types = getAttributeGeomTypes(fs);
-		sftb.add("the_geom", types.get("the_geom"));
-		for(String att : types.keySet())
+		HashMap<String,Class<?>> types = getAttributeGeomTypes(fs, geomColName);
+		sftb.add(geomColName, types.get(geomColName));
+		for(String att : types.keySet()) {
+			if(geomColName.equals(att)) continue;
 			sftb.add(att, types.get(att));
+		}
 		return sftb.buildFeatureType();
 	}
 
@@ -157,13 +162,14 @@ public class SimpleFeatureUtil {
 	 * 
 	 * @param <T>
 	 * @param f
+	 * @param geomColName
 	 * @param crs
 	 * @return
 	 */
-	public static <T extends Feature> SimpleFeatureType getFeatureType(T f, CoordinateReferenceSystem crs) {
+	public static <T extends Feature> SimpleFeatureType getFeatureType(T f, String geomColName, CoordinateReferenceSystem crs) {
 		ArrayList<T> fs = new ArrayList<T>();
 		fs.add(f);
-		return getFeatureType(fs, crs);
+		return getFeatureType(fs, geomColName, crs);
 	}
 
 	/**
@@ -173,7 +179,7 @@ public class SimpleFeatureUtil {
 	 * @param fs
 	 * @return
 	 */
-	public static <T extends Feature> HashMap<String, Class<?>> getAttributeGeomTypes(Collection<T> fs) {
+	public static <T extends Feature> HashMap<String, Class<?>> getAttributeGeomTypes(Collection<T> fs, String geomColName) {
 		HashMap<String, Class<?>> out = new HashMap<>();
 		if(fs.size()==0) return out;
 
@@ -213,8 +219,17 @@ public class SimpleFeatureUtil {
 			}
 		}
 		if(gClass == null) gClass = String.class;
-		out.put("the_geom", gClass);
+		out.put(geomColName, gClass);
 		return out;
+	}
+
+	/**
+	 * @param <T>
+	 * @param fs
+	 * @return
+	 */
+	public static <T extends Feature> HashMap<String, Class<?>> getAttributeGeomTypes(Collection<T> fs) {
+		return getAttributeGeomTypes(fs, "the_geom");
 	}
 
 	/**
