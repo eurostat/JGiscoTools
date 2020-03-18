@@ -23,7 +23,7 @@ public class LocalParameters {
 	 */
 	public static String get(String key) {
 		try {
-			Scanner scanner = new Scanner(new File(System.getProperty("user.home")+"\\eclipse.config"));
+			Scanner scanner = new Scanner(new File(System.getProperty("user.home") + "\\eclipse.config"));
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				if("".equals(line))
@@ -59,4 +59,8 @@ public class LocalParameters {
 
 	}
 
+	public static void main(String[] args) {
+		System.out.println( System.getProperty("user.home") );
+	}
+	
 }
