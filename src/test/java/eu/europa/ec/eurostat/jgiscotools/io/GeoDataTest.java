@@ -17,9 +17,9 @@ import junit.framework.TestCase;
 public class GeoDataTest extends TestCase {
 
 	/** @param args */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		junit.textui.TestRunner.run(GeoDataTest.class);
-	}
+	}*/
 
 	private static final String path = "src/test/resources/io/";
 
