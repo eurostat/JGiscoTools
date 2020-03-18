@@ -70,11 +70,11 @@ public class GeoDataTest extends TestCase {
 	}
 
 	/***/
-	public void testSaveGPKG() { testSave(".gpkg"); }
+	//public void testSaveGPKG() { testSave(".gpkg"); }
 	/***/
-	public void testSaveSHP() { testSave(".shp"); }
+	//public void testSaveSHP() { testSave(".shp"); }
 	/***/
-	public void testSaveGeoJSON() { testSave(".geojson"); }
+	//public void testSaveGeoJSON() { testSave(".geojson"); }
 
 	private void testSave(String format) {
 		//System.out.println(format);

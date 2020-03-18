@@ -18,6 +18,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
@@ -137,6 +138,7 @@ public class CSVUtil {
 	 */
 	public static Collection<Feature> CSVToFeatures(Collection<Map<String, String>> csvData, String xCol, String yCol) {
 		Collection<Feature> out = new ArrayList<Feature>();
+		GeometryFactory gf = new GeometryFactory();
 		for (Map<String, String> h : csvData) {
 			Feature f = new Feature();
 			Coordinate c = new Coordinate(0,0);
@@ -145,9 +147,10 @@ public class CSVUtil {
 				if(yCol.equals(e.getKey())) c.y = Double.parseDouble(e.getValue());
 				f.setAttribute(e.getKey(), e.getValue());
 			}
+			f.setGeometry(gf.createPoint(c));
 			out.add(f);
 		}
 		return out;
 	}
-	
+
 }
