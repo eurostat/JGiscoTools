@@ -74,7 +74,7 @@ public class HealthCareFinal {
 			CSVUtil.save(data, path+"data/csv/"+cc+".csv", cols_);
 			Collection<Feature> fs = CSVUtil.CSVToFeatures(data, "lon", "lat");
 			GeoData.save(fs, path+"data/geojson/"+cc+".geojson", ProjectionUtil.getWGS_84_CRS());
-			//GeoData.save(fs, path+"data/gpkg/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			GeoData.save(fs, path+"data/gpkg/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
 			//make big EU file
 			all.addAll(data);
@@ -86,8 +86,7 @@ public class HealthCareFinal {
 		CSVUtil.save(all, path+"data/csv/all.csv", cols_);
 		Collection<Feature> fs = CSVUtil.CSVToFeatures(all, "lon", "lat");
 		GeoData.save(fs, path+"data/geojson/all.geojson", ProjectionUtil.getWGS_84_CRS());
-		//GeoData.save(fs, path+"data/gpkg/all.gpkg", ProjectionUtil.getWGS_84_CRS());
-
+		GeoData.save(fs, path+"data/gpkg/all.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
 	}
