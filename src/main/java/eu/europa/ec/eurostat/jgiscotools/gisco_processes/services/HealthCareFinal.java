@@ -43,7 +43,7 @@ public class HealthCareFinal {
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
 
 		//load
-		for(String cc : new String[] { "IT", "AT", "RO", "DE" }) {
+		for(String cc : new String[] { /*"IT", "AT", "RO", "DE",*/ "UK", "IE" }) {
 			System.out.println("*** "+cc);
 
 			//load data
