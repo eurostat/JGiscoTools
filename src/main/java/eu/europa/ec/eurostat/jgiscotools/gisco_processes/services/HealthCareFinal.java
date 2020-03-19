@@ -43,7 +43,7 @@ public class HealthCareFinal {
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
 
 		//load
-		for(String cc : new String[] { "IT", "AT", "RO", "DE", "UK", "IE", "LV" }) {
+		for(String cc : new String[] { "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU" }) {
 			System.out.println("*** "+cc);
 
 			//load data
@@ -54,6 +54,9 @@ public class HealthCareFinal {
 			removeColumn(data, "latGISCO");
 			removeColumn(data, "lonGISCO");
 			removeColumn(data, "Column name (code)");
+			removeColumn(data, "county");
+			removeColumn(data, "suburb");
+			removeColumn(data, "state");
 			changeColumnName(data, "latBing", "lat");
 			changeColumnName(data, "lonBing", "lon");
 			changeColumnName(data, "name", "hospital_name");
