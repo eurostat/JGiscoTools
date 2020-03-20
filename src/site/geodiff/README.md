@@ -25,7 +25,7 @@ To retrieve the differences between the two versions, use:
 Collection<Feature> differences = geoDiff.getDifferences();
 ```
 
-This produces a GeoDiff dataset containing the differences between both versions. See the [GeoDiff format description](https://github.com/eurostat/GeoDiff/tree/master/geodiff_format).
+This produces a [GeoDiff](https://github.com/eurostat/GeoDiff/tree/master/geodiff_format) dataset describing the differences between both versions. See the [GeoDiff format description](https://github.com/eurostat/GeoDiff/tree/master/geodiff_format).
 
 See below an example of differences on a test dataset:
 
