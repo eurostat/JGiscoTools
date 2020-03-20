@@ -27,8 +27,8 @@ Grid grid = new Grid()
 		.setToleranceDistance(1000);
 
 //save cells as GeoPackage and SHP file
-GeoPackageUtil.save(grid.getCells(), "path_to_my/file.gpkg", CRS.decode("EPSG:3035"), true);
-SHPUtil.saveSHP(grid.getCells(), "path_to_my/file.shp", CRS.decode("EPSG:3035"));
+GeoData.save(grid.getCells(), "path_to_my/file.gpkg", CRS.decode("EPSG:3035"));
+GeoData.save(grid.getCells(), "path_to_my/file.shp", CRS.decode("EPSG:3035"));
 ```
 
 Input geometries can be loaded from [*GeoPackage*](https://www.geopackage.org/), [*Shapefile*](https://en.wikipedia.org/wiki/Shapefile) or [*GeoJSON*](https://geojson.org/) files or simply specified as rectangular extent. The grid cell geometries can be squared surfaces or points located at the center of these cells. Each grid cell is identified with a standard code such as *CRS3035RES200mN1453400E1452800*. The output grid cells can be saved as [*GeoPackage*](https://www.geopackage.org/), [*Shapefile*](https://en.wikipedia.org/wiki/Shapefile) or [*GeoJSON*](https://geojson.org/) files.
