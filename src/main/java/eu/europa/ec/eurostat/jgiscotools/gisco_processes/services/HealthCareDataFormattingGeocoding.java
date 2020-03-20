@@ -15,7 +15,6 @@ import org.json.simple.parser.JSONParser;
 import org.locationtech.jts.geom.Coordinate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;

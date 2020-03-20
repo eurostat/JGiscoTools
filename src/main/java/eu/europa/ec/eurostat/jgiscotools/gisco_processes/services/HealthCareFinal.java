@@ -11,8 +11,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
@@ -43,16 +45,13 @@ public class HealthCareFinal {
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
 
 		//load
-		for(String cc : new String[] { /*"FI",*/ /*"NL", "SE",*/ "ES"/*, "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU"*/ }) {
+		for(String cc : new String[] { "FI", "NL", "SE", "ES", "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU" }) {
 			System.out.println("*** " + cc);
 
 			//load data
 			ArrayList<Map<String, String>> data = CSVUtil.load(path+"temp/"+cc+".csv");
 			System.out.println(data.size());
-			System.out.println(data.iterator().next().keySet());
-
-			for(Map<String, String> h : data)
-				System.out.println(h);
+			//System.out.println(data.iterator().next().keySet());
 
 			removeColumn(data, "latGISCO");
 			removeColumn(data, "lonGISCO");
@@ -70,6 +69,13 @@ public class HealthCareFinal {
 			removeColumn(data, "Input Geocoder");
 			removeColumn(data, "Part_Ratio");
 			removeColumn(data, "address");
+			removeColumn(data, "extension");
+			removeColumn(data, "Address");
+			removeColumn(data, "organization id");
+			removeColumn(data, "postal district");
+			removeColumn(data, "service industry id");
+			removeColumn(data, "district");
+			removeColumn(data, "organization name");
 			changeColumnName(data, "latBing", "lat");
 			changeColumnName(data, "lonBing", "lon");
 			changeColumnName(data, "name", "hospital_name");
@@ -77,26 +83,55 @@ public class HealthCareFinal {
 			changeColumnName(data, "year", "ref_date");
 			changeColumnName(data, "data_year", "pub_date");
 
-			System.out.println(data.iterator().next().keySet());
-			System.out.println(data.iterator().next().get("id"));
+			//System.out.println(data.iterator().next().keySet());
 
 			Set<String> ch = checkNoUnexpectedColumn(data, cols_);
 			if(ch.size()>0) System.err.println(ch);
 
-			populateAllColumns(data, cols, "NA");
+			populateAllColumns(data, cols, "");
+
+			replaceValue(data, "", null);
+			replaceValue(data, "NA", null);
+			replaceValue(data, "UNKNOWN", null);
+
+			replaceValue(data, "SEGURIDAD SOCIAL", "public");
+			replaceValue(data, "SEGURIDAD SOCIAL", "public");
+			replaceValue(data, "PRIVADO NO BENÉFICO", "private");
+			replaceValue(data, "OTRO PRIVADO BENÉFICO", "private");
+			replaceValue(data, "PRIVADO-BENÉFICO (CRUZ ROJA)", "private");
+			replaceValue(data, "PRIVADO-BENÉFICO (IGLESIA)", "private");
+			replaceValue(data, "OTRA DEPENDENCIA PATRIMONIAL", "private");
+			replaceValue(data, "MATEP", "public"); //TODO ES - check that really?
+			replaceValue(data, "ENTIDADES PÚBLICAS", "public");
+			replaceValue(data, "MUNICIPIO", "public");
+			replaceValue(data, "MINISTERIO DE INTERIOR", "public");
+			replaceValue(data, "MINISTERIO DE DEFENSA", "public");
+			replaceValue(data, "DIPUTACIÓN O CABILDO", "public"); //TODO ES - check that really?
+			replaceValue(data, "COMUNIDAD AUTÓNOMA", "public");
 
 			for(Map<String, String> h : data)
 				h.put("pub_date", timeStamp);
+
+			//cc, country
+			for(Map<String, String> h :data) {
+				h.put("cc", cc);
+				String cntr = NUTSUtils.getName(cc);
+				if(cntr == null) System.err.println("cc: " + cc);
+				h.put("country", cntr);
+			}
+			replaceValue(data, "Germany (until 1990 former territory of the FRG)", "Germany");
+
 
 			//System.out.println(data.iterator().next().keySet());
 
 			//export as geojson and GPKG
 			CSVUtil.save(data, path+"data/csv/"+cc+".csv", cols_);
 			Collection<Feature> fs = CSVUtil.CSVToFeatures(data, "lon", "lat");
+			applyTypes(fs);
 			GeoData.save(fs, path+"data/geojson/"+cc+".geojson", ProjectionUtil.getWGS_84_CRS());
 			GeoData.save(fs, path+"data/gpkg/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
-			//make big EU file
+			//store for big EU file
 			all.addAll(data);
 		}
 
@@ -105,10 +140,28 @@ public class HealthCareFinal {
 		System.out.println(all.size());
 		CSVUtil.save(all, path+"data/csv/all.csv", cols_);
 		Collection<Feature> fs = CSVUtil.CSVToFeatures(all, "lon", "lat");
+		applyTypes(fs);
 		GeoData.save(fs, path+"data/geojson/all.geojson", ProjectionUtil.getWGS_84_CRS());
 		GeoData.save(fs, path+"data/gpkg/all.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
+	}
+
+	private static void applyTypes(Collection<Feature> fs) {
+		for(Feature f : fs) {
+			for(String att : new String[] {"cap_beds", "cap_prac", "cap_rooms"}) {
+				Object v = f.getAttribute(att);
+				if(v==null) continue;
+				if("".equals(v)) f.setAttribute(att, null);
+				else f.setAttribute(att, Integer.parseInt(v.toString()));
+			}
+			for(String att : new String[] {"lat", "lon"}) {
+				Object v = f.getAttribute(att);
+				if(v==null) continue;
+				if("".equals(v)) f.setAttribute(att, null);
+				else f.setAttribute(att, Double.parseDouble(v.toString()));
+			}
+		}
 	}
 
 	private static Set<String> checkNoUnexpectedColumn(ArrayList<Map<String, String>> data, Collection<String> cols) {
@@ -124,9 +177,17 @@ public class HealthCareFinal {
 	private static void populateAllColumns(ArrayList<Map<String, String>> data, String[] cols, String defaultValue) {
 		for(String col : cols)
 			for(Map<String, String> h : data) {
-				if(h.get(col) != null) continue;
-				h.put(col, defaultValue);
+				if(h.get(col) == null || "".equals(h.get(col))) {
+					h.put(col, defaultValue);
+				}
 			}
+	}
+
+	private static void replaceValue(ArrayList<Map<String, String>> data, String ini, String fin) {
+		for(Map<String, String> h : data)
+			for(Entry<String,String> e : h.entrySet())
+				if(e.getValue() != null && ini.equals(e.getValue()))
+					e.setValue(fin);
 	}
 
 	private static void changeColumnName(ArrayList<Map<String, String>> data, String old, String new_) {
