@@ -29,11 +29,11 @@ This produces a GeoDiff dataset containing the differences between both versions
 
 See below an example of differences on a test dataset:
 
-<kbd><img src="img/ini.png" /></kbd>
+<kbd><img src="img/v1.png" /></kbd>
 
-<kbd><img src="img/fin.png" /></kbd>
+<kbd><img src="img/v2.png" /></kbd>
 
-<kbd><img src="img/changes.png" /></kbd>
+<kbd><img src="img/geodiff.png" /></kbd>
 
 Identical features can also be retrieved with:
 
