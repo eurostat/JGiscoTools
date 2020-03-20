@@ -36,26 +36,30 @@ public class HealthCareFinal {
 
 		//the desired columns, ordered
 		String[] cols = new String[] {
-				"id", "name", "site_name", "lat", "lon", "street", "house_number", "postcode", "city", "cc", "country", "emergency", "cap_beds", "cap_prac", "cap_rooms", "facility_type", "public_private", "list_specs", "tel", "email", "url", "ref_date", "pub_date"
+				"id", "hospital_name", "site_name", "lat", "lon", "street", "house_number", "postcode", "city", "cc", "country", "emergency", "cap_beds", "cap_prac", "cap_rooms", "facility_type", "public_private", "list_specs", "tel", "email", "url", "ref_date", "pub_date"
 		};
 		List<String> cols_ = Arrays.asList(cols);
 
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
 
 		//load
-		for(String cc : new String[] { "IT", "AT", "RO", "DE" }) {
+		for(String cc : new String[] { "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU" }) {
 			System.out.println("*** "+cc);
 
 			//load data
 			ArrayList<Map<String, String>> data = CSVUtil.load(path+"temp/"+cc+".csv");
 			System.out.println(data.size());
-			System.out.println(data.iterator().next().keySet());
+			//System.out.println(data.iterator().next().keySet());
 
 			removeColumn(data, "latGISCO");
 			removeColumn(data, "lonGISCO");
+			removeColumn(data, "Column name (code)");
+			removeColumn(data, "county");
+			removeColumn(data, "suburb");
+			removeColumn(data, "state");
 			changeColumnName(data, "latBing", "lat");
 			changeColumnName(data, "lonBing", "lon");
-			changeColumnName(data, "hospital_name", "name");
+			changeColumnName(data, "name", "hospital_name");
 			changeColumnName(data, "type", "facility_type");
 			changeColumnName(data, "year", "ref_date");
 			changeColumnName(data, "data_year", "pub_date");
@@ -68,7 +72,7 @@ public class HealthCareFinal {
 			for(Map<String, String> h : data)
 				h.put("pub_date", timeStamp);
 
-			System.out.println(data.iterator().next().keySet());
+			//System.out.println(data.iterator().next().keySet());
 
 			//export as geojson and GPKG
 			CSVUtil.save(data, path+"data/csv/"+cc+".csv", cols_);
