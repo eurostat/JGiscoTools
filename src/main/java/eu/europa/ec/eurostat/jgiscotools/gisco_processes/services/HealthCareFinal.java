@@ -43,20 +43,33 @@ public class HealthCareFinal {
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
 
 		//load
-		for(String cc : new String[] { "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU" }) {
-			System.out.println("*** "+cc);
+		for(String cc : new String[] { /*"FI",*/ /*"NL", "SE",*/ "ES"/*, "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU"*/ }) {
+			System.out.println("*** " + cc);
 
 			//load data
 			ArrayList<Map<String, String>> data = CSVUtil.load(path+"temp/"+cc+".csv");
 			System.out.println(data.size());
-			//System.out.println(data.iterator().next().keySet());
+			System.out.println(data.iterator().next().keySet());
+
+			for(Map<String, String> h : data)
+				System.out.println(h);
 
 			removeColumn(data, "latGISCO");
 			removeColumn(data, "lonGISCO");
+			removeColumn(data, "x");
+			removeColumn(data, "y");
 			removeColumn(data, "Column name (code)");
 			removeColumn(data, "county");
 			removeColumn(data, "suburb");
 			removeColumn(data, "state");
+			removeColumn(data, "Sort_Ratio");
+			removeColumn(data, "Set_Ratio");
+			removeColumn(data, "Ratio");
+			removeColumn(data, "Coordinates");
+			removeColumn(data, "Output Geocoder");
+			removeColumn(data, "Input Geocoder");
+			removeColumn(data, "Part_Ratio");
+			removeColumn(data, "address");
 			changeColumnName(data, "latBing", "lat");
 			changeColumnName(data, "lonBing", "lon");
 			changeColumnName(data, "name", "hospital_name");
@@ -64,10 +77,13 @@ public class HealthCareFinal {
 			changeColumnName(data, "year", "ref_date");
 			changeColumnName(data, "data_year", "pub_date");
 
+			System.out.println(data.iterator().next().keySet());
+			System.out.println(data.iterator().next().get("id"));
+
 			Set<String> ch = checkNoUnexpectedColumn(data, cols_);
 			if(ch.size()>0) System.err.println(ch);
 
-			populateAllColumns(data, cols, null);
+			populateAllColumns(data, cols, "NA");
 
 			for(Map<String, String> h : data)
 				h.put("pub_date", timeStamp);
