@@ -265,4 +265,6 @@ public class DifferenceDetectionTest extends TestCase {
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
 	}
 
+	
+	//TODO test real change application
 }
