@@ -152,9 +152,9 @@ public class HealthCareDataFormattingGeocoding {
 			GeometryFactory gf = new GeometryFactory();
 			CoordinateReferenceSystem LAMBERT_93 = CRS.decode("EPSG:2154");
 			CoordinateReferenceSystem UTM_N20 = CRS.decode("EPSG:2154");
-			CoordinateReferenceSystem UTM_N21 = CRS.decode("EPSG:32620"); //TODO
+			CoordinateReferenceSystem UTM_N21 = CRS.decode("EPSG:32620");
 			CoordinateReferenceSystem UTM_N22 = CRS.decode("EPSG:32622");
-			CoordinateReferenceSystem UTM_S40 = CRS.decode("EPSG:2975");
+			CoordinateReferenceSystem UTM_S40 = CRS.decode("EPSG:32740");
 			CoordinateReferenceSystem UTM_S38 = CRS.decode("EPSG:32738");
 
 			ArrayList<Map<String, String>> out = new ArrayList<>();
