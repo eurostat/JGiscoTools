@@ -148,8 +148,14 @@ public class HealthCareDataFormattingGeocoding {
 			ArrayList<Map<String, String>> rawLonLat = CSVUtil.load(basePath + "etalab-cs1100507-stock-20200304-0416_geo.csv");
 			System.out.println(rawLonLat.size());
 
+			//prepare
 			GeometryFactory gf = new GeometryFactory();
-			//CoordinateReferenceSystem CRS_l93 = CRS.decode("EPSG:2154");
+			CoordinateReferenceSystem LAMBERT_93 = CRS.decode("EPSG:2154");
+			CoordinateReferenceSystem UTM_N20 = CRS.decode("EPSG:2154");
+			CoordinateReferenceSystem UTM_N21 = CRS.decode("EPSG:32620"); //TODO
+			CoordinateReferenceSystem UTM_N22 = CRS.decode("EPSG:32622");
+			CoordinateReferenceSystem UTM_S40 = CRS.decode("EPSG:2975");
+			CoordinateReferenceSystem UTM_S38 = CRS.decode("EPSG:32738");
 
 			ArrayList<Map<String, String>> out = new ArrayList<>();
 			for(Map<String, String> r : rawLonLat) {
@@ -161,14 +167,24 @@ public class HealthCareDataFormattingGeocoding {
 				String id = r.get("nofinesset");
 				hf.put("id", id);
 
-				double x = Double.parseDouble( r.get("nofinesset") );
+				//get CRS
+				CoordinateReferenceSystem crs = null;
+				switch (r.get("crs")) {
+				case "LAMBERT_93": crs = LAMBERT_93; break;
+				case "UTM_N20": crs = UTM_N20; break;
+				case "UTM_N21": crs = UTM_N21; break;
+				case "UTM_N22": crs = UTM_N22; break;
+				case "UTM_S40": crs = UTM_S40; break;
+				case "UTM_S38": crs = UTM_S38; break;
+				default: System.out.println(r.get("crs")); break;
+				}
+
+				//change crs to lon/lat
+				double x = Double.parseDouble( r.get("coordxet") );
 				double y = Double.parseDouble( r.get("coordyet") );
-
-				System.out.println(x);
-				System.out.println(y);
-
-				//Point pt = (Point) ProjectionUtil.project(gf.createPoint(new Coordinate(x,y)), CRS_l93, ProjectionUtil.getWGS_84_CRS());
-				//System.out.println(pt);
+				Point pt = (Point) ProjectionUtil.project(gf.createPoint(new Coordinate(x,y)), crs, ProjectionUtil.getWGS_84_CRS());
+				hf.put("lon", ""+pt.getY());
+				hf.put("lat", ""+pt.getX());
 
 				/*
 			String id = r.get("NUMERO DE SITE");
@@ -196,7 +212,7 @@ public class HealthCareDataFormattingGeocoding {
 			}
 
 			System.out.println("Save "+out.size());
-			CSVUtil.save(out, basePath + "FR.csv");		
+			CSVUtil.save(out, "/home/juju/Bureau/workspace/healthcare-services/temp/FR.csv");		
 
 		} catch (Exception e) {
 			e.printStackTrace();
