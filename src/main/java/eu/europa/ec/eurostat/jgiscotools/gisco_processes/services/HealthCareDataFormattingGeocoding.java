@@ -22,6 +22,7 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
+import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class HealthCareDataFormattingGeocoding {
 
@@ -39,7 +40,8 @@ public class HealthCareDataFormattingGeocoding {
 		// formatRO();
 		// formatFI();
 		//formatIT();
-		formatDE();
+		//formatDE();
+		formatBE();
 		// ...
 
 		//geocodeIT();
@@ -63,8 +65,8 @@ public class HealthCareDataFormattingGeocoding {
 		geocodeBing(hospitals, false);
 		System.out.println("save");
 		CSVUtil.save(hospitals,path+"IT/IT_geolocated.csv");
-*/
-		
+		 */
+
 		//TODO null pointer
 		//GeoPackageUtil.save(CSVUtil.CSVToFeatures(hospitals, "lonBing", "latBing"), "E:\\\\dissemination\\\\shared-data\\\\MS_data\\\\Service - Health\\\\IT/IT_geolocated.gpkg", ProjectionUtil.getWGS_84_CRS());
 
@@ -130,6 +132,46 @@ public class HealthCareDataFormattingGeocoding {
 
 
 
+	public static void formatBE() {
+		String basePath = "/home/juju/Bureau/BE/";
+		//load csv
+		ArrayList<Map<String, String>> raw = CSVUtil.load(basePath + "BE_raw.csv");
+		System.out.println(raw.size());
+		HashMap<String, Map<String, String>> rawI = Util.index(raw, "NUMERO DE SITE");
+		ArrayList<Map<String, String>> rawLonLat = CSVUtil.load(basePath + "BE_raw_lonlat.csv");
+		System.out.println(rawLonLat.size());
+
+		ArrayList<Map<String, String>> out = new ArrayList<>();
+		for(Map<String, String> r : rawLonLat) {
+			Map<String, String> hf = new HashMap<>();
+
+			String id = r.get("NUMERO DE SITE");
+			hf.put("cc", "BE");
+			hf.put("id", id);
+			hf.put("hospital_name", r.get("HOPITAL"));
+			hf.put("site_name", r.get("SITE"));
+			hf.put("lon", r.get("Longitude"));
+			hf.put("lat", r.get("Latitude"));
+
+			Map<String, String> rd = rawI.get(id);
+			if(rd == null) System.out.println("BE - no information for site " + id);
+			hf.put("street", rd.get("ADRESSE")); //TODO decompose with house number?
+			hf.put("postcode", rd.get("POST"));
+			hf.put("city", rd.get("COMMUNE"));
+			hf.put("tel", rd.get("TELEFON"));
+			hf.put("url", rd.get("WEBSITE"));
+			hf.put("facility_type", rd.get("TYPE HOPITAL"));
+			hf.put("public_private", rd.get("STATUT"));
+			hf.put("cap_beds", rd.get("TOTAL LITS"));
+			hf.put("emergency", rd.get("PREMIERE PRISE EN CHARGE DES URGENCES"));
+			hf.put("ref_date", rd.get("2020-02-01"));
+
+			out.add(hf);
+		}
+
+		System.out.println("Save "+out.size());
+		CSVUtil.save(out, basePath + "BE.csv");
+	}
 
 
 	/**
@@ -455,7 +497,7 @@ public class HealthCareDataFormattingGeocoding {
 
 			Element root = doc.getDocumentElement();
 			//System.out.println( root.getNodeName() );
-			
+
 			NodeList elts = root.getChildNodes();
 			//System.out.println(elts.getLength());
 			Collection<Map<String, String>> hospitalsFormatted = new ArrayList<Map<String, String>>();
@@ -472,7 +514,7 @@ public class HealthCareDataFormattingGeocoding {
 				String postcode = geoAdr.getElementsByTagName("PLZ").item(0).getTextContent();
 				String city = geoAdr.getElementsByTagName("Ort").item(0).getTextContent();
 
-				
+
 				HashMap<String, String> hf = new HashMap<String, String>();
 				hf.put("cc", "DE");
 				hf.put("country", "Germany");
@@ -487,18 +529,18 @@ public class HealthCareDataFormattingGeocoding {
 				hf.put("lat", lat);
 				hf.put("type", "standort");
 				hospitalsFormatted.add(hf);
-				
+
 				//TODO get all einrichtungen
 				NodeList einrichtungen = elt.getElementsByTagName("GeoAdresse");
 				for(int j=0; j<einrichtungen.getLength(); j++) {
 					Element einrichtung = (Element) einrichtungen.item(j);
-				//TODO
+					//TODO
 				}
 			}
-			
+
 			// save
 			CSVUtil.save(hospitalsFormatted, path + "DE/DE_formatted.csv");
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
