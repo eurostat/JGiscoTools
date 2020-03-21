@@ -9,10 +9,14 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.csv.CSVFormat;
+import org.geotools.referencing.CRS;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -22,6 +26,7 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class HealthCareDataFormattingGeocoding {
@@ -41,7 +46,8 @@ public class HealthCareDataFormattingGeocoding {
 		// formatFI();
 		//formatIT();
 		//formatDE();
-		formatBE();
+		//formatBE();
+		formatFR();
 		// ...
 
 		//geocodeIT();
@@ -131,6 +137,73 @@ public class HealthCareDataFormattingGeocoding {
 	}
 
 
+	public static void formatFR() {
+		try {
+
+			String basePath = "/home/juju/Bureau/FR/";
+			//load csv
+			ArrayList<Map<String, String>> raw = CSVUtil.load(basePath + "finess_clean.csv");
+			System.out.println(raw.size());
+			HashMap<String, Map<String, String>> rawI = Util.index(raw, "nofinesset");
+			ArrayList<Map<String, String>> rawLonLat = CSVUtil.load(basePath + "etalab-cs1100507-stock-20200304-0416_geo.csv");
+			System.out.println(rawLonLat.size());
+
+			GeometryFactory gf = new GeometryFactory();
+			//CoordinateReferenceSystem CRS_l93 = CRS.decode("EPSG:2154");
+
+			ArrayList<Map<String, String>> out = new ArrayList<>();
+			for(Map<String, String> r : rawLonLat) {
+				Map<String, String> hf = new HashMap<>();
+
+				//a;nofinesset;nofinessej;rs;rslongue;complrs;compldistrib;numvoie;typvoie;voie;compvoie;lieuditbp;commune;departement;libdepartement;ligneacheminement;telephone;telecopie;categetab;libcategetab;categagretab;libcategagretab;siret;codeape;codemft;libmft;codesph;libsph;dateouv;dateautor;maj;numuai;coordxet;coordyet;sourcecoordet;datemaj
+
+				hf.put("cc", "FR");
+				String id = r.get("nofinesset");
+				hf.put("id", id);
+
+				double x = Double.parseDouble( r.get("nofinesset") );
+				double y = Double.parseDouble( r.get("coordyet") );
+
+				System.out.println(x);
+				System.out.println(y);
+
+				//Point pt = (Point) ProjectionUtil.project(gf.createPoint(new Coordinate(x,y)), CRS_l93, ProjectionUtil.getWGS_84_CRS());
+				//System.out.println(pt);
+
+				/*
+			String id = r.get("NUMERO DE SITE");
+			hf.put("id", id);
+			hf.put("hospital_name", r.get("HOPITAL"));
+			hf.put("site_name", r.get("SITE"));
+			hf.put("lon", r.get("Longitude").replace(",", "."));
+			hf.put("lat", r.get("Latitude").replace(",", "."));
+
+			Map<String, String> rd = rawI.get(id);
+			if(rd == null) System.out.println("BE - no information for site " + id);*/
+				//hf.put("street", rd.get("ADRESSE")); //TODO decompose with house number?
+				//hf.put("postcode", rd.get("POST"));
+				//hf.put("city", rd.get("COMMUNE"));
+				//hf.put("tel", rd.get("TELEFON"));
+				//hf.put("url", rd.get("WEBSITE"));
+				//hf.put("facility_type", rd.get("TYPE HOPITAL"));
+				//hf.put("public_private", rd.get("STATUT"));
+				//hf.put("cap_beds", rd.get("TOTAL LITS"));
+				//if("X".equals(rd.get("PREMIERE PRISE EN CHARGE DES URGENCES")) || "X".equals(rd.get("SOINS URGENTS SPECIALISES")))
+				//hf.put("emergency", "1"); else hf.put("emergency", "0");
+				hf.put("ref_date", "2020-03-04");
+
+				out.add(hf);
+			}
+
+			System.out.println("Save "+out.size());
+			CSVUtil.save(out, basePath + "FR.csv");		
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 
 	public static void formatBE() {
 		String basePath = "/home/juju/Bureau/BE/";
@@ -164,7 +237,7 @@ public class HealthCareDataFormattingGeocoding {
 			hf.put("public_private", rd.get("STATUT"));
 			hf.put("cap_beds", rd.get("TOTAL LITS"));
 			if("X".equals(rd.get("PREMIERE PRISE EN CHARGE DES URGENCES")) || "X".equals(rd.get("SOINS URGENTS SPECIALISES")))
-			hf.put("emergency", "1"); else hf.put("emergency", "0");
+				hf.put("emergency", "1"); else hf.put("emergency", "0");
 			hf.put("ref_date", "2020-02-01");
 
 			out.add(hf);
