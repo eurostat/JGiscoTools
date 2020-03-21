@@ -95,9 +95,9 @@ public class CSVUtil {
 		}
 	}
 
-	public static HashSet<String> getUniqueValues(Collection<HashMap<String, String>> data, String key, boolean print) {
+	public static HashSet<String> getUniqueValues(Collection<Map<String, String>> data, String key, boolean print) {
 		HashSet<String> values = new HashSet<String>();
-		for(HashMap<String, String> obj : data)
+		for(Map<String, String> obj : data)
 			values.add(obj.get(key));
 		if(print){
 			System.out.println(key + " " + values.size()+" values");
