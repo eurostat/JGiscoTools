@@ -45,7 +45,7 @@ public class HealthCareFinal {
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
 
 		//load
-		for(String cc : new String[] { "FI", "NL", "SE", "ES", "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU" }) {
+		for(String cc : new String[] { "BE" /*"FI", "NL", "SE", "ES", "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU"*/ }) {
 			System.out.println("*** " + cc);
 
 			//load data
@@ -94,20 +94,31 @@ public class HealthCareFinal {
 			replaceValue(data, "NA", null);
 			replaceValue(data, "UNKNOWN", null);
 
-			replaceValue(data, "SEGURIDAD SOCIAL", "public");
-			replaceValue(data, "SEGURIDAD SOCIAL", "public");
-			replaceValue(data, "PRIVADO NO BENÉFICO", "private");
-			replaceValue(data, "OTRO PRIVADO BENÉFICO", "private");
-			replaceValue(data, "PRIVADO-BENÉFICO (CRUZ ROJA)", "private");
-			replaceValue(data, "PRIVADO-BENÉFICO (IGLESIA)", "private");
-			replaceValue(data, "OTRA DEPENDENCIA PATRIMONIAL", "private");
-			replaceValue(data, "MATEP", "public"); //TODO ES - check that really?
-			replaceValue(data, "ENTIDADES PÚBLICAS", "public");
-			replaceValue(data, "MUNICIPIO", "public");
-			replaceValue(data, "MINISTERIO DE INTERIOR", "public");
-			replaceValue(data, "MINISTERIO DE DEFENSA", "public");
-			replaceValue(data, "DIPUTACIÓN O CABILDO", "public"); //TODO ES - check that really?
-			replaceValue(data, "COMUNIDAD AUTÓNOMA", "public");
+			if(cc.equals("ES")) {				
+				replaceValue(data, "SEGURIDAD SOCIAL", "public");
+				replaceValue(data, "SEGURIDAD SOCIAL", "public");
+				replaceValue(data, "PRIVADO NO BENÉFICO", "private");
+				replaceValue(data, "OTRO PRIVADO BENÉFICO", "private");
+				replaceValue(data, "PRIVADO-BENÉFICO (CRUZ ROJA)", "private");
+				replaceValue(data, "PRIVADO-BENÉFICO (IGLESIA)", "private");
+				replaceValue(data, "OTRA DEPENDENCIA PATRIMONIAL", "private");
+				replaceValue(data, "MATEP", "public"); //TODO ES - check that really?
+				replaceValue(data, "ENTIDADES PÚBLICAS", "public");
+				replaceValue(data, "MUNICIPIO", "public");
+				replaceValue(data, "MINISTERIO DE INTERIOR", "public");
+				replaceValue(data, "MINISTERIO DE DEFENSA", "public");
+				replaceValue(data, "DIPUTACIÓN O CABILDO", "public"); //TODO ES - check that really?
+				replaceValue(data, "COMUNIDAD AUTÓNOMA", "public");
+			}
+			if(cc.equals("BE")) {
+				replaceValue(data, "Public", "public");
+				replaceValue(data, "Openbaar - Public", "public");
+				replaceValue(data, "Openbaar", "public");
+				replaceValue(data, "Privé", "private");
+				replaceValue(data, "Privaat", "private");
+				replaceValue(data, "Privaat - Privé", "private");
+			}
+
 
 			for(Map<String, String> h : data)
 				h.put("pub_date", timeStamp);

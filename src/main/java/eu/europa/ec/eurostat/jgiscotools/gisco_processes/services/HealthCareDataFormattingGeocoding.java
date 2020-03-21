@@ -150,8 +150,8 @@ public class HealthCareDataFormattingGeocoding {
 			hf.put("id", id);
 			hf.put("hospital_name", r.get("HOPITAL"));
 			hf.put("site_name", r.get("SITE"));
-			hf.put("lon", r.get("Longitude"));
-			hf.put("lat", r.get("Latitude"));
+			hf.put("lon", r.get("Longitude").replace(",", "."));
+			hf.put("lat", r.get("Latitude").replace(",", "."));
 
 			Map<String, String> rd = rawI.get(id);
 			if(rd == null) System.out.println("BE - no information for site " + id);
@@ -163,8 +163,9 @@ public class HealthCareDataFormattingGeocoding {
 			hf.put("facility_type", rd.get("TYPE HOPITAL"));
 			hf.put("public_private", rd.get("STATUT"));
 			hf.put("cap_beds", rd.get("TOTAL LITS"));
-			hf.put("emergency", rd.get("PREMIERE PRISE EN CHARGE DES URGENCES"));
-			hf.put("ref_date", rd.get("2020-02-01"));
+			if("X".equals(rd.get("PREMIERE PRISE EN CHARGE DES URGENCES")) || "X".equals(rd.get("SOINS URGENTS SPECIALISES")))
+			hf.put("emergency", "1"); else hf.put("emergency", "0");
+			hf.put("ref_date", "2020-02-01");
 
 			out.add(hf);
 		}
