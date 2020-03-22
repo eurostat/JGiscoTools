@@ -100,7 +100,7 @@ public class HealthCareDataFormattingGeocoding {
 			hospital.put("geo_confidenceGISCO", "" + gr.confidence);
 		}
 
-		System.out.println("Failures: "+fails+"/"+hospitals.size());
+		System.out.println("Failures: " + fails + "/" + hospitals.size());
 	}
 
 
@@ -130,7 +130,7 @@ public class HealthCareDataFormattingGeocoding {
 			hospital.put("geo_confidence", "" + gr.confidence);
 		}
 
-		System.out.println("Failures: "+fails+"/"+hospitals.size());
+		System.out.println("Failures: " + fails + "/" + hospitals.size());
 	}
 
 
