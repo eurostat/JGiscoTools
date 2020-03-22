@@ -43,7 +43,7 @@ public class HealthCareDataFormattingGeocoding {
 		//formatIT();
 		//formatDE();
 		//formatBE();
-		//formatFR();
+		formatFR();
 		// ...
 
 
@@ -60,7 +60,7 @@ public class HealthCareDataFormattingGeocoding {
 		//geocoding
 		System.out.println("load");
 		ArrayList<Map<String,String>> hospitals = CSVUtil.load("/home/juju/Bureau/FR/FR_formated.csv");
-		geocodeBing(hospitals, false);
+		geocodeBing(hospitals, true);
 		System.out.println("save");
 		CSVUtil.save(hospitals, "/home/juju/Bureau/FR/FR_geolocated.csv");
 
