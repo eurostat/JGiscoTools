@@ -20,6 +20,7 @@ import org.w3c.dom.NodeList;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
@@ -59,8 +60,6 @@ public class HealthCareDataFormattingGeocoding {
 		//geocoding
 		System.out.println("load");
 		ArrayList<Map<String,String>> hospitals = CSVUtil.load("/home/juju/Bureau/FR/FR_formated.csv");
-		//geocodeGISCO(hospitals, true);
-		//LocalParameters.loadProxySettings(); //TODO fix that - GISCO geocoder does not work with proxy
 		geocodeBing(hospitals, false);
 		System.out.println("save");
 		CSVUtil.save(hospitals, "/home/juju/Bureau/FR/FR_geolocated.csv");
@@ -89,13 +88,15 @@ public class HealthCareDataFormattingGeocoding {
 			address += hospital.get("country");
 			System.out.println(address);
 
-			Coordinate c = GISCOGeocoder.geocode(address);
-			System.out.println(c);
+			GeocodingResult gr = GISCOGeocoder.geocode(address);
+			Coordinate c = gr.position;
+			System.out.println(c  + "  --- " + gr.quality);
 			if(c.getX()==0 && c.getY()==0) fails++;
 
 			//if(count > 10) break;
 			hospital.put("latGISCO", "" + c.y);
 			hospital.put("lonGISCO", "" + c.x);
+			hospital.put("geo_qualGISCO", "" + gr.quality);
 		}
 
 		System.out.println("Failures: "+fails+"/"+hospitals.size());
@@ -113,16 +114,18 @@ public class HealthCareDataFormattingGeocoding {
 					hospital.get("street"),
 					hospital.get("city"),
 					hospital.get("cc"),
-					hospital.get("postcode")
+					usePostcode? hospital.get("postcode") : null
 					);
 
-			Coordinate c = BingGeocoder.geocode(address);
-			System.out.println(c);
+			GeocodingResult gr = BingGeocoder.geocode(address);
+			Coordinate c = gr.position;
+			System.out.println(c  + "  --- " + gr.quality);
 			if(c.getX()==0 && c.getY()==0) fails++;
 
 			//if(count > 10) break;
 			hospital.put("lat", "" + c.y);
 			hospital.put("lon", "" + c.x);
+			hospital.put("geo_qual", "" + gr.quality);
 		}
 
 		System.out.println("Failures: "+fails+"/"+hospitals.size());
@@ -145,8 +148,8 @@ public class HealthCareDataFormattingGeocoding {
 			/*/prepare
 			GeometryFactory gf = new GeometryFactory();
 			CoordinateReferenceSystem LAMBERT_93 = CRS.decode("EPSG:2154");
-			CoordinateReferenceSystem UTM_N20 = CRS.decode("EPSG:2154");
-			CoordinateReferenceSystem UTM_N21 = CRS.decode("EPSG:32620");
+			CoordinateReferenceSystem UTM_N20 = CRS.decode("EPSG:32620");
+			CoordinateReferenceSystem UTM_N21 = CRS.decode("EPSG:32621");
 			CoordinateReferenceSystem UTM_N22 = CRS.decode("EPSG:32622");
 			CoordinateReferenceSystem UTM_S40 = CRS.decode("EPSG:32740");
 			CoordinateReferenceSystem UTM_S38 = CRS.decode("EPSG:32738");*/
@@ -199,6 +202,7 @@ public class HealthCareDataFormattingGeocoding {
 
 				String tv = r.get("typvoie");
 				switch (tv) {
+				case "": break;
 				case "R": tv="RUE"; break;
 				case "AV": tv="AVENUE"; break;
 				case "BD": tv="BOULEVARD"; break;
@@ -209,12 +213,26 @@ public class HealthCareDataFormattingGeocoding {
 				case "QUA": tv="QUAI"; break;
 				case "PROM": tv="PROMENADE"; break;
 				case "PASS": tv="PASSAGE"; break;
+				case "ALL": tv="ALLEE"; break;
+				//default: System.out.println(tv);
 				}
-				hf.put("street", (tv + " " + r.get("voie") + (r.get("lieuditbp").contains("BP")?"":" "+r.get("lieuditbp"))).trim());
+
+				String street = "";
+				street += ("".equals(tv) || tv==null)? "" : tv + " ";
+				street += r.get("voie") + " ";
+				street += (r.get("lieuditbp").contains("BP")? "" : r.get("lieuditbp"));
+				street = street.trim();
+				hf.put("street", street);
 
 				String lia = r.get("ligneacheminement");
 				hf.put("postcode", lia.substring(0, 5));
-				hf.put("city", lia.substring(6, lia.length()));
+
+				String city = lia.substring(6, lia.length());
+				for(int cedex = 30; cedex>0; cedex--) city = city.replace("CEDEX " + cedex, "");
+				city = city.replace("CEDEX", "");
+				city = city.trim();
+				hf.put("city", city);
+				if(city==null || city.equals("")) System.err.println("No city for " + id);
 
 				hf.put("tel", r.get("telephone"));
 				hf.put("public_private", r.get("libsph"));
@@ -222,6 +240,7 @@ public class HealthCareDataFormattingGeocoding {
 
 				hf.put("ref_date", "2020-03-04");
 
+				//if("".equals(hf.get("street"))) System.out.println(hf.get("city") + "  ---  " + hf.get("hospital_name"));
 				out.add(hf);
 			}
 
