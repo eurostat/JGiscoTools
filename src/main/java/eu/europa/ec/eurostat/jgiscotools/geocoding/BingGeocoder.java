@@ -24,8 +24,6 @@ public class BingGeocoder {
 
 	//structured version
 	//http://dev.virtualearth.net/REST/v1/Locations?
-
-
 	//unstructured version
 	//http://dev.virtualearth.net/REST/v1/Locations/{locationQuery}?includeNeighborhood={includeNeighborhood}&maxResults={maxResults}&include={includeValue}&key={BingMapsAPIKey}
 
@@ -90,6 +88,9 @@ public class BingGeocoder {
 			GeocodingResult gr = new GeocodingResult();
 			gr.position = c;
 			//TODO add quality indicator
+            //"matchCodes":["Good"]
+            //"confidence":"High"
+
 			return gr;
 		} catch (Exception e) {
 			e.printStackTrace();
