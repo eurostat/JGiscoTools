@@ -5,8 +5,10 @@ import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 public class GeocodingAddress {
 	
 	public String street;
+
 	public String housenumber;
 	public String streetname;
+
 	public String city;
 	public String countryCode;
 	public String postalcode;
