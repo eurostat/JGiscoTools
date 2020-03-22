@@ -42,10 +42,8 @@ public class HealthCareDataFormattingGeocoding {
 		//formatIT();
 		//formatDE();
 		//formatBE();
-		formatFR();
+		//formatFR();
 		// ...
-
-		//geocodeIT();
 
 
 		/*
@@ -58,15 +56,14 @@ public class HealthCareDataFormattingGeocoding {
 		 * CSVUtil.save(hospitals,path+"AT/AT_geolocated.csv");
 		 */
 
-		/*/IT geocoding
+		//geocoding
 		System.out.println("load");
-		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path+"IT/IT_formatted.csv", CSVFormat.DEFAULT.withFirstRecordAsHeader());
-		geocodeGISCO(hospitals, false);
-		LocalParameters.loadProxySettings(); //TODO fix that - GISCO geocoder does not work with proxy
+		ArrayList<Map<String,String>> hospitals = CSVUtil.load("/home/juju/Bureau/FR/FR_formated.csv");
+		//geocodeGISCO(hospitals, true);
+		//LocalParameters.loadProxySettings(); //TODO fix that - GISCO geocoder does not work with proxy
 		geocodeBing(hospitals, false);
 		System.out.println("save");
-		CSVUtil.save(hospitals,path+"IT/IT_geolocated.csv");
-		 */
+		CSVUtil.save(hospitals, "/home/juju/Bureau/FR/FR_geolocated.csv");
 
 		//TODO null pointer
 		//GeoPackageUtil.save(CSVUtil.CSVToFeatures(hospitals, "lonBing", "latBing"), "E:\\\\dissemination\\\\shared-data\\\\MS_data\\\\Service - Health\\\\IT/IT_geolocated.gpkg", ProjectionUtil.getWGS_84_CRS());
@@ -124,8 +121,8 @@ public class HealthCareDataFormattingGeocoding {
 			if(c.getX()==0 && c.getY()==0) fails++;
 
 			//if(count > 10) break;
-			hospital.put("latBing", "" + c.y);
-			hospital.put("lonBing", "" + c.x);
+			hospital.put("lat", "" + c.y);
+			hospital.put("lon", "" + c.x);
 		}
 
 		System.out.println("Failures: "+fails+"/"+hospitals.size());
