@@ -30,7 +30,7 @@ public class GISCOGeocoder {
 	 * @param query The query text (should not be already formatted as URL)
 	 * @return The position, as proposed by the geocoder.
 	 */
-	public static Coordinate geocode(String query) {
+	public static GeocodingResult geocode(String query) {
 		try {
 			query = URLEncoder.encode(query, "UTF-8");
 			String url = "q="+query;
@@ -47,7 +47,7 @@ public class GISCOGeocoder {
 	 * 
 	 * @return The position, as proposed by the geocoder.
 	 */
-	public static Coordinate geocode(GeocodingAddress ad) {
+	public static GeocodingResult geocode(GeocodingAddress ad) {
 		try {
 			String query = "";
 
@@ -98,7 +98,7 @@ public class GISCOGeocoder {
 	 * @param url
 	 * @return
 	 */
-	private static Coordinate geocodeURL(String URLquery) {
+	private static GeocodingResult geocodeURL(String URLquery) {
 		try {
 			String url = "https://europa.eu/webtools/rest/gisco/nominatim/search?" + URLquery + "&polygon=0&viewbox=&format=json&limit=2";
 //			String url = "http(s)://europa.eu/webtools/rest/gisco/api?q=";
@@ -120,7 +120,10 @@ public class GISCOGeocoder {
 				}
 			}
 			in.close();
-			return c;
+			GeocodingResult gr = new GeocodingResult();
+			gr.position = c;
+			//TODO add quality indicator
+			return gr;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

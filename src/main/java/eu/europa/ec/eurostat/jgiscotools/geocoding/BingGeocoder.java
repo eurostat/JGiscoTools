@@ -30,21 +30,11 @@ public class BingGeocoder {
 	//http://dev.virtualearth.net/REST/v1/Locations/{locationQuery}?includeNeighborhood={includeNeighborhood}&maxResults={maxResults}&include={includeValue}&key={BingMapsAPIKey}
 
 
-	public static Coordinate geocode(GeocodingAddress ad) {
+	public static GeocodingResult geocode(GeocodingAddress ad) {
 		try {
 			String query = "";
 
 			//&addressLine={addressLine}   //<AddressLine>1 Microsoft Way</AddressLine>  
-			//&postalCode={postalCode}
-			//&locality={locality}
-			//countryRegion={countryRegion}  //The ISO country code for the country.
-
-			if(ad.city != null)
-				query += "&locality=" + URLEncoder.encode(ad.city, "UTF-8");
-			if(ad.countryCode != null)
-				query += "&countryRegion=" + ad.countryCode;
-			if(ad.postalcode != null)
-				query += "&postalCode=" + URLEncoder.encode(ad.postalcode, "UTF-8");
 
 			if(ad.street != null)
 				query += "&addressLine=" + URLEncoder.encode(ad.street, "UTF-8");
@@ -57,6 +47,13 @@ public class BingGeocoder {
 				if(!street.equals(""))
 					query += "&addressLine=" + URLEncoder.encode(street, "UTF-8");
 			}
+
+			if(ad.city != null)
+				query += "&locality=" + URLEncoder.encode(ad.city, "UTF-8");
+			if(ad.countryCode != null)
+				query += "&countryRegion=" + ad.countryCode;
+			if(ad.postalcode != null)
+				query += "&postalCode=" + URLEncoder.encode(ad.postalcode, "UTF-8");
 
 			//query = URLEncoder.encode(query, "UTF-8");
 
@@ -73,7 +70,7 @@ public class BingGeocoder {
 	 * @param url
 	 * @return
 	 */
-	private static Coordinate geocodeURL(String URLquery) {
+	private static GeocodingResult geocodeURL(String URLquery) {
 		try {
 			String url = "http://dev.virtualearth.net/REST/v1/Locations?" + URLquery + "&maxResults=1&key=" + key;
 			//url = url.replace("+", "%20");
@@ -90,7 +87,10 @@ public class BingGeocoder {
 			double lon = Double.parseDouble(parts[1]);
 			Coordinate c = new Coordinate(lon, lat);
 
-			return c;
+			GeocodingResult gr = new GeocodingResult();
+			gr.position = c;
+			//TODO add quality indicator
+			return gr;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
