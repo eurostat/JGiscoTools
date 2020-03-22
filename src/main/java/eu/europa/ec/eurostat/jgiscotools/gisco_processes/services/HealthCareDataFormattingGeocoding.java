@@ -90,13 +90,14 @@ public class HealthCareDataFormattingGeocoding {
 
 			GeocodingResult gr = GISCOGeocoder.geocode(address);
 			Coordinate c = gr.position;
-			System.out.println(c  + "  --- " + gr.quality);
+			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
 			if(c.getX()==0 && c.getY()==0) fails++;
 
 			//if(count > 10) break;
 			hospital.put("latGISCO", "" + c.y);
 			hospital.put("lonGISCO", "" + c.x);
-			hospital.put("geo_qualGISCO", "" + gr.quality);
+			hospital.put("geo_matchingGISCO", "" + gr.matching);
+			hospital.put("geo_confidenceGISCO", "" + gr.confidence);
 		}
 
 		System.out.println("Failures: "+fails+"/"+hospitals.size());
@@ -119,13 +120,14 @@ public class HealthCareDataFormattingGeocoding {
 
 			GeocodingResult gr = BingGeocoder.geocode(address);
 			Coordinate c = gr.position;
-			System.out.println(c  + "  --- " + gr.quality);
+			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
 			if(c.getX()==0 && c.getY()==0) fails++;
 
 			//if(count > 10) break;
 			hospital.put("lat", "" + c.y);
 			hospital.put("lon", "" + c.x);
-			hospital.put("geo_qual", "" + gr.quality);
+			hospital.put("geo_matching", "" + gr.matching);
+			hospital.put("geo_confidence", "" + gr.confidence);
 		}
 
 		System.out.println("Failures: "+fails+"/"+hospitals.size());

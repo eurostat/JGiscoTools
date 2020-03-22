@@ -75,12 +75,13 @@ public class BingGeocoder {
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
 			String line = in.readLine();
+			//System.out.println(line);
 
 			String[] parts = line.split("\"type\":\"Point\",\"coordinates\":\\[");
-			line = parts[1];
-			parts = line.split("\\]},");
-			line = parts[0];
-			parts = line.split(",");
+			String s = parts[1];
+			parts = s.split("\\]},");
+			s = parts[0];
+			parts = s.split(",");
 			double lat = Double.parseDouble(parts[0]);
 			double lon = Double.parseDouble(parts[1]);
 			Coordinate c = new Coordinate(lon, lat);
@@ -88,8 +89,18 @@ public class BingGeocoder {
 			GeocodingResult gr = new GeocodingResult();
 			gr.position = c;
 			//TODO add quality indicator
-            //"matchCodes":["Good"]
-            //"confidence":"High"
+
+			//"matchCodes":["Good"]}]}],
+			parts = line.split("matchCodes\":\\[\"");
+			s = parts[1];
+			parts = s.split("\"\\]");
+			gr.matching = parts[0];
+
+			//"confidence":"High",
+			parts = line.split("confidence\":\"");
+			s = parts[1];
+			parts = s.split("\",");
+			gr.confidence = parts[0];
 
 			return gr;
 		} catch (Exception e) {
@@ -99,11 +110,11 @@ public class BingGeocoder {
 	}
 
 
-/*
+	/*
 	public static void main(String[] args) {
 		LocalParameters.loadProxySettings();
 		System.out.println( geocode( new GeocodingAddress(null, null, "Rue Alphonse Weicker", "Luxembourg", "LU", null)) );
 	}
-*/
+	 */
 
 }

@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.Coordinate;
 public class GeocodingResult {
 
 	public Coordinate position;
-	public String quality;
+	public String matching;
+	public String confidence;
 
 }
