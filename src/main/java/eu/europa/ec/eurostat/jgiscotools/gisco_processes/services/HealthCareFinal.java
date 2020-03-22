@@ -45,7 +45,7 @@ public class HealthCareFinal {
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
 
 		//load
-		for(String cc : new String[] { "FR" /*"BE", "FI", "NL", "SE", "ES", "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU"*/ }) {
+		for(String cc : new String[] { "FR", "BE", "FI", "NL", "SE", "ES", "IT", "AT", "RO", "DE", "UK", "IE", "LV", "LU" }) {
 			System.out.println("*** " + cc);
 
 			//load data
@@ -76,6 +76,9 @@ public class HealthCareFinal {
 			removeColumn(data, "service industry id");
 			removeColumn(data, "district");
 			removeColumn(data, "organization name");
+			removeColumn(data, "geo_matching");
+			removeColumn(data, "geo_confidence");
+
 			changeColumnName(data, "latBing", "lat");
 			changeColumnName(data, "lonBing", "lon");
 			changeColumnName(data, "name", "hospital_name");
