@@ -29,11 +29,11 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 public class CSVUtil {
 
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		ArrayList<Map<String, String>> a = load("src/test/resources/csv/test.csv");
 		System.out.println(a);
 		save(a, "target/out.csv");
-	}
+	}*/
 
 
 	/**
