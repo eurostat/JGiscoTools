@@ -39,11 +39,11 @@ public class HealthCareDataFormattingGeocoding {
 		// formatLU();
 		// LocalParameters.loadProxySettings();
 		// formatRO();
-		// formatFI();
+		formatFI();
 		//formatIT();
 		//formatDE();
 		//formatBE();
-		formatFR();
+		//formatFR();
 		// ...
 
 
@@ -57,12 +57,12 @@ public class HealthCareDataFormattingGeocoding {
 		 * CSVUtil.save(hospitals,path+"AT/AT_geolocated.csv");
 		 */
 
-		//geocoding
+		/*/geocoding
 		System.out.println("load");
 		ArrayList<Map<String,String>> hospitals = CSVUtil.load("/home/juju/Bureau/FR/FR_formated.csv");
 		geocodeBing(hospitals, true);
 		System.out.println("save");
-		CSVUtil.save(hospitals, "/home/juju/Bureau/FR/FR_geolocated.csv");
+		CSVUtil.save(hospitals, "/home/juju/Bureau/FR/FR_geolocated.csv");*/
 
 		//TODO null pointer
 		//GeoPackageUtil.save(CSVUtil.CSVToFeatures(hospitals, "lonBing", "latBing"), "E:\\\\dissemination\\\\shared-data\\\\MS_data\\\\Service - Health\\\\IT/IT_geolocated.gpkg", ProjectionUtil.getWGS_84_CRS());
@@ -529,7 +529,7 @@ public class HealthCareDataFormattingGeocoding {
 
 	public static void formatFI() {
 
-		String filePath = path + "FI/topi-2020-01-06.csv";
+		String filePath = "/home/juju/Bureau/FI_geolocated.csv";
 		ArrayList<Map<String, String>> hospitals_FI = CSVUtil.load(filePath,
 				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(';'));
 		System.out.println(hospitals_FI.size());
@@ -562,9 +562,7 @@ public class HealthCareDataFormattingGeocoding {
 		}
 
 		// save
-		CSVUtil.save(hospitalsFormatted_FI,
-				"E:\\dissemination\\shared-data\\MS_data\\Service - Health\\FI/FI_formatted.csv");
-
+		CSVUtil.save(hospitalsFormatted_FI, "/home/juju/Bureau/FI.csv");
 	}
 
 	public static void formatIT() {
