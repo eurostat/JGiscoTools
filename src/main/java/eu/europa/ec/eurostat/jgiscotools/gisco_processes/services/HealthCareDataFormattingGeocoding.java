@@ -64,7 +64,7 @@ public class HealthCareDataFormattingGeocoding {
 		System.out.println("save");
 		CSVUtil.save(hospitals, "/home/juju/Bureau/FR/FR_geolocated.csv");*/
 
-		//TODO null pointer
+		//save as geopckg
 		//GeoPackageUtil.save(CSVUtil.CSVToFeatures(hospitals, "lonBing", "latBing"), "E:\\\\dissemination\\\\shared-data\\\\MS_data\\\\Service - Health\\\\IT/IT_geolocated.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
