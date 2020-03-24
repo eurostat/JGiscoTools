@@ -39,12 +39,13 @@ public class HealthCareDataFormattingGeocoding {
 		// formatLU();
 		// LocalParameters.loadProxySettings();
 		// formatRO();
-		formatFI();
+		//formatFI();
 		//formatIT();
 		//formatDE();
 		//formatBE();
 		//formatFR();
 		// ...
+		formatDK();
 
 
 		/*
@@ -133,10 +134,50 @@ public class HealthCareDataFormattingGeocoding {
 		System.out.println("Failures: " + fails + "/" + hospitals.size());
 	}
 
+	public static void formatDK() {
+		try {
+			String basePath = "/home/juju/Bureau/DK/";
+			ArrayList<Map<String, String>> raw = CSVUtil.load(basePath + "DK_geolocated.csv");
+			System.out.println(raw.size());
+
+			ArrayList<Map<String, String>> out = new ArrayList<>();
+			for(Map<String, String> r : raw) {
+				Map<String, String> hf = new HashMap<>();
+
+				hf.put("hospital_name", r.get("hospital_name"));
+				hf.put("lat", r.get("lat"));
+				hf.put("lon", r.get("lon"));
+				hf.put("cc", "DK");
+				hf.put("country", "Denmark");
+
+				//street,house_number,postcode,city
+				String add = r.get("Adresse");
+				String[] parts = add.split(",");
+				if(parts.length == 1) {
+					hf.put("city", add);
+				} else {
+					String postcodeCity = parts[parts.length - 1].trim();
+					String postcode = postcodeCity.substring(0, 4);
+					String city = postcodeCity.substring(5, postcodeCity.length());
+					hf.put("postcode", postcode);
+					hf.put("city", city);
+
+					String st = parts[0].trim();
+					hf.put("street", st);
+				}
+
+				out.add(hf);
+			}
+
+			System.out.println("Save " + out.size());
+			CSVUtil.save(out, basePath + "DK.csv");		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void formatFR() {
 		try {
-
 			String basePath = "/home/juju/Bureau/FR/";
 			//load csv
 			//ArrayList<Map<String, String>> raw = CSVUtil.load(basePath + "finess_data.csv");
@@ -144,7 +185,6 @@ public class HealthCareDataFormattingGeocoding {
 			//HashMap<String, Map<String, String>> rawI = Util.index(raw, "nofinesset");
 			ArrayList<Map<String, String>> raw = CSVUtil.load(basePath + "finess_clean.csv");
 			System.out.println(raw.size());
-
 			//CSVUtil.getUniqueValues(raw, "typvoie", true);
 
 			/*/prepare
@@ -248,11 +288,9 @@ public class HealthCareDataFormattingGeocoding {
 
 			System.out.println("Save "+out.size());
 			CSVUtil.save(out, basePath + "FR_formated.csv");		
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 
