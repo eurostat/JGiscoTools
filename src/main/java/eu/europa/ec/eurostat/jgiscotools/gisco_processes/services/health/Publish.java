@@ -33,8 +33,7 @@ public class Publish {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Start");
-
-		String timeStamp = new SimpleDateFormat("yyyy_MM_dd").format(Calendar.getInstance().getTime());
+		String timeStamp = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
 		System.out.println(timeStamp);
 
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
@@ -67,6 +66,19 @@ public class Publish {
 			applyTypes(fs);
 			GeoData.save(fs, destinationPath+"data/geojson/"+cc+".geojson", ProjectionUtil.getWGS_84_CRS());
 			GeoData.save(fs, destinationPath+"data/gpkg/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+		}
+
+		//append cc to id
+		for(Map<String, String> h : all) {
+			String cc = h.get("cc");
+			String id = h.get("id");
+			if(id == null || "".equals(id)) {
+				System.err.println("No identifier for items in " + cc);
+				break;
+			}
+			String cc_ = id.length()>=2? id.substring(0, 2) : "";
+			if(cc_.equals(cc)) continue;
+			h.put("id", cc + "_" + id);
 		}
 
 		//export all

@@ -50,9 +50,30 @@ public class ValidateCSV {
 			Set<String> ch = checkNoUnexpectedColumn(data, cols_);
 			if(ch.size()>0) System.err.println(ch);
 
-			//TODO other tests
+			//check emergency -yes/no
+			checkValuesAmong(data, "emergency", "", "yes", "no");
+
+			//check public_private - public/private
+			checkValuesAmong(data, "public_private", "", "public", "private");
+
+			//TODO check id - check unicity
+			//TODO check list_specs
+			//TODO check date format DD/MM/YYYY
+			//TODO check empty columns
+			//TODO other tests ?
 		}
 		System.out.println("End");
+	}
+
+	private static void checkValuesAmong(ArrayList<Map<String, String>> data, String col, String... values) {
+		for(Map<String, String> h : data) {
+			String val = h.get(col);
+			boolean found = false;
+			for(String v : values)
+				if(val==null && v==null || v.equals(val)) { found=true; break; }
+			if(!found)
+				System.err.println("Unexpected value '" + val + "' for column '" + col + "'");
+		}
 	}
 
 	private static Set<String> checkNoUnexpectedColumn(ArrayList<Map<String, String>> data, Collection<String> cols) {
