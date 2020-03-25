@@ -38,6 +38,8 @@ public class ValidateCSV {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
+		//TODO export valid version + validate
+
 		//load
 		for(String cc : ccs) {
 			System.out.println("*** " + cc);
@@ -50,13 +52,16 @@ public class ValidateCSV {
 			Set<String> ch = checkNoUnexpectedColumn(data, cols_);
 			if(ch.size()>0) System.err.println(ch);
 
+			//check id is provided
+			checkValuesNotNullOrEmpty(data, "id");
+			//TODO check id unicity
+
 			//check emergency -yes/no
 			checkValuesAmong(data, "emergency", "", "yes", "no");
 
 			//check public_private - public/private
 			checkValuesAmong(data, "public_private", "", "public", "private");
 
-			//TODO check id - check unicity
 			//TODO check list_specs
 			//TODO check date format DD/MM/YYYY
 			//TODO check empty columns
@@ -65,15 +70,29 @@ public class ValidateCSV {
 		System.out.println("End");
 	}
 
-	private static void checkValuesAmong(ArrayList<Map<String, String>> data, String col, String... values) {
+	private static boolean checkValuesNotNullOrEmpty(ArrayList<Map<String, String>> data, String col) {
+		for(Map<String, String> h : data) {
+			String val = h.get(col);
+			if(val == null || val.isEmpty())
+				System.err.println("No value column '" + col + "'");
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean checkValuesAmong(ArrayList<Map<String, String>> data, String col, String... values) {
+		boolean ok = true;
 		for(Map<String, String> h : data) {
 			String val = h.get(col);
 			boolean found = false;
 			for(String v : values)
 				if(val==null && v==null || v.equals(val)) { found=true; break; }
-			if(!found)
+			if(!found) {
 				System.err.println("Unexpected value '" + val + "' for column '" + col + "'");
+				ok = false;				
+			}
 		}
+		return ok;
 	}
 
 	private static Set<String> checkNoUnexpectedColumn(ArrayList<Map<String, String>> data, Collection<String> cols) {
