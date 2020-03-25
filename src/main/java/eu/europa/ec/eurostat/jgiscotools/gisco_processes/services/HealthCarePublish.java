@@ -17,6 +17,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 /**
  * Copy country CSV files to github repository.
  * Combine them in the all.csv file.
+ * Convert as GeoJSON and GPKG format.
  * 
  * @author julien Gaffuri
  *
@@ -38,8 +39,8 @@ public class HealthCarePublish {
 		};
 		List<String> cols_ = Arrays.asList(cols);
 
+
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
-		//load
 		for(String cc : new String[] { "AT", "BE", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LU", "LV", "NL", "PT", "RO", "SE", "UK" }) {
 			System.out.println("*** " + cc);
 
