@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,8 +24,10 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
  * @author julien Gaffuri
  *
  */
-public class HealthCareValidateCSV {
+public class ZZZ_Final {
 
+	//TODO move stuff to CSVUtils
+	
 	/**
 	 * @param args
 	 */

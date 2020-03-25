@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
 import java.util.ArrayList;
 
@@ -20,10 +20,10 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
  * @author clemoki
  *
  */
-public class HealthCareDataIntegrationERMTomTomOSM {
+public class DataIntegrationERMTomTomOSM {
 
 
-	HealthCareDataFormattingGeocoding g;
+	DataFormattingGeocoding g;
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");

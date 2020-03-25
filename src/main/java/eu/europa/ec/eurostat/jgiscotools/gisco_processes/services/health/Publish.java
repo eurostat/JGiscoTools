@@ -1,14 +1,15 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
+import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
@@ -22,7 +23,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
  * @author julien Gaffuri
  *
  */
-public class HealthCarePublish {
+public class Publish {
 
 	static String originPath = "E:\\dissemination\\shared-data\\MS_data\\Service - Health\\";
 	static String destinationPath = "C:\\Users\\gaffuju\\workspace\\healthcare-services\\";
@@ -33,26 +34,35 @@ public class HealthCarePublish {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		//the desired columns, ordered
-		String[] cols = new String[] {
-				"id", "hospital_name", "site_name", "lat", "lon", "street", "house_number", "postcode", "city", "cc", "country", "emergency", "cap_beds", "cap_prac", "cap_rooms", "facility_type", "public_private", "list_specs", "tel", "email", "url", "ref_date", "pub_date"
-		};
-		List<String> cols_ = Arrays.asList(cols);
-
+		String timeStamp = new SimpleDateFormat("yyyy_MM_dd").format(Calendar.getInstance().getTime());
+		System.out.println(timeStamp);
 
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
-		for(String cc : new String[] { "AT", "BE", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LU", "LV", "NL", "PT", "RO", "SE", "UK" }) {
+		for(String cc : ValidateCSV.ccs) {
 			System.out.println("*** " + cc);
 
 			//load data
-			ArrayList<Map<String, String>> data = CSVUtil.load(originPath+cc+".csv");
+			ArrayList<Map<String, String>> data = CSVUtil.load(originPath + cc+"/"+cc+".csv");
 			System.out.println(data.size());
+
+			//cc, country
+			String cntr = NUTSUtils.getName(cc);
+			if(cntr == null) System.err.println("cc: " + cc);
+			cntr.replace("Germany (until 1990 former territory of the FRG)", "Germany");
+			for(Map<String, String> h :data) {
+				h.put("cc", cc);
+				h.put("country", cntr);
+			}
+
+			//apply publication date
+			for(Map<String, String> h : data)
+				h.put("pub_date", timeStamp);
 
 			//store for big EU file
 			all.addAll(data);
 
 			//export as geojson and GPKG
-			CSVUtil.save(data, destinationPath+"data/csv/"+cc+".csv", cols_);
+			CSVUtil.save(data, destinationPath+"data/csv/"+cc+".csv", ValidateCSV.cols_);
 			Collection<Feature> fs = CSVUtil.CSVToFeatures(data, "lon", "lat");
 			applyTypes(fs);
 			GeoData.save(fs, destinationPath+"data/geojson/"+cc+".geojson", ProjectionUtil.getWGS_84_CRS());
@@ -62,7 +72,7 @@ public class HealthCarePublish {
 		//export all
 		System.out.println("*** All");
 		System.out.println(all.size());
-		CSVUtil.save(all, destinationPath+"data/csv/all.csv", cols_);
+		CSVUtil.save(all, destinationPath+"data/csv/all.csv", ValidateCSV.cols_);
 		Collection<Feature> fs = CSVUtil.CSVToFeatures(all, "lon", "lat");
 		applyTypes(fs);
 		GeoData.save(fs, destinationPath+"data/geojson/all.geojson", ProjectionUtil.getWGS_84_CRS());

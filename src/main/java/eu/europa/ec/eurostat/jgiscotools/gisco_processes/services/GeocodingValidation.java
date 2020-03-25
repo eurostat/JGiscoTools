@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.LineString;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.DataFormattingGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
@@ -22,7 +23,7 @@ public class GeocodingValidation {
 		
 		//load hospitals
 		System.out.println("load");
-		ArrayList<Map<String,String>> hospitals = CSVUtil.load(HealthCareDataFormattingGeocoding.path+"IT/IT_geolocated.csv", CSVFormat.DEFAULT.withFirstRecordAsHeader());
+		ArrayList<Map<String,String>> hospitals = CSVUtil.load(DataFormattingGeocoding.path+"IT/IT_geolocated.csv", CSVFormat.DEFAULT.withFirstRecordAsHeader());
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
 		
 		//build linear features
@@ -40,7 +41,7 @@ public class GeocodingValidation {
 		}
 		
 		//save linear feature
-		GeoData.save(errors, HealthCareDataFormattingGeocoding.path+"IT/geocoding_validation.gpkg", crs, true);
+		GeoData.save(errors, DataFormattingGeocoding.path+"IT/geocoding_validation.gpkg", crs, true);
 		
 		System.out.println("End");
 	}

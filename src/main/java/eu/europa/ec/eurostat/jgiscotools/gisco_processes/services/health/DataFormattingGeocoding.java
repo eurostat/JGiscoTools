@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
-public class HealthCareDataFormattingGeocoding {
+public class DataFormattingGeocoding {
 
 	static String path = "E:\\dissemination\\shared-data\\MS_data\\Service - Health\\";
 
