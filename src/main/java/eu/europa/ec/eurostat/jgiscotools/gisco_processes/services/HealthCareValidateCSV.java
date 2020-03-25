@@ -24,7 +24,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
  * @author julien Gaffuri
  *
  */
-public class HealthCareFinal {
+public class HealthCareValidateCSV {
 
 	/**
 	 * @param args
