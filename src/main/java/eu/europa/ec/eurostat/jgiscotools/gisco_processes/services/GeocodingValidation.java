@@ -42,7 +42,7 @@ public class GeocodingValidation {
 		
 		//save linear feature
 		GeoData.save(errors, DataFormattingGeocoding.path+"IT/geocoding_validation.gpkg", crs, true);
-		
+
 		System.out.println("End");
 	}
 

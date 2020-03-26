@@ -27,7 +27,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class DataFormattingGeocoding {
 
-	static String path = "E:\\dissemination\\shared-data\\MS_data\\Service - Health\\";
+	public static String path = "E:\\dissemination\\shared-data\\MS_data\\Service - Health\\";
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
@@ -35,7 +35,7 @@ public class DataFormattingGeocoding {
 		//
 
 		// formatAT();
-		// formatCH();
+		formatCH();
 		// formatLU();
 		// LocalParameters.loadProxySettings();
 		// formatRO();
@@ -44,8 +44,7 @@ public class DataFormattingGeocoding {
 		//formatDE();
 		//formatBE();
 		//formatFR();
-		// ...
-		formatDK();
+		//formatDK();
 
 
 		/*
@@ -476,18 +475,22 @@ public class DataFormattingGeocoding {
 
 	public static void formatCH() {
 
-		String filePath = path + "CH/kzp17_daten.csv";
-		ArrayList<Map<String, String>> hospitals = CSVUtil.load(filePath,
-				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(';'));
-		System.out.println(hospitals.size());
+		ArrayList<Map<String, String>> hs = CSVUtil.load(path + "CH/CH_geolocated.csv");
+		System.out.println(hs.size());
 
-		Collection<Map<String, String>> hospitalsFormatted = new ArrayList<Map<String, String>>();
-		for (Map<String, String> h : hospitals) {
+		Collection<Map<String, String>> out = new ArrayList<Map<String, String>>();
+		for (Map<String, String> h : hs) {
 
 			// new formatted hospital
 			HashMap<String, String> hf = new HashMap<String, String>();
 
 			// copy columns
+
+			//hospital_name,site_Name,Adr_Standort,Ort_Standort,Country,lat,lon
+			int ID = 1;
+			hf.put("id", ""+(ID++));
+			hf.put("cc", "CH");
+
 
 			// country - CH
 			hf.put("country", "CH");
@@ -503,7 +506,6 @@ public class DataFormattingGeocoding {
 			hf.put("facility_type", h.get("Typ"));
 			// Jahr = year
 			hf.put("data_year", h.get("Jahr"));
-
 			// address AT
 			// street house_number postcode city - Adresse
 			// St. Veiter-Straße 46, 5621 St. Veit im Pongau
@@ -557,12 +559,11 @@ public class DataFormattingGeocoding {
 			}
 
 			// add to list
-			hospitalsFormatted.add(hf);
+			out.add(hf);
 		}
 
 		// save
-		CSVUtil.save(hospitalsFormatted,
-				"E:\\dissemination\\shared-data\\MS_data\\Service - Health\\CH/CH_formatted.csv");
+		CSVUtil.save(out, path + "CH/CH.csv");
 	}
 
 	public static void formatFI() {
