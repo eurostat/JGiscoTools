@@ -22,14 +22,12 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class DataFormattingGeocoding {
 
-	public static String path = "E:\\dissemination\\shared-data\\MS_data\\Service - Health\\";
+	public static String path = ValidateCSV.path;
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
@@ -37,7 +35,7 @@ public class DataFormattingGeocoding {
 		//
 
 		// formatAT();
-		//formatCH();
+		formatCH();
 		// formatLU();
 		// LocalParameters.loadProxySettings();
 		// formatRO();
@@ -67,7 +65,7 @@ public class DataFormattingGeocoding {
 		CSVUtil.save(hospitals, path + "FR/FR_geolocated_new.csv");
 		//save as gpkg
 		GeoData.save(CSVUtil.CSVToFeatures(hospitals, "lon", "lat"), path + "FR/FR_geolocated_new.gpkg", ProjectionUtil.getWGS_84_CRS());
-*/
+		 */
 
 		System.out.println("End");
 	}
@@ -487,84 +485,29 @@ public class DataFormattingGeocoding {
 			// new formatted hospital
 			HashMap<String, String> hf = new HashMap<String, String>();
 
-			// copy columns
-
-			//hospital_name,site_Name,Adr_Standort,Ort_Standort,Country,lat,lon
-			int ID = 1;
-			hf.put("id", ""+(ID++));
+			hf.put("id", h.get("id"));
+			hf.put("hospital_name", h.get("hospital_name"));
+			hf.put("site_name", h.get("site_name"));
+			hf.put("lat", h.get("lat"));
+			hf.put("lon", h.get("lon"));
+			hf.put("ref_date", h.get("ref_date"));
 			hf.put("cc", "CH");
 
-
-			// country - CH
-			hf.put("country", "CH");
-			// Inst = name
-			hf.put("name", h.get("Inst"));
-			// list_specs - Intensivbereiche
-			hf.put("list_specs", h.get("Akt"));
-			// BettenStat = cap_beds (Betten)
-			hf.put("cap_beds", h.get("BettenStat"));
-			// PersA = cap_prac (Ärzte)
-			hf.put("cap_prac", h.get("PersA"));
-			// Typ - facility_type (Spitaltyp, gemäss BFS Spitaltypologie)
-			hf.put("facility_type", h.get("Typ"));
-			// Jahr = year
-			hf.put("data_year", h.get("Jahr"));
-			// address AT
-			// street house_number postcode city - Adresse
-			// St. Veiter-Straße 46, 5621 St. Veit im Pongau
-
-			// address CH
-			// Ort = postcode + city
-			// 7000 Chur
-			// Adr = streetname (street name and number)
-			// Loestrasse 220
-
-			// Split "Ort" column into postcode and city
-			String ort = h.get("Ort");
-			// split in two where there's a space
-			String[] parts = ort.split(" ");
-			// If there are more than 2 parts, print error
-			if (parts.length != 2)
-				System.err.println(ort);
-			// on the right:
-			String rightPart = parts[1];
-			String fc = rightPart.substring(0, 1);
-			if (!fc.equals(" "))
-				System.err.println(fc);
-			rightPart = rightPart.substring(1, rightPart.length());
-			String postcode = rightPart.substring(0, 4);
+			String postcode_city = h.get("postcode_city");
+			String postcode = postcode_city.substring(0, 4);
+			String city = postcode_city.substring(5, postcode_city.length());
 			hf.put("postcode", postcode);
-
-			fc = rightPart.substring(4, 5);
-			if (!fc.equals(" "))
-				System.err.println(fc);
-			String city = rightPart.substring(5, rightPart.length());
 			hf.put("city", city);
 
-			String leftPart = h.get("Adr");
-			// String leftPart = parts[0];
-			if (leftPart.equals("")) {
-				hf.put("house_number", "");
-				hf.put("street", "");
-			} else {
-				parts = leftPart.split(" ");
-				String house_number = parts[parts.length - 1];
+			//"street", "house_number"
+			//no way to decompose that
+			hf.put("street", h.get("address"));
 
-				// assign the house_number, or "" if it equals "0"
-				hf.put("house_number", house_number.equals("0") ? "" : house_number);
-
-				leftPart = leftPart.replace(house_number, "");
-				fc = leftPart.substring(leftPart.length() - 1, leftPart.length());
-				if (!fc.equals(" "))
-					System.err.println(fc);
-				String street = leftPart.substring(0, leftPart.length() - 1);
-				hf.put("street", street);
-			}
-
-			// add to list
 			out.add(hf);
 		}
 
+		populateAllColumns(out, ValidateCSV.cols, "");
+		
 		// save
 		CSVUtil.save(out, path + "CH/CH.csv");
 	}
@@ -709,6 +652,16 @@ public class DataFormattingGeocoding {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+
+	private static void populateAllColumns(Collection<Map<String, String>> data, String[] cols, String defaultValue) {
+		for(String col : cols)
+			for(Map<String, String> h : data) {
+				if(h.get(col) == null || "".equals(h.get(col))) {
+					h.put(col, defaultValue);
+				}
+			}
 	}
 
 }

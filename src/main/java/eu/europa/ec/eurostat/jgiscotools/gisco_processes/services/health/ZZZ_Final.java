@@ -93,7 +93,7 @@ public class ZZZ_Final {
 			Set<String> ch = checkNoUnexpectedColumn(data, cols_);
 			if(ch.size()>0) System.err.println(ch);
 
-			populateAllColumns(data, cols, "");
+			//populateAllColumns(data, cols, "");
 
 			replaceValue(data, "", null);
 			replaceValue(data, "NA", null);
@@ -192,15 +192,6 @@ public class ZZZ_Final {
 				return cs;
 		}
 		return new HashSet<String>();
-	}
-
-	private static void populateAllColumns(ArrayList<Map<String, String>> data, String[] cols, String defaultValue) {
-		for(String col : cols)
-			for(Map<String, String> h : data) {
-				if(h.get(col) == null || "".equals(h.get(col))) {
-					h.put(col, defaultValue);
-				}
-			}
 	}
 
 	private static void replaceValue(ArrayList<Map<String, String>> data, String ini, String fin) {
