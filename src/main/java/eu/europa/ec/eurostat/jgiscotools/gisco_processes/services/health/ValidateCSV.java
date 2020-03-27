@@ -83,11 +83,41 @@ public class ValidateCSV {
 			b = checkValuesNotNullOrEmpty(data, "ref_date");
 			if(!b) System.err.println("Missing values for ref_date format for " + cc);
 
+			//check lon,lat extends
+			checkGeoExtent(data, "lon", "lat");
+
 			//TODO other tests ?
 			//check list_specs
 			//check empty columns
 		}
 		System.out.println("End");
+	}
+
+	private static void checkGeoExtent(ArrayList<Map<String, String>> data, String lonCol, String latCol) {
+		for(Map<String, String> h : data) {
+			String lon_ = h.get(lonCol);
+			String lat_ = h.get(latCol);
+
+			double lon = 0;
+			try {
+				lon = Double.parseDouble(lon_);
+			} catch (NumberFormatException e) {
+				System.err.println("Cannot decode longitude value " + lon_);
+				continue;
+			}
+			double lat = 0;
+			try {
+				lat = Double.parseDouble(lat_);
+			} catch (NumberFormatException e) {
+				System.err.println("Cannot decode latitude value " + lat_);
+				continue;
+			}
+
+			if(lat < -90.0 || lat > 90)
+				System.err.println("Invalid latitude value: " + lat);
+			if(lon < -180.0 || lon > 180)
+				System.err.println("Invalid longitude value: " + lon);
+		}
 	}
 
 	private static boolean checkId(ArrayList<Map<String, String>> data, String idCol) {
