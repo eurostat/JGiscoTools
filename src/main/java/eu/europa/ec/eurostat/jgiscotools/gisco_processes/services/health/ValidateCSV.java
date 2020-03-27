@@ -26,7 +26,7 @@ public class ValidateCSV {
 	static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
 
 	//country codes covered
-	static String[] ccs = new String[] { "AT", "BE", "CH", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LU", "LV", "NL", "PT", "RO", "SE", "UK" };
+	static String[] ccs = new String[] { "AT", "BE", "CH", "CY", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LU", "LV", "MT", "NL", "PT", "RO", "SE", "UK" };
 
 	//CSV columns
 	static String[] cols = new String[] {
