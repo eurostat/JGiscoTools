@@ -59,7 +59,7 @@ public class DataFormattingGeocoding {
 		 * CSVUtil.save(hospitals,path+"AT/AT_geolocated.csv");
 		 */
 
-		//geocoding
+		/*/geocoding
 		System.out.println("load");
 		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path + "FR/FR_formated.csv");
 		geocodeBing(hospitals, true);
@@ -67,6 +67,7 @@ public class DataFormattingGeocoding {
 		CSVUtil.save(hospitals, path + "FR/FR_geolocated_new.csv");
 		//save as gpkg
 		GeoData.save(CSVUtil.CSVToFeatures(hospitals, "lon", "lat"), path + "FR/FR_geolocated_new.gpkg", ProjectionUtil.getWGS_84_CRS());
+*/
 
 		System.out.println("End");
 	}
@@ -178,12 +179,11 @@ public class DataFormattingGeocoding {
 
 	public static void formatFR() {
 		try {
-			String basePath = "/home/juju/Bureau/FR/";
 			//load csv
 			//ArrayList<Map<String, String>> raw = CSVUtil.load(basePath + "finess_data.csv");
 			//System.out.println(raw.size());
 			//HashMap<String, Map<String, String>> rawI = Util.index(raw, "nofinesset");
-			ArrayList<Map<String, String>> raw = CSVUtil.load(basePath + "finess_clean.csv");
+			ArrayList<Map<String, String>> raw = CSVUtil.load(path + "FR/finess_clean.csv");
 			System.out.println(raw.size());
 			//CSVUtil.getUniqueValues(raw, "typvoie", true);
 
@@ -259,6 +259,8 @@ public class DataFormattingGeocoding {
 				//default: System.out.println(tv);
 				}
 
+				//TODO cedex postcode to noncedex
+
 				String street = "";
 				street += ("".equals(tv) || tv==null)? "" : tv + " ";
 				street += r.get("voie") + " ";
@@ -287,7 +289,7 @@ public class DataFormattingGeocoding {
 			}
 
 			System.out.println("Save "+out.size());
-			CSVUtil.save(out, basePath + "FR_formated.csv");		
+			CSVUtil.save(out, path + "FR/FR_formated.csv");		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

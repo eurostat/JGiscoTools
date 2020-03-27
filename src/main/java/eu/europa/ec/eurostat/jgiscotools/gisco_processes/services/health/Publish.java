@@ -3,7 +3,6 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -33,7 +32,7 @@ public class Publish {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Start");
-		String timeStamp = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+		String timeStamp = ValidateCSV.dateFormat.format(Calendar.getInstance().getTime());
 		System.out.println(timeStamp);
 
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();

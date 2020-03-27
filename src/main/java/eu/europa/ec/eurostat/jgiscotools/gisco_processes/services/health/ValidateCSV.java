@@ -3,6 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,13 +34,14 @@ public class ValidateCSV {
 	};
 	static List<String> cols_ = Arrays.asList(cols);
 
+	//date format
+	static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		System.out.println("Start");
-
-		//TODO export valid version + validate
 
 		//load
 		for(String cc : ccs) {
@@ -62,12 +65,36 @@ public class ValidateCSV {
 			//check public_private - public/private
 			checkValuesAmong(data, "public_private", "", "public", "private");
 
-			//TODO check list_specs
-			//TODO check date format DD/MM/YYYY
-			//TODO check empty columns
+			//check date format DD/MM/YYYY
+			checkDateFormat(data, "ref_date", dateFormat);
+			checkDateFormat(data, "pub_date", dateFormat);
+
+			//non null columns
+			checkValuesNotNullOrEmpty(data, "hospital_name");
+			checkValuesNotNullOrEmpty(data, "lat");
+			checkValuesNotNullOrEmpty(data, "lon");
+			checkValuesNotNullOrEmpty(data, "ref_date");
+
 			//TODO other tests ?
+			//check list_specs
+			//check empty columns
 		}
 		System.out.println("End");
+	}
+
+	private static boolean checkDateFormat(ArrayList<Map<String, String>> data, String col, SimpleDateFormat df) {
+		for(Map<String, String> h : data) {
+			String val = h.get(col);
+			if(val == null || val.isEmpty())
+				continue;
+			try {
+				df.parse(val);
+			} catch (ParseException e) {
+				System.out.println("Could not parse date: " + val);
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static boolean checkValuesNotNullOrEmpty(ArrayList<Map<String, String>> data, String col) {
