@@ -25,8 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
  */
 public class Publish {
 
-	static String originPath = "E:\\dissemination\\shared-data\\MS_data\\Service - Health\\";
-	static String destinationPath = "C:\\Users\\gaffuju\\workspace\\healthcare-services\\";
+	static String destinationPath = "C:/Users/gaffuju/workspace/healthcare-services/";
 
 	/**
 	 * @param args
@@ -48,7 +47,7 @@ public class Publish {
 			System.out.println("*** " + cc);
 
 			//load data
-			ArrayList<Map<String, String>> data = CSVUtil.load(originPath + cc+"/"+cc+".csv");
+			ArrayList<Map<String, String>> data = CSVUtil.load(ValidateCSV.path + cc+"/"+cc+".csv");
 			System.out.println(data.size());
 
 			//cc, country

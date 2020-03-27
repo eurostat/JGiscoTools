@@ -23,10 +23,10 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
  */
 public class ValidateCSV {
 
-	static String path = "E:\\dissemination\\shared-data\\MS_data\\Service - Health\\";
+	static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
 
 	//country codes covered
-	static String[] ccs = new String[] { "AT", "BE", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LU", "LV", "NL", "PT", "RO", "SE", "UK" };
+	static String[] ccs = new String[] { "AT", "BE", "CH", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LU", "LV", "NL", "PT", "RO", "SE", "UK" };
 
 	//CSV columns
 	static String[] cols = new String[] {
