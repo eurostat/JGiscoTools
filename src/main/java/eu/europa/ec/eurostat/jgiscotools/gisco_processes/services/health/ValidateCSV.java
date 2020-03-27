@@ -55,25 +55,33 @@ public class ValidateCSV {
 			Set<String> ch = checkNoUnexpectedColumn(data, cols_);
 			if(ch.size()>0) System.err.println(ch);
 
-			//check id is provided
-			checkValuesNotNullOrEmpty(data, "id");
-			//TODO check id unicity
+			//check id is provided and unique
+			boolean b = checkId(data, "id");
+			if(!b) System.err.println("Problem with identifier for " + cc);
 
 			//check emergency -yes/no
-			checkValuesAmong(data, "emergency", "", "yes", "no");
+			b = checkValuesAmong(data, "emergency", "", "yes", "no");
+			if(!b) System.err.println("Problem with emergency values for " + cc);
 
 			//check public_private - public/private
-			checkValuesAmong(data, "public_private", "", "public", "private");
+			b = checkValuesAmong(data, "public_private", "", "public", "private");
+			if(!b) System.err.println("Problem with public_private values for " + cc);
 
 			//check date format DD/MM/YYYY
-			checkDateFormat(data, "ref_date", dateFormat);
+			b = checkDateFormat(data, "ref_date", dateFormat);
+			if(!b) System.err.println("Problem with ref_date format for " + cc);
 			checkDateFormat(data, "pub_date", dateFormat);
+			if(!b) System.err.println("Problem with pub_date format for " + cc);
 
 			//non null columns
-			checkValuesNotNullOrEmpty(data, "hospital_name");
-			checkValuesNotNullOrEmpty(data, "lat");
-			checkValuesNotNullOrEmpty(data, "lon");
-			checkValuesNotNullOrEmpty(data, "ref_date");
+			b = checkValuesNotNullOrEmpty(data, "hospital_name");
+			if(!b) System.err.println("Missing values for hospital_name format for " + cc);
+			b = checkValuesNotNullOrEmpty(data, "lat");
+			if(!b) System.err.println("Missing values for lat format for " + cc);
+			b = checkValuesNotNullOrEmpty(data, "lon");
+			if(!b) System.err.println("Missing values for lon format for " + cc);
+			b = checkValuesNotNullOrEmpty(data, "ref_date");
+			if(!b) System.err.println("Missing values for ref_date format for " + cc);
 
 			//TODO other tests ?
 			//check list_specs
@@ -81,6 +89,25 @@ public class ValidateCSV {
 		}
 		System.out.println("End");
 	}
+
+	private static boolean checkId(ArrayList<Map<String, String>> data, String idCol) {
+		//id values should be provided
+		boolean b = checkValuesNotNullOrEmpty(data, idCol);
+		if(!b) return false;
+		//id values should be unique
+		ArrayList<String> valL = getValues(data, "id");
+		HashSet<String> valS = new HashSet<String>(valL);
+		if(valL.size() != valS.size()) return false;
+		return true;
+	}
+
+	private static ArrayList<String> getValues(ArrayList<Map<String, String>> data, String col) {
+		ArrayList<String> out = new ArrayList<>();
+		for(Map<String, String> h : data)
+			out.add(h.get(col));
+		return out;
+	}
+
 
 	private static boolean checkDateFormat(ArrayList<Map<String, String>> data, String col, SimpleDateFormat df) {
 		for(Map<String, String> h : data) {
@@ -90,7 +117,7 @@ public class ValidateCSV {
 			try {
 				df.parse(val);
 			} catch (ParseException e) {
-				System.out.println("Could not parse date: " + val);
+				//System.out.println("Could not parse date: " + val);
 				return false;
 			}
 		}
@@ -101,25 +128,25 @@ public class ValidateCSV {
 		for(Map<String, String> h : data) {
 			String val = h.get(col);
 			if(val == null || val.isEmpty())
-				System.err.println("No value column '" + col + "'");
-			return false;
+				return false;
 		}
 		return true;
 	}
 
 	private static boolean checkValuesAmong(ArrayList<Map<String, String>> data, String col, String... values) {
-		boolean ok = true;
 		for(Map<String, String> h : data) {
 			String val = h.get(col);
 			boolean found = false;
 			for(String v : values)
-				if(val==null && v==null || v.equals(val)) { found=true; break; }
+				if(val==null && v==null || v.equals(val)) {
+					found=true; break;
+				}
 			if(!found) {
-				System.err.println("Unexpected value '" + val + "' for column '" + col + "'");
-				ok = false;				
+				//System.err.println("Unexpected value '" + val + "' for column '" + col + "'");
+				return false;
 			}
 		}
-		return ok;
+		return true;
 	}
 
 	private static Set<String> checkNoUnexpectedColumn(ArrayList<Map<String, String>> data, Collection<String> cols) {

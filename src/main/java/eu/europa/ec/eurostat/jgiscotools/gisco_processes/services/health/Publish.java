@@ -3,6 +3,7 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -32,8 +33,15 @@ public class Publish {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Start");
+
+		//publication date
 		String timeStamp = ValidateCSV.dateFormat.format(Calendar.getInstance().getTime());
 		System.out.println(timeStamp);
+
+		//make outpur folders
+		new File(destinationPath + "data/csv/").mkdirs();
+		new File(destinationPath + "data/geojson/").mkdirs();
+		new File(destinationPath + "data/gpkg/").mkdirs();
 
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
 		for(String cc : ValidateCSV.ccs) {
