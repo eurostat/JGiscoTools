@@ -35,7 +35,7 @@ public class DataFormattingGeocoding {
 		//
 
 		// formatAT();
-		formatCH();
+		//formatCH();
 		// formatLU();
 		// LocalParameters.loadProxySettings();
 		// formatRO();
@@ -45,6 +45,7 @@ public class DataFormattingGeocoding {
 		//formatBE();
 		//formatFR();
 		//formatDK();
+		formatLT();
 
 
 		/*
@@ -59,7 +60,7 @@ public class DataFormattingGeocoding {
 
 		/*/geocoding
 		System.out.println("load");
-		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path + "FR/FR_formated.csv");
+		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path + "LT/LT_.csv");
 		geocodeBing(hospitals, true);
 		System.out.println("save");
 		CSVUtil.save(hospitals, path + "FR/FR_geolocated_new.csv");
@@ -131,6 +132,58 @@ public class DataFormattingGeocoding {
 		}
 
 		System.out.println("Failures: " + fails + "/" + hospitals.size());
+	}
+
+	public static void formatLT() {
+		try {
+			ArrayList<Map<String, String>> hs = CSVUtil.load(path + "LT/LT_.csv");
+			System.out.println(hs.size());
+
+			for(Map<String, String> h : hs) {
+
+
+				h.remove("Code of legal entity");
+
+				//street	house_number	postcode
+				String add = h.get("address");
+				//System.out.println(add);
+				String[] parts = add.split(";");
+				if(parts.length == 2) {
+					String[] parts_ = parts[0].split(" ");
+					String hn = parts_[parts_.length-1];
+					h.put("house_number", hn);
+					String street = parts[0].replace(hn, "").trim();
+					h.put("street", street);
+					System.out.println(parts[1].replace(h.get("city"), "").trim());
+				} else if(parts.length == 3) {
+					//System.out.println(add);
+				} else
+					;//System.out.println(add);
+				h.remove("address");
+
+				//sub_priv_pub - public_private
+				String spp = h.get("sub_priv_pub");
+				h.put("public_private", "8".equals(spp)?"private":"public");
+				h.remove("sub_priv_pub");
+
+				h.put("cc", "LT");
+				h.put("country", "");
+				h.put("emergency", "");
+				h.put("list_specs", "");
+				h.put("cap_prac", "");
+				h.put("cap_rooms", "");
+				h.put("tel", "");
+				h.put("email", "");
+				h.put("url", "");
+				h.put("pub_date", "");
+				h.put("ref_date", "31/12/2018");
+			}
+
+			System.out.println("Save " + hs.size());
+			CSVUtil.save(hs, path + "LT/LT_formatted.csv");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 
 	public static void formatDK() {
@@ -507,7 +560,7 @@ public class DataFormattingGeocoding {
 		}
 
 		populateAllColumns(out, ValidateCSV.cols, "");
-		
+
 		// save
 		CSVUtil.save(out, path + "CH/CH.csv");
 	}
