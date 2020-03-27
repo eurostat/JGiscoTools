@@ -22,7 +22,9 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class DataFormattingGeocoding {
@@ -35,7 +37,7 @@ public class DataFormattingGeocoding {
 		//
 
 		// formatAT();
-		formatCH();
+		//formatCH();
 		// formatLU();
 		// LocalParameters.loadProxySettings();
 		// formatRO();
@@ -57,15 +59,14 @@ public class DataFormattingGeocoding {
 		 * CSVUtil.save(hospitals,path+"AT/AT_geolocated.csv");
 		 */
 
-		/*/geocoding
+		//geocoding
 		System.out.println("load");
-		ArrayList<Map<String,String>> hospitals = CSVUtil.load("/home/juju/Bureau/FR/FR_formated.csv");
+		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path + "FR/FR_formated.csv");
 		geocodeBing(hospitals, true);
 		System.out.println("save");
-		CSVUtil.save(hospitals, "/home/juju/Bureau/FR/FR_geolocated.csv");*/
-
-		//save as geopckg
-		//GeoPackageUtil.save(CSVUtil.CSVToFeatures(hospitals, "lonBing", "latBing"), "E:\\\\dissemination\\\\shared-data\\\\MS_data\\\\Service - Health\\\\IT/IT_geolocated.gpkg", ProjectionUtil.getWGS_84_CRS());
+		CSVUtil.save(hospitals, path + "FR/FR_geolocated_new.csv");
+		//save as gpkg
+		GeoData.save(CSVUtil.CSVToFeatures(hospitals, "lon", "lat"), path + "FR/FR_geolocated_new.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
 	}
