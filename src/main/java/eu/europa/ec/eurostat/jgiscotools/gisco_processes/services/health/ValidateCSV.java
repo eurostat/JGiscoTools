@@ -51,50 +51,55 @@ public class ValidateCSV {
 			ArrayList<Map<String, String>> data = CSVUtil.load(path + cc+"/"+cc+".csv");
 			System.out.println(data.size());
 
-			//check presence of all columns
-			Set<String> ch = checkNoUnexpectedColumn(data, cols_);
-			if(ch.size()>0) System.err.println(ch);
-
-			//check id is provided and unique
-			boolean b = checkId(data, "id");
-			if(!b) System.err.println("Problem with identifier for " + cc);
-
-			//check emergency -yes/no
-			b = checkValuesAmong(data, "emergency", "", "yes", "no");
-			if(!b) System.err.println("Problem with emergency values for " + cc);
-
-			//check public_private - public/private
-			b = checkValuesAmong(data, "public_private", "", "public", "private");
-			if(!b) System.err.println("Problem with public_private values for " + cc);
-
-			//check geo_qual -1,1,2,3
-			b = checkValuesAmong(data, "geo_qual", "-1", "1", "2", "3");
-			if(!b) System.err.println("Problem with geo_qual values for " + cc);
-
-			//check date format DD/MM/YYYY
-			b = checkDateFormat(data, "ref_date", dateFormat);
-			if(!b) System.err.println("Problem with ref_date format for " + cc);
-			checkDateFormat(data, "pub_date", dateFormat);
-			if(!b) System.err.println("Problem with pub_date format for " + cc);
-
-			//non null columns
-			b = checkValuesNotNullOrEmpty(data, "hospital_name");
-			if(!b) System.err.println("Missing values for hospital_name format for " + cc);
-			b = checkValuesNotNullOrEmpty(data, "lat");
-			if(!b) System.err.println("Missing values for lat format for " + cc);
-			b = checkValuesNotNullOrEmpty(data, "lon");
-			if(!b) System.err.println("Missing values for lon format for " + cc);
-			b = checkValuesNotNullOrEmpty(data, "ref_date");
-			if(!b) System.err.println("Missing values for ref_date format for " + cc);
-
-			//check lon,lat extends
-			checkGeoExtent(data, "lon", "lat");
-
-			//TODO other tests ?
-			//check list_specs
-			//check empty columns
+			validate(data, cc);
 		}
 		System.out.println("End");
+	}
+
+	static void validate(ArrayList<Map<String, String>> data, String cc) {
+
+		//check presence of all columns
+		Set<String> ch = checkNoUnexpectedColumn(data, cols_);
+		if(ch.size()>0) System.err.println(ch);
+
+		//check id is provided and unique
+		boolean b = checkId(data, "id");
+		if(!b) System.err.println("Problem with identifier for " + cc);
+
+		//check emergency -yes/no
+		b = checkValuesAmong(data, "emergency", "", "yes", "no");
+		if(!b) System.err.println("Problem with emergency values for " + cc);
+
+		//check public_private - public/private
+		b = checkValuesAmong(data, "public_private", "", "public", "private");
+		if(!b) System.err.println("Problem with public_private values for " + cc);
+
+		//check geo_qual -1,1,2,3
+		b = checkValuesAmong(data, "geo_qual", "-1", "1", "2", "3");
+		if(!b) System.err.println("Problem with geo_qual values for " + cc);
+
+		//check date format DD/MM/YYYY
+		b = checkDateFormat(data, "ref_date", dateFormat);
+		if(!b) System.err.println("Problem with ref_date format for " + cc);
+		checkDateFormat(data, "pub_date", dateFormat);
+		if(!b) System.err.println("Problem with pub_date format for " + cc);
+
+		//non null columns
+		b = checkValuesNotNullOrEmpty(data, "hospital_name");
+		if(!b) System.err.println("Missing values for hospital_name format for " + cc);
+		b = checkValuesNotNullOrEmpty(data, "lat");
+		if(!b) System.err.println("Missing values for lat format for " + cc);
+		b = checkValuesNotNullOrEmpty(data, "lon");
+		if(!b) System.err.println("Missing values for lon format for " + cc);
+		b = checkValuesNotNullOrEmpty(data, "ref_date");
+		if(!b) System.err.println("Missing values for ref_date format for " + cc);
+
+		//check lon,lat extends
+		checkGeoExtent(data, "lon", "lat");
+
+		//TODO other tests ?
+		//check list_specs
+		//check empty columns
 	}
 
 	private static void checkGeoExtent(ArrayList<Map<String, String>> data, String lonCol, String latCol) {

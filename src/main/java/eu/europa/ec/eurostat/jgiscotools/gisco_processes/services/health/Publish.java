@@ -63,9 +63,9 @@ public class Publish {
 			for(Map<String, String> h : data)
 				h.put("pub_date", timeStamp);
 
-			//TODO apply geo_qual
-			replace(data, "geo_qual", null, "-1");
-			replace(data, "geo_qual", "", "-1");
+			//apply geo_qual
+			//replace(data, "geo_qual", null, "-1");
+			//replace(data, "geo_qual", "", "-1");
 
 			//store for big EU file
 			all.addAll(data);
