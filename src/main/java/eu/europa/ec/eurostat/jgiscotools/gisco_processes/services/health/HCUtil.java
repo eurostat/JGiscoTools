@@ -4,12 +4,9 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
@@ -17,7 +14,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
  * @author gaffuju
  *
  */
-public class HCUtils {
+public class HCUtil {
 
 	static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
 
@@ -36,18 +33,6 @@ public class HCUtils {
 
 
 
-
-
-
-
-	static void replace(ArrayList<Map<String, String>> data, String col, String iniVal, String finVal) {
-		for(Map<String, String> h :data) {
-			String v = h.get(col);
-			if(iniVal == null && v == null || iniVal != null && iniVal.equals(v))
-				h.put(col, finVal);
-		}
-	}
-
 	static void applyTypes(Collection<Feature> fs) {
 		for(Feature f : fs) {
 			for(String att : new String[] {"cap_beds", "cap_prac", "cap_rooms"}) {
@@ -63,47 +48,6 @@ public class HCUtils {
 				else f.setAttribute(att, Double.parseDouble(v.toString()));
 			}
 		}
-	}
-
-
-	static ArrayList<String> getValues(ArrayList<Map<String, String>> data, String col) {
-		ArrayList<String> out = new ArrayList<>();
-		for(Map<String, String> h : data)
-			out.add(h.get(col));
-		return out;
-	}
-
-	static void replaceValue(ArrayList<Map<String, String>> data, String ini, String fin) {
-		for(Map<String, String> h : data)
-			for(Entry<String,String> e : h.entrySet())
-				if(e.getValue() != null && ini.equals(e.getValue()))
-					e.setValue(fin);
-	}
-
-	static void changeColumnName(ArrayList<Map<String, String>> data, String old, String new_) {
-		for(Map<String, String> h : data) {
-			if(h.get(old) != null) {
-				h.put(new_, h.get(old));
-				h.remove(old);
-			}
-		}
-	}
-
-	static void removeColumn(ArrayList<Map<String, String>> data, String col) {
-		for(Map<String, String> h : data) {
-			if(h.get(col) != null)
-				h.remove(col);
-		}
-	}
-
-
-	static void populateAllColumns(Collection<Map<String, String>> data, String[] cols, String defaultValue) {
-		for(String col : cols)
-			for(Map<String, String> h : data) {
-				if(h.get(col) == null || "".equals(h.get(col))) {
-					h.put(col, defaultValue);
-				}
-			}
 	}
 
 }

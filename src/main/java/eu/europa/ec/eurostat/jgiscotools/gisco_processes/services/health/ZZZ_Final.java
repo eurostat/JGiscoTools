@@ -53,38 +53,38 @@ public class ZZZ_Final {
 			System.out.println(data.size());
 			//System.out.println(data.iterator().next().keySet());
 
-			HCUtils.removeColumn(data, "latGISCO");
-			HCUtils.removeColumn(data, "lonGISCO");
-			HCUtils.removeColumn(data, "x");
-			HCUtils.removeColumn(data, "y");
-			HCUtils.removeColumn(data, "Column name (code)");
-			HCUtils.	removeColumn(data, "county");
-			HCUtils.removeColumn(data, "suburb");
-			HCUtils.	removeColumn(data, "state");
-			HCUtils.removeColumn(data, "Sort_Ratio");
-			HCUtils.removeColumn(data, "Set_Ratio");
-			HCUtils.removeColumn(data, "Ratio");
-			HCUtils.removeColumn(data, "Coordinates");
-			HCUtils.removeColumn(data, "Output Geocoder");
-			HCUtils.removeColumn(data, "Input Geocoder");
-			HCUtils.removeColumn(data, "Part_Ratio");
-			HCUtils.removeColumn(data, "address");
-			HCUtils.removeColumn(data, "extension");
-			HCUtils.removeColumn(data, "Address");
-			HCUtils.removeColumn(data, "organization id");
-			HCUtils.removeColumn(data, "postal district");
-			HCUtils.removeColumn(data, "service industry id");
-			HCUtils.removeColumn(data, "district");
-			HCUtils.removeColumn(data, "organization name");
-			HCUtils.removeColumn(data, "geo_matching");
-			HCUtils.removeColumn(data, "geo_confidence");
+			CSVUtil.removeColumn(data, "latGISCO");
+			CSVUtil.removeColumn(data, "lonGISCO");
+			CSVUtil.removeColumn(data, "x");
+			CSVUtil.removeColumn(data, "y");
+			CSVUtil.removeColumn(data, "Column name (code)");
+			CSVUtil.	removeColumn(data, "county");
+			CSVUtil.removeColumn(data, "suburb");
+			CSVUtil.	removeColumn(data, "state");
+			CSVUtil.removeColumn(data, "Sort_Ratio");
+			CSVUtil.removeColumn(data, "Set_Ratio");
+			CSVUtil.removeColumn(data, "Ratio");
+			CSVUtil.removeColumn(data, "Coordinates");
+			CSVUtil.removeColumn(data, "Output Geocoder");
+			CSVUtil.removeColumn(data, "Input Geocoder");
+			CSVUtil.removeColumn(data, "Part_Ratio");
+			CSVUtil.removeColumn(data, "address");
+			CSVUtil.removeColumn(data, "extension");
+			CSVUtil.removeColumn(data, "Address");
+			CSVUtil.removeColumn(data, "organization id");
+			CSVUtil.removeColumn(data, "postal district");
+			CSVUtil.removeColumn(data, "service industry id");
+			CSVUtil.removeColumn(data, "district");
+			CSVUtil.removeColumn(data, "organization name");
+			CSVUtil.removeColumn(data, "geo_matching");
+			CSVUtil.removeColumn(data, "geo_confidence");
 
-			HCUtils.changeColumnName(data, "latBing", "lat");
-			HCUtils.changeColumnName(data, "lonBing", "lon");
-			HCUtils.changeColumnName(data, "name", "hospital_name");
-			HCUtils.changeColumnName(data, "type", "facility_type");
-			HCUtils.changeColumnName(data, "year", "ref_date");
-			HCUtils.changeColumnName(data, "data_year", "pub_date");
+			CSVUtil.renameColumn(data, "latBing", "lat");
+			CSVUtil.renameColumn(data, "lonBing", "lon");
+			CSVUtil.renameColumn(data, "name", "hospital_name");
+			CSVUtil.renameColumn(data, "type", "facility_type");
+			CSVUtil.renameColumn(data, "year", "ref_date");
+			CSVUtil.renameColumn(data, "data_year", "pub_date");
 
 			//System.out.println(data.iterator().next().keySet());
 
@@ -93,37 +93,37 @@ public class ZZZ_Final {
 
 			//populateAllColumns(data, cols, "");
 
-			HCUtils.replaceValue(data, "", null);
-			HCUtils.replaceValue(data, "NA", null);
-			HCUtils.replaceValue(data, "UNKNOWN", null);
+			CSVUtil.replaceValue(data, "", null);
+			CSVUtil.replaceValue(data, "NA", null);
+			CSVUtil.replaceValue(data, "UNKNOWN", null);
 
 
 			//hospital_name,Region,Country,Adresse,lat,lon
 
 
 			if(cc.equals("ES")) {				
-				HCUtils.replaceValue(data, "SEGURIDAD SOCIAL", "public");
-				HCUtils.replaceValue(data, "SEGURIDAD SOCIAL", "public");
-				HCUtils.replaceValue(data, "PRIVADO NO BENÉFICO", "private");
-				HCUtils.replaceValue(data, "OTRO PRIVADO BENÉFICO", "private");
-				HCUtils.replaceValue(data, "PRIVADO-BENÉFICO (CRUZ ROJA)", "private");
-				HCUtils.replaceValue(data, "PRIVADO-BENÉFICO (IGLESIA)", "private");
-				HCUtils.replaceValue(data, "OTRA DEPENDENCIA PATRIMONIAL", "private");
-				HCUtils.replaceValue(data, "MATEP", "public"); //TODO ES - check that really?
-				HCUtils.replaceValue(data, "ENTIDADES PÚBLICAS", "public");
-				HCUtils.replaceValue(data, "MUNICIPIO", "public");
-				HCUtils.replaceValue(data, "MINISTERIO DE INTERIOR", "public");
-				HCUtils.replaceValue(data, "MINISTERIO DE DEFENSA", "public");
-				HCUtils.replaceValue(data, "DIPUTACIÓN O CABILDO", "public"); //TODO ES - check that really?
-				HCUtils.replaceValue(data, "COMUNIDAD AUTÓNOMA", "public");
+				CSVUtil.replaceValue(data, "SEGURIDAD SOCIAL", "public");
+				CSVUtil.replaceValue(data, "SEGURIDAD SOCIAL", "public");
+				CSVUtil.replaceValue(data, "PRIVADO NO BENÉFICO", "private");
+				CSVUtil.replaceValue(data, "OTRO PRIVADO BENÉFICO", "private");
+				CSVUtil.replaceValue(data, "PRIVADO-BENÉFICO (CRUZ ROJA)", "private");
+				CSVUtil.replaceValue(data, "PRIVADO-BENÉFICO (IGLESIA)", "private");
+				CSVUtil.replaceValue(data, "OTRA DEPENDENCIA PATRIMONIAL", "private");
+				CSVUtil.replaceValue(data, "MATEP", "public"); //TODO ES - check that really?
+				CSVUtil.replaceValue(data, "ENTIDADES PÚBLICAS", "public");
+				CSVUtil.replaceValue(data, "MUNICIPIO", "public");
+				CSVUtil.replaceValue(data, "MINISTERIO DE INTERIOR", "public");
+				CSVUtil.replaceValue(data, "MINISTERIO DE DEFENSA", "public");
+				CSVUtil.replaceValue(data, "DIPUTACIÓN O CABILDO", "public"); //TODO ES - check that really?
+				CSVUtil.replaceValue(data, "COMUNIDAD AUTÓNOMA", "public");
 			}
 			if(cc.equals("BE")) {
-				HCUtils.replaceValue(data, "Public", "public");
-				HCUtils.replaceValue(data, "Openbaar - Public", "public");
-				HCUtils.replaceValue(data, "Openbaar", "public");
-				HCUtils.replaceValue(data, "Privé", "private");
-				HCUtils.replaceValue(data, "Privaat", "private");
-				HCUtils.replaceValue(data, "Privaat - Privé", "private");
+				CSVUtil.replaceValue(data, "Public", "public");
+				CSVUtil.replaceValue(data, "Openbaar - Public", "public");
+				CSVUtil.replaceValue(data, "Openbaar", "public");
+				CSVUtil.replaceValue(data, "Privé", "private");
+				CSVUtil.replaceValue(data, "Privaat", "private");
+				CSVUtil.replaceValue(data, "Privaat - Privé", "private");
 			}
 
 
@@ -137,7 +137,7 @@ public class ZZZ_Final {
 				if(cntr == null) System.err.println("cc: " + cc);
 				h.put("country", cntr);
 			}
-			HCUtils.replaceValue(data, "Germany (until 1990 former territory of the FRG)", "Germany");
+			CSVUtil.replaceValue(data, "Germany (until 1990 former territory of the FRG)", "Germany");
 
 
 			//System.out.println(data.iterator().next().keySet());

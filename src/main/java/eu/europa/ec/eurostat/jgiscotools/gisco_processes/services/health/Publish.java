@@ -34,7 +34,7 @@ public class Publish {
 		System.out.println("Start");
 
 		//publication date
-		String timeStamp = HCUtils.dateFormat.format(Calendar.getInstance().getTime());
+		String timeStamp = HCUtil.dateFormat.format(Calendar.getInstance().getTime());
 		System.out.println(timeStamp);
 
 		//make outpur folders
@@ -43,11 +43,11 @@ public class Publish {
 		new File(destinationPath + "data/gpkg/").mkdirs();
 
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
-		for(String cc : HCUtils.ccs) {
+		for(String cc : HCUtil.ccs) {
 			System.out.println("*** " + cc);
 
 			//load data
-			ArrayList<Map<String, String>> data = CSVUtil.load(HCUtils.path + cc+"/"+cc+".csv");
+			ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + cc+"/"+cc+".csv");
 			System.out.println(data.size());
 
 			//cc, country
@@ -71,9 +71,9 @@ public class Publish {
 			all.addAll(data);
 
 			//export as geojson and GPKG
-			CSVUtil.save(data, destinationPath+"data/csv/"+cc+".csv", HCUtils.cols_);
+			CSVUtil.save(data, destinationPath+"data/csv/"+cc+".csv", HCUtil.cols_);
 			Collection<Feature> fs = CSVUtil.CSVToFeatures(data, "lon", "lat");
-			HCUtils.applyTypes(fs);
+			HCUtil.applyTypes(fs);
 			GeoData.save(fs, destinationPath+"data/geojson/"+cc+".geojson", ProjectionUtil.getWGS_84_CRS());
 			GeoData.save(fs, destinationPath+"data/gpkg/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 		}
@@ -94,9 +94,9 @@ public class Publish {
 		//export all
 		System.out.println("*** All");
 		System.out.println(all.size());
-		CSVUtil.save(all, destinationPath+"data/csv/all.csv", HCUtils.cols_);
+		CSVUtil.save(all, destinationPath+"data/csv/all.csv", HCUtil.cols_);
 		Collection<Feature> fs = CSVUtil.CSVToFeatures(all, "lon", "lat");
-		HCUtils.applyTypes(fs);
+		HCUtil.applyTypes(fs);
 		GeoData.save(fs, destinationPath+"data/geojson/all.geojson", ProjectionUtil.getWGS_84_CRS());
 		GeoData.save(fs, destinationPath+"data/gpkg/all.gpkg", ProjectionUtil.getWGS_84_CRS());
 

@@ -28,11 +28,11 @@ public class ValidateCSV {
 		System.out.println("Start");
 
 		//load
-		for(String cc : HCUtils.ccs) {
+		for(String cc : HCUtil.ccs) {
 			System.out.println("*** " + cc);
 
 			//load data
-			ArrayList<Map<String, String>> data = CSVUtil.load(HCUtils.path + cc+"/"+cc+".csv");
+			ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + cc+"/"+cc+".csv");
 			System.out.println(data.size());
 
 			validate(data, cc);
@@ -43,7 +43,7 @@ public class ValidateCSV {
 	static void validate(ArrayList<Map<String, String>> data, String cc) {
 
 		//check presence of all columns
-		Set<String> ch = checkNoUnexpectedColumn(data, HCUtils.cols_);
+		Set<String> ch = checkNoUnexpectedColumn(data, HCUtil.cols_);
 		if(ch.size()>0) System.err.println(ch);
 
 		//check id is provided and unique
@@ -63,9 +63,9 @@ public class ValidateCSV {
 		if(!b) System.err.println("Problem with geo_qual values for " + cc);
 
 		//check date format DD/MM/YYYY
-		b = checkDateFormat(data, "ref_date", HCUtils.dateFormat);
+		b = checkDateFormat(data, "ref_date", HCUtil.dateFormat);
 		if(!b) System.err.println("Problem with ref_date format for " + cc);
-		checkDateFormat(data, "pub_date", HCUtils.dateFormat);
+		checkDateFormat(data, "pub_date", HCUtil.dateFormat);
 		if(!b) System.err.println("Problem with pub_date format for " + cc);
 
 		//non null columns
@@ -118,7 +118,7 @@ public class ValidateCSV {
 		boolean b = checkValuesNotNullOrEmpty(data, idCol);
 		if(!b) return false;
 		//id values should be unique
-		ArrayList<String> valL = HCUtils.getValues(data, "id");
+		ArrayList<String> valL = CSVUtil.getValues(data, "id");
 		HashSet<String> valS = new HashSet<String>(valL);
 		if(valL.size() != valS.size()) return false;
 		return true;

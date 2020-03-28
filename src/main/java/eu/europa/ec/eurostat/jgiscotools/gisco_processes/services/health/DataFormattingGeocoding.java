@@ -30,7 +30,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class DataFormattingGeocoding {
 
-	public static String path = HCUtils.path;
+	public static String path = HCUtil.path;
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
@@ -599,7 +599,7 @@ public class DataFormattingGeocoding {
 			out.add(hf);
 		}
 
-		HCUtils.populateAllColumns(out, HCUtils.cols, "");
+		CSVUtil.addColumns(out, HCUtil.cols, "");
 
 		// save
 		CSVUtil.save(out, path + "CH/CH.csv");
