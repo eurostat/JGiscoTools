@@ -145,7 +145,7 @@ public class ZZZ_Final {
 			//export as geojson and GPKG
 			CSVUtil.save(data, path+"data/csv/"+cc+".csv", cols_);
 			Collection<Feature> fs = CSVUtil.CSVToFeatures(data, "lon", "lat");
-			applyTypes(fs);
+			HCUtil.applyTypes(fs);
 			GeoData.save(fs, path+"data/geojson/"+cc+".geojson", ProjectionUtil.getWGS_84_CRS());
 			GeoData.save(fs, path+"data/gpkg/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
@@ -158,28 +158,11 @@ public class ZZZ_Final {
 		System.out.println(all.size());
 		CSVUtil.save(all, path+"data/csv/all.csv", cols_);
 		Collection<Feature> fs = CSVUtil.CSVToFeatures(all, "lon", "lat");
-		applyTypes(fs);
+		HCUtil.applyTypes(fs);
 		GeoData.save(fs, path+"data/geojson/all.geojson", ProjectionUtil.getWGS_84_CRS());
 		GeoData.save(fs, path+"data/gpkg/all.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
-	}
-
-	private static void applyTypes(Collection<Feature> fs) {
-		for(Feature f : fs) {
-			for(String att : new String[] {"cap_beds", "cap_prac", "cap_rooms"}) {
-				Object v = f.getAttribute(att);
-				if(v==null) continue;
-				if("".equals(v)) f.setAttribute(att, null);
-				else f.setAttribute(att, Integer.parseInt(v.toString()));
-			}
-			for(String att : new String[] {"lat", "lon"}) {
-				Object v = f.getAttribute(att);
-				if(v==null) continue;
-				if("".equals(v)) f.setAttribute(att, null);
-				else f.setAttribute(att, Double.parseDouble(v.toString()));
-			}
-		}
 	}
 
 }
