@@ -63,6 +63,10 @@ public class Publish {
 			for(Map<String, String> h : data)
 				h.put("pub_date", timeStamp);
 
+			//TODO apply geo_qual
+			replace(data, "geo_qual", null, "-1");
+			replace(data, "geo_qual", "", "-1");
+
 			//store for big EU file
 			all.addAll(data);
 
@@ -97,6 +101,14 @@ public class Publish {
 		GeoData.save(fs, destinationPath+"data/gpkg/all.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
+	}
+
+	private static void replace(ArrayList<Map<String, String>> data, String col, String iniVal, String finVal) {
+		for(Map<String, String> h :data) {
+			String v = h.get(col);
+			if(iniVal == null && v == null || iniVal != null && iniVal.equals(v))
+				h.put(col, finVal);
+		}
 	}
 
 	private static void applyTypes(Collection<Feature> fs) {
