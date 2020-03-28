@@ -30,7 +30,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class DataFormattingGeocoding {
 
-	public static String path = ValidateCSV.path;
+	public static String path = HCUtils.path;
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
@@ -599,7 +599,7 @@ public class DataFormattingGeocoding {
 			out.add(hf);
 		}
 
-		populateAllColumns(out, ValidateCSV.cols, "");
+		HCUtils.populateAllColumns(out, HCUtils.cols, "");
 
 		// save
 		CSVUtil.save(out, path + "CH/CH.csv");
@@ -745,16 +745,6 @@ public class DataFormattingGeocoding {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-
-	private static void populateAllColumns(Collection<Map<String, String>> data, String[] cols, String defaultValue) {
-		for(String col : cols)
-			for(Map<String, String> h : data) {
-				if(h.get(col) == null || "".equals(h.get(col))) {
-					h.put(col, defaultValue);
-				}
-			}
 	}
 
 }

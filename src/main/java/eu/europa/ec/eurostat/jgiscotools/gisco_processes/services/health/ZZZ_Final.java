@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
@@ -27,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 public class ZZZ_Final {
 
 	//TODO move stuff to CSVUtils
-	
+
 	/**
 	 * @param args
 	 */
@@ -55,77 +53,77 @@ public class ZZZ_Final {
 			System.out.println(data.size());
 			//System.out.println(data.iterator().next().keySet());
 
-			removeColumn(data, "latGISCO");
-			removeColumn(data, "lonGISCO");
-			removeColumn(data, "x");
-			removeColumn(data, "y");
-			removeColumn(data, "Column name (code)");
-			removeColumn(data, "county");
-			removeColumn(data, "suburb");
-			removeColumn(data, "state");
-			removeColumn(data, "Sort_Ratio");
-			removeColumn(data, "Set_Ratio");
-			removeColumn(data, "Ratio");
-			removeColumn(data, "Coordinates");
-			removeColumn(data, "Output Geocoder");
-			removeColumn(data, "Input Geocoder");
-			removeColumn(data, "Part_Ratio");
-			removeColumn(data, "address");
-			removeColumn(data, "extension");
-			removeColumn(data, "Address");
-			removeColumn(data, "organization id");
-			removeColumn(data, "postal district");
-			removeColumn(data, "service industry id");
-			removeColumn(data, "district");
-			removeColumn(data, "organization name");
-			removeColumn(data, "geo_matching");
-			removeColumn(data, "geo_confidence");
+			HCUtils.removeColumn(data, "latGISCO");
+			HCUtils.removeColumn(data, "lonGISCO");
+			HCUtils.removeColumn(data, "x");
+			HCUtils.removeColumn(data, "y");
+			HCUtils.removeColumn(data, "Column name (code)");
+			HCUtils.	removeColumn(data, "county");
+			HCUtils.removeColumn(data, "suburb");
+			HCUtils.	removeColumn(data, "state");
+			HCUtils.removeColumn(data, "Sort_Ratio");
+			HCUtils.removeColumn(data, "Set_Ratio");
+			HCUtils.removeColumn(data, "Ratio");
+			HCUtils.removeColumn(data, "Coordinates");
+			HCUtils.removeColumn(data, "Output Geocoder");
+			HCUtils.removeColumn(data, "Input Geocoder");
+			HCUtils.removeColumn(data, "Part_Ratio");
+			HCUtils.removeColumn(data, "address");
+			HCUtils.removeColumn(data, "extension");
+			HCUtils.removeColumn(data, "Address");
+			HCUtils.removeColumn(data, "organization id");
+			HCUtils.removeColumn(data, "postal district");
+			HCUtils.removeColumn(data, "service industry id");
+			HCUtils.removeColumn(data, "district");
+			HCUtils.removeColumn(data, "organization name");
+			HCUtils.removeColumn(data, "geo_matching");
+			HCUtils.removeColumn(data, "geo_confidence");
 
-			changeColumnName(data, "latBing", "lat");
-			changeColumnName(data, "lonBing", "lon");
-			changeColumnName(data, "name", "hospital_name");
-			changeColumnName(data, "type", "facility_type");
-			changeColumnName(data, "year", "ref_date");
-			changeColumnName(data, "data_year", "pub_date");
+			HCUtils.changeColumnName(data, "latBing", "lat");
+			HCUtils.changeColumnName(data, "lonBing", "lon");
+			HCUtils.changeColumnName(data, "name", "hospital_name");
+			HCUtils.changeColumnName(data, "type", "facility_type");
+			HCUtils.changeColumnName(data, "year", "ref_date");
+			HCUtils.changeColumnName(data, "data_year", "pub_date");
 
 			//System.out.println(data.iterator().next().keySet());
 
-			Set<String> ch = checkNoUnexpectedColumn(data, cols_);
+			Set<String> ch = ValidateCSV.checkNoUnexpectedColumn(data, cols_);
 			if(ch.size()>0) System.err.println(ch);
 
 			//populateAllColumns(data, cols, "");
 
-			replaceValue(data, "", null);
-			replaceValue(data, "NA", null);
-			replaceValue(data, "UNKNOWN", null);
+			HCUtils.replaceValue(data, "", null);
+			HCUtils.replaceValue(data, "NA", null);
+			HCUtils.replaceValue(data, "UNKNOWN", null);
 
 
 			//hospital_name,Region,Country,Adresse,lat,lon
 
 
 			if(cc.equals("ES")) {				
-				replaceValue(data, "SEGURIDAD SOCIAL", "public");
-				replaceValue(data, "SEGURIDAD SOCIAL", "public");
-				replaceValue(data, "PRIVADO NO BENÉFICO", "private");
-				replaceValue(data, "OTRO PRIVADO BENÉFICO", "private");
-				replaceValue(data, "PRIVADO-BENÉFICO (CRUZ ROJA)", "private");
-				replaceValue(data, "PRIVADO-BENÉFICO (IGLESIA)", "private");
-				replaceValue(data, "OTRA DEPENDENCIA PATRIMONIAL", "private");
-				replaceValue(data, "MATEP", "public"); //TODO ES - check that really?
-				replaceValue(data, "ENTIDADES PÚBLICAS", "public");
-				replaceValue(data, "MUNICIPIO", "public");
-				replaceValue(data, "MINISTERIO DE INTERIOR", "public");
-				replaceValue(data, "MINISTERIO DE DEFENSA", "public");
-				replaceValue(data, "DIPUTACIÓN O CABILDO", "public"); //TODO ES - check that really?
-				replaceValue(data, "COMUNIDAD AUTÓNOMA", "public");
+				HCUtils.replaceValue(data, "SEGURIDAD SOCIAL", "public");
+				HCUtils.replaceValue(data, "SEGURIDAD SOCIAL", "public");
+				HCUtils.replaceValue(data, "PRIVADO NO BENÉFICO", "private");
+				HCUtils.replaceValue(data, "OTRO PRIVADO BENÉFICO", "private");
+				HCUtils.replaceValue(data, "PRIVADO-BENÉFICO (CRUZ ROJA)", "private");
+				HCUtils.replaceValue(data, "PRIVADO-BENÉFICO (IGLESIA)", "private");
+				HCUtils.replaceValue(data, "OTRA DEPENDENCIA PATRIMONIAL", "private");
+				HCUtils.replaceValue(data, "MATEP", "public"); //TODO ES - check that really?
+				HCUtils.replaceValue(data, "ENTIDADES PÚBLICAS", "public");
+				HCUtils.replaceValue(data, "MUNICIPIO", "public");
+				HCUtils.replaceValue(data, "MINISTERIO DE INTERIOR", "public");
+				HCUtils.replaceValue(data, "MINISTERIO DE DEFENSA", "public");
+				HCUtils.replaceValue(data, "DIPUTACIÓN O CABILDO", "public"); //TODO ES - check that really?
+				HCUtils.replaceValue(data, "COMUNIDAD AUTÓNOMA", "public");
 			}
 			if(cc.equals("BE")) {
-				replaceValue(data, "Public", "public");
-				replaceValue(data, "Openbaar - Public", "public");
-				replaceValue(data, "Openbaar", "public");
-				replaceValue(data, "Privé", "private");
-				replaceValue(data, "Privaat", "private");
-				replaceValue(data, "Privaat - Privé", "private");
+				HCUtils.replaceValue(data, "Public", "public");
+				HCUtils.replaceValue(data, "Openbaar - Public", "public");
+				HCUtils.replaceValue(data, "Openbaar", "public");
+				HCUtils.replaceValue(data, "Privé", "private");
+				HCUtils.replaceValue(data, "Privaat", "private");
+				HCUtils.replaceValue(data, "Privaat - Privé", "private");
 			}
 
 
@@ -139,7 +137,7 @@ public class ZZZ_Final {
 				if(cntr == null) System.err.println("cc: " + cc);
 				h.put("country", cntr);
 			}
-			replaceValue(data, "Germany (until 1990 former territory of the FRG)", "Germany");
+			HCUtils.replaceValue(data, "Germany (until 1990 former territory of the FRG)", "Germany");
 
 
 			//System.out.println(data.iterator().next().keySet());
@@ -181,39 +179,6 @@ public class ZZZ_Final {
 				if("".equals(v)) f.setAttribute(att, null);
 				else f.setAttribute(att, Double.parseDouble(v.toString()));
 			}
-		}
-	}
-
-	private static Set<String> checkNoUnexpectedColumn(ArrayList<Map<String, String>> data, Collection<String> cols) {
-		for(Map<String, String> h : data) {
-			Set<String> cs = new HashSet<>(h.keySet());
-			cs.removeAll(cols);
-			if(cs.size() != 0)
-				return cs;
-		}
-		return new HashSet<String>();
-	}
-
-	private static void replaceValue(ArrayList<Map<String, String>> data, String ini, String fin) {
-		for(Map<String, String> h : data)
-			for(Entry<String,String> e : h.entrySet())
-				if(e.getValue() != null && ini.equals(e.getValue()))
-					e.setValue(fin);
-	}
-
-	private static void changeColumnName(ArrayList<Map<String, String>> data, String old, String new_) {
-		for(Map<String, String> h : data) {
-			if(h.get(old) != null) {
-				h.put(new_, h.get(old));
-				h.remove(old);
-			}
-		}
-	}
-
-	private static void removeColumn(ArrayList<Map<String, String>> data, String col) {
-		for(Map<String, String> h : data) {
-			if(h.get(col) != null)
-				h.remove(col);
 		}
 	}
 

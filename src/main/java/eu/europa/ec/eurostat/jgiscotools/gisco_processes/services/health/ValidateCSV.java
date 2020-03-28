@@ -6,10 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,20 +21,6 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
  */
 public class ValidateCSV {
 
-	static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
-
-	//country codes covered
-	static String[] ccs = new String[] { "AT", "BE", "CH", "CY", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PT", "RO", "SE", "UK" };
-
-	//CSV columns
-	static String[] cols = new String[] {
-			"id", "hospital_name", "site_name", "lat", "lon", "street", "house_number", "postcode", "city", "cc", "country", "emergency", "cap_beds", "cap_prac", "cap_rooms", "facility_type", "public_private", "list_specs", "tel", "email", "url", "ref_date", "pub_date", "geo_qual"
-	};
-	static List<String> cols_ = Arrays.asList(cols);
-
-	//date format
-	static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
 	/**
 	 * @param args
 	 */
@@ -44,11 +28,11 @@ public class ValidateCSV {
 		System.out.println("Start");
 
 		//load
-		for(String cc : ccs) {
+		for(String cc : HCUtils.ccs) {
 			System.out.println("*** " + cc);
 
 			//load data
-			ArrayList<Map<String, String>> data = CSVUtil.load(path + cc+"/"+cc+".csv");
+			ArrayList<Map<String, String>> data = CSVUtil.load(HCUtils.path + cc+"/"+cc+".csv");
 			System.out.println(data.size());
 
 			validate(data, cc);
@@ -59,7 +43,7 @@ public class ValidateCSV {
 	static void validate(ArrayList<Map<String, String>> data, String cc) {
 
 		//check presence of all columns
-		Set<String> ch = checkNoUnexpectedColumn(data, cols_);
+		Set<String> ch = checkNoUnexpectedColumn(data, HCUtils.cols_);
 		if(ch.size()>0) System.err.println(ch);
 
 		//check id is provided and unique
@@ -79,9 +63,9 @@ public class ValidateCSV {
 		if(!b) System.err.println("Problem with geo_qual values for " + cc);
 
 		//check date format DD/MM/YYYY
-		b = checkDateFormat(data, "ref_date", dateFormat);
+		b = checkDateFormat(data, "ref_date", HCUtils.dateFormat);
 		if(!b) System.err.println("Problem with ref_date format for " + cc);
-		checkDateFormat(data, "pub_date", dateFormat);
+		checkDateFormat(data, "pub_date", HCUtils.dateFormat);
 		if(!b) System.err.println("Problem with pub_date format for " + cc);
 
 		//non null columns
@@ -134,19 +118,11 @@ public class ValidateCSV {
 		boolean b = checkValuesNotNullOrEmpty(data, idCol);
 		if(!b) return false;
 		//id values should be unique
-		ArrayList<String> valL = getValues(data, "id");
+		ArrayList<String> valL = HCUtils.getValues(data, "id");
 		HashSet<String> valS = new HashSet<String>(valL);
 		if(valL.size() != valS.size()) return false;
 		return true;
 	}
-
-	private static ArrayList<String> getValues(ArrayList<Map<String, String>> data, String col) {
-		ArrayList<String> out = new ArrayList<>();
-		for(Map<String, String> h : data)
-			out.add(h.get(col));
-		return out;
-	}
-
 
 	private static boolean checkDateFormat(ArrayList<Map<String, String>> data, String col, SimpleDateFormat df) {
 		for(Map<String, String> h : data) {
@@ -188,7 +164,7 @@ public class ValidateCSV {
 		return true;
 	}
 
-	private static Set<String> checkNoUnexpectedColumn(ArrayList<Map<String, String>> data, Collection<String> cols) {
+	static Set<String> checkNoUnexpectedColumn(ArrayList<Map<String, String>> data, Collection<String> cols) {
 		for(Map<String, String> h : data) {
 			Set<String> cs = new HashSet<>(h.keySet());
 			cs.removeAll(cols);

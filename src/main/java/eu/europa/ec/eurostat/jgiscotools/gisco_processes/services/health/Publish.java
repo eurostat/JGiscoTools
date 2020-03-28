@@ -34,7 +34,7 @@ public class Publish {
 		System.out.println("Start");
 
 		//publication date
-		String timeStamp = ValidateCSV.dateFormat.format(Calendar.getInstance().getTime());
+		String timeStamp = HCUtils.dateFormat.format(Calendar.getInstance().getTime());
 		System.out.println(timeStamp);
 
 		//make outpur folders
@@ -43,11 +43,11 @@ public class Publish {
 		new File(destinationPath + "data/gpkg/").mkdirs();
 
 		ArrayList<Map<String, String>> all = new ArrayList<Map<String, String>>();
-		for(String cc : ValidateCSV.ccs) {
+		for(String cc : HCUtils.ccs) {
 			System.out.println("*** " + cc);
 
 			//load data
-			ArrayList<Map<String, String>> data = CSVUtil.load(ValidateCSV.path + cc+"/"+cc+".csv");
+			ArrayList<Map<String, String>> data = CSVUtil.load(HCUtils.path + cc+"/"+cc+".csv");
 			System.out.println(data.size());
 
 			//cc, country
@@ -71,9 +71,9 @@ public class Publish {
 			all.addAll(data);
 
 			//export as geojson and GPKG
-			CSVUtil.save(data, destinationPath+"data/csv/"+cc+".csv", ValidateCSV.cols_);
+			CSVUtil.save(data, destinationPath+"data/csv/"+cc+".csv", HCUtils.cols_);
 			Collection<Feature> fs = CSVUtil.CSVToFeatures(data, "lon", "lat");
-			applyTypes(fs);
+			HCUtils.applyTypes(fs);
 			GeoData.save(fs, destinationPath+"data/geojson/"+cc+".geojson", ProjectionUtil.getWGS_84_CRS());
 			GeoData.save(fs, destinationPath+"data/gpkg/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 		}
@@ -94,38 +94,13 @@ public class Publish {
 		//export all
 		System.out.println("*** All");
 		System.out.println(all.size());
-		CSVUtil.save(all, destinationPath+"data/csv/all.csv", ValidateCSV.cols_);
+		CSVUtil.save(all, destinationPath+"data/csv/all.csv", HCUtils.cols_);
 		Collection<Feature> fs = CSVUtil.CSVToFeatures(all, "lon", "lat");
-		applyTypes(fs);
+		HCUtils.applyTypes(fs);
 		GeoData.save(fs, destinationPath+"data/geojson/all.geojson", ProjectionUtil.getWGS_84_CRS());
 		GeoData.save(fs, destinationPath+"data/gpkg/all.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
-	}
-
-	private static void replace(ArrayList<Map<String, String>> data, String col, String iniVal, String finVal) {
-		for(Map<String, String> h :data) {
-			String v = h.get(col);
-			if(iniVal == null && v == null || iniVal != null && iniVal.equals(v))
-				h.put(col, finVal);
-		}
-	}
-
-	private static void applyTypes(Collection<Feature> fs) {
-		for(Feature f : fs) {
-			for(String att : new String[] {"cap_beds", "cap_prac", "cap_rooms"}) {
-				Object v = f.getAttribute(att);
-				if(v==null) continue;
-				if("".equals(v)) f.setAttribute(att, null);
-				else f.setAttribute(att, Integer.parseInt(v.toString()));
-			}
-			for(String att : new String[] {"lat", "lon"}) {
-				Object v = f.getAttribute(att);
-				if(v==null) continue;
-				if("".equals(v)) f.setAttribute(att, null);
-				else f.setAttribute(att, Double.parseDouble(v.toString()));
-			}
-		}
 	}
 
 }
