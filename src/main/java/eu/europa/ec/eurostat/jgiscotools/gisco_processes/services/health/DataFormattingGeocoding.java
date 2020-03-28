@@ -151,10 +151,13 @@ public class DataFormattingGeocoding {
 				if(parts.length == 2) {
 					String[] parts_ = parts[0].split(" ");
 					String hn = parts_[parts_.length-1];
-					h.put("house_number", hn);
-					String street = parts[0].replace(hn, "").trim();
-					h.put("street", street);
-					System.out.println(parts[1].replace(h.get("city"), "").trim());
+					h.put("house_number", hn.toLowerCase());
+					//System.out.println(h.get("house_number"));
+					String rest = parts[0].replace(hn, "").trim();
+					System.out.println(rest);
+
+					//h.put("street", street);
+					//System.out.println(parts[1].replace(h.get("city"), "").trim());
 				} else if(parts.length == 3) {
 					//System.out.println(add);
 				} else
