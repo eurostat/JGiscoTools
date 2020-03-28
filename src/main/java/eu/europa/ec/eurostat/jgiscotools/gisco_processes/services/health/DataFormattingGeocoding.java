@@ -21,8 +21,11 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class DataFormattingGeocoding {
@@ -45,7 +48,7 @@ public class DataFormattingGeocoding {
 		//formatBE();
 		//formatFR();
 		//formatDK();
-		formatLT();
+		//formatLT();
 
 
 		/*
@@ -58,15 +61,15 @@ public class DataFormattingGeocoding {
 		 * CSVUtil.save(hospitals,path+"AT/AT_geolocated.csv");
 		 */
 
-		/*/geocoding
+		//geocoding
+		LocalParameters.loadProxySettings();
 		System.out.println("load");
-		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path + "LT/LT_.csv");
+		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path + "LT/LT_formatted.csv");
 		geocodeBing(hospitals, true);
 		System.out.println("save");
-		CSVUtil.save(hospitals, path + "FR/FR_geolocated_new.csv");
+		CSVUtil.save(hospitals, path + "LT/LT_geolocated.csv");
 		//save as gpkg
-		GeoData.save(CSVUtil.CSVToFeatures(hospitals, "lon", "lat"), path + "FR/FR_geolocated_new.gpkg", ProjectionUtil.getWGS_84_CRS());
-		 */
+		GeoData.save(CSVUtil.CSVToFeatures(hospitals, "lon", "lat"), path + "LT/LT_geolocated.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
 	}
@@ -119,7 +122,7 @@ public class DataFormattingGeocoding {
 					usePostcode? hospital.get("postcode") : null
 					);
 
-			GeocodingResult gr = BingGeocoder.geocode(address);
+			GeocodingResult gr = BingGeocoder.geocode(address, true);
 			Coordinate c = gr.position;
 			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
 			if(c.getX()==0 && c.getY()==0) fails++;
@@ -129,6 +132,7 @@ public class DataFormattingGeocoding {
 			hospital.put("lon", "" + c.x);
 			hospital.put("geo_matching", "" + gr.matching);
 			hospital.put("geo_confidence", "" + gr.confidence);
+			hospital.put("geo_qual", "" + gr.quality);
 		}
 
 		System.out.println("Failures: " + fails + "/" + hospitals.size());
@@ -150,19 +154,52 @@ public class DataFormattingGeocoding {
 				String[] parts = add.split(";");
 				if(parts.length == 2) {
 					String[] parts_ = parts[0].split(" ");
-					String hn = parts_[parts_.length-1];
+					String hn = parts_[parts_.length-1].trim();
 					h.put("house_number", hn.toLowerCase());
 					//System.out.println(h.get("house_number"));
-					String rest = parts[0].replace(hn, "").trim();
-					System.out.println(rest);
+					String street = parts[0].replace(hn, "").trim();
+					h.put("street", street);
+					//System.out.println(h.get("street"));
 
-					//h.put("street", street);
-					//System.out.println(parts[1].replace(h.get("city"), "").trim());
+					String rest = parts[1].trim();
+					int i = rest.indexOf("LT-");
+					if(i>=0) {
+						//get postcode
+						String postcode = "LT-" + rest.substring(i+3, i+8);
+						//System.out.println(postcode);
+						h.put("postcode", postcode);
+						rest = rest.replace(postcode, "").replace("  ", "").trim();
+					}
+					//System.out.println(rest + " - " + h.get("city"));
+					h.put("city", rest);
 				} else if(parts.length == 3) {
 					//System.out.println(add);
-				} else
-					;//System.out.println(add);
-				h.remove("address");
+					String[] parts_ = parts[0].split(" ");
+					String hn = parts_[parts_.length-1].trim();
+					hn = hn.toLowerCase().replace("km.", "");
+					h.put("house_number", hn);
+					//System.out.println(h.get("house_number"));
+
+					String street = parts[0].replace(parts_[parts_.length-1], "").trim();
+					h.put("street", street);
+					//System.out.println(h.get("street"));
+
+					String rest = parts[1].trim() + ";" + parts[2].trim();
+					int i = rest.indexOf("LT-");
+					if(i>=0) {
+						//get postcode
+						String postcode = "LT-" + rest.substring(i+3, i+8);
+						//System.out.println(postcode);
+						h.put("postcode", postcode);
+						rest = rest.replace(postcode, "").replace("  ", "").trim();
+					}
+					//System.out.println(" --- " + street + " --- " +h.get("city"));
+					//System.out.println(rest);
+				} else {
+					System.out.println(add);
+				}
+
+				//h.remove("address");
 
 				//sub_priv_pub - public_private
 				String spp = h.get("sub_priv_pub");

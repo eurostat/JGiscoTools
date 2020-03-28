@@ -28,7 +28,7 @@ public class BingGeocoder {
 	//http://dev.virtualearth.net/REST/v1/Locations/{locationQuery}?includeNeighborhood={includeNeighborhood}&maxResults={maxResults}&include={includeValue}&key={BingMapsAPIKey}
 
 
-	public static GeocodingResult geocode(GeocodingAddress ad) {
+	public static GeocodingResult geocode(GeocodingAddress ad, boolean printURLQuery) {
 		try {
 			String query = "";
 
@@ -55,7 +55,7 @@ public class BingGeocoder {
 
 			//query = URLEncoder.encode(query, "UTF-8");
 
-			return geocodeURL(query);
+			return geocodeURL(query, printURLQuery);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -68,10 +68,11 @@ public class BingGeocoder {
 	 * @param url
 	 * @return
 	 */
-	private static GeocodingResult geocodeURL(String URLquery) {
+	private static GeocodingResult geocodeURL(String URLquery, boolean printURLQuery) {
 		try {
 			String url = "http://dev.virtualearth.net/REST/v1/Locations?" + URLquery + "&maxResults=1&key=" + key;
 			//url = url.replace("+", "%20");
+			if(printURLQuery) System.out.println(url);
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
 			String line = in.readLine();
@@ -88,19 +89,25 @@ public class BingGeocoder {
 
 			GeocodingResult gr = new GeocodingResult();
 			gr.position = c;
-			//TODO add quality indicator
 
 			//"matchCodes":["Good"]}]}],
+			//Good Ambiguous UpHierarchy
 			parts = line.split("matchCodes\":\\[\"");
 			s = parts[1];
 			parts = s.split("\"\\]");
 			gr.matching = parts[0];
 
+
 			//"confidence":"High",
+			//High Medium Low
 			parts = line.split("confidence\":\"");
 			s = parts[1];
 			parts = s.split("\",");
 			gr.confidence = parts[0];
+
+			if(gr.confidence.equals("High")) gr.quality = 1;
+			else if(gr.confidence.equals("Medium")) gr.quality = 2;
+			else if(gr.confidence.equals("Low")) gr.quality = 3;
 
 			return gr;
 		} catch (Exception e) {

@@ -26,11 +26,11 @@ public class ValidateCSV {
 	static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
 
 	//country codes covered
-	static String[] ccs = new String[] { "AT", "BE", "CH", "CY", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LU", "LV", "MT", "NL", "PT", "RO", "SE", "UK" };
+	static String[] ccs = new String[] { "AT", "BE", "CH", "CY", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PT", "RO", "SE", "UK" };
 
 	//CSV columns
 	static String[] cols = new String[] {
-			"id", "hospital_name", "site_name", "lat", "lon", "street", "house_number", "postcode", "city", "cc", "country", "emergency", "cap_beds", "cap_prac", "cap_rooms", "facility_type", "public_private", "list_specs", "tel", "email", "url", "ref_date", "pub_date"
+			"id", "hospital_name", "site_name", "lat", "lon", "street", "house_number", "postcode", "city", "cc", "country", "emergency", "cap_beds", "cap_prac", "cap_rooms", "facility_type", "public_private", "list_specs", "tel", "email", "url", "ref_date", "pub_date", "geo_qual"
 	};
 	static List<String> cols_ = Arrays.asList(cols);
 
@@ -66,6 +66,10 @@ public class ValidateCSV {
 			//check public_private - public/private
 			b = checkValuesAmong(data, "public_private", "", "public", "private");
 			if(!b) System.err.println("Problem with public_private values for " + cc);
+
+			//check geo_qual -1,1,2,3
+			b = checkValuesAmong(data, "geo_qual", "-1", "1", "2", "3");
+			if(!b) System.err.println("Problem with geo_qual values for " + cc);
 
 			//check date format DD/MM/YYYY
 			b = checkDateFormat(data, "ref_date", dateFormat);
