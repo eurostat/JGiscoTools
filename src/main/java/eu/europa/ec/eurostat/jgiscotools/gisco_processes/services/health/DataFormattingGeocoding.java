@@ -65,77 +65,13 @@ public class DataFormattingGeocoding {
 		LocalParameters.loadProxySettings();
 		System.out.println("load");
 		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path + "LT/LT_formatted.csv");
-		geocodeBing(hospitals, true);
+		HCUtil.geocodeBing(hospitals, true);
 		System.out.println("save");
 		CSVUtil.save(hospitals, path + "LT/LT_geolocated.csv");
 		//save as gpkg
 		GeoData.save(CSVUtil.CSVToFeatures(hospitals, "lon", "lat"), path + "LT/LT_geolocated.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
-	}
-
-	private static void geocodeGISCO(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
-		//int count = 0;
-		int fails = 0;
-		for(Map<String,String> hospital : hospitals) {
-			//count++;
-			String address = "";
-			if(hospital.get("house_number")!=null) address += hospital.get("house_number") + " ";
-			address += hospital.get("street");
-			address += " ";
-			if(usePostcode) {
-				address += hospital.get("postcode");
-				address += " ";
-			}
-			address += hospital.get("city");
-			address += " ";
-			address += hospital.get("country");
-			System.out.println(address);
-
-			GeocodingResult gr = GISCOGeocoder.geocode(address);
-			Coordinate c = gr.position;
-			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
-			if(c.getX()==0 && c.getY()==0) fails++;
-
-			//if(count > 10) break;
-			hospital.put("latGISCO", "" + c.y);
-			hospital.put("lonGISCO", "" + c.x);
-			hospital.put("geo_matchingGISCO", "" + gr.matching);
-			hospital.put("geo_confidenceGISCO", "" + gr.confidence);
-		}
-
-		System.out.println("Failures: " + fails + "/" + hospitals.size());
-	}
-
-
-	private static void geocodeBing(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
-		//int count = 0;
-		int fails = 0;
-		for(Map<String,String> hospital : hospitals) {
-			//count++;
-			GeocodingAddress address = new GeocodingAddress(
-					null,
-					hospital.get("house_number"),
-					hospital.get("street"),
-					hospital.get("city"),
-					hospital.get("cc"),
-					usePostcode? hospital.get("postcode") : null
-					);
-
-			GeocodingResult gr = BingGeocoder.geocode(address, true);
-			Coordinate c = gr.position;
-			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
-			if(c.getX()==0 && c.getY()==0) fails++;
-
-			//if(count > 10) break;
-			hospital.put("lat", "" + c.y);
-			hospital.put("lon", "" + c.x);
-			hospital.put("geo_matching", "" + gr.matching);
-			hospital.put("geo_confidence", "" + gr.confidence);
-			hospital.put("geo_qual", "" + gr.quality);
-		}
-
-		System.out.println("Failures: " + fails + "/" + hospitals.size());
 	}
 
 	public static void formatLT() {

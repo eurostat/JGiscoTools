@@ -50,6 +50,10 @@ public class ValidateCSV {
 		boolean b = checkId(data, "id");
 		if(!b) System.err.println("Problem with identifier for " + cc);
 
+		//check cc
+		b = checkValuesAmong(data, "cc", cc);
+		if(!b) System.err.println("Problem with cc values for " + cc);
+
 		//check emergency -yes/no
 		b = checkValuesAmong(data, "emergency", "", "yes", "no");
 		if(!b) System.err.println("Problem with emergency values for " + cc);

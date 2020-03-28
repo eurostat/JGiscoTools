@@ -4,14 +4,22 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
 
 /**
- * @author gaffuju
+ * @author julien Gaffuri
  *
  */
 public class HCUtil {
@@ -33,6 +41,94 @@ public class HCUtil {
 
 
 
+	static void geocodeGISCO(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
+		//int count = 0;
+		int fails = 0;
+		for(Map<String,String> hospital : hospitals) {
+			//count++;
+			String address = "";
+			if(hospital.get("house_number")!=null) address += hospital.get("house_number") + " ";
+			address += hospital.get("street");
+			address += " ";
+			if(usePostcode) {
+				address += hospital.get("postcode");
+				address += " ";
+			}
+			address += hospital.get("city");
+			address += " ";
+			address += hospital.get("country");
+			System.out.println(address);
+
+			GeocodingResult gr = GISCOGeocoder.geocode(address);
+			Coordinate c = gr.position;
+			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
+			if(c.getX()==0 && c.getY()==0) fails++;
+
+			//if(count > 10) break;
+			hospital.put("latGISCO", "" + c.y);
+			hospital.put("lonGISCO", "" + c.x);
+			hospital.put("geo_matchingGISCO", "" + gr.matching);
+			hospital.put("geo_confidenceGISCO", "" + gr.confidence);
+		}
+
+		System.out.println("Failures: " + fails + "/" + hospitals.size());
+	}
+
+	static void geocodeBing(Map<String,String> hospital, boolean usePostcode) {
+		GeocodingAddress address = new GeocodingAddress(
+				null,
+				hospital.get("house_number"),
+				hospital.get("street"),
+				hospital.get("city"),
+				hospital.get("cc"),
+				usePostcode? hospital.get("postcode") : null
+				);
+
+		GeocodingResult gr = BingGeocoder.geocode(address, true);
+		Coordinate c = gr.position;
+		System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
+
+		//if(count > 10) break;
+		hospital.put("lat", "" + c.y);
+		hospital.put("lon", "" + c.x);
+		hospital.put("geo_matching", "" + gr.matching);
+		hospital.put("geo_confidence", "" + gr.confidence);
+		hospital.put("geo_qual", "" + gr.quality);		
+	}
+
+	static void geocodeBing(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
+		//int count = 0;
+		int fails = 0;
+		for(Map<String,String> hospital : hospitals) {
+			//count++;
+			GeocodingAddress address = new GeocodingAddress(
+					null,
+					hospital.get("house_number"),
+					hospital.get("street"),
+					hospital.get("city"),
+					hospital.get("cc"),
+					usePostcode? hospital.get("postcode") : null
+					);
+
+			GeocodingResult gr = BingGeocoder.geocode(address, true);
+			Coordinate c = gr.position;
+			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
+			if(c.getX()==0 && c.getY()==0) fails++;
+
+			//if(count > 10) break;
+			hospital.put("lat", "" + c.y);
+			hospital.put("lon", "" + c.x);
+			hospital.put("geo_matching", "" + gr.matching);
+			hospital.put("geo_confidence", "" + gr.confidence);
+			hospital.put("geo_qual", "" + gr.quality);
+		}
+
+		System.out.println("Failures: " + fails + "/" + hospitals.size());
+	}
+
+
+	
+	
 	static void applyTypes(Collection<Feature> fs) {
 		for(Feature f : fs) {
 			for(String att : new String[] {"cap_beds", "cap_prac", "cap_rooms"}) {

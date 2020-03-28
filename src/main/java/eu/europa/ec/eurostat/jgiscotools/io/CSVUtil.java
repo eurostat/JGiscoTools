@@ -157,6 +157,11 @@ public class CSVUtil {
 
 
 
+	public static void setValue(Collection<Map<String, String>> data, String col, String value) {
+		for(Map<String, String> r : data)
+			r.put(col, value);
+	}
+
 	public static void addColumn(Collection<Map<String, String>> data, String col, String defaultValue) {
 		for(Map<String, String> h : data) {
 			if(h.get(col) == null || "".equals(h.get(col))) {
@@ -170,14 +175,14 @@ public class CSVUtil {
 			addColumn(data, col, defaultValue);
 	}
 
-	public static void removeColumn(ArrayList<Map<String, String>> data, String col) {
+	public static void removeColumn(Collection<Map<String, String>> data, String col) {
 		for(Map<String, String> h : data) {
 			if(h.get(col) != null)
 				h.remove(col);
 		}
 	}
 
-	public static void renameColumn(ArrayList<Map<String, String>> data, String oldName, String newName) {
+	public static void renameColumn(Collection<Map<String, String>> data, String oldName, String newName) {
 		for(Map<String, String> h : data) {
 			if(h.get(oldName) != null) {
 				h.put(newName, h.get(oldName));
@@ -186,7 +191,7 @@ public class CSVUtil {
 		}
 	}
 
-	public static void replaceValue(ArrayList<Map<String, String>> data, String col, String iniVal, String finVal) {
+	public static void replaceValue(Collection<Map<String, String>> data, String col, String iniVal, String finVal) {
 		for(Map<String, String> h : data) {
 			String v = h.get(col);
 			if(iniVal == null && v == null || iniVal != null && iniVal.equals(v))
@@ -194,7 +199,7 @@ public class CSVUtil {
 		}
 	}
 
-	public static void replaceValue(ArrayList<Map<String, String>> data, String iniVal, String finVal) {
+	public static void replaceValue(Collection<Map<String, String>> data, String iniVal, String finVal) {
 		for(Map<String, String> h : data)
 			for(Entry<String,String> e : h.entrySet()) {
 				String v = e.getValue();
@@ -203,7 +208,7 @@ public class CSVUtil {
 			}
 	}
 
-	public static ArrayList<String> getValues(ArrayList<Map<String, String>> data, String col) {
+	public static ArrayList<String> getValues(Collection<Map<String, String>> data, String col) {
 		ArrayList<String> out = new ArrayList<>();
 		for(Map<String, String> h : data)
 			out.add(h.get(col));

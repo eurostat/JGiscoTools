@@ -54,14 +54,11 @@ public class Publish {
 			String cntr = NUTSUtils.getName(cc);
 			if(cntr == null) System.err.println("cc: " + cc);
 			cntr.replace("Germany (until 1990 former territory of the FRG)", "Germany");
-			for(Map<String, String> h :data) {
-				h.put("cc", cc);
-				h.put("country", cntr);
-			}
+			CSVUtil.setValue(data, "cc", cc);
+			CSVUtil.setValue(data, "country", cntr);
 
 			//apply publication date
-			for(Map<String, String> h : data)
-				h.put("pub_date", timeStamp);
+			CSVUtil.setValue(data, "pub_date", timeStamp);
 
 			//apply geo_qual
 			//replace(data, "geo_qual", null, "-1");
