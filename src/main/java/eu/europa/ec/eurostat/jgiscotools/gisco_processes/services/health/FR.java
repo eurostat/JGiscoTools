@@ -3,6 +3,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 import java.util.ArrayList;
 import java.util.Map;
 
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
@@ -10,6 +11,7 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 public class FR {
 
 	public static void main(String[] args) {
+		LocalParameters.loadProxySettings();
 
 		//load data
 		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/FR_geolocated_v4.csv");
@@ -18,7 +20,7 @@ public class FR {
 		for(Map<String, String> h : data) {
 			String geoq = h.get("geo_qual");
 			String cc = h.get("cc");
-			if("1".equals(geoq) && "cc".equals(cc))
+			if("1".equals(geoq) && "FR".equals(cc))
 				continue;
 			System.out.println(cc + " " + geoq);
 
@@ -30,7 +32,7 @@ public class FR {
 
 		CSVUtil.save(data, HCUtil.path + "FR/FR_geolocated_v5.csv");
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "FR/FR_geolocated_v5.gpkg", ProjectionUtil.getWGS_84_CRS());
-		
+
 		/*
 		CSVUtil.setValue(data, "emergency", "");
 
@@ -71,7 +73,7 @@ public class FR {
 
 		CSVUtil.save(data, HCUtil.path + "FR/FR_geolocated_v4.csv");
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "FR/FR_geolocated_v4.gpkg", ProjectionUtil.getWGS_84_CRS());
-*/
+		 */
 		System.out.println("End");
 	}
 
