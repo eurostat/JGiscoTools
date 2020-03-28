@@ -63,6 +63,8 @@ public class Publish {
 			//apply geo_qual
 			//replace(data, "geo_qual", null, "-1");
 			//replace(data, "geo_qual", "", "-1");
+			//CSVUtil.removeColumn(data, "geo_matching");
+			//CSVUtil.removeColumn(data, "geo_confidence");
 
 			//store for big EU file
 			all.addAll(data);
