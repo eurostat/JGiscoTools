@@ -153,4 +153,61 @@ public class CSVUtil {
 		return out;
 	}
 
+
+
+
+
+	public static void addColumn(Collection<Map<String, String>> data, String col, String defaultValue) {
+		for(Map<String, String> h : data) {
+			if(h.get(col) == null || "".equals(h.get(col))) {
+				h.put(col, defaultValue);
+			}
+		}
+	}
+
+	public static void addColumns(Collection<Map<String, String>> data, String[] cols, String defaultValue) {
+		for(String col : cols)
+			addColumn(data, col, defaultValue);
+	}
+
+	public static void removeColumn(ArrayList<Map<String, String>> data, String col) {
+		for(Map<String, String> h : data) {
+			if(h.get(col) != null)
+				h.remove(col);
+		}
+	}
+
+	public static void renameColumn(ArrayList<Map<String, String>> data, String oldName, String newName) {
+		for(Map<String, String> h : data) {
+			if(h.get(oldName) != null) {
+				h.put(newName, h.get(oldName));
+				h.remove(oldName);
+			}
+		}
+	}
+
+	public static void replaceValue(ArrayList<Map<String, String>> data, String col, String iniVal, String finVal) {
+		for(Map<String, String> h : data) {
+			String v = h.get(col);
+			if(iniVal == null && v == null || iniVal != null && iniVal.equals(v))
+				h.put(col, finVal);
+		}
+	}
+
+	public static void replaceValue(ArrayList<Map<String, String>> data, String iniVal, String finVal) {
+		for(Map<String, String> h : data)
+			for(Entry<String,String> e : h.entrySet()) {
+				String v = e.getValue();
+				if(iniVal == null && v == null || iniVal != null && iniVal.equals(v))
+					e.setValue(finVal);
+			}
+	}
+
+	public static ArrayList<String> getValues(ArrayList<Map<String, String>> data, String col) {
+		ArrayList<String> out = new ArrayList<>();
+		for(Map<String, String> h : data)
+			out.add(h.get(col));
+		return out;
+	}
+
 }
