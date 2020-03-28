@@ -13,6 +13,8 @@ public class FR {
 	public static void main(String[] args) {
 		LocalParameters.loadProxySettings();
 
+		//TODO extract that - geocoding improvement function
+
 		//load data
 		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/FR_geolocated_v4.csv");
 		System.out.println(data.size());
