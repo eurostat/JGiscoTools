@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.old;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -12,7 +12,6 @@ import org.locationtech.jts.geom.LineString;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.DataFormattingGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 

@@ -1,9 +1,10 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.old;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.HCUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
@@ -18,19 +19,6 @@ public class FR {
 		//load data
 		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/FR_geolocated_v4.csv");
 		System.out.println(data.size());
-
-		for(Map<String, String> h : data) {
-			String geoq = h.get("geo_qual");
-			String cc = h.get("cc");
-			if("1".equals(geoq) && "FR".equals(cc))
-				continue;
-			System.out.println(cc + " " + geoq);
-
-			//
-			HCUtil.geocodeBing(h, true);
-			geoq = h.get("geo_qual");
-			System.out.println("   " + geoq);
-		}
 
 		CSVUtil.save(data, HCUtil.path + "FR/FR_geolocated_v5.csv");
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "FR/FR_geolocated_v5.gpkg", ProjectionUtil.getWGS_84_CRS());

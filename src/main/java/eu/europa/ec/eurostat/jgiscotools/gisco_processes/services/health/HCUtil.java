@@ -13,9 +13,7 @@ import java.util.Map;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
 
 /**
@@ -24,19 +22,39 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
  */
 public class HCUtil {
 
-	static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
+	public static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
 
 	//country codes covered
 	static String[] ccs = new String[] { "AT", "BE", "CH", "CY", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PT", "RO", "SE", "UK" };
 
 	//CSV columns
-	static String[] cols = new String[] {
+	public static String[] cols = new String[] {
 			"id", "hospital_name", "site_name", "lat", "lon", "street", "house_number", "postcode", "city", "cc", "country", "emergency", "cap_beds", "cap_prac", "cap_rooms", "facility_type", "public_private", "list_specs", "tel", "email", "url", "ref_date", "pub_date", "geo_qual"
 	};
-	static List<String> cols_ = Arrays.asList(cols);
+	public static List<String> cols_ = Arrays.asList(cols);
 
 	//date format
 	static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+
+
+	static void applyTypes(Collection<Feature> fs) {
+		for(Feature f : fs) {
+			for(String att : new String[] {"cap_beds", "cap_prac", "cap_rooms"}) {
+				Object v = f.getAttribute(att);
+				if(v==null) continue;
+				if("".equals(v)) f.setAttribute(att, null);
+				else f.setAttribute(att, Integer.parseInt(v.toString()));
+			}
+			for(String att : new String[] {"lat", "lon"}) {
+				Object v = f.getAttribute(att);
+				if(v==null) continue;
+				if("".equals(v)) f.setAttribute(att, null);
+				else f.setAttribute(att, Double.parseDouble(v.toString()));
+			}
+		}
+	}
+
 
 
 
@@ -72,78 +90,6 @@ public class HCUtil {
 		}
 
 		System.out.println("Failures: " + fails + "/" + hospitals.size());
-	}
-
-	static void geocodeBing(Map<String,String> hospital, boolean usePostcode) {
-		GeocodingAddress address = new GeocodingAddress(
-				null,
-				hospital.get("house_number"),
-				hospital.get("street"),
-				hospital.get("city"),
-				hospital.get("cc"),
-				usePostcode? hospital.get("postcode") : null
-				);
-
-		GeocodingResult gr = BingGeocoder.geocode(address, true);
-		Coordinate c = gr.position;
-		System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
-
-		//if(count > 10) break;
-		hospital.put("lat", "" + c.y);
-		hospital.put("lon", "" + c.x);
-		hospital.put("geo_matching", "" + gr.matching);
-		hospital.put("geo_confidence", "" + gr.confidence);
-		hospital.put("geo_qual", "" + gr.quality);		
-	}
-
-	static void geocodeBing(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
-		//int count = 0;
-		int fails = 0;
-		for(Map<String,String> hospital : hospitals) {
-			//count++;
-			GeocodingAddress address = new GeocodingAddress(
-					null,
-					hospital.get("house_number"),
-					hospital.get("street"),
-					hospital.get("city"),
-					hospital.get("cc"),
-					usePostcode? hospital.get("postcode") : null
-					);
-
-			GeocodingResult gr = BingGeocoder.geocode(address, true);
-			Coordinate c = gr.position;
-			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
-			if(c.getX()==0 && c.getY()==0) fails++;
-
-			//if(count > 10) break;
-			hospital.put("lat", "" + c.y);
-			hospital.put("lon", "" + c.x);
-			hospital.put("geo_matching", "" + gr.matching);
-			hospital.put("geo_confidence", "" + gr.confidence);
-			hospital.put("geo_qual", "" + gr.quality);
-		}
-
-		System.out.println("Failures: " + fails + "/" + hospitals.size());
-	}
-
-
-	
-	
-	static void applyTypes(Collection<Feature> fs) {
-		for(Feature f : fs) {
-			for(String att : new String[] {"cap_beds", "cap_prac", "cap_rooms"}) {
-				Object v = f.getAttribute(att);
-				if(v==null) continue;
-				if("".equals(v)) f.setAttribute(att, null);
-				else f.setAttribute(att, Integer.parseInt(v.toString()));
-			}
-			for(String att : new String[] {"lat", "lon"}) {
-				Object v = f.getAttribute(att);
-				if(v==null) continue;
-				if("".equals(v)) f.setAttribute(att, null);
-				else f.setAttribute(att, Double.parseDouble(v.toString()));
-			}
-		}
 	}
 
 }

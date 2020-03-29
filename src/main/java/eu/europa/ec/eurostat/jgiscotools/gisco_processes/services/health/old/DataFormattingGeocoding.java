@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.old;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,20 +12,14 @@ import org.apache.commons.csv.CSVFormat;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.locationtech.jts.geom.Coordinate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.HCUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class DataFormattingGeocoding {
@@ -63,14 +57,14 @@ public class DataFormattingGeocoding {
 
 		//geocoding
 		LocalParameters.loadProxySettings();
-		System.out.println("load");
+		/*System.out.println("load");
 		ArrayList<Map<String,String>> hospitals = CSVUtil.load(path + "LT/LT_formatted.csv");
 		HCUtil.geocodeBing(hospitals, true);
 		System.out.println("save");
 		CSVUtil.save(hospitals, path + "LT/LT_geolocated.csv");
 		//save as gpkg
 		GeoData.save(CSVUtil.CSVToFeatures(hospitals, "lon", "lat"), path + "LT/LT_geolocated.gpkg", ProjectionUtil.getWGS_84_CRS());
-
+*/
 		System.out.println("End");
 	}
 

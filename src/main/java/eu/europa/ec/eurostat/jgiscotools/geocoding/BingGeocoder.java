@@ -115,13 +115,5 @@ public class BingGeocoder {
 			return null;
 		}
 	}
-
-
-	/*
-	public static void main(String[] args) {
-		LocalParameters.loadProxySettings();
-		System.out.println( geocode( new GeocodingAddress(null, null, "Rue Alphonse Weicker", "Luxembourg", "LU", null)) );
-	}
-	 */
-
+	
 }

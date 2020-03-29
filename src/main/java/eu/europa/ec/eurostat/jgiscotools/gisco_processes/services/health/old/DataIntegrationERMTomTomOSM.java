@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.old;
 
 import java.util.ArrayList;
 
