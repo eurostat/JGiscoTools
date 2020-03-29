@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.old;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.cntr;
 
 import java.util.ArrayList;
 import java.util.Map;
