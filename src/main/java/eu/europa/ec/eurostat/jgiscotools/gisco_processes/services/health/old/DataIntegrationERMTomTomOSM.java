@@ -10,6 +10,7 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.cntr.DataFormattingGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**

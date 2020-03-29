@@ -3,7 +3,7 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
@@ -43,21 +43,21 @@ public class ServicesBingGeocoding {
 		set(s, gr);
 	}
 
-	static void set(ArrayList<Map<String,String>> hospitals, boolean usePostcode, boolean print) {
+	public static void set(Collection<Map<String,String>> services, boolean usePostcode, boolean print) {
 		int fails = 0;
-		for(Map<String,String> s : hospitals) {
+		for(Map<String,String> s : services) {
 			GeocodingResult gr = get(s, usePostcode, print);
 			if(print) System.out.println(gr.position  + "  --- " + gr.quality + " --- " + gr.matching + " --- " + gr.confidence);
 			if(gr.position.getX()==0 && gr.position.getY()==0) fails++;
 			set(s, gr);
 		}
-		System.out.println("Failures: " + fails + "/" + hospitals.size());
+		System.out.println("Failures: " + fails + "/" + services.size());
 	}
 
 
 
 
-	private static void improve(Map<String, String> s, boolean usePostcode, boolean print) {
+	public static void improve(Map<String, String> s, boolean usePostcode, boolean print) {
 
 		//check if position is not already perfect
 		int geoqIni = Integer.parseInt(s.get("geo_qual"));
