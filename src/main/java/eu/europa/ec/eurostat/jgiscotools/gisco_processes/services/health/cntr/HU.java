@@ -1,5 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.cntr;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,6 +86,14 @@ public class HU {
 				}
 			}
 			data = ind.values();
+
+
+			//remove those without city
+			Collection<Map<String, String>> rem = new ArrayList<>();
+			for(Map<String, String> h : data)
+				if("".equals(h.get("city"))) rem.add(h);
+			data.removeAll(rem);
+
 
 			// save 1
 			System.out.println(data.size());
