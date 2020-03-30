@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.geocoding;
+package eu.europa.ec.eurostat.jgiscotools.geocoding.base;
 
 import org.locationtech.jts.geom.Coordinate;
 

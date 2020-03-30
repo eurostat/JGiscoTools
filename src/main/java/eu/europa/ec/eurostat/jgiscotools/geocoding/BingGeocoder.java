@@ -3,22 +3,22 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.geocoding;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.net.URLEncoder;
 
 import org.locationtech.jts.geom.Coordinate;
 
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 
 /**
  * @author clemoki
  *
  */
-public class BingGeocoder {
+public class BingGeocoder extends Geocoder {
 
-	private static String key = LocalParameters.get("bing_map_api_key");
+	private static final String key = LocalParameters.get("bing_map_api_key");
 
 	//https://docs.microsoft.com/en-us/bingmaps/rest-services/locations/find-a-location-by-address
 
@@ -27,8 +27,12 @@ public class BingGeocoder {
 	//unstructured version
 	//http://dev.virtualearth.net/REST/v1/Locations/{locationQuery}?includeNeighborhood={includeNeighborhood}&maxResults={maxResults}&include={includeValue}&key={BingMapsAPIKey}
 
+	private BingGeocoder() {}
+	private static final BingGeocoder OBJ = new BingGeocoder();
+	/** @return the instance. */
+	public static BingGeocoder get() { return OBJ; }
 
-	private static String toQueryURL(GeocodingAddress ad) {
+	protected String toQueryURL(GeocodingAddress ad) {
 		try {
 			String query = "";
 
@@ -62,7 +66,7 @@ public class BingGeocoder {
 		}
 	}
 
-	private static GeocodingResult decodeResult(String queryResult) {
+	protected GeocodingResult decodeResult(String queryResult) {
 
 		String[] parts = queryResult.split("\"type\":\"Point\",\"coordinates\":\\[");
 		String s = parts[1];
@@ -96,25 +100,6 @@ public class BingGeocoder {
 		else if(gr.confidence.equals("Low")) gr.quality = 3;
 
 		return gr;
-	}
-
-
-	private static GeocodingResult geocodeURL(String url) {
-		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
-			String queryResult = in.readLine();
-			in.close();
-			return decodeResult(queryResult);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static GeocodingResult geocode(GeocodingAddress address, boolean printURLQuery) {
-		String url = toQueryURL(address);
-		if(printURLQuery) System.out.println(url);
-		return geocodeURL(url);
 	}
 
 }

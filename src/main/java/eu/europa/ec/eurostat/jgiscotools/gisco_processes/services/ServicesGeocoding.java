@@ -6,18 +6,18 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
 import java.util.Collection;
 import java.util.Map;
 
-import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingAddress;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
 
 /**
  * @author julien Gaffuri
  *
  */
-public class ServicesBingGeocoding {
+public class ServicesGeocoding {
 
-	public static GeocodingResult get(Map<String,String> s, boolean usePostcode, boolean print) {
-		GeocodingAddress address = new GeocodingAddress(
+	private static GeocodingAddress toGeocodingAddress(Map<String,String> s, boolean usePostcode) {
+		return new GeocodingAddress(
 				null,
 				s.get("house_number"),
 				s.get("street"),
@@ -25,9 +25,11 @@ public class ServicesBingGeocoding {
 				s.get("cc"),
 				usePostcode? s.get("postcode") : null
 				);
-		return BingGeocoder.geocode(address, print);
 	}
 
+	public static GeocodingResult get(Geocoder gc, Map<String,String> s, boolean usePostcode, boolean print) {
+		return gc.geocode(toGeocodingAddress(s, usePostcode), print);
+	}
 
 	public static void set(Map<String,String> s, GeocodingResult gr) {
 		s.put("lat", "" + gr.position.y);
@@ -37,16 +39,16 @@ public class ServicesBingGeocoding {
 		s.put("geo_qual", "" + gr.quality);		
 	}
 
-	public static void set(Map<String,String> s, boolean usePostcode, boolean print) {
-		GeocodingResult gr = get(s, usePostcode, print);
+	public static void set(Geocoder gc, Map<String,String> s, boolean usePostcode, boolean print) {
+		GeocodingResult gr = get(gc, s, usePostcode, print);
 		if(print) System.out.println(gr.position  + "  --- " + gr.quality + " --- " + gr.matching + " --- " + gr.confidence);
 		set(s, gr);
 	}
 
-	public static void set(Collection<Map<String,String>> services, boolean usePostcode, boolean print) {
+	public static void set(Geocoder gc, Collection<Map<String,String>> services, boolean usePostcode, boolean print) {
 		int fails = 0;
 		for(Map<String,String> s : services) {
-			GeocodingResult gr = get(s, usePostcode, print);
+			GeocodingResult gr = get(gc, s, usePostcode, print);
 			if(print) System.out.println(gr.position  + "  --- " + gr.quality + " --- " + gr.matching + " --- " + gr.confidence);
 			if(gr.position.getX()==0 && gr.position.getY()==0) fails++;
 			set(s, gr);
@@ -57,7 +59,7 @@ public class ServicesBingGeocoding {
 
 
 
-	public static void improve(Map<String, String> s, boolean usePostcode, boolean print) {
+	public static void improve(Geocoder gc, Map<String, String> s, boolean usePostcode, boolean print) {
 
 		//check if position is not already perfect
 		int geoqIni = Integer.parseInt(s.get("geo_qual"));
@@ -67,7 +69,7 @@ public class ServicesBingGeocoding {
 		}
 
 		//find new candidate position
-		GeocodingResult gr = get(s, usePostcode, print);
+		GeocodingResult gr = get(gc, s, usePostcode, print);
 		if(gr.quality >= geoqIni) {
 			if(print) System.out.println("No positionning improvement for " + s.get("id"));
 			return;

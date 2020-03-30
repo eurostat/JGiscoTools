@@ -1,12 +1,8 @@
-package eu.europa.ec.eurostat.jgiscotools.geocoding;
+package eu.europa.ec.eurostat.jgiscotools.geocoding.base;
 
 import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 
 public class GeocodingAddress {
-
-	//TODO
-	//check ESRI geocoder
-	//https://developers.arcgis.com/rest/geocode/api-reference/overview-world-geocoding-service.htm
 
 	public String street;
 

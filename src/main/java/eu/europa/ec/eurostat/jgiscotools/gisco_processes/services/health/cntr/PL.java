@@ -12,8 +12,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ServicesBingGeocoding;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ServicesGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.HCUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
@@ -102,7 +103,7 @@ public class PL {
 
 			//geocode
 			LocalParameters.loadProxySettings();
-			ServicesBingGeocoding.set(out, true, true);
+			ServicesGeocoding.set(BingGeocoder.get(), out, true, true);
 
 			// save 2
 			CSVUtil.addColumns(out, HCUtil.cols, "");

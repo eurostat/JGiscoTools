@@ -3,13 +3,14 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.geocoding;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 
 import org.locationtech.jts.geom.Coordinate;
+
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
 
 /**
  * Some function to geocode data based on addresses
@@ -18,9 +19,14 @@ import org.locationtech.jts.geom.Coordinate;
  * @author clemoki
  *
  */
-public class GISCOGeocoder {
+public class GISCOGeocoder extends Geocoder {
 
-	private static String toQueryURL(GeocodingAddress ad) {
+	private GISCOGeocoder() {}
+	private static final GISCOGeocoder OBJ = new GISCOGeocoder();
+	/** @return the instance. */
+	public static GISCOGeocoder get() { return OBJ; }
+
+	protected String toQueryURL(GeocodingAddress ad) {
 		try {
 			String query = "";
 
@@ -54,7 +60,7 @@ public class GISCOGeocoder {
 	}
 
 
-	private static GeocodingResult decodeResult(String queryResult) {
+	protected GeocodingResult decodeResult(String queryResult) {
 		String[] parts = queryResult.split(",");
 		Coordinate c = new Coordinate();
 		for(String part : parts) {
@@ -75,31 +81,6 @@ public class GISCOGeocoder {
 		//TODO add quality indicator
 
 		return gr;
-	}
-
-
-	/**
-	 * Geocode from URL.
-	 * 
-	 * @param url
-	 * @return
-	 */
-	private static GeocodingResult geocodeURL(String url) {
-		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
-			String queryResult = in.readLine();
-			in.close();
-			return decodeResult(queryResult);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static GeocodingResult geocode(GeocodingAddress address, boolean printURLQuery) {
-		String url = toQueryURL(address);
-		if(printURLQuery) System.out.println(url);
-		return geocodeURL(url);
 	}
 
 }
