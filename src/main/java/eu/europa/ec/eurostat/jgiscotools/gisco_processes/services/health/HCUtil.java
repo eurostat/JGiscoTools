@@ -23,7 +23,13 @@ public class HCUtil {
 
 	//CSV columns
 	public static String[] cols = new String[] {
-			"id", "hospital_name", "site_name", "lat", "lon", "street", "house_number", "postcode", "city", "cc", "country", "emergency", "cap_beds", "cap_prac", "cap_rooms", "facility_type", "public_private", "list_specs", "tel", "email", "url", "ref_date", "pub_date", "geo_qual"
+			"id", "hospital_name", "site_name",
+			"lat", "lon", "geo_qual",
+			"street", "house_number", "postcode", "city", "cc", "country",
+			"cap_beds", "cap_prac", "cap_rooms",
+			"emergency", "facility_type", "public_private", "list_specs",
+			"tel", "email", "url",
+			"ref_date", "pub_date"
 	};
 	public static List<String> cols_ = Arrays.asList(cols);
 

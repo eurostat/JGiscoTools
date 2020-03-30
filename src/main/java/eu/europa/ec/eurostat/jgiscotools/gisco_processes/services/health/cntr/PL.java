@@ -103,7 +103,7 @@ public class PL {
 
 			//geocode
 			LocalParameters.loadProxySettings();
-			ServicesGeocoding.set(BingGeocoder.get(), out, true, true);
+			ServicesGeocoding.set(BingGeocoder.get(), out, "lon", "lat", true, true);
 
 			// save 2
 			CSVUtil.addColumns(out, HCUtil.cols, "");

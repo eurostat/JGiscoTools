@@ -1,27 +1,16 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.cntr;
 
-import java.util.ArrayList;
-import java.util.Map;
-
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.HCUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
-
 public class FR {
 
 	public static void main(String[] args) {
-		LocalParameters.loadProxySettings();
-
-		//TODO extract that - geocoding improvement function
+		//LocalParameters.loadProxySettings();
 
 		//load data
-		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/FR_geolocated_v4.csv");
-		System.out.println(data.size());
+		//ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/FR_geolocated_v4.csv");
+		//System.out.println(data.size());
 
-		CSVUtil.save(data, HCUtil.path + "FR/FR_geolocated_v5.csv");
-		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "FR/FR_geolocated_v5.gpkg", ProjectionUtil.getWGS_84_CRS());
+		//CSVUtil.save(data, HCUtil.path + "FR/FR_geolocated_v5.csv");
+		//GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "FR/FR_geolocated_v5.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		/*
 		CSVUtil.setValue(data, "emergency", "");

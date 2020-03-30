@@ -31,27 +31,27 @@ public class ServicesGeocoding {
 		return gc.geocode(toGeocodingAddress(s, usePostcode), print);
 	}
 
-	public static void set(Map<String,String> s, GeocodingResult gr) {
-		s.put("lat", "" + gr.position.y);
-		s.put("lon", "" + gr.position.x);
+	public static void set(Map<String,String> s, GeocodingResult gr, String lonCol, String latCol) {
+		s.put(latCol, "" + gr.position.y);
+		s.put(lonCol, "" + gr.position.x);
 		//s.put("geo_matching", "" + gr.matching);
 		//s.put("geo_confidence", "" + gr.confidence);
 		s.put("geo_qual", "" + gr.quality);		
 	}
 
-	public static void set(Geocoder gc, Map<String,String> s, boolean usePostcode, boolean print) {
+	public static void set(Geocoder gc, Map<String,String> s, String lonCol, String latCol, boolean usePostcode, boolean print) {
 		GeocodingResult gr = get(gc, s, usePostcode, print);
 		if(print) System.out.println(gr.position  + "  --- " + gr.quality + " --- " + gr.matching + " --- " + gr.confidence);
-		set(s, gr);
+		set(s, gr, lonCol, latCol);
 	}
 
-	public static void set(Geocoder gc, Collection<Map<String,String>> services, boolean usePostcode, boolean print) {
+	public static void set(Geocoder gc, Collection<Map<String,String>> services, String lonCol, String latCol, boolean usePostcode, boolean print) {
 		int fails = 0;
 		for(Map<String,String> s : services) {
 			GeocodingResult gr = get(gc, s, usePostcode, print);
 			if(print) System.out.println(gr.position  + "  --- " + gr.quality + " --- " + gr.matching + " --- " + gr.confidence);
 			if(gr.position.getX()==0 && gr.position.getY()==0) fails++;
-			set(s, gr);
+			set(s, gr, lonCol, latCol);
 		}
 		System.out.println("Failures: " + fails + "/" + services.size());
 	}
