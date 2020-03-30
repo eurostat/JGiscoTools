@@ -64,6 +64,7 @@ public class HU {
 			CSVUtil.removeColumn(data, "Telephely utca");
 
 			CSVUtil.addColumn(data, "cc", "HU");
+			CSVUtil.addColumn(data, "ref_date", "01/01/2019");
 
 			//dissolve by id
 			//TODO extract that as a generic function ?
