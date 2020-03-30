@@ -3,7 +3,11 @@ package eu.europa.ec.eurostat.jgiscotools.geocoding;
 import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 
 public class GeocodingAddress {
-	
+
+	//TODO
+	//check ESRI geocoder
+	//https://developers.arcgis.com/rest/geocode/api-reference/overview-world-geocoding-service.htm
+
 	public String street;
 
 	public String housenumber;

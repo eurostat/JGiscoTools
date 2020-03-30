@@ -4,17 +4,11 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
-import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
 
 /**
  * @author julien Gaffuri
@@ -58,8 +52,8 @@ public class HCUtil {
 
 
 
-
-	static void geocodeGISCO(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
+	/*
+	static void geocodeGISCO(ArrayList<Map<String,String>> hospitals, boolean usePostcode, boolean printURLQuery) {
 		//int count = 0;
 		int fails = 0;
 		for(Map<String,String> hospital : hospitals) {
@@ -77,7 +71,7 @@ public class HCUtil {
 			address += hospital.get("country");
 			System.out.println(address);
 
-			GeocodingResult gr = GISCOGeocoder.geocode(address);
+			GeocodingResult gr = GISCOGeocoder.geocode(address, printURLQuery);
 			Coordinate c = gr.position;
 			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
 			if(c.getX()==0 && c.getY()==0) fails++;
@@ -85,11 +79,13 @@ public class HCUtil {
 			//if(count > 10) break;
 			hospital.put("latGISCO", "" + c.y);
 			hospital.put("lonGISCO", "" + c.x);
+			hospital.put("geo_qual", "" + gr.quality);
 			hospital.put("geo_matchingGISCO", "" + gr.matching);
 			hospital.put("geo_confidenceGISCO", "" + gr.confidence);
 		}
 
 		System.out.println("Failures: " + fails + "/" + hospitals.size());
 	}
+	 */
 
 }

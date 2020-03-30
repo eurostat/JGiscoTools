@@ -28,7 +28,7 @@ public class BingGeocoder {
 	//http://dev.virtualearth.net/REST/v1/Locations/{locationQuery}?includeNeighborhood={includeNeighborhood}&maxResults={maxResults}&include={includeValue}&key={BingMapsAPIKey}
 
 
-	public static GeocodingResult geocode(GeocodingAddress ad, boolean printURLQuery) {
+	private static String toQueryURL(GeocodingAddress ad) {
 		try {
 			String query = "";
 
@@ -53,67 +53,68 @@ public class BingGeocoder {
 			if(ad.postalcode != null)
 				query += "&postalCode=" + URLEncoder.encode(ad.postalcode, "UTF-8");
 
-			//query = URLEncoder.encode(query, "UTF-8");
+			String url = "http://dev.virtualearth.net/REST/v1/Locations?" + query + "&maxResults=1&key=" + key;
 
-			return geocodeURL(query, printURLQuery);
+			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	/**
-	 * Geocode from URL.
-	 * 
-	 * @param url
-	 * @return
-	 */
-	private static GeocodingResult geocodeURL(String URLquery, boolean printURLQuery) {
+	private static GeocodingResult decodeResult(String queryResult) {
+
+		String[] parts = queryResult.split("\"type\":\"Point\",\"coordinates\":\\[");
+		String s = parts[1];
+		parts = s.split("\\]},");
+		s = parts[0];
+		parts = s.split(",");
+		double lat = Double.parseDouble(parts[0]);
+		double lon = Double.parseDouble(parts[1]);
+		Coordinate c = new Coordinate(lon, lat);
+
+		GeocodingResult gr = new GeocodingResult();
+		gr.position = c;
+
+		//"matchCodes":["Good"]}]}],
+		//Good Ambiguous UpHierarchy
+		parts = queryResult.split("matchCodes\":\\[\"");
+		s = parts[1];
+		parts = s.split("\"\\]");
+		gr.matching = parts[0];
+
+
+		//"confidence":"High",
+		//High Medium Low
+		parts = queryResult.split("confidence\":\"");
+		s = parts[1];
+		parts = s.split("\",");
+		gr.confidence = parts[0];
+
+		if(gr.confidence.equals("High")) gr.quality = 1;
+		else if(gr.confidence.equals("Medium")) gr.quality = 2;
+		else if(gr.confidence.equals("Low")) gr.quality = 3;
+
+		return gr;
+	}
+
+
+	private static GeocodingResult geocodeURL(String url) {
 		try {
-			String url = "http://dev.virtualearth.net/REST/v1/Locations?" + URLquery + "&maxResults=1&key=" + key;
-			//url = url.replace("+", "%20");
-			if(printURLQuery) System.out.println(url);
-
 			BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
-			String line = in.readLine();
-			//System.out.println(line);
-
-			String[] parts = line.split("\"type\":\"Point\",\"coordinates\":\\[");
-			String s = parts[1];
-			parts = s.split("\\]},");
-			s = parts[0];
-			parts = s.split(",");
-			double lat = Double.parseDouble(parts[0]);
-			double lon = Double.parseDouble(parts[1]);
-			Coordinate c = new Coordinate(lon, lat);
-
-			GeocodingResult gr = new GeocodingResult();
-			gr.position = c;
-
-			//"matchCodes":["Good"]}]}],
-			//Good Ambiguous UpHierarchy
-			parts = line.split("matchCodes\":\\[\"");
-			s = parts[1];
-			parts = s.split("\"\\]");
-			gr.matching = parts[0];
-
-
-			//"confidence":"High",
-			//High Medium Low
-			parts = line.split("confidence\":\"");
-			s = parts[1];
-			parts = s.split("\",");
-			gr.confidence = parts[0];
-
-			if(gr.confidence.equals("High")) gr.quality = 1;
-			else if(gr.confidence.equals("Medium")) gr.quality = 2;
-			else if(gr.confidence.equals("Low")) gr.quality = 3;
-
-			return gr;
+			String queryResult = in.readLine();
+			in.close();
+			return decodeResult(queryResult);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
+	public static GeocodingResult geocode(GeocodingAddress address, boolean printURLQuery) {
+		String url = toQueryURL(address);
+		if(printURLQuery) System.out.println(url);
+		return geocodeURL(url);
+	}
+
 }
