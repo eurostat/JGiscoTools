@@ -215,4 +215,29 @@ public class CSVUtil {
 		return out;
 	}
 
+
+
+	public static Collection<Map<String, String>> aggregateById(Collection<Map<String, String>> data, String idCol, String...  sumCols) {
+		HashMap<String, Map<String, String>> ind = new HashMap<String, Map<String, String>>();
+		for(Map<String, String> h : data) {
+			String id  = h.get(idCol);
+			Map<String, String> h_ = ind.get(id);
+			if(h_ == null) {
+				ind.put(id, h);
+			} else {
+				//increment number of beds
+				for(String sumCol : sumCols) {					
+					String nbs = h.get(sumCol);
+					if(nbs == null || nbs.isEmpty()) continue;
+					double nb = Double.parseDouble(nbs);
+					String nbs_ = h_.get(sumCol);
+					if(nbs_ == null || nbs_.isEmpty()) { h_.put(sumCol, ""+nb); continue; }
+					double nb_ = Double.parseDouble(nbs_);
+					h_.put(sumCol, ""+(nb+nb_));
+				}
+			}
+		}
+		return ind.values();
+	}
+
 }

@@ -2,7 +2,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.cntr;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
@@ -66,28 +65,8 @@ public class HU {
 			CSVUtil.addColumn(data, "cc", "HU");
 			CSVUtil.addColumn(data, "ref_date", "01/01/2019");
 
-			//dissolve by id
-			//TODO extract that as a generic function ?
-			HashMap<String, Map<String, String>> ind = new HashMap<String, Map<String, String>>();
-			for(Map<String, String> h : data) {
-				String id  = h.get("id");
-				Map<String, String> h_ = ind.get(id);
-				if(h_ == null) {
-					ind.put(id, h);
-				} else {
-					//increment number of beds
-					String nbs = h.get("cap_beds");
-					if(nbs == null || nbs.isEmpty()) continue;
-					int nb = Integer.parseInt(nbs);
-					String nbs_ = h_.get("cap_beds");
-					if(nbs_ == null || nbs_.isEmpty()) { h_.put("cap_beds", ""+nb); continue; }
-					int nb_ = Integer.parseInt(nbs_);
-					h_.put("cap_beds", ""+(nb+nb_));
-					//TODO aggregate other attributes
-				}
-			}
-			data = ind.values();
-
+			//aggregate by id
+			data = CSVUtil.aggregateById(data, "id", "cap_beds", "cap_prac", "cap_rooms" );
 
 			//remove those without city
 			Collection<Map<String, String>> rem = new ArrayList<>();
