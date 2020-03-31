@@ -1,7 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.cntr;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,14 +11,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.HCUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class DataFormattingGeocoding {
@@ -619,62 +614,6 @@ public class DataFormattingGeocoding {
 
 		// save
 		CSVUtil.save(hospitalsFormatted, path + "IT/IT_formatted.csv");
-	}
-
-	public static void formatDE() {
-		try {
-			String filePath = path + "DE/20200308_Verzeichnisabruf_aktuell.xml";
-			Document doc = XMLUtils.parse(new FileInputStream(filePath));
-
-			Element root = doc.getDocumentElement();
-			//System.out.println( root.getNodeName() );
-
-			NodeList elts = root.getChildNodes();
-			//System.out.println(elts.getLength());
-			Collection<Map<String, String>> hospitalsFormatted = new ArrayList<Map<String, String>>();
-			for(int i=0; i<elts.getLength(); i++) {
-				if(!elts.item(i).getNodeName().equals("Standort")) continue;
-				Element elt = (Element) elts.item(i);
-				String name = elt.getElementsByTagName("Bezeichnung").item(0).getTextContent();
-				String id = elt.getElementsByTagName("StandortId").item(0).getTextContent();
-				Element geoAdr = (Element) elt.getElementsByTagName("GeoAdresse").item(0);
-				String lon = geoAdr.getElementsByTagName("Längengrad").item(0).getTextContent();
-				String lat = geoAdr.getElementsByTagName("Breitengrad").item(0).getTextContent();
-				String housenb = geoAdr.getElementsByTagName("Hausnummer").item(0).getTextContent();
-				String street = geoAdr.getElementsByTagName("Straße").item(0).getTextContent();
-				String postcode = geoAdr.getElementsByTagName("PLZ").item(0).getTextContent();
-				String city = geoAdr.getElementsByTagName("Ort").item(0).getTextContent();
-
-
-				HashMap<String, String> hf = new HashMap<String, String>();
-				hf.put("cc", "DE");
-				hf.put("country", "Germany");
-				hf.put("id", id);
-				hf.put("hospital_name", name);
-				hf.put("house_number", housenb);
-				hf.put("street", street);
-				hf.put("postcode", postcode);
-				hf.put("city", city);
-				hf.put("year", "2020");				
-				hf.put("lon", lon);
-				hf.put("lat", lat);
-				hf.put("type", "standort");
-				hospitalsFormatted.add(hf);
-
-				//TODO get all einrichtungen
-				NodeList einrichtungen = elt.getElementsByTagName("GeoAdresse");
-				for(int j=0; j<einrichtungen.getLength(); j++) {
-					Element einrichtung = (Element) einrichtungen.item(j);
-					//TODO
-				}
-			}
-
-			// save
-			CSVUtil.save(hospitalsFormatted, path + "DE/DE_formatted.csv");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 }

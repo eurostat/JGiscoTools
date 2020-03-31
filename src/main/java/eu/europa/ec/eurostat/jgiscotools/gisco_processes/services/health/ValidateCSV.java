@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,15 +41,25 @@ public class ValidateCSV {
 		System.out.println("End");
 	}
 
-	public static void validate(ArrayList<Map<String, String>> data, String cc) {
+	public static void validate(Collection<Map<String, String>> data, String cc) {
 
 		//check presence of all columns
 		Set<String> ch = checkNoUnexpectedColumn(data, HCUtil.cols_);
 		if(ch.size()>0) System.err.println(ch);
 
+		boolean b;
+
+		//id should be provided
+		b = checkValuesNotNullOrEmpty(data, "id");
+		if(!b) System.err.println("Identifier not provided for " + cc);
+
 		//check id is provided and unique
-		boolean b = checkId(data, "id");
-		if(!b) System.err.println("Problem with identifier for " + cc);
+		Set<String> dup = checkIdUnicity(data, "id");
+		if(dup.size()>0) {
+			System.err.println(dup.size() + " non unique identifiers for " + cc);
+			for(String d : dup) System.out.print(d + ", ");
+			System.out.println();
+		}
 
 		//check cc
 		b = checkValuesAmong(data, "cc", cc);
@@ -90,7 +101,7 @@ public class ValidateCSV {
 		//check empty columns
 	}
 
-	private static void checkGeoExtent(ArrayList<Map<String, String>> data, String lonCol, String latCol) {
+	private static void checkGeoExtent(Collection<Map<String, String>> data, String lonCol, String latCol) {
 		for(Map<String, String> h : data) {
 			String lon_ = h.get(lonCol);
 			String lat_ = h.get(latCol);
@@ -117,18 +128,18 @@ public class ValidateCSV {
 		}
 	}
 
-	private static boolean checkId(ArrayList<Map<String, String>> data, String idCol) {
-		//id values should be provided
-		boolean b = checkValuesNotNullOrEmpty(data, idCol);
-		if(!b) return false;
-		//id values should be unique
-		ArrayList<String> valL = CSVUtil.getValues(data, "id");
-		HashSet<String> valS = new HashSet<String>(valL);
-		if(valL.size() != valS.size()) return false;
-		return true;
+	private static Set<String> checkIdUnicity(Collection<Map<String, String>> data, String idCol) {
+		ArrayList<String> ids = CSVUtil.getValues(data, idCol);
+
+		Set<String> duplicates = new LinkedHashSet<>();
+		Set<String> uniques = new HashSet<>();
+		for(String id : ids)
+			if(!uniques.add(id)) duplicates.add(id);
+
+		return duplicates;
 	}
 
-	private static boolean checkDateFormat(ArrayList<Map<String, String>> data, String col, SimpleDateFormat df) {
+	private static boolean checkDateFormat(Collection<Map<String, String>> data, String col, SimpleDateFormat df) {
 		for(Map<String, String> h : data) {
 			String val = h.get(col);
 			if(val == null || val.isEmpty())
@@ -143,7 +154,7 @@ public class ValidateCSV {
 		return true;
 	}
 
-	private static boolean checkValuesNotNullOrEmpty(ArrayList<Map<String, String>> data, String col) {
+	private static boolean checkValuesNotNullOrEmpty(Collection<Map<String, String>> data, String col) {
 		for(Map<String, String> h : data) {
 			String val = h.get(col);
 			if(val == null || val.isEmpty())
@@ -152,7 +163,7 @@ public class ValidateCSV {
 		return true;
 	}
 
-	private static boolean checkValuesAmong(ArrayList<Map<String, String>> data, String col, String... values) {
+	private static boolean checkValuesAmong(Collection<Map<String, String>> data, String col, String... values) {
 		for(Map<String, String> h : data) {
 			String val = h.get(col);
 			boolean found = false;
@@ -168,7 +179,7 @@ public class ValidateCSV {
 		return true;
 	}
 
-	static Set<String> checkNoUnexpectedColumn(ArrayList<Map<String, String>> data, Collection<String> cols) {
+	static Set<String> checkNoUnexpectedColumn(Collection<Map<String, String>> data, Collection<String> cols) {
 		for(Map<String, String> h : data) {
 			Set<String> cs = new HashSet<>(h.keySet());
 			cs.removeAll(cols);
