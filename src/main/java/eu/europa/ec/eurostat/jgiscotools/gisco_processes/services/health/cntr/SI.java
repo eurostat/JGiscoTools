@@ -24,7 +24,6 @@ public class SI {
 		CSVUtil.addColumn(data, "cc", "SI");
 		CSVUtil.addColumn(data, "geo_qual", "-1"); //ask kimberly
 		CSVUtil.addColumn(data, "ref_date", "06/03/2020");
-		CSVUtil.addColumns(data, HCUtil.cols, "");
 
 		for(Map<String, String> h : data) {
 			String s = h.get("postcode_city");
@@ -36,21 +35,22 @@ public class SI {
 			s = h.get("street_number");
 			String[] parts = s.split(" ");
 			String hn = parts[parts.length-1];
+			h.put("house_number", hn);
 			s = s.replace(hn, "").trim();
 			h.put("street", s);
 		}
 		CSVUtil.removeColumn(data, "postcode_city");
 		CSVUtil.removeColumn(data, "street_number");
 
-		// save 1
-		System.out.println(data.size());
-		CSVUtil.save(data, HCUtil.path + "SI/SI.csv");
-
 		LocalParameters.loadProxySettings();
 		ServicesGeocoding.set(BingGeocoder.get(), data, "lon", "lat", true, true);
 
+		CSVUtil.addColumns(data, HCUtil.cols, "");
 		ValidateCSV.validate(data, "SI");
 
+		// save
+		System.out.println(data.size());
+		CSVUtil.save(data, HCUtil.path + "SI/SI.csv");
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "SI/SI.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
