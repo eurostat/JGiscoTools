@@ -53,7 +53,7 @@ public class Publish {
 			//cc, country
 			String cntr = NUTSUtils.getName(cc);
 			if(cntr == null) System.err.println("cc: " + cc);
-			cntr.replace("Germany (until 1990 former territory of the FRG)", "Germany");
+			if("DE".equals(cc)) cntr = "Germany";
 			//CSVUtil.setValue(data, "cc", cc); //do not apply that - overseas territories
 			CSVUtil.setValue(data, "country", cntr);
 
