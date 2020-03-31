@@ -40,7 +40,7 @@ public class ValidateCSV {
 		System.out.println("End");
 	}
 
-	static void validate(ArrayList<Map<String, String>> data, String cc) {
+	public static void validate(ArrayList<Map<String, String>> data, String cc) {
 
 		//check presence of all columns
 		Set<String> ch = checkNoUnexpectedColumn(data, HCUtil.cols_);

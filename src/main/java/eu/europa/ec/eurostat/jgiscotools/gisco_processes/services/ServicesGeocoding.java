@@ -39,7 +39,7 @@ public class ServicesGeocoding {
 		s.put("geo_qual", "" + gr.quality);		
 	}
 
-	public static void set(Geocoder gc, Map<String,String> s, String lonCol, String latCol, boolean usePostcode, boolean print) {
+	public static void set(Map<String,String> s, Geocoder gc, String lonCol, String latCol, boolean usePostcode, boolean print) {
 		GeocodingResult gr = get(gc, s, usePostcode, print);
 		if(print) System.out.println(gr.position  + "  --- " + gr.quality + " --- " + gr.matching + " --- " + gr.confidence);
 		set(s, gr, lonCol, latCol);

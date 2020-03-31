@@ -106,7 +106,6 @@ public class PL {
 			ServicesGeocoding.set(BingGeocoder.get(), out, "lon", "lat", true, true);
 
 			// save 2
-			CSVUtil.addColumns(out, HCUtil.cols, "");
 			CSVUtil.save(out, HCUtil.path + "PL/PL.csv");
 			GeoData.save(CSVUtil.CSVToFeatures(out, "lon", "lat"), HCUtil.path + "PL/PL.gpkg", ProjectionUtil.getWGS_84_CRS());
 
