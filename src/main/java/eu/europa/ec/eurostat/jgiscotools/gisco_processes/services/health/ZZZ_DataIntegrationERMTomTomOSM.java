@@ -10,7 +10,6 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.cntr.ZZZ_DataFormattingGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
@@ -22,9 +21,6 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
  *
  */
 public class ZZZ_DataIntegrationERMTomTomOSM {
-
-
-	ZZZ_DataFormattingGeocoding g;
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
@@ -63,7 +59,7 @@ public class ZZZ_DataIntegrationERMTomTomOSM {
 		String name2= hosp2.getAttribute("name").toString();
 		if(name1.length()!=0 && name2.length()!=0)
 			distName = LevenshteinMatching.getLevenshteinDistance(name1, name2, true, true, true, true);
-*/
+		 */
 
 		return 0;
 	}

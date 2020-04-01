@@ -19,7 +19,7 @@ public class FR {
 		System.out.println("Start");
 
 		format();
-		//geocode();
+		geocode();
 
 		System.out.println("End");
 	}
