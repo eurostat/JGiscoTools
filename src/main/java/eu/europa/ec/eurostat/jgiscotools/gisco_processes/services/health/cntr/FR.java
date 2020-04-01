@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ServicesGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.HCUtil;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.ValidateCSV;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 public class FR {
 
@@ -14,13 +19,14 @@ public class FR {
 		System.out.println("Start");
 
 		format();
-		geocode();
+		//geocode();
 
 		System.out.println("End");
 	}
 
 	private static void format() {
-		//load data
+
+		//load input data
 		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/finess_clean.csv");
 		System.out.println(data.size());
 
@@ -127,6 +133,7 @@ public class FR {
 		CSVUtil.addColumn(out, "geo_qual", "-1");
 		CSVUtil.addColumn(out, "lon", "0");
 		CSVUtil.addColumn(out, "lat", "0");
+		CSVUtil.addColumns(out, HCUtil.cols, "");
 		ValidateCSV.validate(out, "FR");
 
 		System.out.println("Save " + out.size());
@@ -136,6 +143,17 @@ public class FR {
 
 	public static void geocode() {
 
+		//load input data
+		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/FR_formated.csv");
+		System.out.println(data.size());
+
+		LocalParameters.loadProxySettings();
+		ServicesGeocoding.set(BingGeocoder.get(), data, "lon", "lat", true, true);
+
+		CSVUtil.addColumns(data, HCUtil.cols, "");
+		ValidateCSV.validate(data, "FR");
+		CSVUtil.save(data, HCUtil.path + "FR/FR.csv");
+		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "FR/FR.gpkg", ProjectionUtil.getWGS_84_CRS());
 	}
 
 
