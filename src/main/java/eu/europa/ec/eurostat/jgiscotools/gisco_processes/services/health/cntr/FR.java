@@ -15,10 +15,13 @@ import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 public class FR {
 
+	static String cc = "FR";
+
 	public static void main(String[] args) {
 		System.out.println("Start");
 
 		//format();
+		HCUtil.CSVToGPKG(cc);
 		//geocode();
 
 		System.out.println("End");
@@ -27,7 +30,7 @@ public class FR {
 	private static void format() {
 
 		//load input data
-		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/finess_clean.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path+cc + "/finess_clean.csv");
 		System.out.println(data.size());
 
 		ArrayList<Map<String, String>> out = new ArrayList<>();
@@ -134,26 +137,26 @@ public class FR {
 		CSVUtil.addColumn(out, "lon", "0");
 		CSVUtil.addColumn(out, "lat", "0");
 		CSVUtil.addColumns(out, HCUtil.cols, "");
-		ValidateCSV.validate(out, "FR");
+		ValidateCSV.validate(out, cc);
 
 		System.out.println("Save " + out.size());
-		CSVUtil.save(out, HCUtil.path + "FR/FR_formated.csv");
+		CSVUtil.save(out, HCUtil.path+cc + "/"+cc+"_formated.csv");
 	}
 
 
 	public static void geocode() {
 
 		//load input data
-		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/FR_formated.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path+cc + "/"+cc+"_formated.csv");
 		System.out.println(data.size());
 
 		LocalParameters.loadProxySettings();
 		ServicesGeocoding.set(BingGeocoder.get(), data, "lon", "lat", true, true);
 
 		CSVUtil.addColumns(data, HCUtil.cols, "");
-		ValidateCSV.validate(data, "FR");
-		CSVUtil.save(data, HCUtil.path + "FR/FR.csv");
-		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "FR/FR.gpkg", ProjectionUtil.getWGS_84_CRS());
+		ValidateCSV.validate(data, cc);
+		CSVUtil.save(data, HCUtil.path+cc + "/"+cc+".csv");
+		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path+cc + "/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
 	}
 

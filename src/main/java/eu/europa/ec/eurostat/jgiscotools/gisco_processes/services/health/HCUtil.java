@@ -4,11 +4,16 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 /**
  * @author julien Gaffuri
@@ -93,5 +98,12 @@ public class HCUtil {
 		System.out.println("Failures: " + fails + "/" + hospitals.size());
 	}
 	 */
+
+	public static void CSVToGPKG(String cc) {
+		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + cc+"/"+cc+".csv");
+		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + cc+"/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+	}
+
+
 
 }
