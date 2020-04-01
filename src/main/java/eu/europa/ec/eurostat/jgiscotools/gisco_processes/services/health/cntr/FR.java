@@ -18,8 +18,8 @@ public class FR {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		format();
-		geocode();
+		//format();
+		//geocode();
 
 		System.out.println("End");
 	}
@@ -154,6 +154,7 @@ public class FR {
 		ValidateCSV.validate(data, "FR");
 		CSVUtil.save(data, HCUtil.path + "FR/FR.csv");
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "FR/FR.gpkg", ProjectionUtil.getWGS_84_CRS());
+
 	}
 
 
