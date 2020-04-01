@@ -13,6 +13,13 @@ public class FR {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
+		format();
+		geocode();
+
+		System.out.println("End");
+	}
+
+	private static void format() {
 		//load data
 		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "FR/finess_clean.csv");
 		System.out.println(data.size());
@@ -124,24 +131,18 @@ public class FR {
 
 		System.out.println("Save " + out.size());
 		CSVUtil.save(out, HCUtil.path + "FR/FR_formated.csv");
+	}
 
-		System.out.println("End");
+
+	public static void geocode() {
+
 	}
 
 
 
 
-	public static void formatFR() {
-		try {
-			//load csv
-			//ArrayList<Map<String, String>> raw = CSVUtil.load(basePath + "finess_data.csv");
-			//System.out.println(raw.size());
-			//HashMap<String, Map<String, String>> rawI = Util.index(raw, "nofinesset");
-			ArrayList<Map<String, String>> raw = CSVUtil.load(HCUtil.path + "FR/finess_clean.csv");
-			System.out.println(raw.size());
-			//CSVUtil.getUniqueValues(raw, "typvoie", true);
 
-			/*/prepare
+	/*/
 			GeometryFactory gf = new GeometryFactory();
 			CoordinateReferenceSystem LAMBERT_93 = CRS.decode("EPSG:2154");
 			CoordinateReferenceSystem UTM_N20 = CRS.decode("EPSG:32620");
@@ -150,30 +151,8 @@ public class FR {
 			CoordinateReferenceSystem UTM_S40 = CRS.decode("EPSG:32740");
 			CoordinateReferenceSystem UTM_S38 = CRS.decode("EPSG:32738");*/
 
-			ArrayList<Map<String, String>> out = new ArrayList<>();
-			for(Map<String, String> r : raw) {
-				Map<String, String> hf = new HashMap<>();
 
-				String id = r.get("nofinesset");
-
-				/*Map<String, String> rd = rawI.get(id);
-				if(rd == null) {
-					System.out.println("FR - no information for site " + id);
-					continue;
-				}*/
-
-				/*categagretab
-				1101 - Centres Hospitaliers Régionaux
-				1102 - Centres Hospitaliers
-				//1205 - Autres Etablissements Relevant de la Loi Hospitalière
-				//2204 - Etablissements ne relevant pas de la Loi Hospitalière
-				1106 - Hôpitaux Locaux*/
-				int cat = (int) Double.parseDouble(r.get("categagretab"));
-				if(cat!=1101 && cat!=1102 && cat!=1106) continue;
-
-				hf.put("id", id);
-
-				/*/get CRS
+	/*/get CRS
 				CoordinateReferenceSystem crs = null;
 				switch (r.get("crs")) {
 				case "LAMBERT_93": crs = LAMBERT_93; break;
@@ -185,67 +164,11 @@ public class FR {
 				default: System.out.println(r.get("crs")); break;
 				}*/
 
-				/*/change crs to lon/lat
+	/*/change crs to lon/lat
 				double x = Double.parseDouble( r.get("coordxet") );
 				double y = Double.parseDouble( r.get("coordyet") );
 				Point pt = (Point) ProjectionUtil.project(gf.createPoint(new Coordinate(x,y)), crs, ProjectionUtil.getWGS_84_CRS());
 				hf.put("lon", ""+pt.getY());
 				hf.put("lat", ""+pt.getX());*/
-
-				hf.put("hospital_name", !r.get("rslongue").equals("")? r.get("rslongue") : r.get("rs"));
-				hf.put("house_number", r.get("numvoie") + r.get("compvoie"));
-
-				String tv = r.get("typvoie");
-				switch (tv) {
-				case "": break;
-				case "R": tv="RUE"; break;
-				case "AV": tv="AVENUE"; break;
-				case "BD": tv="BOULEVARD"; break;
-				case "PL": tv="PLACE"; break;
-				case "RTE": tv="ROUTE"; break;
-				case "IMP": tv="IMPASSE"; break;
-				case "CHE": tv="CHEMIN"; break;
-				case "QUA": tv="QUAI"; break;
-				case "PROM": tv="PROMENADE"; break;
-				case "PASS": tv="PASSAGE"; break;
-				case "ALL": tv="ALLEE"; break;
-				//default: System.out.println(tv);
-				}
-
-				//TODO cedex postcode to noncedex
-
-				String street = "";
-				street += ("".equals(tv) || tv==null)? "" : tv + " ";
-				street += r.get("voie") + " ";
-				street += (r.get("lieuditbp").contains("BP")? "" : r.get("lieuditbp"));
-				street = street.trim();
-				hf.put("street", street);
-
-				String lia = r.get("ligneacheminement");
-				hf.put("postcode", lia.substring(0, 5));
-
-				String city = lia.substring(6, lia.length());
-				for(int cedex = 30; cedex>0; cedex--) city = city.replace("CEDEX " + cedex, "");
-				city = city.replace("CEDEX", "");
-				city = city.trim();
-				hf.put("city", city);
-				if(city==null || city.equals("")) System.err.println("No city for " + id);
-
-				hf.put("tel", r.get("telephone"));
-				hf.put("public_private", r.get("libsph"));
-				hf.put("facility_type", r.get("libcategagretab"));
-
-				hf.put("ref_date", "2020-03-04");
-
-				//if("".equals(hf.get("street"))) System.out.println(hf.get("city") + "  ---  " + hf.get("hospital_name"));
-				out.add(hf);
-			}
-
-			//System.out.println("Save "+out.size());
-			//CSVUtil.save(out, path + "FR/FR_formated.csv");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 }

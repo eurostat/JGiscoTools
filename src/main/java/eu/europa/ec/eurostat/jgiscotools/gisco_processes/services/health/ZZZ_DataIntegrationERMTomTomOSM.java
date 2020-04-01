@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.old;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.cntr.DataFormattingGeocoding;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.cntr.ZZZ_DataFormattingGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
@@ -21,10 +21,10 @@ import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
  * @author clemoki
  *
  */
-public class DataIntegrationERMTomTomOSM {
+public class ZZZ_DataIntegrationERMTomTomOSM {
 
 
-	DataFormattingGeocoding g;
+	ZZZ_DataFormattingGeocoding g;
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");

@@ -7,11 +7,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * @author julien Gaffuri
  *
  */
 public abstract class Geocoder {
+	private final static Logger LOGGER = LogManager.getLogger(Geocoder.class.getName());
 
 	//TODO
 	//test ESRI geocoder
@@ -60,7 +64,7 @@ public abstract class Geocoder {
 	 */
 	public GeocodingResult geocode(GeocodingAddress address, boolean printURLQuery) {
 		String url = toQueryURL(address);
-		if(printURLQuery) System.out.println(url);
+		if(printURLQuery) LOGGER.info(url);
 		return geocodeURL(url);
 	}
 
