@@ -95,9 +95,9 @@ public class BingGeocoder extends Geocoder {
 		parts = s.split("\",");
 		gr.confidence = parts[0];
 
-		if(gr.confidence.equals("High")) gr.quality = 1;
-		else if(gr.confidence.equals("Medium")) gr.quality = 2;
+		if(gr.confidence.equals("High") && gr.matching.equals("Good")) gr.quality = 1;
 		else if(gr.confidence.equals("Low")) gr.quality = 3;
+		else gr.quality = 2;
 
 		return gr;
 	}
