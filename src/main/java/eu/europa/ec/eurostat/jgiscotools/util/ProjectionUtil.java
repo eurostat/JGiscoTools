@@ -13,7 +13,10 @@ import org.apache.logging.log4j.Logger;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.util.CRSUtilities;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -85,8 +88,10 @@ public class ProjectionUtil {
 		return null;
 	}
 
-	public static Geometry project(Geometry geom, int sourceEPSG, int destEPSG) {
-		return project(geom, getCRS(sourceEPSG), getCRS(destEPSG));
+	public static Coordinate project(Coordinate c, CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem targetCRS) {
+		Point pt = new GeometryFactory().createPoint(c);
+		pt = (Point) project(pt, sourceCRS, targetCRS);
+		return pt.getCoordinate();
 	}
 
 	public static Geometry project(Geometry geom, CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem targetCRS) {

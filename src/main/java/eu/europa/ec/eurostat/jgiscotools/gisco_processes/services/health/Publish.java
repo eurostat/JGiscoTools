@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Map;
 
+import org.locationtech.jts.geom.Coordinate;
+
 import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
@@ -99,19 +101,30 @@ public class Publish {
 		GeoData.save(fs, destinationPath+"data/geojson/all.geojson", ProjectionUtil.getWGS_84_CRS());
 		GeoData.save(fs, destinationPath+"data/gpkg/all.gpkg", ProjectionUtil.getWGS_84_CRS());
 
+		{
+			//export for web
+			ArrayList<Map<String, String>> data = CSVUtil.load(destinationPath+"data/csv/all.csv");
+			for(Map<String, String> d : data) {
+				//load lat/lon
+				double lon = Double.parseDouble(d.get("lon"));
+				d.remove("lon");
+				double lat = Double.parseDouble(d.get("lat"));
+				d.remove("lat");
 
-		//export for web
-		ArrayList<Map<String, String>> data = CSVUtil.load(destinationPath+"data/csv/all.csv");
-		for(Map<String, String> d : data) {
-			//load lat/lon
-			double lon = Double.parseDouble(d.get("lon"));
-			double lat = Double.parseDouble(d.get("lat"));
-			d.remove("lon");
-			d.remove("lat");
+				//project to LAEA
+				Coordinate c = ProjectionUtil.project(new Coordinate(lat,lon), ProjectionUtil.getWGS_84_CRS(), ProjectionUtil.getETRS89_LAEA_CRS());
+				d.put("x", ""+(int)c.y);
+				d.put("y", ""+(int)c.x);
 
-		
+				d.remove("id");
+				d.remove("cc");
+				d.remove("geo_qual");
+			}
+
+			//save
+			CSVUtil.save(data, destinationPath+"map/hcs.csv");
 		}
-
+		
 		
 		System.out.println("End");
 	}
