@@ -10,11 +10,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.locationtech.jts.geom.Coordinate;
-
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GeocodingResult;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 /**
  * @author julien Gaffuri
@@ -25,11 +24,17 @@ public class HCUtil {
 	public static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
 
 	//country codes covered
-	static String[] ccs = new String[] { "AT", "BE", "CH", "CY", "DE", "DK", "ES", "FI", "FR", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "UK" };
+	static String[] ccs = new String[] { "AT", "BE", "CH", "CY", "DE", "DK", "ES", "FI", "FR", /*"HU",*/ "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI"/*, "UK"*/ };
 
 	//CSV columns
 	public static String[] cols = new String[] {
-			"id", "hospital_name", "site_name", "lat", "lon", "street", "house_number", "postcode", "city", "cc", "country", "emergency", "cap_beds", "cap_prac", "cap_rooms", "facility_type", "public_private", "list_specs", "tel", "email", "url", "ref_date", "pub_date", "geo_qual"
+			"id", "hospital_name", "site_name",
+			"lat", "lon", "geo_qual",
+			"street", "house_number", "postcode", "city", "cc", "country",
+			"cap_beds", "cap_prac", "cap_rooms",
+			"emergency", "facility_type", "public_private", "list_specs",
+			"tel", "email", "url",
+			"ref_date", "pub_date"
 	};
 	public static List<String> cols_ = Arrays.asList(cols);
 
@@ -58,8 +63,8 @@ public class HCUtil {
 
 
 
-
-	static void geocodeGISCO(ArrayList<Map<String,String>> hospitals, boolean usePostcode) {
+	/*
+	static void geocodeGISCO(ArrayList<Map<String,String>> hospitals, boolean usePostcode, boolean printURLQuery) {
 		//int count = 0;
 		int fails = 0;
 		for(Map<String,String> hospital : hospitals) {
@@ -77,7 +82,7 @@ public class HCUtil {
 			address += hospital.get("country");
 			System.out.println(address);
 
-			GeocodingResult gr = GISCOGeocoder.geocode(address);
+			GeocodingResult gr = GISCOGeocoder.geocode(address, printURLQuery);
 			Coordinate c = gr.position;
 			System.out.println(c  + "  --- " + gr.matching + " --- " + gr.confidence);
 			if(c.getX()==0 && c.getY()==0) fails++;
@@ -85,11 +90,20 @@ public class HCUtil {
 			//if(count > 10) break;
 			hospital.put("latGISCO", "" + c.y);
 			hospital.put("lonGISCO", "" + c.x);
+			hospital.put("geo_qual", "" + gr.quality);
 			hospital.put("geo_matchingGISCO", "" + gr.matching);
 			hospital.put("geo_confidenceGISCO", "" + gr.confidence);
 		}
 
 		System.out.println("Failures: " + fails + "/" + hospitals.size());
 	}
+	 */
+
+	public static void CSVToGPKG(String cc) {
+		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + cc+"/"+cc+".csv");
+		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + cc+"/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+	}
+
+
 
 }

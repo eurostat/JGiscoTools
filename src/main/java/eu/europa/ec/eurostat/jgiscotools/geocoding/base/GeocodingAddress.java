@@ -1,9 +1,9 @@
-package eu.europa.ec.eurostat.jgiscotools.geocoding;
+package eu.europa.ec.eurostat.jgiscotools.geocoding.base;
 
 import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 
 public class GeocodingAddress {
-	
+
 	public String street;
 
 	public String housenumber;
