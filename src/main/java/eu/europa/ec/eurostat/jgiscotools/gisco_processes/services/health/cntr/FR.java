@@ -21,7 +21,7 @@ public class FR {
 		System.out.println("Start");
 
 		//format();
-		HCUtil.CSVToGPKG(cc);
+		//HCUtil.CSVToGPKG(cc);
 		//geocode();
 
 		System.out.println("End");
