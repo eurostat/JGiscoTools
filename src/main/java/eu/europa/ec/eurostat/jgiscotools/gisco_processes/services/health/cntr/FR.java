@@ -8,7 +8,7 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ServicesGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.HCUtil;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.ValidateCSV;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.Validation;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
@@ -137,7 +137,7 @@ public class FR {
 		CSVUtil.addColumn(out, "lon", "0");
 		CSVUtil.addColumn(out, "lat", "0");
 		CSVUtil.addColumns(out, HCUtil.cols, "");
-		ValidateCSV.validate(out, cc);
+		Validation.validate(out, cc);
 
 		System.out.println("Save " + out.size());
 		CSVUtil.save(out, HCUtil.path+cc + "/"+cc+"_formated.csv");
@@ -154,7 +154,7 @@ public class FR {
 		ServicesGeocoding.set(BingGeocoder.get(), data, "lon", "lat", true, true);
 
 		CSVUtil.addColumns(data, HCUtil.cols, "");
-		ValidateCSV.validate(data, cc);
+		Validation.validate(data, cc);
 		CSVUtil.save(data, HCUtil.path+cc + "/"+cc+".csv");
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path+cc + "/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 

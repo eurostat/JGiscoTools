@@ -20,7 +20,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
  * @author julien Gaffuri
  *
  */
-public class ValidateCSV {
+public class Validation {
 
 	/**
 	 * @param args

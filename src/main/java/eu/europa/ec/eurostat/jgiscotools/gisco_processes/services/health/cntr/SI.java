@@ -7,7 +7,7 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ServicesGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.HCUtil;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.ValidateCSV;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.Validation;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
@@ -46,7 +46,7 @@ public class SI {
 		ServicesGeocoding.set(BingGeocoder.get(), data, "lon", "lat", true, true);
 
 		CSVUtil.addColumns(data, HCUtil.cols, "");
-		ValidateCSV.validate(data, "SI");
+		Validation.validate(data, "SI");
 
 		// save
 		System.out.println(data.size());

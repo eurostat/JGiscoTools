@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.HCUtil;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.ValidateCSV;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.health.Validation;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
@@ -97,7 +97,7 @@ public class DE {
 		// save
 		System.out.println(data.size());
 		CSVUtil.addColumns(data, HCUtil.cols, "");
-		ValidateCSV.validate(data, "DE");
+		Validation.validate(data, "DE");
 		CSVUtil.save(data, HCUtil.path + "DE/DE.csv");
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + "DE/DE.gpkg", ProjectionUtil.getWGS_84_CRS());
 	}
