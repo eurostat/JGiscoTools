@@ -20,8 +20,6 @@ public class IE {
 		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path+cc + "/IE_raw.csv");
 		System.out.println(data.size());
 
-		CSVUtil.renameColumn(data, "name", "hospital_name");
-		CSVUtil.renameColumn(data, "alternate_name", "site_name");
 		CSVUtil.renameColumn(data, "web", "url");
 		CSVUtil.renameColumn(data, "telephone", "tel");
 		CSVUtil.removeColumn(data, "fax");
@@ -32,16 +30,25 @@ public class IE {
 		CSVUtil.renameColumn(data, "subcategory", "facility_type");
 
 		CSVUtil.addColumn(data, "cc", cc);
+		CSVUtil.addColumn(data, "site_name", "");
 		CSVUtil.addColumn(data, "ref_date", "01/04/2020");
 		CSVUtil.addColumn(data, "pub_date", "");
 		CSVUtil.addColumn(data, "geo_qual", "1");
 		CSVUtil.addColumn(data, "emergency", "");
 		CSVUtil.addColumn(data, "public_private", "");
 
-		//address
+		//TODO try to further decompose the addresses OR use reverse geocoding
+		CSVUtil.renameColumn(data, "address", "street");
+
 		for(Map<String, String> h : data) {
+			//name
+			String name1 = h.get("name");
+			String name2 = h.get("alternate_name");
+			String name = name1.length()>name2.length() ? name1 : name2;
+			h.put("hospital_name", name);
 		}
-		CSVUtil.removeColumn(data, "address");
+		CSVUtil.removeColumn(data, "name");
+		CSVUtil.removeColumn(data, "alternate_name");
 
 		Validation.validate(data, cc);
 
