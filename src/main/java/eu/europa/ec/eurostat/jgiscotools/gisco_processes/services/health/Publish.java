@@ -99,6 +99,20 @@ public class Publish {
 		GeoData.save(fs, destinationPath+"data/geojson/all.geojson", ProjectionUtil.getWGS_84_CRS());
 		GeoData.save(fs, destinationPath+"data/gpkg/all.gpkg", ProjectionUtil.getWGS_84_CRS());
 
+
+		//export for web
+		ArrayList<Map<String, String>> data = CSVUtil.load(destinationPath+"data/csv/all.csv");
+		for(Map<String, String> d : data) {
+			//load lat/lon
+			double lon = Double.parseDouble(d.get("lon"));
+			double lat = Double.parseDouble(d.get("lat"));
+			d.remove("lon");
+			d.remove("lat");
+
+		
+		}
+
+		
 		System.out.println("End");
 	}
 
