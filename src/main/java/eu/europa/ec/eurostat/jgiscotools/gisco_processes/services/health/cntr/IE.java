@@ -20,6 +20,7 @@ public class IE {
 		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path+cc + "/IE_raw.csv");
 		System.out.println(data.size());
 
+		//rename and delete columns
 		CSVUtil.renameColumn(data, "web", "url");
 		CSVUtil.renameColumn(data, "telephone", "tel");
 		CSVUtil.removeColumn(data, "fax");
@@ -29,6 +30,7 @@ public class IE {
 		CSVUtil.removeColumn(data, "category");
 		CSVUtil.renameColumn(data, "subcategory", "facility_type");
 
+		//add columns
 		CSVUtil.addColumn(data, "cc", cc);
 		CSVUtil.addColumn(data, "site_name", "");
 		CSVUtil.addColumn(data, "ref_date", "01/04/2020");
@@ -37,16 +39,20 @@ public class IE {
 		CSVUtil.addColumn(data, "emergency", "");
 		CSVUtil.addColumn(data, "public_private", "");
 
+		//handle complex columns
 		for(Map<String, String> h : data) {
-			//name
+
+			//name: get the longer among 'name' and 'alternate_name'.
 			String name1 = h.get("name");
 			String name2 = h.get("alternate_name");
 			String name = name1.length()>name2.length() ? name1 : name2;
 			h.put("hospital_name", name);
 
+			//decompose addresses
 			String add = h.get("address");
 
-			//get postcodes A91 E671
+			//get postcodes. Pattern: A91 E671
+			h.put("postcode", "");
 			for(String part : add.split(",")) {
 				part = part.trim();
 				if(part.length() != 8) continue;
@@ -57,42 +63,41 @@ public class IE {
 			}
 			add = collapse(add, ",");
 
-			//remove county or hospital part
+			//filter 'county' or 'hospital' part
 			for(String part : add.split(",")) {
 				part = part.trim();
-				if(!part.contains("Co. ") && !part.contains("Co ") && !part.contains("ospital")) continue;
+				if(!part.contains("Co. ") && !part.contains("Co ") && !part.toLowerCase().contains("hospital") && !part.toLowerCase().contains("centre")) continue;
 				add = add.replace(part, "").trim();
 			}
 			add = collapse(add, ",");
 
+			//handle rest of the address: street and city part
 			String[] parts = add.split(",");
-			switch (parts.length) {
-			case 1:
-				h.put("city", parts[0]);
-				break;
-			case 2:
-				h.put("street", parts[0]);
-				h.put("city", parts[1]);
-				break;
-			default:
-				//System.out.println(parts.length);
-				h.put("street", add);
-				break;
-			}
+			String city = parts[parts.length-1].trim();
+			h.put("city", city);
+			add = add.replace(city, "");
+			add = collapse(add, ",").trim();
+			h.put("street", add);
 		}
-		//TODO try to further decompose the addresses OR use reverse geocoding
+
+		//remove columns
 		CSVUtil.removeColumn(data, "address");
 		CSVUtil.removeColumn(data, "name");
 		CSVUtil.removeColumn(data, "alternate_name");
 
+		//validation
 		Validation.validate(data, cc);
 
+		//save
 		System.out.println("Save " + data.size());
 		CSVUtil.save(data, HCUtil.path+cc + "/"+cc+".csv");
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path+cc + "/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
 	}
+
+
+
 
 	private static String collapse(String s, String sep) {
 		String out = "";
