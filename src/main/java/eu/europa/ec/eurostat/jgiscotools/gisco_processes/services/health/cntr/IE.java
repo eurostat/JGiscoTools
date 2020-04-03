@@ -37,16 +37,37 @@ public class IE {
 		CSVUtil.addColumn(data, "emergency", "");
 		CSVUtil.addColumn(data, "public_private", "");
 
-		//TODO try to further decompose the addresses OR use reverse geocoding
-		CSVUtil.renameColumn(data, "address", "street");
-
 		for(Map<String, String> h : data) {
 			//name
 			String name1 = h.get("name");
 			String name2 = h.get("alternate_name");
 			String name = name1.length()>name2.length() ? name1 : name2;
 			h.put("hospital_name", name);
+
+			String add = h.get("address");
+
+			//get postcodes A91 E671
+			for(String part : add.split(",")) {
+				part = part.trim();
+				if(part.length() != 8) continue;
+				if(!part.equals(part.toUpperCase())) continue;
+				if(!part.contains(" ")) continue;
+				h.put("postcode", part);
+				add = add.replace(part, "").trim();
+			}
+
+			//remove county
+			for(String part : add.split(",")) {
+				part = part.trim();
+				if(!part.contains("Co.")) continue;
+				System.out.println(part);
+			}
+
+			h.put("street", add);
+			//System.out.println(add);
 		}
+		//TODO try to further decompose the addresses OR use reverse geocoding
+		CSVUtil.removeColumn(data, "address");
 		CSVUtil.removeColumn(data, "name");
 		CSVUtil.removeColumn(data, "alternate_name");
 
