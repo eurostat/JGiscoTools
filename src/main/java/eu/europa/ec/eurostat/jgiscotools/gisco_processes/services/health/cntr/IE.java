@@ -55,16 +55,30 @@ public class IE {
 				h.put("postcode", part);
 				add = add.replace(part, "").trim();
 			}
+			add = collapse(add, ",");
 
-			//remove county
+			//remove county or hospital part
 			for(String part : add.split(",")) {
 				part = part.trim();
-				if(!part.contains("Co.")) continue;
-				System.out.println(part);
+				if(!part.contains("Co. ") && !part.contains("Co ") && !part.contains("ospital")) continue;
+				add = add.replace(part, "").trim();
 			}
+			add = collapse(add, ",");
 
-			h.put("street", add);
-			//System.out.println(add);
+			String[] parts = add.split(",");
+			switch (parts.length) {
+			case 1:
+				h.put("city", parts[0]);
+				break;
+			case 2:
+				h.put("street", parts[0]);
+				h.put("city", parts[1]);
+				break;
+			default:
+				//System.out.println(parts.length);
+				h.put("street", add);
+				break;
+			}
 		}
 		//TODO try to further decompose the addresses OR use reverse geocoding
 		CSVUtil.removeColumn(data, "address");
@@ -78,6 +92,16 @@ public class IE {
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path+cc + "/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
+	}
+
+	private static String collapse(String s, String sep) {
+		String out = "";
+		for(String part : s.split(sep)) {
+			part = part.trim();
+			if(part.isEmpty()) continue;
+			out += (out.isEmpty()?"":", ") + part;
+		}
+		return out;
 	}
 
 }
