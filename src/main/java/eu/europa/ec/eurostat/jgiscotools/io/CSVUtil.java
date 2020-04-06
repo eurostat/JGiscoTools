@@ -29,11 +29,11 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 public class CSVUtil {
 
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		ArrayList<Map<String, String>> a = load("src/test/resources/csv/test.csv");
 		System.out.println(a);
 		save(a, "target/out.csv");
-	}
+	}*/
 
 
 	/**
@@ -95,9 +95,9 @@ public class CSVUtil {
 		}
 	}
 
-	public static HashSet<String> getUniqueValues(Collection<HashMap<String, String>> data, String key, boolean print) {
+	public static HashSet<String> getUniqueValues(Collection<Map<String, String>> data, String key, boolean print) {
 		HashSet<String> values = new HashSet<String>();
-		for(HashMap<String, String> obj : data)
+		for(Map<String, String> obj : data)
 			values.add(obj.get(key));
 		if(print){
 			System.out.println(key + " " + values.size()+" values");
@@ -151,6 +151,93 @@ public class CSVUtil {
 			out.add(f);
 		}
 		return out;
+	}
+
+
+
+
+
+	public static void setValue(Collection<Map<String, String>> data, String col, String value) {
+		for(Map<String, String> r : data)
+			r.put(col, value);
+	}
+
+	public static void addColumn(Collection<Map<String, String>> data, String col, String defaultValue) {
+		for(Map<String, String> h : data) {
+			if(h.get(col) == null || "".equals(h.get(col))) {
+				h.put(col, defaultValue);
+			}
+		}
+	}
+
+	public static void addColumns(Collection<Map<String, String>> data, String[] cols, String defaultValue) {
+		for(String col : cols)
+			addColumn(data, col, defaultValue);
+	}
+
+	public static void removeColumn(Collection<Map<String, String>> data, String col) {
+		for(Map<String, String> h : data) {
+			if(h.get(col) != null)
+				h.remove(col);
+		}
+	}
+
+	public static void renameColumn(Collection<Map<String, String>> data, String oldName, String newName) {
+		for(Map<String, String> h : data) {
+			if(h.get(oldName) != null) {
+				h.put(newName, h.get(oldName));
+				h.remove(oldName);
+			}
+		}
+	}
+
+	public static void replaceValue(Collection<Map<String, String>> data, String col, String iniVal, String finVal) {
+		for(Map<String, String> h : data) {
+			String v = h.get(col);
+			if(iniVal == null && v == null || iniVal != null && iniVal.equals(v))
+				h.put(col, finVal);
+		}
+	}
+
+	public static void replaceValue(Collection<Map<String, String>> data, String iniVal, String finVal) {
+		for(Map<String, String> h : data)
+			for(Entry<String,String> e : h.entrySet()) {
+				String v = e.getValue();
+				if(iniVal == null && v == null || iniVal != null && iniVal.equals(v))
+					e.setValue(finVal);
+			}
+	}
+
+	public static ArrayList<String> getValues(Collection<Map<String, String>> data, String col) {
+		ArrayList<String> out = new ArrayList<>();
+		for(Map<String, String> h : data)
+			out.add(h.get(col));
+		return out;
+	}
+
+
+
+	public static Collection<Map<String, String>> aggregateById(Collection<Map<String, String>> data, String idCol, String...  sumCols) {
+		HashMap<String, Map<String, String>> ind = new HashMap<String, Map<String, String>>();
+		for(Map<String, String> h : data) {
+			String id  = h.get(idCol);
+			Map<String, String> h_ = ind.get(id);
+			if(h_ == null) {
+				ind.put(id, h);
+			} else {
+				//increment number of beds
+				for(String sumCol : sumCols) {					
+					String nbs = h.get(sumCol);
+					if(nbs == null || nbs.isEmpty()) continue;
+					double nb = Double.parseDouble(nbs);
+					String nbs_ = h_.get(sumCol);
+					if(nbs_ == null || nbs_.isEmpty()) { h_.put(sumCol, ""+nb); continue; }
+					double nb_ = Double.parseDouble(nbs_);
+					h_.put(sumCol, ""+(nb+nb_));
+				}
+			}
+		}
+		return ind.values();
 	}
 
 }

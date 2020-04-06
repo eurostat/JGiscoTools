@@ -1,7 +1,6 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.education;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

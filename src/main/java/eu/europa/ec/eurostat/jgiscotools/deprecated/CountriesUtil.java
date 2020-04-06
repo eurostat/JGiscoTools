@@ -68,4 +68,12 @@ public class CountriesUtil {
 		makeEuropeGeometry(true);
 	}*/
 
+
+	//971 GP guadeloupe
+	//972 MQ martinique
+	//973 GF guyane
+	//974 RE reunion
+	//975 PM saint pierre et miquelon
+	//976 YT mayotte
+
 }

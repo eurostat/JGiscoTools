@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 
@@ -71,17 +72,17 @@ public class Util {
 
 
 	//index list of hashmaps (only one value)
-	public static HashMap<String, String> index(ArrayList<HashMap<String, String>> data, String indexKey, String valueCol) {
+	public static HashMap<String, String> index(ArrayList<Map<String, String>> data, String indexKey, String valueCol) {
 		HashMap<String, String> ind = new HashMap<String, String>();
-		for(HashMap<String, String> elt : data)
+		for(Map<String, String> elt : data)
 			ind.put(elt.get(indexKey), elt.get(valueCol));
 		return ind;
 	}
 
 	//index list of hashmaps (all values)
-	public static HashMap<String,HashMap<String,String>> index(ArrayList<HashMap<String, String>> data, String indexKey) {
-		HashMap<String,HashMap<String,String>> ind = new HashMap<String,HashMap<String,String>>();
-		for(HashMap<String, String> elt : data)
+	public static HashMap<String,Map<String,String>> index(ArrayList<Map<String, String>> data, String indexKey) {
+		HashMap<String,Map<String,String>> ind = new HashMap<>();
+		for(Map<String, String> elt : data)
 			ind.put(elt.get(indexKey), elt);
 		return ind;
 	}
