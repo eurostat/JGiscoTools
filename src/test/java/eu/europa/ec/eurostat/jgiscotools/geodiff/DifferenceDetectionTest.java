@@ -23,11 +23,11 @@ import junit.framework.TestCase;
  */
 public class DifferenceDetectionTest extends TestCase {
 
-	/*public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		junit.textui.TestRunner.run(DifferenceDetectionTest.class);
-		//new ChangeDetectionTest().testSurf();
-		//new ChangeDetectionTest().testPt();
-	}*/
+		//new DifferenceDetectionTest().testSurf();
+		//new DifferenceDetectionTest().testPt();
+	}
 
 	private String path = "src/test/resources/difference_detection/";
 
@@ -36,22 +36,18 @@ public class DifferenceDetectionTest extends TestCase {
 		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 
 		//load datasets
-		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_surf.gpkg");
+		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_surf.gpkg", "id");
 		assertEquals(13, fsIni.size());
-		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"fin_surf.gpkg");
+		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"fin_surf.gpkg", "id");
 		assertEquals(14, fsFin.size());
-
-		//set identifiers
-		FeatureUtil.setId(fsIni, "id");
-		FeatureUtil.setId(fsFin, "id");
 
 		//check geometries
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPolygon.class));
 		assertTrue(JTSGeomUtil.checkGeometry(fsFin, true, MultiPolygon.class));
 
 		//check ids
-		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, "id").size());
-		assertEquals(0, FeatureUtil.checkIdentfier(fsFin, "id").size());
+		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
+		assertEquals(0, FeatureUtil.checkIdentfier(fsFin, null).size());
 
 		//build change detection object
 		double resolution = 1;
@@ -115,22 +111,18 @@ public class DifferenceDetectionTest extends TestCase {
 		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 
 		//load datasets
-		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_pt.gpkg");
+		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_pt.gpkg", "id");
 		assertEquals(10, fsIni.size());
-		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"fin_pt.gpkg");
+		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"fin_pt.gpkg", "id");
 		assertEquals(10, fsFin.size());
-
-		//set identifiers
-		FeatureUtil.setId(fsIni, "id");
-		FeatureUtil.setId(fsFin, "id");
 
 		//check geometries
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPoint.class));
 		assertTrue(JTSGeomUtil.checkGeometry(fsFin, true, MultiPoint.class));
 
 		//check ids
-		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, "id").size());
-		assertEquals(0, FeatureUtil.checkIdentfier(fsFin, "id").size());
+		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
+		assertEquals(0, FeatureUtil.checkIdentfier(fsFin, null).size());
 
 
 
@@ -194,22 +186,18 @@ public class DifferenceDetectionTest extends TestCase {
 		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 
 		//load datasets
-		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_lin.gpkg");
+		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_lin.gpkg", "id");
 		assertEquals(9, fsIni.size());
-		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"fin_lin.gpkg");
+		ArrayList<Feature> fsFin = GeoData.getFeatures(path+"fin_lin.gpkg", "id");
 		assertEquals(10, fsFin.size());
-
-		//set identifiers
-		FeatureUtil.setId(fsIni, "id");
-		FeatureUtil.setId(fsFin, "id");
 
 		//check geometries
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiLineString.class));
 		assertTrue(JTSGeomUtil.checkGeometry(fsFin, true, MultiLineString.class));
 
 		//check ids
-		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, "id").size());
-		assertEquals(0, FeatureUtil.checkIdentfier(fsFin, "id").size());
+		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
+		assertEquals(0, FeatureUtil.checkIdentfier(fsFin, null).size());
 
 		//build change detection object
 		double resolution = 1;

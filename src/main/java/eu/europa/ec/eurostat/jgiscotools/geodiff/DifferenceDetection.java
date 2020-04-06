@@ -169,7 +169,6 @@ public class DifferenceDetection {
 		for(String id : idsDiff) {
 			Feature f = ind1.get(id);
 			Feature ch = FeatureUtil.copy(f);
-			ch.setAttribute("ch_id", f.getID());
 			ch.setAttribute("GeoDiff", "D");
 			differences.add(ch);
 		}
@@ -184,7 +183,6 @@ public class DifferenceDetection {
 		for(String id : idsDiff) {
 			Feature f = ind2.get(id);
 			Feature ch = FeatureUtil.copy(f);
-			ch.setAttribute("ch_id", f.getID());
 			ch.setAttribute("GeoDiff", "I");
 			differences.add(ch);
 		}
@@ -231,7 +229,6 @@ public class DifferenceDetection {
 
 		//set id
 		difference.setID(fs2.getID());
-		difference.setAttribute("ch_id", fs2.getID());
 
 		//set geometry
 		difference.setGeometry(fs2.getGeometry());
@@ -298,7 +295,8 @@ public class DifferenceDetection {
 			HausdorffDistance hd = new HausdorffDistance(g1, g2);
 			Feature hdf = new Feature();
 			hdf.setGeometry(hd.toGeom());
-			hdf.setAttribute("ch_id", id);
+			hdf.setID(id);
+			hdf.setAttribute("id", id);
 			hdf.setAttribute("hdist", hd.getDistance());
 			hausdorffGeomDifferences.add(hdf);
 
@@ -313,7 +311,8 @@ public class DifferenceDetection {
 				if(gD!=null && !gD.isEmpty()) {
 					Feature f = new Feature();
 					f.setGeometry(JTSGeomUtil.extract(gD, geomType));
-					f.setAttribute("ch_id", id);
+					f.setID(id+"_D");
+					f.setAttribute("id", id+"_D");
 					f.setAttribute("GeoDiff", "D");
 					geomDifferences.add(f);
 				}
@@ -330,7 +329,8 @@ public class DifferenceDetection {
 				if(gI!=null && !gI.isEmpty()) {
 					Feature f = new Feature();
 					f.setGeometry(JTSGeomUtil.extract(gI, geomType));
-					f.setAttribute("ch_id", id);
+					f.setID(id+"_I");
+					f.setAttribute("id", id+"_I");
 					f.setAttribute("GeoDiff", "I");
 					geomDifferences.add(f);
 				}
@@ -466,14 +466,13 @@ public class DifferenceDetection {
 
 			//retrieve type of difference and change/feature id
 			String ct = ch.getAttribute("GeoDiff").toString();
-			String id = ch.getAttribute("ch_id").toString();
+			String id = ch.getID();
 
 			//new feature insertion
 			if("I".equals(ct)) {
 				LOGGER.info("New feature inserted. id=" + id);
 				Feature f = FeatureUtil.copy(ch);
 				f.getAttributes().remove("GeoDiff");
-				f.getAttributes().remove("ch_id");
 				fs.add(f);
 				continue;
 			}
@@ -533,7 +532,6 @@ public class DifferenceDetection {
 		for(Entry<String,Object> att : diff.getAttributes().entrySet()) {
 
 			if("GeoDiff".equals(att.getKey())) continue;
-			if("ch_id".equals(att.getKey())) continue;
 			if(att.getValue() == null) continue;
 
 			f.setAttribute(att.getKey(), att.getValue());
