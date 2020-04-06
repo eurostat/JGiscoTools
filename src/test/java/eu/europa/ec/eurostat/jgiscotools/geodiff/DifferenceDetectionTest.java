@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 public class DifferenceDetectionTest extends TestCase {
 
 	/*public static void main(String[] args) throws Exception {
-		junit.textui.TestRunner.run(ChangeDetectionTest.class);
+		junit.textui.TestRunner.run(DifferenceDetectionTest.class);
 		//new ChangeDetectionTest().testSurf();
 		//new ChangeDetectionTest().testPt();
 	}*/
