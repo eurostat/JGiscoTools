@@ -27,8 +27,10 @@ public class Validation {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Start");
-		//validate(HCUtil.path + "ES/CSV/ES_Geocoded.csv", "ES");
-		for(String cc : HCUtil.ccs) validate(HCUtil.path + cc+"/"+cc+".csv", cc);
+		//validate(HCUtil.path + "ES/CSV/ES_no_Geocoded.csv", "ES");
+		//validate(HCUtil.path + "NO/CSV/NO_from_Web.csv", "NO");
+		validate(HCUtil.path + "BG/BG.csv", "BG");
+		//for(String cc : HCUtil.ccs) validate(HCUtil.path + cc+"/"+cc+".csv", cc);
 		System.out.println("End");
 	}
 
