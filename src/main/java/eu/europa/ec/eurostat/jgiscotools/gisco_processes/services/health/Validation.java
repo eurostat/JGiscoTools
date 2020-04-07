@@ -31,7 +31,7 @@ public class Validation {
 
 		//validate(HCUtil.path + "ES/CSV/ES_no_Geocoded.csv", "ES");
 		//validate(HCUtil.path + "NO/CSV/NO_from_Web.csv", "NO");
-		validate(HCUtil.path + "BG/BG.csv", "BG");
+		//validate(HCUtil.path + "BG/BG.csv", "BG");
 
 		System.out.println("End");
 	}
