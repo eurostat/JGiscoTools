@@ -24,7 +24,7 @@ public class HCUtil {
 	public static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
 
 	//country codes covered
-	static String[] ccs = new String[] { "AT", "BE", "CH", "CY", "DE", "DK", "ES", "FI", "FR", /*"HU",*/ "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI"/*, "UK"*/ };
+	static String[] ccs = new String[] { "AT", "BE", "BG","CH", "CY", "DE", "DK", "ES", "FI", "FR", /*"HU",*/ "IE", "IT", "LT", "LU", "LV", "MT", "NL", /*"NO",*/ "PL", "PT", "RO", "SE", "SI"/*, "UK"*/ };
 
 	//CSV columns
 	public static String[] cols = new String[] {
