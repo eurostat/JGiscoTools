@@ -27,18 +27,15 @@ public class Validation {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Start");
-
-		//load
-		for(String cc : HCUtil.ccs) {
-			System.out.println("*** " + cc);
-
-			//load data
-			ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + cc+"/"+cc+".csv");
-			System.out.println(data.size());
-
-			validate(data, cc);
-		}
+		//validate(HCUtil.path + "ES/CSV/ES_Geocoded.csv", "ES");
+		for(String cc : HCUtil.ccs) validate(HCUtil.path + cc+"/"+cc+".csv", cc);
 		System.out.println("End");
+	}
+
+	public static void validate(String filePath, String cc) {
+		ArrayList<Map<String, String>> data = CSVUtil.load(filePath);
+		System.out.println(data.size());
+		validate(data, cc);
 	}
 
 	public static void validate(Collection<Map<String, String>> data, String cc) {
