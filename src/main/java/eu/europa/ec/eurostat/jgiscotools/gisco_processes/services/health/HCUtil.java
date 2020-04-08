@@ -24,7 +24,7 @@ public class HCUtil {
 	public static String path = "E:/dissemination/shared-data/MS_data/Service - Health/";
 
 	//country codes covered
-	static String[] ccs = new String[] { "AT", "BE", "BG","CH", "CY", "DE", "DK", "ES", "FI", "FR", /*"HU",*/ "IE", "IT", "LT", "LU", "LV", "MT", "NL", /*"NO",*/ "PL", "PT", "RO", "SE", "SI"/*, "UK"*/ };
+	static String[] ccs = new String[] { "AT", "BE", "BG","CH", "CY", "DE", "DK", "ES", "FI", "FR", /*"HU",*/ "IE", "IT", "LT", "LU", "LV", "MT", "NL", "NO", "PL", "PT", "RO", "SE", "SI"/*, "UK"*/ };
 
 	//CSV columns
 	public static String[] cols = new String[] {
@@ -103,7 +103,5 @@ public class HCUtil {
 		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + cc+"/"+cc+".csv");
 		GeoData.save(CSVUtil.CSVToFeatures(data, "lon", "lat"), HCUtil.path + cc+"/"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 	}
-
-
 
 }

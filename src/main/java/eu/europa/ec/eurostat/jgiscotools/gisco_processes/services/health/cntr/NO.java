@@ -26,8 +26,11 @@ public class NO {
 	public static void main(String[] args) {
 
 		//load input data
-		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path+cc + "/"+cc+"_formated.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(HCUtil.path + "NO/CSV/NO_from_Web.csv");
 		System.out.println(data.size());
+
+		CSVUtil.removeColumn(data, "Besøksadresse");
+		CSVUtil.addColumn(data, "ref_date", "01/01/2020");
 
 		LocalParameters.loadProxySettings();
 		ServicesGeocoding.set(BingGeocoder.get(), data, "lon", "lat", true, true);
