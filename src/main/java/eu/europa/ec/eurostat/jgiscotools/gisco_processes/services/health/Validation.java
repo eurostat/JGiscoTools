@@ -27,7 +27,7 @@ public class Validation {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Start");
-		//for(String cc : HCUtil.ccs) validate(HCUtil.path + cc+"/"+cc+".csv", cc);
+		for(String cc : HCUtil.ccs) validate(HCUtil.path + cc+"/"+cc+".csv", cc);
 
 		//validate(HCUtil.path + "ES/ES.csv", "ES");
 		//validate(HCUtil.path + "NO/CSV/NO_from_Web.csv", "NO");
