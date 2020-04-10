@@ -23,6 +23,14 @@ public class GeocodingAddress {
 	}
 
 	public String getCountryName() {
+		switch (this.countryCode) {
+		case "GP": return "Guadeloupe";
+		case "MQ": return "Martinique";
+		case "GF": return "Guyane française";
+		case "RE": return "Réunion";
+		case "PM": return "Saint-Pierre et Miquelon";
+		case "YT": return "Mayotte";
+		}
 		String name = NUTSUtils.getName(this.countryCode);
 		name = name.replace(" (until 1990 former territory of the FRG)", "");
 		return name;
