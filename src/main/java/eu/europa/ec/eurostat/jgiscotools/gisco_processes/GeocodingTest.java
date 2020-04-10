@@ -16,6 +16,7 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ServicesGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
@@ -37,7 +38,8 @@ public class GeocodingTest {
 		for(Map<String, String> d : data) {
 			if(i++>20) break;
 
-			GeocodingAddress add = new GeocodingAddress();
+			//get address
+			GeocodingAddress add = ServicesGeocoding.toGeocodingAddress(d, true);
 
 			//compute position with bing geocoder
 			GeocodingResult grB = BingGeocoder.get().geocode(add, true);

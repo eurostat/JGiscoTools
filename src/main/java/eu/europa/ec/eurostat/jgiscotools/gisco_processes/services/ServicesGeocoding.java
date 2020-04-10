@@ -16,7 +16,7 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
  */
 public class ServicesGeocoding {
 
-	private static GeocodingAddress toGeocodingAddress(Map<String,String> s, boolean usePostcode) {
+	public static GeocodingAddress toGeocodingAddress(Map<String,String> s, boolean usePostcode) {
 		return new GeocodingAddress(
 				null,
 				s.get("house_number"),
