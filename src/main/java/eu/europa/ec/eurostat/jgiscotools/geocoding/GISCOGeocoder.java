@@ -3,9 +3,12 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.geocoding;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
@@ -28,58 +31,59 @@ public class GISCOGeocoder extends Geocoder {
 
 	protected String toQueryURL(GeocodingAddress ad) {
 		try {
+			//version with https://europa.eu/webtools/rest/gisco/api?q=
 			String query = "";
 
-			if(ad.city != null)
-				query += "&city=" + URLEncoder.encode(ad.city, "UTF-8");
-			if(ad.countryCode != null)
-				query += "&country=" + URLEncoder.encode(ad.getCountryName(), "UTF-8");
-			if(ad.postalcode != null)
-				query += "&postalcode=" + URLEncoder.encode(ad.postalcode, "UTF-8");
-
 			if(ad.street != null)
-				query += "&street=" + URLEncoder.encode(ad.street, "UTF-8");
+				query += ad.street;
 			else {
 				String street = "";
 				if(ad.housenumber != null)
-					street += URLEncoder.encode(ad.housenumber, "UTF-8") + (ad.streetname != null? " ":"");
+					street += ad.housenumber + (ad.streetname != null? " ":"");
 				if(ad.streetname != null)
-					street += URLEncoder.encode(ad.streetname, "UTF-8");
+					street += ad.streetname;
 				if(!street.equals(""))
-					query += "&street=" + URLEncoder.encode(street, "UTF-8");
+					query += street;
 			}
 
-			String url = "https://europa.eu/webtools/rest/gisco/nominatim/search?" + query + "&polygon=0&viewbox=&format=json&limit=1";
-			//String url = "https://europa.eu/webtools/rest/gisco/api?q=";
-			return url;
+			if(ad.postalcode != null)
+				query += ", " + ad.postalcode;
+			if(ad.city != null)
+				query += " " + ad.city;
+			if(ad.countryCode != null)
+				query += ", " + ad.getCountryName();
 
-		} catch (UnsupportedEncodingException e) {
+			query = URLEncoder.encode(query, "UTF-8");
+
+			return "https://europa.eu/webtools/rest/gisco/api?q=" + query + "&limit=1";
+
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-
 	protected GeocodingResult decodeResult(String queryResult) {
-		String[] parts = queryResult.split(",");
-		Coordinate c = new Coordinate();
-		for(String part : parts) {
-			if(part.contains("\"lat\":")) {
-				part = part.replace("\"lat\":\"", "");
-				part = part.replace("\"", "");
-				c.y = Double.parseDouble(part);
-			}
-			if(part.contains("\"lon\":")) {
-				part = part.replace("\"lon\":\"", "");
-				part = part.replace("\"", "");
-				c.x = Double.parseDouble(part);
-			}
-		}
 		GeocodingResult gr = new GeocodingResult();
-		gr.position = c;
-
-		//TODO add quality indicator
-
+		try {
+			JSONObject json = (JSONObject) new JSONParser().parse(queryResult);
+			JSONArray fs = (JSONArray)json.get("features");
+			if(fs.size() == 0) {
+				gr.position = new Coordinate(0,0);
+				gr.quality = 3;
+				return gr;
+			}
+			JSONObject f = (JSONObject)fs.get(0);
+			JSONArray c = (JSONArray)((JSONObject)f.get("geometry")).get("coordinates");
+			gr.position = new Coordinate(
+					Double.parseDouble(c.get(0).toString()),
+					Double.parseDouble(c.get(1).toString())
+					);
+			gr.quality = -1;
+		} catch (ParseException e) {
+			System.err.println("Could not parse JSON: " + queryResult);
+			e.printStackTrace();
+		}
 		return gr;
 	}
 

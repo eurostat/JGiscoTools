@@ -23,7 +23,9 @@ public class GeocodingAddress {
 	}
 
 	public String getCountryName() {
-		return NUTSUtils.getName(this.countryCode);
+		String name = NUTSUtils.getName(this.countryCode);
+		name = name.replace(" (until 1990 former territory of the FRG)", "");
+		return name;
 	}
 
 }

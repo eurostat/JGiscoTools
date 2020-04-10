@@ -33,7 +33,7 @@ public class GeocodingTest {
 		System.out.println(data.size());
 
 		Collections.shuffle(data);
-		int i=0; int nb = 1;
+		int i=0; int nb = 5;
 
 		LocalParameters.loadProxySettings();
 
