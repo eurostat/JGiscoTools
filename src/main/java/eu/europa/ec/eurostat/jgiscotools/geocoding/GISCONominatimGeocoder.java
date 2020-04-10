@@ -51,6 +51,23 @@ public class GISCONominatimGeocoder extends Geocoder {
 			String url = "https://europa.eu/webtools/rest/gisco/nominatim/search?" + query + "&polygon=0&viewbox=&format=json&limit=1";
 			return url;
 
+			/*
+			http(s)://europa.eu/webtools/rest/gisco/nominatim/search.php?q=berlin
+&format=json
+&countrycode=DE
+&limit=1
+
+
+addressdetails=0|1
+
+street=<housenumber> <streetname>
+city=<city>
+county=<county>
+state=<state>
+country=<country>
+postalcode=<postalcode>
+
+			 */
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
