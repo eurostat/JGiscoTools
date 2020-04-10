@@ -53,8 +53,7 @@ public class GeocodingTest {
 			out.add(f);
 		}
 
-		//save
-		System.out.println(out.size());
+		System.out.println("Save - " + out.size());
 		GeoData.save(out, "C:\\Users\\gaffuju\\Desktop/geocoderValidation.gpkg", ProjectionUtil.getWGS_84_CRS());
 
 		System.out.println("End");
