@@ -49,7 +49,7 @@ public class GISCOGeocoder extends Geocoder {
 					query += "&street=" + URLEncoder.encode(street, "UTF-8");
 			}
 
-			String url = "https://europa.eu/webtools/rest/gisco/nominatim/search?" + query + "&polygon=0&viewbox=&format=json&limit=2";
+			String url = "https://europa.eu/webtools/rest/gisco/nominatim/search?" + query + "&polygon=0&viewbox=&format=json&limit=1";
 			//String url = "https://europa.eu/webtools/rest/gisco/api?q=";
 			return url;
 
