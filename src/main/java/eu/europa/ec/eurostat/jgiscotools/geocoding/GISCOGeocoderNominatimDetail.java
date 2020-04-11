@@ -5,6 +5,10 @@ package eu.europa.ec.eurostat.jgiscotools.geocoding;
 
 import java.net.URLEncoder;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
@@ -18,17 +22,15 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
  * @author clemoki
  *
  */
-public class GISCOGeocoderNominatimAdd extends Geocoder {
+public class GISCOGeocoderNominatimDetail extends Geocoder {
 
-	private GISCOGeocoderNominatimAdd() {}
-	private static final GISCOGeocoderNominatimAdd OBJ = new GISCOGeocoderNominatimAdd();
+	private GISCOGeocoderNominatimDetail() {}
+	private static final GISCOGeocoderNominatimDetail OBJ = new GISCOGeocoderNominatimDetail();
 	/** @return the instance. */
-	public static GISCOGeocoderNominatimAdd get() { return OBJ; }
+	public static GISCOGeocoderNominatimDetail get() { return OBJ; }
 
 	protected String toQueryURL(GeocodingAddress ad) {
 		try {
-			//TODO http(s)://europa.eu/webtools/rest/gisco/nominatim/search.php?q=berlin
-
 			String query = "";
 
 			if(ad.street != null)
@@ -63,8 +65,6 @@ public class GISCOGeocoderNominatimAdd extends Geocoder {
 
 
 	protected GeocodingResult decodeResult(String queryResult) {
-
-		System.out.println(queryResult);
 		/*
 		[{
 		"place_id":32850086,
@@ -91,28 +91,24 @@ public class GISCOGeocoderNominatimAdd extends Geocoder {
 			"country_code":"nl"}
 		}]
 		 */
-
-		//TODO better - get quality indicator
-		String[] parts = queryResult.split(",");
-		Coordinate c = new Coordinate();
-		for(String part : parts) {
-			if(part.contains("\"lat\":")) {
-				part = part.replace("\"lat\":\"", "");
-				part = part.replace("\"", "");
-				c.y = Double.parseDouble(part);
-			}
-			if(part.contains("\"lon\":")) {
-				part = part.replace("\"lon\":\"", "");
-				part = part.replace("\"", "");
-				c.x = Double.parseDouble(part);
-			}
-		}
 		GeocodingResult gr = new GeocodingResult();
-		gr.position = c;
-
-		//TODO add quality indicator ?
-		gr.quality = -1;
-
+		try {
+			JSONArray arr = ((JSONArray)new JSONParser().parse(queryResult));
+			if(arr.size() == 0) {
+				gr.position = new Coordinate(0,0);
+				gr.quality = 3;
+				return gr;
+			}
+			JSONObject json = (JSONObject) arr.get(0);
+			double lon = Double.parseDouble(json.get("lon").toString());
+			double lat = Double.parseDouble(json.get("lat").toString());
+			gr.position = new Coordinate(lon, lat);
+			//TODO add quality indicator. base on importance?
+			gr.quality = -1;
+		} catch (ParseException e) {
+			System.err.println("Could not parse JSON: " + queryResult);
+			e.printStackTrace();
+		}
 		return gr;
 	}
 

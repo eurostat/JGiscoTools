@@ -14,7 +14,7 @@ import org.locationtech.jts.geom.LineString;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderAPI;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderNominatimAdd;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderNominatimDetail;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
@@ -43,13 +43,13 @@ public class GeocodingTest {
 			//System.out.println("Save - " + outB.size());
 			//GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
-			Collection<Feature> outGNA = validate(data, GISCOGeocoderNominatimAdd.get(), "lon", "lat");
+			Collection<Feature> outGNA = validate(data, GISCOGeocoderNominatimDetail.get(), "lon", "lat");
 			System.out.println("Save - " + outGNA.size());
 			GeoData.save(outGNA, outPath + "geocoderValidationGISCO_NominatimAdd_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
-			Collection<Feature> outGAPI = validate(data, GISCOGeocoderAPI.get(), "lon", "lat");
-			System.out.println("Save - " + outGAPI.size());
-			GeoData.save(outGAPI, outPath + "geocoderValidationGISCO_API_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			//Collection<Feature> outGAPI = validate(data, GISCOGeocoderAPI.get(), "lon", "lat");
+			//System.out.println("Save - " + outGAPI.size());
+			//GeoData.save(outGAPI, outPath + "geocoderValidationGISCO_API_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
 			//TODO add 2 other GISCO geocoders
 		}
