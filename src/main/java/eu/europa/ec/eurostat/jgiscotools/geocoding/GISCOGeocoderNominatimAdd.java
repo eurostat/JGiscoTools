@@ -18,56 +18,43 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
  * @author clemoki
  *
  */
-public class GISCONominatimGeocoder extends Geocoder {
+public class GISCOGeocoderNominatimAdd extends Geocoder {
 
-	private GISCONominatimGeocoder() {}
-	private static final GISCONominatimGeocoder OBJ = new GISCONominatimGeocoder();
+	private GISCOGeocoderNominatimAdd() {}
+	private static final GISCOGeocoderNominatimAdd OBJ = new GISCOGeocoderNominatimAdd();
 	/** @return the instance. */
-	public static GISCONominatimGeocoder get() { return OBJ; }
+	public static GISCOGeocoderNominatimAdd get() { return OBJ; }
 
 	protected String toQueryURL(GeocodingAddress ad) {
 		try {
+			//TODO http(s)://europa.eu/webtools/rest/gisco/nominatim/search.php?q=berlin
+
 			String query = "";
 
-			if(ad.city != null)
-				query += "&city=" + URLEncoder.encode(ad.city, "UTF-8");
-			if(ad.countryCode != null)
-				query += "&country=" + URLEncoder.encode(ad.getCountryName(), "UTF-8");
-			if(ad.postalcode != null)
-				query += "&postalcode=" + URLEncoder.encode(ad.postalcode, "UTF-8");
-
 			if(ad.street != null)
-				query += "&street=" + URLEncoder.encode(ad.street, "UTF-8");
+				query += "&street=" + ad.street;
 			else {
 				String street = "";
 				if(ad.housenumber != null)
-					street += URLEncoder.encode(ad.housenumber, "UTF-8") + (ad.streetname != null? " ":"");
+					street += ad.housenumber + (ad.streetname != null? " ":"");
 				if(ad.streetname != null)
-					street += URLEncoder.encode(ad.streetname, "UTF-8");
+					street += ad.streetname;
 				if(!street.equals(""))
-					query += "&street=" + URLEncoder.encode(street, "UTF-8");
+					query += "&street=" + street;
+			}
+			if(ad.postalcode != null)
+				query += "&postalcode=" + ad.postalcode;
+			if(ad.city != null)
+				query += "&city=" + ad.city;
+			if(ad.countryCode != null) {
+				query += "&countrycode=" + ad.countryCode;
+				query += "&country=" + ad.getCountryName();
 			}
 
-			String url = "https://europa.eu/webtools/rest/gisco/nominatim/search?" + query + "&polygon=0&viewbox=&format=json&limit=1";
-			return url;
+			query = URLEncoder.encode(query, "UTF-8");
 
-			/*
-			http(s)://europa.eu/webtools/rest/gisco/nominatim/search.php?q=berlin
-&format=json
-&countrycode=DE
-&limit=1
+			return "https://europa.eu/webtools/rest/gisco/nominatim/search?addressdetails=1" + query + "&polygon=0&viewbox=&format=json&limit=1";
 
-
-addressdetails=0|1
-
-street=<housenumber> <streetname>
-city=<city>
-county=<county>
-state=<state>
-country=<country>
-postalcode=<postalcode>
-
-			 */
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -76,6 +63,7 @@ postalcode=<postalcode>
 
 
 	protected GeocodingResult decodeResult(String queryResult) {
+		//TODO better - get quality indicator
 		String[] parts = queryResult.split(",");
 		Coordinate c = new Coordinate();
 		for(String part : parts) {
@@ -93,7 +81,8 @@ postalcode=<postalcode>
 		GeocodingResult gr = new GeocodingResult();
 		gr.position = c;
 
-		//TODO add quality indicator
+		//TODO add quality indicator ?
+		gr.quality = -1;
 
 		return gr;
 	}
