@@ -22,12 +22,12 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
  * @author clemoki
  *
  */
-public class GISCOGeocoder extends Geocoder {
+public class GISCOGeocoderAPI extends Geocoder {
 
-	private GISCOGeocoder() {}
-	private static final GISCOGeocoder OBJ = new GISCOGeocoder();
+	private GISCOGeocoderAPI() {}
+	private static final GISCOGeocoderAPI OBJ = new GISCOGeocoderAPI();
 	/** @return the instance. */
-	public static GISCOGeocoder get() { return OBJ; }
+	public static GISCOGeocoderAPI get() { return OBJ; }
 
 	protected String toQueryURL(GeocodingAddress ad) {
 		try {

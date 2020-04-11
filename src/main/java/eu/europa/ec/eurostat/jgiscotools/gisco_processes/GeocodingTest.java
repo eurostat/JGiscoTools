@@ -13,7 +13,8 @@ import org.locationtech.jts.geom.LineString;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderAPI;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderNominatimAdd;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
@@ -32,23 +33,30 @@ public class GeocodingTest {
 		String outPath = "C:\\Users\\gaffuju\\Desktop/gv/";
 
 		//load hospital addresses - the ones with geolocation and address DE-RO
-		for(String cc : new String[] {/*"NL",*/ "DE", "RO"}) {
+		for(String cc : new String[] {"NL"/*, "DE", "RO"*/}) {
 			System.out.println("*** " + cc);
 			ArrayList<Map<String, String>> data = CSVUtil.load(inPath + "csv/"+cc+".csv");
 			System.out.println(data.size());
 
-			LocalParameters.loadProxySettings();
-			Collection<Feature> outB = validate(data, BingGeocoder.get(), "lon", "lat");
-			Collection<Feature> outG = validate(data, GISCOGeocoder.get(), "lon", "lat");
+			//LocalParameters.loadProxySettings();
+			//Collection<Feature> outB = validate(data, BingGeocoder.get(), "lon", "lat");
+			//System.out.println("Save - " + outB.size());
+			//GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
-			System.out.println("Save - " + outB.size());
-			GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
-			System.out.println("Save - " + outG.size());
-			GeoData.save(outG, outPath + "geocoderValidationGISCO_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			Collection<Feature> outGNA = validate(data, GISCOGeocoderNominatimAdd.get(), "lon", "lat");
+			System.out.println("Save - " + outGNA.size());
+			GeoData.save(outGNA, outPath + "geocoderValidationGISCO_NominatimAdd_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+
+			Collection<Feature> outGAPI = validate(data, GISCOGeocoderAPI.get(), "lon", "lat");
+			System.out.println("Save - " + outGAPI.size());
+			GeoData.save(outGAPI, outPath + "geocoderValidationGISCO_API_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+
+			//TODO add 2 other GISCO geocoders
 		}
 
 		System.out.println("End");
 	}
+
 
 	public static Collection<Feature> validate(Collection<Map<String, String>> data, Geocoder gc, String lonCol, String latCol) {
 		ArrayList<Feature> out = new ArrayList<>();
