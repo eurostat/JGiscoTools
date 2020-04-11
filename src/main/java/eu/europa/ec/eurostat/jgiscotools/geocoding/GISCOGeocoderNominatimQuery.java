@@ -56,7 +56,7 @@ public class GISCOGeocoderNominatimQuery extends Geocoder {
 
 			query = URLEncoder.encode(query, "UTF-8");
 
-			return "http(s)://europa.eu/webtools/rest/gisco/nominatim/search.php?q=" + query + "&polygon=0&viewbox=&format=json&limit=1";
+			return "https://europa.eu/webtools/rest/gisco/nominatim/search.php?q=" + query + "&polygon=0&viewbox=&format=json&limit=1";
 
 		} catch (Exception e) {
 			e.printStackTrace();

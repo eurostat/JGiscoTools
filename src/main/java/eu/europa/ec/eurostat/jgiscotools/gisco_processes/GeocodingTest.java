@@ -12,9 +12,9 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderAPI;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderNominatimDetail;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderNominatimQuery;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
@@ -43,15 +43,17 @@ public class GeocodingTest {
 			//System.out.println("Save - " + outB.size());
 			//GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
-			Collection<Feature> outGNA = validate(data, GISCOGeocoderNominatimDetail.get(), "lon", "lat");
-			System.out.println("Save - " + outGNA.size());
-			GeoData.save(outGNA, outPath + "geocoderValidationGISCO_NominatimAdd_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			Collection<Feature> outGD = validate(data, GISCOGeocoderNominatimDetail.get(), "lon", "lat");
+			System.out.println("Save - " + outGD.size());
+			GeoData.save(outGD, outPath + "geocoderValidationGISCO_NominatimDetail_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
-			//Collection<Feature> outGAPI = validate(data, GISCOGeocoderAPI.get(), "lon", "lat");
-			//System.out.println("Save - " + outGAPI.size());
-			//GeoData.save(outGAPI, outPath + "geocoderValidationGISCO_API_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			Collection<Feature> outGQ = validate(data, GISCOGeocoderNominatimQuery.get(), "lon", "lat");
+			System.out.println("Save - " + outGQ.size());
+			GeoData.save(outGQ, outPath + "geocoderValidationGISCO_NominatimQuery_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
-			//TODO add 2 other GISCO geocoders
+			Collection<Feature> outGAPI = validate(data, GISCOGeocoderAPI.get(), "lon", "lat");
+			System.out.println("Save - " + outGAPI.size());
+			GeoData.save(outGAPI, outPath + "geocoderValidationGISCO_API_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 		}
 
 		System.out.println("End");
