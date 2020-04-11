@@ -32,7 +32,7 @@ public class GISCOGeocoderNominatimAdd extends Geocoder {
 			String query = "";
 
 			if(ad.street != null)
-				query += "&street=" + ad.street;
+				query += "&street=" + URLEncoder.encode(ad.street, "UTF-8");
 			else {
 				String street = "";
 				if(ad.housenumber != null)
@@ -40,18 +40,18 @@ public class GISCOGeocoderNominatimAdd extends Geocoder {
 				if(ad.streetname != null)
 					street += ad.streetname;
 				if(!street.equals(""))
-					query += "&street=" + street;
+					query += "&street=" + URLEncoder.encode(street, "UTF-8");
 			}
 			if(ad.postalcode != null)
-				query += "&postalcode=" + ad.postalcode;
+				query += "&postalcode=" + URLEncoder.encode(ad.postalcode, "UTF-8");
 			if(ad.city != null)
-				query += "&city=" + ad.city;
+				query += "&city=" + URLEncoder.encode(ad.city, "UTF-8");
 			if(ad.countryCode != null) {
-				query += "&countrycode=" + ad.countryCode;
-				query += "&country=" + ad.getCountryName();
+				query += "&countrycode=" + URLEncoder.encode(ad.countryCode, "UTF-8");
+				query += "&country=" + URLEncoder.encode(ad.getCountryName(), "UTF-8");
 			}
 
-			query = URLEncoder.encode(query, "UTF-8");
+			//query = URLEncoder.encode(query, "UTF-8");
 
 			return "https://europa.eu/webtools/rest/gisco/nominatim/search?addressdetails=1" + query + "&polygon=0&viewbox=&format=json&limit=1";
 
@@ -63,6 +63,35 @@ public class GISCOGeocoderNominatimAdd extends Geocoder {
 
 
 	protected GeocodingResult decodeResult(String queryResult) {
+
+		System.out.println(queryResult);
+		/*
+		[{
+		"place_id":32850086,
+		"licence":"",
+		"osm_type":"node",
+		"osm_id":2802069236,
+		"boundingbox":["50.8466259","50.8467259","5.6692597","5.6693597"],
+		"lat":"50.8466759",
+		"lon":"5.6693097",
+		"display_name":"Chalans Maastricht, 100, Brouwersweg, Brusselsepoort, Maastricht, Limburg, Nederland, 6216EG, Nederland",
+		"class":"amenity",
+		"type":"dancing_school",
+		"importance":0.5310000000000001,
+		"address":{
+			"address29":"Chalans Maastricht",
+			"house_number":"100",
+			"road":"Brouwersweg",
+			"neighbourhood":"Brusselsepoort",
+			"suburb":"Maastricht",
+			"city":"Maastricht",
+			"state":"Limburg",
+			"postcode":"6216EG",
+			"country":"Nederland",
+			"country_code":"nl"}
+		}]
+		 */
+
 		//TODO better - get quality indicator
 		String[] parts = queryResult.split(",");
 		Coordinate c = new Coordinate();
