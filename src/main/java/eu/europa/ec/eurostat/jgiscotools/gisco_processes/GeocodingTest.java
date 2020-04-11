@@ -4,7 +4,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Map;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -14,6 +14,7 @@ import org.locationtech.jts.geom.LineString;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoder;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ServicesGeocoding;
@@ -27,50 +28,54 @@ public class GeocodingTest {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		//load hospital addresses
-		ArrayList<Map<String, String>> data = CSVUtil.load("C:\\Users\\gaffuju\\workspace\\healthcare-services\\data\\csv/all.csv");
-		System.out.println(data.size());
+		String inPath = "C:\\Users\\gaffuju\\workspace\\healthcare-services\\data\\";
+		String outPath = "C:\\Users\\gaffuju\\Desktop/";
 
-		Collections.shuffle(data);
-		int i=0; int nb = 500;
+		//load hospital addresses - the ones with geolocation and address DE-RO
+		for(String cc : new String[] {"DE", "RO"}) {
+			System.out.println("*** " + cc);
+			ArrayList<Map<String, String>> data = CSVUtil.load(inPath + "csv/"+cc+".csv");
+			System.out.println(data.size());
 
-		LocalParameters.loadProxySettings();
+			LocalParameters.loadProxySettings();
+			Collection<Feature> outB = validate(data, BingGeocoder.get(), "lon", "lat");
+			Collection<Feature> outG = validate(data, GISCOGeocoder.get(), "lon", "lat");
 
+			System.out.println("Save - " + outB.size());
+			GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			System.out.println("Save - " + outG.size());
+			GeoData.save(outG, outPath + "geocoderValidationGISCO_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+		}
+
+		System.out.println("End");
+	}
+
+	public static Collection<Feature> validate(Collection<Map<String, String>> data, Geocoder gc, String lonCol, String latCol) {
 		ArrayList<Feature> out = new ArrayList<>();
 		GeometryFactory gf = new GeometryFactory();
 		for(Map<String, String> d : data) {
-			if(i++ >= nb) break;
+
+			//get position
+			Coordinate c = new Coordinate(Double.parseDouble(d.get(lonCol)), Double.parseDouble(d.get(latCol)));
 
 			//get address
 			GeocodingAddress add = ServicesGeocoding.toGeocodingAddress(d, true);
 
-			//compute position with bing geocoder
-			GeocodingResult grB = BingGeocoder.get().geocode(add, true);
-			System.out.println(grB.position);
-
-			//compute position with gisco geocoder
-			GeocodingResult grG = GISCOGeocoder.get().geocode(add, true);
-			System.out.println(grG.position);
+			//get geocoder position 
+			GeocodingResult gr = gc.geocode(add, true);
+			System.out.println(gr.position);
 
 			//build output feature
 			Feature f = new Feature();
-			LineString ls = gf.createLineString(new Coordinate[] { grB.position, grG.position });
+			LineString ls = gf.createLineString(new Coordinate[] { c, gr.position });
 			f.setGeometry(ls);
-			f.setAttribute("Bing_q", grB.quality);
-			f.setAttribute("GISCO_q", grG.quality);
-			f.setAttribute("best", grG.quality>grB.quality?"bing":grG.quality<grB.quality?"gisco":"draw");
-
-			double dist = 1000 * GeoDistanceUtil.getDistanceKM(grB.position.x, grB.position.y, grG.position.x, grG.position.y);
+			double dist = 1000 * GeoDistanceUtil.getDistanceKM(gr.position.x, gr.position.y, c.x, c.y);
 			f.setAttribute("dist", dist);
-			if(dist>5000) System.err.println((int)dist); else System.out.println((int)dist);
+			f.setAttribute("qual", gr.quality);
 
 			out.add(f);
 		}
-
-		System.out.println("Save - " + out.size());
-		GeoData.save(out, "C:\\Users\\gaffuju\\Desktop/geocoderValidation.gpkg", ProjectionUtil.getWGS_84_CRS());
-
-		System.out.println("End");
+		return out;
 	}
 
 }
