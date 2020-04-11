@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.geocoding.BingGeocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderAPI;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderNominatimDetail;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.GISCOGeocoderNominatimQuery;
@@ -33,15 +34,15 @@ public class GeocodingTest {
 		String outPath = "C:\\Users\\gaffuju\\Desktop/gv/";
 
 		//load hospital addresses - the ones with geolocation and address DE-RO
-		for(String cc : new String[] {"NL", "DE", "RO", "PT", "DK", "LT"}) {
+		for(String cc : new String[] {"CH", "BE", "AT" /*"NL", "DE", "RO", "PT", "DK", "LT"*/}) {
 			System.out.println("*** " + cc);
 			ArrayList<Map<String, String>> data = CSVUtil.load(inPath + "csv/"+cc+".csv");
 			System.out.println(data.size());
 
-			//LocalParameters.loadProxySettings();
-			//Collection<Feature> outB = validate(data, BingGeocoder.get(), "lon", "lat");
-			//System.out.println("Save - " + outB.size());
-			//GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			LocalParameters.loadProxySettings();
+			Collection<Feature> outB = validate(data, BingGeocoder.get(), "lon", "lat");
+			System.out.println("Save - " + outB.size());
+			GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
 			Collection<Feature> outGD = validate(data, GISCOGeocoderNominatimDetail.get(), "lon", "lat");
 			System.out.println("Save - " + outGD.size());
