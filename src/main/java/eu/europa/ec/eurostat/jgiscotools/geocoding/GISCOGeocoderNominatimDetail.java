@@ -31,6 +31,8 @@ public class GISCOGeocoderNominatimDetail extends Geocoder {
 
 	protected String toQueryURL(GeocodingAddress ad) {
 		try {
+			//version with https://europa.eu/webtools/rest/gisco/nominatim/search?addressdetails=1
+			
 			String query = "";
 
 			if(ad.street != null)

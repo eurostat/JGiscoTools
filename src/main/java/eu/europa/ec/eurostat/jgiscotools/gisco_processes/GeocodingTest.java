@@ -33,7 +33,7 @@ public class GeocodingTest {
 		String outPath = "C:\\Users\\gaffuju\\Desktop/gv/";
 
 		//load hospital addresses - the ones with geolocation and address DE-RO
-		for(String cc : new String[] {"NL"/*, "DE", "RO"*/}) {
+		for(String cc : new String[] {"NL", "DE", "RO", "PT", "DK", "LT"}) {
 			System.out.println("*** " + cc);
 			ArrayList<Map<String, String>> data = CSVUtil.load(inPath + "csv/"+cc+".csv");
 			System.out.println(data.size());

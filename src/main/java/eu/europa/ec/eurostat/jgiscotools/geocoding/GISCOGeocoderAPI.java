@@ -32,6 +32,7 @@ public class GISCOGeocoderAPI extends Geocoder {
 	protected String toQueryURL(GeocodingAddress ad) {
 		try {
 			//version with https://europa.eu/webtools/rest/gisco/api?q=
+
 			String query = "";
 
 			if(ad.street != null)
