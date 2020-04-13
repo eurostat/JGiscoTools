@@ -17,9 +17,13 @@ import org.apache.logging.log4j.Logger;
 public abstract class Geocoder {
 	private final static Logger LOGGER = LogManager.getLogger(Geocoder.class.getName());
 
-	//TODO
-	//test ESRI geocoder
-	//https://developers.arcgis.com/rest/geocode/api-reference/overview-world-geocoding-service.htm
+	//TODO try also!
+	//https://geocode.xyz/api
+	//https://mapmarker.com/
+	//https://docs.mapbox.com/api/search/#geocoding
+	//https://www.pitneybowes.com/us/location-intelligence/geocoding-data-enrichment/spectrum-geocoding-on-demand.html
+	//ESRI geocoder: 	//https://developers.arcgis.com/rest/geocode/api-reference/overview-world-geocoding-service.htm
+	//only US? http://geoservices.tamu.edu/Services/Geocode/WebService/
 
 	/**
 	 * Returns the geocoder URL for an address.
