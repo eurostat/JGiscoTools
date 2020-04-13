@@ -20,6 +20,7 @@ public abstract class Geocoder {
 	//TODO
 	//test ESRI geocoder
 	//https://developers.arcgis.com/rest/geocode/api-reference/overview-world-geocoding-service.htm
+	//TODO see https://gisgeography.com/reverse-geocoding-services-addresses-free-paid/
 
 	/**
 	 * Returns the geocoder URL for an address.
