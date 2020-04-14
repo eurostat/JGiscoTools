@@ -33,8 +33,8 @@ public class GeocodingTest {
 		String inPath = "C:\\Users\\gaffuju\\workspace\\healthcare-services\\data\\";
 		String outPath = "C:\\Users\\gaffuju\\Desktop/gv/";
 
-		//load hospital addresses - the ones with geolocation and address DE-RO
-		for(String cc : new String[] {"CH", "BE", "AT" /*"NL", "DE", "RO", "PT", "DK", "LT"*/}) {
+		//load hospital addresses - the ones with geolocation and address
+		for(String cc : new String[] {"PT", "CH", "BE", "NL", "DE", "DK"}) {
 			System.out.println("*** " + cc);
 			ArrayList<Map<String, String>> data = CSVUtil.load(inPath + "csv/"+cc+".csv");
 			System.out.println(data.size());
@@ -44,17 +44,17 @@ public class GeocodingTest {
 			System.out.println("Save - " + outB.size());
 			GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
-			Collection<Feature> outGD = validate(data, GISCOGeocoderNominatimDetail.get(), "lon", "lat");
-			System.out.println("Save - " + outGD.size());
-			GeoData.save(outGD, outPath + "geocoderValidationGISCO_NominatimDetail_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			Collection<Feature> outGAPI = validate(data, GISCOGeocoderAPI.get(), "lon", "lat");
+			System.out.println("Save - " + outGAPI.size());
+			GeoData.save(outGAPI, outPath + "geocoderValidationGISCO_API_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
 			Collection<Feature> outGQ = validate(data, GISCOGeocoderNominatimQuery.get(), "lon", "lat");
 			System.out.println("Save - " + outGQ.size());
 			GeoData.save(outGQ, outPath + "geocoderValidationGISCO_NominatimQuery_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 
-			Collection<Feature> outGAPI = validate(data, GISCOGeocoderAPI.get(), "lon", "lat");
-			System.out.println("Save - " + outGAPI.size());
-			GeoData.save(outGAPI, outPath + "geocoderValidationGISCO_API_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			Collection<Feature> outGD = validate(data, GISCOGeocoderNominatimDetail.get(), "lon", "lat");
+			System.out.println("Save - " + outGD.size());
+			GeoData.save(outGD, outPath + "geocoderValidationGISCO_NominatimDetail_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
 		}
 
 		System.out.println("End");
@@ -83,6 +83,8 @@ public class GeocodingTest {
 			double dist = 1000 * GeoDistanceUtil.getDistanceKM(gr.position.x, gr.position.y, c.x, c.y);
 			f.setAttribute("dist", dist);
 			f.setAttribute("qual", gr.quality);
+
+			f.getAttributes().putAll(d);
 
 			out.add(f);
 		}
