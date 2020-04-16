@@ -76,6 +76,7 @@ public class ServicesGeocoding {
 		}
 
 		if(print) System.out.println("Positionning improvement for " + s.get("id") + ". "+ geoqIni + " -> " + gr.quality);
+		ServicesGeocoding.set(s, gr, "lon", "lat");
 	}
 
 }
