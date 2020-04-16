@@ -19,6 +19,7 @@ eu.europa.ec.eurostat.jgiscotools.algo.triangulation
 eu.europa.ec.eurostat.jgiscotools.deprecated
 eu.europa.ec.eurostat.jgiscotools.feature
 eu.europa.ec.eurostat.jgiscotools.geocoding
+eu.europa.ec.eurostat.jgiscotools.geocoding.base
 eu.europa.ec.eurostat.jgiscotools.geodiff
 eu.europa.ec.eurostat.jgiscotools.geostat
 eu.europa.ec.eurostat.jgiscotools.gisco_processes
@@ -27,6 +28,7 @@ eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod
 eu.europa.ec.eurostat.jgiscotools.gisco_processes.nutscommgen
 eu.europa.ec.eurostat.jgiscotools.gisco_processes.rail
 eu.europa.ec.eurostat.jgiscotools.gisco_processes.services
+eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.education
 eu.europa.ec.eurostat.jgiscotools.gisco_processes.test
 eu.europa.ec.eurostat.jgiscotools.graph
 eu.europa.ec.eurostat.jgiscotools.graph.algo
