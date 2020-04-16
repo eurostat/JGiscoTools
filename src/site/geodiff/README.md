@@ -15,7 +15,7 @@ Collection<Feature> features1 = GeoData.getFeatures("C:/myDatasetVersion2015.gpk
 Collection<Feature> features2 = GeoData.getFeatures("C:/myDatasetVersion2020.gpkg", "id");
 ```
 
-where *id* is the dataset column where the dataset identifier is defined. This identifier is expected to be stable between the two versions (corresponding features in both versions should have the same identifier). Both dataset versions are assumed to have the exact same structure (attribute names and types, geometry type).
+where *id* is the dataset field where the identifier is defined. This identifier is expected to be stable between the two versions (corresponding features in both versions should have the same identifier). Both dataset versions are assumed to have the exact same structure (attribute names and types, geometry type).
 
 ## Get differences
 
