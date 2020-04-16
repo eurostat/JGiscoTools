@@ -175,11 +175,12 @@ public class CSVUtil {
 			addColumn(data, col, defaultValue);
 	}
 
-	public static void removeColumn(Collection<Map<String, String>> data, String col) {
-		for(Map<String, String> h : data) {
-			if(h.get(col) != null)
-				h.remove(col);
-		}
+	public static void removeColumn(Collection<Map<String, String>> data, String... cols) {
+		for(String col : cols)
+			for(Map<String, String> h : data) {
+				if(h.get(col) != null)
+					h.remove(col);
+			}
 	}
 
 	public static void renameColumn(Collection<Map<String, String>> data, String oldName, String newName) {
