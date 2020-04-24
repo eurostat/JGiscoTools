@@ -1,20 +1,15 @@
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
-import java.util.Collection;
-
-import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 import junit.framework.TestCase;
 
 public class TesselationGeneralisationTest extends TestCase {
 
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
 		junit.textui.TestRunner.run(TesselationGeneralisationTest.class);
-	}
+	}*/
 
 	public void test() {
-		for(String cntr : new String[] {"bangladesh", "chile", "china_mainland", "indonesia", "panama", "philippines"})
+		/*for(String cntr : new String[] {"bangladesh", "chile", "china_mainland", "indonesia", "panama", "philippines"})
 			for(int scaleM : new int[] {1, 5, 10, 20, 50}) {
 				System.out.println(" *** " + cntr + " - scaleM: " + scaleM);
 
@@ -30,7 +25,7 @@ public class TesselationGeneralisationTest extends TestCase {
 
 				String outFile = "target/testout/tessgene/"+cntr+"_"+scaleM+".gpkg";
 				GeoData.save(units, outFile, GeoData.getCRS(inFile));
-			}
+			}*/
 	}
 
 }
