@@ -23,16 +23,16 @@ import junit.framework.TestCase;
  */
 public class DifferenceDetectionTest extends TestCase {
 
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
 		junit.textui.TestRunner.run(DifferenceDetectionTest.class);
 		//new DifferenceDetectionTest().testSurf();
 		//new DifferenceDetectionTest().testPt();
-	}
+	}*/
 
 	private String path = "src/test/resources/difference_detection/";
 
-	/*** @throws Exception  **/
-	public void testSurf() throws Exception {
+	/***  **/
+	public void testSurf() {
 		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 
 		//load datasets
@@ -106,8 +106,8 @@ public class DifferenceDetectionTest extends TestCase {
 
 
 
-	/*** @throws Exception  **/
-	public void testPt() throws Exception {
+	/***  **/
+	public void testPt() {
 		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 
 		//load datasets
@@ -181,8 +181,8 @@ public class DifferenceDetectionTest extends TestCase {
 	}
 
 
-	/*** @throws Exception  **/
-	public void testLin() throws Exception {
+	/***  **/
+	public void testLin() {
 		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 
 		//load datasets
