@@ -96,6 +96,7 @@ public class Partition {
 			Collection<Partition> subPartitions = decompose();
 
 			//run process on sub-partitions
+			//TODO allow parallel computation
 			for(Partition sp : subPartitions)
 				sp.runRecursively(maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
 

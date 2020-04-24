@@ -14,15 +14,15 @@ public class TesselationGeneralisationTest extends TestCase {
 	}
 
 	public void test() {
-		for(int scaleM : new int[] {5, 10})
-			for(String cntr : new String[] {/*"bangladesh", "chile", "china_mainland", "indonesia",*/ "panama", "philippines"}) {
+		for(String cntr : new String[] {"bangladesh", "chile", "china_mainland", "indonesia", "panama", "philippines"})
+			for(int scaleM : new int[] {1, 5, 10, 20}) {
 				System.out.println(" *** " + cntr + " - scaleM: " + scaleM);
 
 				String inFile = "src/test/resources/tessgene/cntr/" + cntr + ".shp";
 				Collection<Feature> units = GeoData.getFeatures(inFile);
 
 				CRSType crsType = GeoData.getCRSType(inFile);
-				int roundNb = 10;
+				int roundNb = 1;
 				int maxCoordinatesNumber = 1000000;
 				int objMaxCoordinateNumber = 1000;
 				units = TesselationGeneralisation.runGeneralisation(units, null, crsType, scaleM * 1e6, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);

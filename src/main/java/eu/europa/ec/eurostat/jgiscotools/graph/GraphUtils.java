@@ -44,9 +44,10 @@ public class GraphUtils {
 
 
 
-	//if the edge is closed, return the are. Return -1 else.
+	//if the edge is closed, return the area. Return -1 else.
 	public static double getArea(Edge e) {
 		if(!TopologyAnalysis.isClosed(e)) return -1;
+		if(e.getCoords().length == 3) return 0;
 		return new GeometryFactory().createPolygon(e.getCoords()).getArea();
 	}
 
