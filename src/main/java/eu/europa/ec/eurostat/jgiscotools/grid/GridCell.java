@@ -3,6 +3,9 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.grid;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -112,17 +115,16 @@ public class GridCell {
 	 * @author Julien Gaffuri
 	 */
 	public static enum GridCellGeometryType {SURFACE, CENTER_POINT};
-	private GridCellGeometryType gridCellGeometryType = GridCellGeometryType.SURFACE;
-	public GridCellGeometryType getGridCellGeometryType() { return gridCellGeometryType; }
 
-	public Geometry geometry = null;
-	public Geometry getGeometry() {
-		if(geometry == null) {
-			GridCellGeometryType gt = getGridCellGeometryType();
+	private Map<GridCellGeometryType, Geometry> geometry = new HashMap<GridCellGeometryType, Geometry>();
+	public Geometry getGeometry(GridCellGeometryType gt) {
+		Geometry g = geometry.get(gt);
+		if(g == null) {
 			GeometryFactory gf = new GeometryFactory();
-			geometry = gt.equals(GridCellGeometryType.CENTER_POINT)? getPointGeometry(gf ) : getPolygonGeometry(gf);
+			g = gt.equals(GridCellGeometryType.CENTER_POINT)? getPointGeometry(gf ) : getPolygonGeometry(gf);
+			geometry.put(gt , g);
 		}
-		return geometry;
+		return g;
 	}
 
 	/**
@@ -153,12 +155,12 @@ public class GridCell {
 
 	/**
 	 * Convert the grid cell into a feature.
-	 * 
+	 * @param gt
 	 * @return
 	 */
-	public Feature toFeature() {
+	public Feature toFeature(GridCellGeometryType gt) {
 		Feature f = new Feature();
-		f.setGeometry(this.getGeometry());
+		f.setGeometry(this.getGeometry(gt));
 		f.setID(this.getId());
 		f.setAttribute("GRD_ID", this.getId());
 		f.setAttribute("X_LLC", this.getLowerLeftCornerPositionX());
@@ -190,7 +192,7 @@ public class GridCell {
 	}
 
 	/**
-	 * Get the cell of the upper grod cell, whose resolution is the specified one.
+	 * Get the cell of the upper grid, whose resolution is the specified one.
 	 * This target resolution is expected to be a multiple of the grid cell resolution.
 	 * 
 	 * @param resolution

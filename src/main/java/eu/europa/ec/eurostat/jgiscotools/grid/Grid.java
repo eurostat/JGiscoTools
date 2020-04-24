@@ -34,7 +34,7 @@ public class Grid {
 	 * NB: The unit of measure should be the same as the one of the Coordinate Reference System.
 	 */
 	private int resolution = 100000;
-	public double getResolution() { return resolution; }
+	public int getResolution() { return resolution; }
 	public Grid setResolution(int resolution) {
 		this.resolution = resolution;
 		cells = null;
@@ -143,7 +143,7 @@ public class Grid {
 				geometriesToCoverBuff.add(g.buffer(toleranceDistance));
 		}
 
-		//TODO tile geometriesToCoverBuff to improve efficientcy ?
+		//TODO tile geometriesToCoverBuff to improve efficiency ?
 
 		if(logger.isDebugEnabled()) logger.debug("   Make spatial index from geometriesToCoverBuff...");
 		SpatialIndex index = new STRtree();
@@ -171,7 +171,7 @@ public class Grid {
 				if( ! JTSGeomUtil.intersects(index, gridCellGeom) ) continue;
 
 				//build the cell
-				cells.add(cell.toFeature());
+				cells.add(cell.toFeature(getGridCellGeometryType()));
 			}
 		if(logger.isDebugEnabled()) logger.debug(cells.size() + " cells built");
 		return this;
