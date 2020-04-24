@@ -56,14 +56,10 @@ public class Decomposer {
 	 */
 	public static Collection<Feature> decomposeFeature(Collection<Feature> fs, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
 		final Collection<Feature> out = new ArrayList<>();
-		PartitionedOperation op = new PartitionedOperation() {
-			@Override
-			public void run(Partition p) {
-				logger.debug(p.getCode());
-				out.addAll(p.getFeatures());
-			}
-		};
-		Partition.runRecursively(fs, op, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		Partition.runRecursively(fs, p -> {
+			logger.debug(p.getCode());
+			out.addAll(p.getFeatures());
+		}, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
 		int i=1;
 		for(Feature f : out) f.setID( f.getID()+"_"+(i++) );
 		return out;

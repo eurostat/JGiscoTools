@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
@@ -80,7 +81,14 @@ public class CUnitNoNarrowGaps extends Constraint<AUnit> {
 
 			//go through the narrow gaps
 			for(Polygon ng : ngs) {
-				ng = (Polygon) ng.buffer(separationDistanceMeter*0.001, quad);
+				Geometry buff = ng.buffer(separationDistanceMeter*0.001, quad);
+
+				if(buff instanceof Polygon)
+					ng = (Polygon) buff;
+				else if(buff instanceof MultiPolygon && buff.getNumGeometries() == 1)
+					ng = (Polygon) ((MultiPolygon) buff).getGeometryN(0);
+				else
+					LOGGER.warn("Unexpected geometry type: " + buff.getGeometryType());
 
 				//union with unit geometry
 				Geometry newUnitGeom = null;
