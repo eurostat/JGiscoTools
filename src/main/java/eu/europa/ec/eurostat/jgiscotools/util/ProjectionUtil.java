@@ -340,6 +340,9 @@ public class ProjectionUtil {
 		switch (unit.toString()) {
 		case "": return CRSType.UNKNOWN;
 		case "°": return CRSType.GEOG;
+		case "deg": return CRSType.GEOG;
+		case "dms": return CRSType.GEOG;
+		case "degree": return CRSType.GEOG;
 		case "m": return CRSType.CARTO;
 		default:
 			LOGGER.warn("Unexpected unit of measure for projection: "+unit);
