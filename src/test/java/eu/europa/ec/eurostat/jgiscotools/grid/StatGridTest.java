@@ -23,7 +23,7 @@ public class StatGridTest extends TestCase {
 		//SHPUtil.saveSHP(sg.getCells(), "C:/Users/gaffuju/Desktop/test.shp", CRS.decode("EPSG:3035"));
 
 		assertEquals("3035", sg.getEPSGCode());
-		assertEquals(100000.0, sg.getResolution());
+		assertEquals(100000, sg.getResolution());
 		assertEquals(0.0, sg.getToleranceDistance());
 		assertEquals(GridCellGeometryType.SURFACE, sg.getGridCellGeometryType());
 		assertEquals(10201, sg.getCells().size());
@@ -39,7 +39,7 @@ public class StatGridTest extends TestCase {
 		//SHPUtil.saveSHP(sg.getCells(), "C:/Users/gaffuju/Desktop/test.shp", CRS.decode("EPSG:3035"));
 
 		assertEquals("1464412", sg.getEPSGCode());
-		assertEquals(50000.0, sg.getResolution());
+		assertEquals(50000, sg.getResolution());
 		assertEquals(500000.0, sg.getToleranceDistance());
 		assertEquals(GridCellGeometryType.CENTER_POINT, sg.getGridCellGeometryType());
 		assertEquals(48748, sg.getCells().size());
