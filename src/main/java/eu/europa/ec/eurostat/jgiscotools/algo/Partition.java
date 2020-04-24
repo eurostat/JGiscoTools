@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,10 +97,18 @@ public class Partition {
 			Collection<Partition> subPartitions = decompose();
 
 			//run process on sub-partitions
-			//TODO allow parallel computation
-			for(Partition sp : subPartitions)
+			//TODO test
+			Stream<Partition> st = subPartitions.stream(); if(parallel) st = st.parallel();
+			st.forEach(sp -> {
 				sp.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
+			});
+			st.close();
 
+			//for(Partition sp : subPartitions)
+			//	sp.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
+
+			//TODO: executed once all thread have resumed? Guess so.
+			
 			if(!ignoreRecomposition) {
 				if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Recomposing");
 				recompose(subPartitions);

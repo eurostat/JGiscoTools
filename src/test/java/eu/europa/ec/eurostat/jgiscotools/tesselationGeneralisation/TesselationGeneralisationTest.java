@@ -25,7 +25,8 @@ public class TesselationGeneralisationTest extends TestCase {
 				int roundNb = 10;
 				int maxCoordinatesNumber = 1000000;
 				int objMaxCoordinateNumber = 1000;
-				units = TesselationGeneralisation.runGeneralisation(units, null, crsType, scaleM * 1e6, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);
+				boolean parallel = true;
+				units = TesselationGeneralisation.runGeneralisation(units, null, crsType, scaleM * 1e6, parallel, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);
 
 				String outFile = "target/testout/tessgene/"+cntr+"_"+scaleM+".gpkg";
 				GeoData.save(units, outFile, GeoData.getCRS(inFile));
