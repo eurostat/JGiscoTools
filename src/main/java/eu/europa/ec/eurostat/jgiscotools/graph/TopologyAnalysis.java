@@ -41,7 +41,7 @@ public class TopologyAnalysis {
 		return "non_coastal";
 	}
 
-	public static boolean isClosed(Edge e){ return e.getN1()==e.getN2(); }
+	public static boolean isClosed(Edge e){ return e.getN1() == e.getN2(); }
 	public static boolean isIsolated(Edge e){ return !isClosed(e) && e.getN1().getEdges().size()==1 && e.getN2().getEdges().size()==1; }
 	public static boolean isDangle(Edge e){ return !isClosed(e) && e.getN1().getEdges().size()==1 ^ e.getN2().getEdges().size()==1; }
 	public static String getTopologicalType(Edge e) {

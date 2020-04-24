@@ -26,20 +26,18 @@ public abstract class TEdgeSimplifier extends TransformationCancellable<AEdge> {
 	@Override
 	public boolean isCancelable() { return true; }
 
-	private LineString geomStore= null;
+	private LineString geomStore = null;
 	private Coordinate closedEdgeNodePosition = null;
 	protected double scaleRatio = 1;
 
+	//applied to closed edge, after the simplifier algo, to ensure area is equal to a target area
 	protected void postScaleClosed(Edge e, double targetArea) {
 		if(e.getGeometry().isValid()){
-			scaleRatio = Math.sqrt( targetArea / GraphUtils.getArea(e) );
-			scaleClosed(e);
+			double area = GraphUtils.getArea(e);
+			if(area == 0) return;
+			scaleRatio = Math.sqrt( targetArea / area );
+			scaleClosed(e, scaleRatio);
 		}
-	}
-
-	protected void scaleClosed(Edge e) {
-		if(!TopologyAnalysis.isClosed(e) || scaleRatio == 1) return;
-		EdgeScaling.scale(e, scaleRatio);
 	}
 
 	@Override
@@ -55,11 +53,16 @@ public abstract class TEdgeSimplifier extends TransformationCancellable<AEdge> {
 
 		if(e.getGeometry().isValid()){
 			scaleRatio = 1/scaleRatio;
-			scaleClosed(e);
+			scaleClosed(e, scaleRatio);
 		}
 
 		e.setGeom(geomStore.getCoordinates());
 		if(TopologyAnalysis.isClosed(e)) NodeDisplacement.moveTo(e.getN1(), closedEdgeNodePosition.x, closedEdgeNodePosition.y);;
+	}
+
+	private static void scaleClosed(Edge e, double scaleRatio) {
+		if(!TopologyAnalysis.isClosed(e) || scaleRatio == 1) return;
+		EdgeScaling.scale(e, scaleRatio);
 	}
 
 }
