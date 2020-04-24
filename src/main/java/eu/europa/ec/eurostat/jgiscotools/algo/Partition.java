@@ -31,9 +31,9 @@ public class Partition {
 
 	public final static Logger LOGGER = LogManager.getLogger(Partition.class.getName());
 
-	public static Collection<Feature> runRecursively(Collection<Feature> features, PartitionedOperation op, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition, GeomType gt, double midRandom) {
+	public static Collection<Feature> runRecursively(Collection<Feature> features, PartitionedOperation op, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition, GeomType gt, double midRandom) {
 		Partition p = new Partition("0", features, op, gt, midRandom);
-		p.runRecursively(maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
+		p.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
 		return p.getFeatures();
 	}
 
@@ -87,7 +87,7 @@ public class Partition {
 
 
 	//run process on the partition, decomposing it recursively if it is too large.
-	private void runRecursively(int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition) {
+	private void runRecursively(boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition) {
 		if(! isTooLarge(maxCoordinatesNumber, objMaxCoordinateNumber)) {
 			if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   not too large: Run process...");
 			operation.run(this);
@@ -98,7 +98,7 @@ public class Partition {
 			//run process on sub-partitions
 			//TODO allow parallel computation
 			for(Partition sp : subPartitions)
-				sp.runRecursively(maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
+				sp.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
 
 			if(!ignoreRecomposition) {
 				if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Recomposing");
@@ -252,23 +252,22 @@ public class Partition {
 
 
 	//build a dataset of partition areas, with some information on each partition area
-	public static Collection<Feature> getPartitionDataset(Collection<Feature> features, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
+	public static Collection<Feature> getPartitionDataset(Collection<Feature> features, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
 		final Collection<Feature> fs = new ArrayList<Feature>();
 
-		Partition.runRecursively(features, new PartitionedOperation() {
-			public void run(Partition p) {
-				LOGGER.info(p.toString());
-				double area = p.env.getArea();
-				Feature f = new Feature();
-				f.setGeometry(p.getExtend(null));
-				f.setAttribute("code", p.code);
-				f.setAttribute("f_nb", p.features.size());
-				f.setAttribute("c_nb", p.coordinatesNumber);
-				f.setAttribute("c_dens", p.coordinatesNumber/area);
-				f.setAttribute("maxfcn", p.maxEltCN);
-				f.setAttribute("area", area);
-				fs.add(f);
-			}}, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		Partition.runRecursively(features, p -> {
+			LOGGER.info(p.toString());
+			double area = p.env.getArea();
+			Feature f = new Feature();
+			f.setGeometry(p.getExtend(null));
+			f.setAttribute("code", p.code);
+			f.setAttribute("f_nb", p.features.size());
+			f.setAttribute("c_nb", p.coordinatesNumber);
+			f.setAttribute("c_dens", p.coordinatesNumber/area);
+			f.setAttribute("maxfcn", p.maxEltCN);
+			f.setAttribute("area", area);
+			fs.add(f);
+		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
 
 		return fs;
 	}

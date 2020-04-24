@@ -39,7 +39,7 @@ public class DecomposeLandWaterAreas {
 		logger.info("Run decomposition...");
 		//Collection<Geometry> landGeometries = Decomposer.decomposeGeometry(fs, 1000, 500, GeomType.ONLY_AREAS, 0);
 		//TODO it takes ages to save that !!! Fix that
-		Collection<Feature> landFeatures = Decomposer.decomposeFeature(fs, 1000, 500, GeomType.ONLY_AREAS, 0);
+		Collection<Feature> landFeatures = Decomposer.decomposeFeature(fs, false, 1000, 500, GeomType.ONLY_AREAS, 0);
 		//logger.info(landGeometries.size());
 		logger.info(landFeatures.size());
 

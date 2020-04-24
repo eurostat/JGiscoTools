@@ -14,7 +14,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.Partition;
-import eu.europa.ec.eurostat.jgiscotools.algo.Partition.PartitionedOperation;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -35,56 +34,55 @@ public class TesselationGeneralisation {
 	public final static Logger LOGGER = LogManager.getLogger(TesselationGeneralisation.class.getName());
 	public static boolean tracePartitioning = true;
 
-	public static Collection<Feature> runGeneralisation(Collection<Feature> units, HashMap<String, Collection<Point>> points, CRSType crsType, double scaleDenominator, final int roundNb, int maxCoordinatesNumber, int objMaxCoordinateNumber) {
+	public static Collection<Feature> runGeneralisation(Collection<Feature> units, HashMap<String, Collection<Point>> points, CRSType crsType, double scaleDenominator, boolean parallel, final int roundNb, int maxCoordinatesNumber, int objMaxCoordinateNumber) {
 		TesselationGeneralisationSpecification specs = new TesselationGeneralisationSpecification(scaleDenominator, crsType);
-		return runGeneralisation(units, points, specs, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);
+		return runGeneralisation(units, points, specs, parallel, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);
 	}
 
-	public static Collection<Feature> runGeneralisation(Collection<Feature> units, HashMap<String, Collection<Point>> points, final TesselationGeneralisationSpecification specs, int roundNb, int maxCoordinatesNumber, int objMaxCoordinateNumber) {
+	public static Collection<Feature> runGeneralisation(Collection<Feature> units, HashMap<String, Collection<Point>> points, final TesselationGeneralisationSpecification specs, boolean parallel, int roundNb, int maxCoordinatesNumber, int objMaxCoordinateNumber) {
 		for(int i=1; i<=roundNb; i++) {
 			if(LOGGER.isInfoEnabled()) LOGGER.info("Round "+i+" - CoordNb="+FeatureUtil.getVerticesNumber(units)+" FeatNb="+units.size());
 			final int i_ = i;
-			units = Partition.runRecursively(units, new PartitionedOperation() {
-				public void run(Partition p) {
-					try {
-						if(LOGGER.isInfoEnabled() && tracePartitioning) LOGGER.info("R" + i_ + "/" + roundNb + " - " + p.toString());
+			units = Partition.runRecursively(units, p -> {
+				try {
+					if(LOGGER.isInfoEnabled() && tracePartitioning) LOGGER.info("R" + i_ + "/" + roundNb + " - " + p.toString());
 
-						//build tesselation
-						ATesselation t = new ATesselation(p.getFeatures(), p.getEnvelope(), clipPoints(points,p.getEnvelope()));
+					//build tesselation
+					ATesselation t = new ATesselation(p.getFeatures(), p.getEnvelope(), clipPoints(points,p.getEnvelope()));
 
-						Engine<?> eng;
+					Engine<?> eng;
 
-						LOGGER.debug("   Activate units");
-						specs.setUnitConstraints(t);
-						//TODO activate smaller first?
-						eng = new Engine<AUnit>(t.aUnits); eng.shuffle().activateQueue().clear();
+					LOGGER.debug("   Activate units");
+					specs.setUnitConstraints(t);
+					//TODO activate smaller first?
+					eng = new Engine<AUnit>(t.aUnits); eng.shuffle().activateQueue().clear();
 
-						LOGGER.trace("   Ensure noding");
-						NodingUtil.fixNoding(NodingIssueType.PointPoint, t.getUnits(), specs.getNodingResolution());
-						NodingUtil.fixNoding(NodingIssueType.LinePoint, t.getUnits(), specs.getNodingResolution());
+					LOGGER.trace("   Ensure noding");
+					NodingUtil.fixNoding(NodingIssueType.PointPoint, t.getUnits(), specs.getNodingResolution());
+					NodingUtil.fixNoding(NodingIssueType.LinePoint, t.getUnits(), specs.getNodingResolution());
 
-						LOGGER.debug("   Create tesselation's topological map");
-						t.buildTopologicalMap();
-						specs.setTopologicalConstraints(t);
-						LOGGER.debug("   Activate faces");
-						//TODO activate smaller first?
-						eng = new Engine<AFace>(t.aFaces); eng.shuffle().activateQueue().clear();
-						LOGGER.debug("   Activate edges");
-						//TODO activate longest first?
-						eng = new Engine<AEdge>(t.aEdges); eng.shuffle().activateQueue().clear();
+					LOGGER.debug("   Create tesselation's topological map");
+					t.buildTopologicalMap();
+					specs.setTopologicalConstraints(t);
+					LOGGER.debug("   Activate faces");
+					//TODO activate smaller first?
+					eng = new Engine<AFace>(t.aFaces); eng.shuffle().activateQueue().clear();
+					LOGGER.debug("   Activate edges");
+					//TODO activate longest first?
+					eng = new Engine<AEdge>(t.aEdges); eng.shuffle().activateQueue().clear();
 
-						//update units' geometries
-						for(AUnit u : t.aUnits) {
-							if(u.isDeleted()) continue; //TODO keep trace of deleted units to remove them?
-							u.updateGeomFromFaceGeoms();
-						}
-						t.destroyTopologicalMap();
-						//TODO remove deleted units here?
-						t.clear();
+					//update units' geometries
+					for(AUnit u : t.aUnits) {
+						if(u.isDeleted()) continue; //TODO keep trace of deleted units to remove them?
+						u.updateGeomFromFaceGeoms();
+					}
+					t.destroyTopologicalMap();
+					//TODO remove deleted units here?
+					t.clear();
 
-						//if(runGC) System.gc();
-					} catch (Exception e) { e.printStackTrace(); }
-				}}, maxCoordinatesNumber, objMaxCoordinateNumber, false, Partition.GeomType.ONLY_AREAS, 0.02);
+					//if(runGC) System.gc();
+				} catch (Exception e) { e.printStackTrace(); }
+			}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, false, Partition.GeomType.ONLY_AREAS, 0.02);
 			for(Feature unit : units) unit.setGeometry(JTSGeomUtil.toMulti(unit.getGeometry()));
 		}
 		return units;

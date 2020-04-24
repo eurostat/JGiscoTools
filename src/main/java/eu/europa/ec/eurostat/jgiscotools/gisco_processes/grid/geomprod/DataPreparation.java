@@ -48,7 +48,7 @@ public class DataPreparation {
 		logger.info("Decompose boundaries");
 		Collection<Feature> bn = GeoData.getFeatures(path+"CNTR_BN_100K_2016_LAEA.gpkg");
 		logger.info(bn.size());
-		bn = Decomposer.decomposeFeature(bn, 5000, 200, GeomType.ONLY_LINES, 0);
+		bn = Decomposer.decomposeFeature(bn, false, 5000, 200, GeomType.ONLY_LINES, 0);
 		for(Feature f : bn) f.setGeometry( JTSGeomUtil.toMulti(f.getGeometry()) );
 		logger.info(bn.size());
 		GeoData.save(bn, path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", CRS.decode("EPSG:3035"), true);

@@ -13,7 +13,6 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.TopologyException;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.Partition;
-import eu.europa.ec.eurostat.jgiscotools.algo.Partition.PartitionedOperation;
 import eu.europa.ec.eurostat.jgiscotools.algo.aggregation.BufferAggregation;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
@@ -83,9 +82,7 @@ public class RailwayServiceAreasBufferDetection {
 		serviceAreas = new ArrayList<Polygon>();
 		doubleTrackAreas = new ArrayList<Polygon>();
 
-		Partition.runRecursively(secs, new PartitionedOperation() {
-			@Override
-			public void run(Partition p) {
+		Partition.runRecursively(secs, p -> {
 				LOGGER.info(p.toString());
 
 				RailwayServiceAreasBufferDetection rsad = new RailwayServiceAreasBufferDetection(p.getFeatures());
@@ -94,7 +91,7 @@ public class RailwayServiceAreasBufferDetection {
 				serviceAreas.addAll(rsad.getServiceAreas());
 				doubleTrackAreas.addAll(rsad.getDoubleTrackAreas());
 
-			}}, maxCoordinatesNumber, objMaxCoordinateNumber, true, Partition.GeomType.ONLY_LINES, 0);
+			}, false, maxCoordinatesNumber, objMaxCoordinateNumber, true, Partition.GeomType.ONLY_LINES, 0);
 	}
 
 }

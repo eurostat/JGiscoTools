@@ -33,7 +33,7 @@ public class Decomposer {
 	 * @param midRandom
 	 * @return
 	 */
-	public static Collection<Geometry> decomposeGeometry(Collection<Feature> fs, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
+	public static Collection<Geometry> decomposeGeometry(Collection<Feature> fs, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
 		final Collection<Geometry> out = new ArrayList<>();
 		PartitionedOperation op = new PartitionedOperation() {
 			@Override
@@ -42,7 +42,7 @@ public class Decomposer {
 				out.addAll(FeatureUtil.getGeometriesSimple(p.getFeatures()));
 			}
 		};
-		Partition.runRecursively(fs, op, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		Partition.runRecursively(fs, op, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
 		return out;
 	}
 
@@ -54,12 +54,12 @@ public class Decomposer {
 	 * @param midRandom
 	 * @return
 	 */
-	public static Collection<Feature> decomposeFeature(Collection<Feature> fs, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
+	public static Collection<Feature> decomposeFeature(Collection<Feature> fs, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
 		final Collection<Feature> out = new ArrayList<>();
 		Partition.runRecursively(fs, p -> {
 			logger.debug(p.getCode());
 			out.addAll(p.getFeatures());
-		}, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
 		int i=1;
 		for(Feature f : out) f.setID( f.getID()+"_"+(i++) );
 		return out;

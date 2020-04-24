@@ -17,7 +17,6 @@ import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.quadtree.Quadtree;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.Partition;
-import eu.europa.ec.eurostat.jgiscotools.algo.Partition.PartitionedOperation;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -35,39 +34,38 @@ public class TesselationQuality {
 
 
 	//
-	public static void checkQuality(Collection<Feature> units, double nodingResolution, String outFilePath, boolean overrideFile, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean tracePartitionning) {
-		Partition.runRecursively(units, new PartitionedOperation() {
-			public void run(Partition p) {
-				if(tracePartitionning) LOGGER.info(p);
+	public static void checkQuality(Collection<Feature> units, double nodingResolution, String outFilePath, boolean overrideFile, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean tracePartitionning) {
+		Partition.runRecursively(units, p -> {
+			if(tracePartitionning) LOGGER.info(p);
 
-				LOGGER.debug("Build spatial indexes");
-				SpatialIndex index = FeatureUtil.getSTRtree(p.features);
-				SpatialIndex indexLP = FeatureUtil.getSTRtreeCoordinates(p.features);
-				SpatialIndex indexPP = NodingUtil.getSTRtreeCoordinatesForPP(p.features, nodingResolution);
+			LOGGER.debug("Build spatial indexes");
+			SpatialIndex index = FeatureUtil.getSTRtree(p.features);
+			SpatialIndex indexLP = FeatureUtil.getSTRtreeCoordinates(p.features);
+			SpatialIndex indexPP = NodingUtil.getSTRtreeCoordinatesForPP(p.features, nodingResolution);
 
-				ATesselation t = new ATesselation(p.getFeatures());
-				LOGGER.debug("Set constraints");
-				for(AUnit a : t.aUnits) {
-					a.clearConstraints();
-					a.addConstraint(new CUnitOverlap(a, index));
-					a.addConstraint(new CUnitNoding(a, indexLP, NodingIssueType.LinePoint, nodingResolution));
-					a.addConstraint(new CUnitNoding(a, indexPP, NodingIssueType.PointPoint, nodingResolution));
-					a.addConstraint(new CUnitValidity(a));
-				}
+			ATesselation t = new ATesselation(p.getFeatures());
+			LOGGER.debug("Set constraints");
+			for(AUnit a : t.aUnits) {
+				a.clearConstraints();
+				a.addConstraint(new CUnitOverlap(a, index));
+				a.addConstraint(new CUnitNoding(a, indexLP, NodingIssueType.LinePoint, nodingResolution));
+				a.addConstraint(new CUnitNoding(a, indexPP, NodingIssueType.PointPoint, nodingResolution));
+				a.addConstraint(new CUnitValidity(a));
+			}
 
-				LOGGER.debug("Run evaluation");
-				Engine<AUnit> uEng = new Engine<AUnit>(t.aUnits).sort();
-				uEng.runEvaluation(outFilePath, overrideFile).clear();
+			LOGGER.debug("Run evaluation");
+			Engine<AUnit> uEng = new Engine<AUnit>(t.aUnits).sort();
+			uEng.runEvaluation(outFilePath, overrideFile).clear();
 
-				t.clear();
+			t.clear();
 
-			}}, maxCoordinatesNumber, objMaxCoordinateNumber, true, Partition.GeomType.ONLY_AREAS, 0);
+		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, Partition.GeomType.ONLY_AREAS, 0);
 	}
 
 
 
 	//
-	public static Collection<Feature> fixQuality(Collection<Feature> units, Envelope clipEnv, double nodingResolution, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean tracePartitionning) {
+	public static Collection<Feature> fixQuality(Collection<Feature> units, Envelope clipEnv, double nodingResolution, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean tracePartitionning) {
 		LOGGER.info("Dissolve by id");
 		FeatureUtil.dissolveById(units);
 
@@ -80,15 +78,14 @@ public class TesselationQuality {
 		}
 
 		LOGGER.info("Ensure tesselation and fix noding");
-		units = Partition.runRecursively(units, new PartitionedOperation() {
-			public void run(Partition p) {
-				if(tracePartitionning) LOGGER.info(p);
-				NodingUtil.fixNoding(NodingIssueType.PointPoint, p.getFeatures(), nodingResolution);
-				NodingUtil.fixNoding(NodingIssueType.LinePoint, p.getFeatures(), nodingResolution);
-				ensureTesselation_(p.getFeatures());
-				NodingUtil.fixNoding(NodingIssueType.PointPoint, p.getFeatures(), nodingResolution);
-				NodingUtil.fixNoding(NodingIssueType.LinePoint, p.getFeatures(), nodingResolution);
-			}}, maxCoordinatesNumber, objMaxCoordinateNumber, false, Partition.GeomType.ONLY_AREAS, 0);
+		units = Partition.runRecursively(units, p -> {
+			if(tracePartitionning) LOGGER.info(p);
+			NodingUtil.fixNoding(NodingIssueType.PointPoint, p.getFeatures(), nodingResolution);
+			NodingUtil.fixNoding(NodingIssueType.LinePoint, p.getFeatures(), nodingResolution);
+			ensureTesselation_(p.getFeatures());
+			NodingUtil.fixNoding(NodingIssueType.PointPoint, p.getFeatures(), nodingResolution);
+			NodingUtil.fixNoding(NodingIssueType.LinePoint, p.getFeatures(), nodingResolution);
+		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, false, Partition.GeomType.ONLY_AREAS, 0);
 
 		LOGGER.info("Ensure units are multipolygons");
 		for(Feature u : units)
