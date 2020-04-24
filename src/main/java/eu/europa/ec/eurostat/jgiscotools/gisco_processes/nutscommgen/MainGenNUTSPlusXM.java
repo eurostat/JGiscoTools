@@ -105,7 +105,7 @@ public class MainGenNUTSPlusXM {
 
 			LOGGER.info("Launch generalisation for "+((int)s)+"M");
 			int roundNb = 8;
-			units = TesselationGeneralisation.runGeneralisation(units, ptsData, specs, roundNb, 1000000, 1000);
+			units = TesselationGeneralisation.runGeneralisation(units, ptsData, specs, false, roundNb, 1000000, 1000);
 
 			LOGGER.info("Save output data");
 			GeoData.save(units, basePath + "out/NUTS_PLUS_"+((int)s)+"M.shp", GeoData.getCRS(inFile));

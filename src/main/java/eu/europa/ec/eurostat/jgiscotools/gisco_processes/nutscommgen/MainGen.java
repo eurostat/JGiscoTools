@@ -69,7 +69,7 @@ public class MainGen {
 		double scaleDenominator = 1.0*1e6;
 		int roundNb = 5;
 		CRSType crsType = GeoData.getCRSType(in);
-		units = TesselationGeneralisation.runGeneralisation(units, null, crsType, scaleDenominator, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);
+		units = TesselationGeneralisation.runGeneralisation(units, null, crsType, scaleDenominator, false, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);
 
 		LOGGER.info("Save output data in "+out);
 		GeoData.save(units, out, GeoData.getCRS(in));

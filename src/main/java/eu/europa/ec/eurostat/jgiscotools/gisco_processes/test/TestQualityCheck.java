@@ -25,7 +25,7 @@ public class TestQualityCheck {
 
 		LOGGER.info("Run quality check");
 		final double nodingResolution = 1e-7;
-		TesselationQuality.checkQuality(units, nodingResolution, "target/eval_units.csv", true, 3000000, 15000, true);
+		TesselationQuality.checkQuality(units, nodingResolution, "target/eval_units.csv", true, false, 3000000, 15000, true);
 
 		/*
 		LOGGER.info("Check identifier");

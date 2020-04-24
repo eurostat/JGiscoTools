@@ -45,7 +45,7 @@ public class TestTesselationGeneralisation {
 		LOGGER.info("Launch generalisation");
 		double scaleDenominator = 1e6; int roundNb = 10;
 		CRSType crsType = ProjectionUtil.getCRSType(GeoData.getCRS(in));
-		units = TesselationGeneralisation.runGeneralisation(units, points, crsType, scaleDenominator, roundNb, 1000000, 1000);
+		units = TesselationGeneralisation.runGeneralisation(units, points, crsType, scaleDenominator, false, roundNb, 1000000, 1000);
 
 		LOGGER.info("Save output data");
 		GeoData.save(units, "target/testTesselationGeneralisation_out.shp", GeoData.getCRS(in));

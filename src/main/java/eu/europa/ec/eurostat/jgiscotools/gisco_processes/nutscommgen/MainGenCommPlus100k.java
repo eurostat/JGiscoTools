@@ -85,7 +85,7 @@ public class MainGenCommPlus100k {
 			};
 
 			LOGGER.info("Launch generalisation " + i);
-			units = TesselationGeneralisation.runGeneralisation(units, null, specs, 1, 1000000, 1000);
+			units = TesselationGeneralisation.runGeneralisation(units, null, specs, false, 1, 1000000, 1000);
 
 			LOGGER.info("Run GC");
 			System.gc();

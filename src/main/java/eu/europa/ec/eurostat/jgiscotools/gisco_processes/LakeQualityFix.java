@@ -17,7 +17,7 @@ public class LakeQualityFix {
 		Collection<Feature> lakes = GeoData.getFeatures("Y:\\JIRA-2019\\GISCO_2207_Lakes_100K\\LAKE_EURO_PL_100K_2019.shp");
 		System.out.println(lakes.size());
 		
-		lakes = TesselationQuality.fixQuality(lakes, null, 10, 100000, 10000, true);
+		lakes = TesselationQuality.fixQuality(lakes, null, 10, false, 100000, 10000, true);
 		System.out.println(lakes.size());
 		
 		//save
