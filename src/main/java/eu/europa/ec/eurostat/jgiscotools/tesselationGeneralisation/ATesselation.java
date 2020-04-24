@@ -19,13 +19,13 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.strtree.STRtree;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphToFeature;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
 import eu.europa.ec.eurostat.jgiscotools.transfoengine.Agent;
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * A tesselation to be generalised. It is a macro agent.

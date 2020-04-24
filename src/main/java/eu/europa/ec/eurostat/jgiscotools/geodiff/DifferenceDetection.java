@@ -19,8 +19,8 @@ import org.locationtech.jts.index.quadtree.Quadtree;
 import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * 

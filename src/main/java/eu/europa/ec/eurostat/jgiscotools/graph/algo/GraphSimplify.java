@@ -12,10 +12,10 @@ import org.locationtech.jts.operation.linemerge.LineMerger;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.algo.line.DouglasPeuckerRamerFilter;
 import eu.europa.ec.eurostat.jgiscotools.algo.resolutionise.Resolutionise;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * Some functions to simplify linear meshes.

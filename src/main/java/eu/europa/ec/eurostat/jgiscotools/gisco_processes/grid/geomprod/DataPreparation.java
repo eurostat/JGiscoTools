@@ -17,8 +17,8 @@ import eu.europa.ec.eurostat.jgiscotools.algo.Partition.GeomType;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.deprecated.CountriesUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 public class DataPreparation {
 	static Logger logger = LogManager.getLogger(DataPreparation.class.getName());

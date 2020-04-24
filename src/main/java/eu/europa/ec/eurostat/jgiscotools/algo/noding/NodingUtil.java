@@ -28,7 +28,7 @@ import org.locationtech.jts.index.strtree.STRtree;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 
 /**
  * @author julien Gaffuri

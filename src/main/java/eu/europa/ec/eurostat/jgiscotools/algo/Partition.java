@@ -19,7 +19,7 @@ import org.locationtech.jts.geom.Polygon;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 
 /**
  * @author julien Gaffuri

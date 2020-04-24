@@ -15,8 +15,8 @@ import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell.GridCellGeometryType;
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * Build a grid.

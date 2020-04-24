@@ -18,7 +18,7 @@ import org.locationtech.jts.operation.buffer.BufferParameters;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 
 /**
  * @author julien Gaffuri

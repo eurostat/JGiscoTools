@@ -14,7 +14,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 
 /**
  * @author julien gaffuri

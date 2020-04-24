@@ -17,7 +17,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.Partition.PartitionedOperation;
 import eu.europa.ec.eurostat.jgiscotools.algo.aggregation.BufferAggregation;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 
 /**
  * @author julien Gaffuri

@@ -29,7 +29,6 @@ import org.locationtech.jts.index.quadtree.Quadtree;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 
-import eu.europa.ec.eurostat.jgiscotools.util.JTSGeomUtil;
 
 /**
  * @author julien Gaffuri

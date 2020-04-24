@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.util;
+package eu.europa.ec.eurostat.jgiscotools.feature;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,8 +19,6 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.operation.linemerge.LineMerger;
-
-import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 public class JTSGeomUtil {
 	public final static Logger LOGGER = LogManager.getLogger(JTSGeomUtil.class.getName());
