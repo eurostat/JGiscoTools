@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.grid;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,6 +21,7 @@ import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
+import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 
 /**

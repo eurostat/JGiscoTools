@@ -5,19 +5,25 @@ package eu.europa.ec.eurostat.jgiscotools.grid;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
+import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**
  * A number of functions on grids.
@@ -121,7 +127,7 @@ public class GridUtil {
 
 			//compute land proportion
 			double prop = 100.0 * landCellGeom.getArea() / cellArea;
-			prop = Util.round(prop, decimalNB);
+			prop = round(prop, decimalNB);
 			cell.setAttribute(cellLandPropAttribute, prop);
 		}
 
@@ -156,7 +162,7 @@ public class GridUtil {
 		}
 
 		//compute union
-		Geometry landCellGeom = Union.polygonsUnionAll(patches);
+		Geometry landCellGeom = polygonsUnionAll(patches);
 
 		if(landCellGeom == null)
 			return cellGeom.getFactory().createPolygon();
@@ -175,7 +181,7 @@ public class GridUtil {
 		}
 		if( patches.size() > 0 ) {
 			//compute inland water as union
-			Geometry inlandWater = Union.polygonsUnionAll(patches);
+			Geometry inlandWater = polygonsUnionAll(patches);
 			//compute geom difference
 			landCellGeom = landCellGeom.difference( inlandWater );
 		}
@@ -214,7 +220,7 @@ public class GridUtil {
 			}
 
 			//store the distance
-			minDist = Util.round(minDist, decimalNB);
+			minDist = round(minDist, decimalNB);
 			cell.setAttribute(distanceAttribute, minDist);
 		}
 
@@ -228,5 +234,105 @@ public class GridUtil {
 		}
 	};
 
+
+
+
+	private static Geometry polygonsUnionAll(Collection<Geometry> polys) {
+		Geometry union = null;
+		try {
+			if(logger.isTraceEnabled()) logger.trace("Try union with CascadedPolygonUnion");
+			union = CascadedPolygonUnion.union(polys);
+		} catch (Exception e) {
+			try {
+				if(logger.isTraceEnabled()) logger.trace("Try union with PolygonUnion");
+				union = getPolygonUnion(polys);
+			} catch (Exception e1) {
+				try {
+					if(logger.isTraceEnabled()) logger.trace("Try buffer(0)");
+					GeometryCollection gc = new GeometryFactory().createGeometryCollection(polys.toArray(new Geometry[polys.size()]));
+					union = gc.buffer(0);
+				} catch (Exception e2) {
+					if(logger.isTraceEnabled()) logger.trace("Try iterative union");
+					for(Geometry poly : polys)
+						union = union==null? poly : union.union(poly);
+				}
+			}
+		}
+		return union;
+	}
+	
+	private static Geometry getPolygonUnion(Collection<Geometry> geoms) {
+		return getPolygon( union_(geoms) );
+	}
+
+	private static <T extends Geometry> ArrayList<Geometry> union_(Collection<T> geoms) {
+		ArrayList<Geometry> geoms_ = new ArrayList<Geometry>();
+		geoms_.addAll(geoms);
+
+		final int cellSize = 1 + (int)Math.sqrt(geoms_.size());
+
+		Comparator<Geometry> comparator =  new Comparator<Geometry>(){
+			public int compare(Geometry geom1, Geometry geom2) {
+				if (geom1==null || geom2==null) return 0;
+				Envelope env1 = geom1.getEnvelopeInternal();
+				Envelope env2 = geom2.getEnvelopeInternal();
+				double i1 = env1.getMinX() / cellSize + cellSize*( (int)env1.getMinY() / cellSize );
+				double i2 = env2.getMinX() / cellSize + cellSize*( (int)env2.getMinY() / cellSize );
+				return i1>=i2? 1 : i1<i2? -1 : 0;
+			}
+		};
+
+		int i = 1;
+		int nb = 1 + (int)( Math.log(geoms_.size()) / Math.log(4) );
+		TreeSet<Geometry> treeSet;
+		while (geoms_.size() > 1) {
+			i++;
+			if(logger.isTraceEnabled()) logger.trace("Union (" + (i-1) + "/" + nb + ")");
+			//System.out.println( "Union (" + (i-1) + "/" + nb + ")" );
+			treeSet = new TreeSet<Geometry>(comparator);
+			treeSet.addAll(geoms_);
+			geoms_ = union(treeSet, 4);
+		}
+		return geoms_;
+	}
+	
+
+	private static ArrayList<Geometry> union(TreeSet<Geometry> treeSet, int groupSize) {
+		ArrayList<Geometry> unions = new ArrayList<Geometry>();
+		Geometry union = null;
+		int i=0;
+		for (Geometry geom : treeSet) {
+			if ((union==null)||(i%groupSize==0)) union = geom;
+			else {
+				union = union.union(geom);
+				if (groupSize-i%groupSize==1) unions.add(union);
+			}
+			i++;
+			if(logger.isTraceEnabled()) logger.trace(" " + i + " - " + treeSet.size() + " geometries");
+		}
+		if (groupSize-i%groupSize!=0) unions.add(union);
+		return unions;
+	}
+
+	private static Geometry getPolygon(ArrayList<Geometry> geoms_) {
+		List<Polygon> polys = new ArrayList<Polygon>();
+		for (Geometry geom : geoms_) {
+			if (geom instanceof Polygon) polys.add((Polygon) geom);
+			else if (geom instanceof MultiPolygon) {
+				MultiPolygon mp = (MultiPolygon) geom;
+				for (int k=0; k<mp.getNumGeometries(); k++)
+					polys.add((Polygon)mp.getGeometryN(k));
+			} else logger.error("Error in polygon union: geometry type not supported: " + geom.getGeometryType());
+		}
+		if (polys.size()==1) return polys.get(0);
+		if (geoms_.isEmpty()) return new GeometryFactory().createGeometryCollection(new Geometry[0]);
+		return geoms_.iterator().next().getFactory().createMultiPolygon(polys.toArray(new Polygon[0]));
+
+	}
+
+	private static double round(double x, int decimalNB) {
+		double pow = Math.pow(10, decimalNB);
+		return ( (int)(x * pow + 0.5) ) / pow;
+	}
 
 }

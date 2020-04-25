@@ -5,8 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.GriddedStatsTiler;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod.GridsProduction;
-import eu.europa.ec.eurostat.jgiscotools.grid.GriddedStatsTiler;
 
 public class PopGridTiling {
 	private static Logger logger = LogManager.getLogger(PopGridTiling.class.getName());
