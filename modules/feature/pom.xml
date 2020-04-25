@@ -2,11 +2,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>eu.europa.ec.eurostat</groupId>
-		<artifactId>JGiscoTools</artifactId>
+		<artifactId>jgiscotools</artifactId>
 		<version>0.8.11-SNAPSHOT</version>
 	</parent>
-	<artifactId>JGiscoTools-feature</artifactId>
-	<name>JGiscoTools-feature</name>
+	<artifactId>jgiscotools-feature</artifactId>
+	<name>jgiscotools-feature</name>
 
 	<dependencies>
 		<dependency>

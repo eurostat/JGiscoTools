@@ -4,16 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>eu.europa.ec.eurostat</groupId>
-		<artifactId>JGiscoTools</artifactId>
+		<artifactId>jgiscotools</artifactId>
 		<version>0.8.11-SNAPSHOT</version>
 	</parent>
-	<artifactId>JGiscoTools-full</artifactId>
-	<name>JGiscoTools-full</name>
+	<artifactId>jgiscotools-full</artifactId>
+	<name>jgiscotools-full</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>JGiscoTools-feature</artifactId>
+			<artifactId>jgiscotools-feature</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
