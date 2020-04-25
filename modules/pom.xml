@@ -204,6 +204,9 @@
 
 	<modules>
 		<module>feature</module>
+		<module>geoio</module>
+		<module>grid</module>
+		<module>geodiff</module>
 		<module>full</module>
 	</modules>
 
