@@ -13,8 +13,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.data.DataStore;
@@ -36,8 +36,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 
 /**
  * Some generic function to load data from mainstream data formats: gpkg, shp, geojson.
@@ -83,7 +81,7 @@ public class GeoData {
 			LOGGER.error("Data source: " + filePath + " not found.");
 			return;
 		}
-		this.format = FilenameUtils.getExtension(filePath).toLowerCase();
+		this.format = getExtension(filePath).get().toLowerCase();
 		if(!HANDLERS.keySet().contains(this.format)) {
 			LOGGER.error("Unsupported data format '" + this.format + "' for data source:" + filePath + " not found.");
 			return;
@@ -128,16 +126,6 @@ public class GeoData {
 	public CoordinateReferenceSystem getCRS() {
 		return getSchema().getCoordinateReferenceSystem();
 	}
-
-	/**
-	 * @return The coordinate reference system type
-	 */
-	public CRSType getCRSType() {
-		return ProjectionUtil.getCRSType(getCRS());
-	}
-
-
-
 
 
 
@@ -403,14 +391,6 @@ public class GeoData {
 		return new GeoData(filePath).getCRS();
 	}
 
-	/**
-	 * @param filePath
-	 * @return
-	 */
-	public static CRSType getCRSType(String filePath) {
-		return new GeoData(filePath).getCRSType();
-	}
-
 
 
 	/**
@@ -427,7 +407,7 @@ public class GeoData {
 		}
 
 		//get format handler
-		String format = FilenameUtils.getExtension(filePath).toLowerCase();
+		String format = getExtension(filePath).get().toLowerCase();
 		GeoDataFormatHandler dfh = HANDLERS.get(format);
 		if(dfh == null) {
 			LOGGER.error("Unsuported output format: " + format);
@@ -481,4 +461,9 @@ public class GeoData {
 		return file;
 	}
 
+	private static Optional<String> getExtension(String filename) {
+		return Optional.ofNullable(filename)
+				.filter(f -> f.contains("."))
+				.map(f -> f.substring(filename.lastIndexOf(".") + 1));
+	}
 }

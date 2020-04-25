@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisation;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 
 /**
@@ -60,20 +61,20 @@ public class MainGen {
 
 		LOGGER.info("Save output data in "+out);
 		SHPUtil.saveSHP(units, basePath+"GLOBAL_ADMIN_AREAS_clean.shp", SHPUtil.getCRS(in));
-*/
+		 */
 
 		//generalisation
 
-		
+
 		LOGGER.info("Launch generalisation");
 		double scaleDenominator = 1.0*1e6;
 		int roundNb = 5;
-		CRSType crsType = GeoData.getCRSType(in);
+		CRSType crsType = ProjectionUtil.getCRSType(GeoData.getCRS(in));
 		units = TesselationGeneralisation.runGeneralisation(units, null, crsType, scaleDenominator, false, roundNb, maxCoordinatesNumber, objMaxCoordinateNumber);
 
 		LOGGER.info("Save output data in "+out);
 		GeoData.save(units, out, GeoData.getCRS(in));
-		 
+
 
 
 		LOGGER.info("End");
