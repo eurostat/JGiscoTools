@@ -17,7 +17,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
 import eu.europa.ec.eurostat.jgiscotools.io.web.HTTPUtil;
 
@@ -30,8 +29,9 @@ public class GWebServices {
 
 	//https://developers.google.com/maps/documentation/geocoding/start
 
-	public static String gKey = LocalParameters.get("google_API_key");
-	public static String cs = LocalParameters.get("google_API_cx");
+	//TODO add key in constructor?
+	public static String gKey = null;
+	public static String cs = null;
 
 	/**
 	 * Get the URL of the first website returned by a query

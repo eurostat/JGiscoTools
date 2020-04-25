@@ -10,7 +10,6 @@ import org.locationtech.jts.geom.Coordinate;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
 
 /**
  * @author clemoki
@@ -18,7 +17,8 @@ import eu.europa.ec.eurostat.jgiscotools.gisco_processes.LocalParameters;
  */
 public class BingGeocoder extends Geocoder {
 
-	private static final String key = LocalParameters.get("bing_map_api_key");
+	//TODO add key in constructor?
+	public static String key = null;
 
 	//https://docs.microsoft.com/en-us/bingmaps/rest-services/locations/find-a-location-by-address
 
