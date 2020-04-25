@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.io;
+package eu.europa.ec.eurostat.jgiscotools.io.geo;
 
 import java.util.ArrayList;
 
