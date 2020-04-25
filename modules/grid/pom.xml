@@ -6,7 +6,7 @@
 		<version>0.9.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>jgiscotools-grid</artifactId>
-	<name>jgiscotools-grid</name>
+	<name>JGiscoTools-grid</name>
 
 	<dependencies>
 		<dependency>

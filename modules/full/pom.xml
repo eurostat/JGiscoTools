@@ -6,7 +6,7 @@
 		<version>0.9.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>jgiscotools-full</artifactId>
-	<name>jgiscotools-full</name>
+	<name>JGiscoTools-full</name>
 
 	<dependencies>
 		<dependency>

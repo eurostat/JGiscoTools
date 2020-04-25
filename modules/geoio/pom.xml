@@ -6,7 +6,7 @@
 		<version>0.9.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>jgiscotools-geo-io</artifactId>
-	<name>jgiscotools-geo-io</name>
+	<name>JGiscoTools-geo-io</name>
 
 	<dependencies>
 
