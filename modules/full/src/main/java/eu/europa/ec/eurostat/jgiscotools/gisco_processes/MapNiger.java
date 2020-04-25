@@ -16,7 +16,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.matching.LevenshteinMatching.Match
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 public class MapNiger {
 	private final static Logger LOGGER = LogManager.getLogger(MapNiger.class.getName());

@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 public class MainCheckIdentifier {
 	private final static Logger LOGGER = LogManager.getLogger(MainCheckIdentifier.class.getName());

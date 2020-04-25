@@ -19,7 +19,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.algo.EdgeCollapse;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke.Stroke;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke.StrokeAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
  * @author julien Gaffuri

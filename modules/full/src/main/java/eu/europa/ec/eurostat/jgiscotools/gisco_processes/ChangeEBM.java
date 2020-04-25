@@ -9,7 +9,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 public class ChangeEBM {
 	private final static Logger LOGGER = LogManager.getLogger(ChangeEBM.class.getName());

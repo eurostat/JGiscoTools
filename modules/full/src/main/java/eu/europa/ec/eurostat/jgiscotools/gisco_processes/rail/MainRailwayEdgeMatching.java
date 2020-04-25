@@ -9,7 +9,7 @@ import java.util.HashMap;
 import eu.europa.ec.eurostat.jgiscotools.algo.edgematching.NetworkEdgeMatching;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.graph.GraphToFeature;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
  * @author julien Gaffuri

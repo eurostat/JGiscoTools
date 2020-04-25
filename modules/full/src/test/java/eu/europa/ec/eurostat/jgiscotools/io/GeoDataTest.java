@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import junit.framework.TestCase;
 
 /**

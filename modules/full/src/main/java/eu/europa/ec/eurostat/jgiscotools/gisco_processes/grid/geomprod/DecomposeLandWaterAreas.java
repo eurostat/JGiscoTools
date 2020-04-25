@@ -13,7 +13,7 @@ import org.geotools.referencing.CRS;
 import eu.europa.ec.eurostat.jgiscotools.algo.Decomposer;
 import eu.europa.ec.eurostat.jgiscotools.algo.Partition.GeomType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
  * @author julien Gaffuri

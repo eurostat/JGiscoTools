@@ -21,7 +21,7 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ServicesGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.GeoDistanceUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 

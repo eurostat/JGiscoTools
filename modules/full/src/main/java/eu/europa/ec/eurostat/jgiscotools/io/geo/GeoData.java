@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.io;
+package eu.europa.ec.eurostat.jgiscotools.io.geo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -439,7 +439,7 @@ public class GeoData {
 		SimpleFeatureCollection sfc = SimpleFeatureUtil.get(fs, ft);
 
 		//create output file
-		File file = FileUtil.getFile(filePath, true, true);
+		File file = getFile(filePath, true, true);
 
 		//save
 		dfh.save(sfc, file, crs, createSpatialIndex);
@@ -463,6 +463,22 @@ public class GeoData {
 	 */
 	public static <T extends Geometry> void saveGeoms(Collection<T> geoms, String outFile, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
 		save(SimpleFeatureUtil.getFeaturesFromGeometries(geoms), outFile, crs, createSpatialIndex);
+	}
+
+
+
+
+	private static void createFolders(String filePath){
+		File parent = new File(filePath).getParentFile();
+		if (!parent.exists() && !parent.mkdirs())
+			throw new IllegalStateException("Couldn't create dir: " + parent);
+	}
+
+	private static File getFile(String filePath, boolean createFolders, boolean eraseOnExist){
+		if(createFolders) createFolders(filePath);
+		File file = new File(filePath);
+		if(eraseOnExist && file.exists()) file.delete();
+		return file;
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.geotools.referencing.CRS;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationQuality;
 
 public class LakeQualityFix {
