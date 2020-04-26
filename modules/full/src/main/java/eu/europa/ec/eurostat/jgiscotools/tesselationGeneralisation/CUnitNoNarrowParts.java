@@ -12,13 +12,13 @@ import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
+import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
+import eu.europa.ec.eurostat.jgiscotools.agent.Transformation;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.algo.polygon.MorphologicalAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Transformation;
 
 /**
  * 

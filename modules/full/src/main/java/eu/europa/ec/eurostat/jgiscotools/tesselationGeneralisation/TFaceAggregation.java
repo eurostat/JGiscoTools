@@ -5,10 +5,10 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import eu.europa.ec.eurostat.jgiscotools.agent.TransformationNonCancellable;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.FaceAggregation;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.TransformationNonCancellable;
 
 /**
  * @author julien Gaffuri

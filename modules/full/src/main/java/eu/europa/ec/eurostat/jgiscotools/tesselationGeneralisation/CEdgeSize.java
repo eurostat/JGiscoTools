@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.locationtech.jts.geom.LineString;
 
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Transformation;
+import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
+import eu.europa.ec.eurostat.jgiscotools.agent.Transformation;
 
 /**
  * Ensure too short segment edges are collapsed or lengthened.

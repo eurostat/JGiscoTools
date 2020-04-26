@@ -3,8 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
+import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
 
 /**
  * 

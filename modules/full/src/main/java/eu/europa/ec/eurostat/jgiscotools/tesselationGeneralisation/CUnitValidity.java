@@ -6,7 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 import org.locationtech.jts.operation.valid.IsValidOp;
 import org.locationtech.jts.operation.valid.TopologyValidationError;
 
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
+import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 
 /**
  * @author julien Gaffuri

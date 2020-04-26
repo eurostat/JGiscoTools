@@ -10,10 +10,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
+import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
+import eu.europa.ec.eurostat.jgiscotools.agent.Transformation;
 import eu.europa.ec.eurostat.jgiscotools.graph.TopologyAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Transformation;
 
 /**
  * 

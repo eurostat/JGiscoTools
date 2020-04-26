@@ -3,7 +3,7 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.CartographicResolution;
+import eu.europa.ec.eurostat.jgiscotools.agent.CartographicResolution;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
 
 /**

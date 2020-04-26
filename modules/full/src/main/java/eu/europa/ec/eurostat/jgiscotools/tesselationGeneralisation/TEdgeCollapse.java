@@ -3,9 +3,9 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
+import eu.europa.ec.eurostat.jgiscotools.agent.TransformationNonCancellable;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.EdgeCollapse;
 import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.TransformationNonCancellable;
 
 /**
  * @author julien Gaffuri

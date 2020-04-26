@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.transfoengine;
+package eu.europa.ec.eurostat.jgiscotools.agent;
 
 /**
  * @author julien Gaffuri

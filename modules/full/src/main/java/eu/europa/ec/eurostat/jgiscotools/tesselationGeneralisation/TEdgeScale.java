@@ -3,8 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
+import eu.europa.ec.eurostat.jgiscotools.agent.TransformationCancellable;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.EdgeScaling;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.TransformationCancellable;
 
 /**
  * 

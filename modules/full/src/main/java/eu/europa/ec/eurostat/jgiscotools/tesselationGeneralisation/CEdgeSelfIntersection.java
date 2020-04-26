@@ -3,7 +3,7 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
+import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 
 /**
  * Ensures an edge does not intersect itself (it should remain "simple").

@@ -16,6 +16,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.quadtree.Quadtree;
 
+import eu.europa.ec.eurostat.jgiscotools.agent.Engine;
 import eu.europa.ec.eurostat.jgiscotools.algo.Partition;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
@@ -23,7 +24,6 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Engine;
 
 /**
  * @author julien gaffuri

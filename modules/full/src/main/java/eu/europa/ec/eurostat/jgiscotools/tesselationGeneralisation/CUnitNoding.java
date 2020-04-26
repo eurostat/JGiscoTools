@@ -11,11 +11,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.index.SpatialIndex;
 
+import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
+import eu.europa.ec.eurostat.jgiscotools.agent.Transformation;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssue;
 import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Constraint;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.Transformation;
 
 /**
  * 

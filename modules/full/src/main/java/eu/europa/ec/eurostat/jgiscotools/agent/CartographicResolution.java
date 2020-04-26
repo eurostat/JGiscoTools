@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.transfoengine;
+package eu.europa.ec.eurostat.jgiscotools.agent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

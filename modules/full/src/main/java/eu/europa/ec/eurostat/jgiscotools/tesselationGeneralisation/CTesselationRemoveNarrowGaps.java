@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import eu.europa.ec.eurostat.jgiscotools.agent.ConstraintOneShot;
+import eu.europa.ec.eurostat.jgiscotools.agent.TransformationNonCancellable;
 import eu.europa.ec.eurostat.jgiscotools.algo.polygon.MorphologicalAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.ConstraintOneShot;
-import eu.europa.ec.eurostat.jgiscotools.transfoengine.TransformationNonCancellable;
 
 /**
  * @author julien Gaffuri
