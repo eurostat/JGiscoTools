@@ -204,6 +204,7 @@
 
 	<modules>
 		<module>feature</module>
+		<module>algobase</module>
 		<module>geoio</module>
 		<module>grid</module>
 		<module>geodiff</module>
