@@ -70,7 +70,7 @@ public class DifferenceDetection {
 			LOGGER.warn("Dataset in second version is empty");
 
 		//TODO check attributes in common
-		HashMap<String, Class<?>> attsCom = getCommonAttributes(this.fs1, this.fs2);
+		//HashMap<String, Class<?>> attsCom = getCommonAttributes(this.fs1, this.fs2);
 		//TODO
 
 		this.resolution = resolution;
