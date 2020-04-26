@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.geocoding;
+package eu.europa.ec.eurostat.jgiscotools.io;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -17,7 +17,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
-import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
 import eu.europa.ec.eurostat.jgiscotools.io.web.HTTPUtil;
 
 /**
