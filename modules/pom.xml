@@ -210,7 +210,7 @@
 		<module>graphalgo</module>
 		<module>geoio</module>
 		<module>geocoding</module>
-		<module>misc</module>
+		<module>algo</module>
 		<module>agent</module>
 
 		<module>grid</module>
