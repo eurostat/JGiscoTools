@@ -206,6 +206,8 @@
 	<modules>
 		<module>feature</module>
 		<module>algobase</module>
+		<module>graphbase</module>
+		<module>graphalgo</module>
 		<module>geoio</module>
 		<module>grid</module>
 		<module>geocoding</module>
