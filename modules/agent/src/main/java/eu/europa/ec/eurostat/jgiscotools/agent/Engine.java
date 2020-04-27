@@ -11,8 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.stat.StatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,7 +41,7 @@ public class Engine<T extends Agent> {
 		return this;
 	}
 
-
+	/*
 	public Stats getSatisfactionStats(boolean refreshSatisfactionValues){
 		ArrayList<Double> s = new ArrayList<Double>();
 		for(Agent agent : agents){
@@ -79,7 +77,7 @@ public class Engine<T extends Agent> {
 					.toString();
 		}
 	}
-
+	 */
 
 
 

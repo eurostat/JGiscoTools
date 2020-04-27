@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.agent;
+package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

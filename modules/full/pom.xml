@@ -24,6 +24,11 @@
 			<artifactId>jgiscotools-geodiff</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>jgiscotools-agent</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.geotools</groupId>

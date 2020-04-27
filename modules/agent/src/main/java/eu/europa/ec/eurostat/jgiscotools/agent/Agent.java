@@ -9,8 +9,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import eu.europa.ec.eurostat.jgiscotools.util.Util;
-
 /**
  * @author julien Gaffuri
  *
@@ -170,7 +168,7 @@ public abstract class Agent {
 	 */
 
 	public String toString(){
-		return getClass().getSimpleName()+"-"+getId()+" (satisf="+Util.round(satisfaction,3)+",nbContr="+constraints.size()+",obj="+getObject().toString()+")";
+		return getClass().getSimpleName()+"-"+getId()+" (satisf="+round(satisfaction,3)+",nbContr="+constraints.size()+",obj="+getObject().toString()+")";
 	}
 
 
@@ -196,6 +194,14 @@ public abstract class Agent {
 		this.object = null;
 		for(Constraint<?> c : getConstraints()) c.clear();
 		clearConstraints();
+	}
+
+
+
+	//round a double
+	private static double round(double x, int decimalNB) {
+		double pow = Math.pow(10, decimalNB);
+		return ( (int)(x * pow + 0.5) ) / pow;
 	}
 
 }
