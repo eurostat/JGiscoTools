@@ -211,6 +211,8 @@
 		<module>geocoding</module>
 		<module>agent</module>
 		<module>geodiff</module>
+		<module>misc</module>
+		<module>regionsimplify</module>
 		<module>full</module>
 	</modules>
 

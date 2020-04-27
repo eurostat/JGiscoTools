@@ -5,8 +5,8 @@
 		<artifactId>jgiscotools</artifactId>
 		<version>0.9.3-SNAPSHOT</version>
 	</parent>
-	<artifactId>jgiscotools-full</artifactId>
-	<name>JGiscoTools-full</name>
+	<artifactId>jgiscotools-regionsimplify</artifactId>
+	<name>JGiscoTools-regionsimplify</name>
 
 	<dependencies>
 		<dependency>
@@ -16,27 +16,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jgiscotools-geo-io</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jgiscotools-grid</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jgiscotools-geocoding</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>jgiscotools-agent</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jgiscotools-geodiff</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
