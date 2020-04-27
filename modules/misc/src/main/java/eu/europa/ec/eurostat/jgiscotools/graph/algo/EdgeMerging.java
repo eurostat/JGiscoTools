@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.graph.TopologyAnalysis;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.TopologyAnalysis;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Node;
 
 /**
  * @author julien Gaffuri

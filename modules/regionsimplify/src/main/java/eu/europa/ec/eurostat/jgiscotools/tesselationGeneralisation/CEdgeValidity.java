@@ -6,7 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.EdgeValidity;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.FaceValidity;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 
 /**
  * Ensure the edge is valid:

@@ -11,7 +11,7 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.index.SpatialIndex;
 
 import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 
 /**
  * Ensures that an edge does not intersects other ones in an unvalid manner.

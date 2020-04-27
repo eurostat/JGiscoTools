@@ -13,9 +13,9 @@ import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.algo.line.DouglasPeuckerRamerFilter;
 import eu.europa.ec.eurostat.jgiscotools.algo.resolutionise.Resolutionise;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphUtils;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphBuilder;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphUtils;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
 
 /**
  * Some functions to simplify linear meshes.

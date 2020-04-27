@@ -6,9 +6,9 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.rail;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.edgematching.NetworkEdgeMatching;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphToFeature;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.edgematching.NetworkEdgeMatching;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphToFeature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**

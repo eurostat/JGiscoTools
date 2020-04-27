@@ -5,8 +5,8 @@ package eu.europa.ec.eurostat.jgiscotools;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphToFeature;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphToFeature;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**

@@ -5,7 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
 import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.algo.polygon.Triangle;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 
 /**
  * Ensure the faces on both sides of the edge do not become triangles.

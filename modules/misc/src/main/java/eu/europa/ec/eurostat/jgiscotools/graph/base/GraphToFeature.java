@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.graph;
+package eu.europa.ec.eurostat.jgiscotools.graph.base;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,10 +16,10 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.GraphElement;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.GraphElement;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Node;
 
 /**
  * 

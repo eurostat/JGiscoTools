@@ -21,11 +21,11 @@ import org.locationtech.jts.index.strtree.STRtree;
 import eu.europa.ec.eurostat.jgiscotools.agent.Agent;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphToFeature;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphBuilder;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphToFeature;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
 
 /**
  * A tesselation to be generalised. It is a macro agent.

@@ -12,8 +12,8 @@ import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.agent.Transformation;
-import eu.europa.ec.eurostat.jgiscotools.graph.TopologyAnalysis;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.TopologyAnalysis;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
 
 /**
  * 

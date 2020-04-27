@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.graph;
+package eu.europa.ec.eurostat.jgiscotools.graph.base;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,10 +12,10 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Face;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Node;
 
 /**
  * 

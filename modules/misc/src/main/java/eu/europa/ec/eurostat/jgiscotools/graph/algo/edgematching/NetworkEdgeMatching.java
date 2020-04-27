@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.algo.edgematching;
+package eu.europa.ec.eurostat.jgiscotools.graph.algo.edgematching;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,13 +21,13 @@ import org.locationtech.jts.operation.linemerge.LineMerger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphBuilder;
-import eu.europa.ec.eurostat.jgiscotools.graph.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.ConnexComponents;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.ConnexComponents.EdgeFilter;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Edge;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Graph;
-import eu.europa.ec.eurostat.jgiscotools.graph.structure.Node;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphBuilder;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphUtils;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
+import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Node;
 
 /**
  * Compute edgematching of network data collected on different regions.
