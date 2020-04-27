@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -18,7 +19,6 @@ import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**
@@ -203,9 +203,10 @@ public class LevenshteinMatching {
 	 * 
 	 * @param ms
 	 * @param outFile
+	 * @return 
 	 */
-	public static void saveAsCSV(Collection<Match> ms, String outFile) {
-		ArrayList<Map<String, String>> data = new ArrayList<>();
+	public static List<Map<String,String>> getCSVEntries(Collection<Match> ms) {
+		List<Map<String, String>> data = new ArrayList<>();
 		for(Match m : ms) {
 			HashMap<String, String> data_ = new HashMap<>();
 			data_.put("s1", m.s1);
@@ -219,7 +220,7 @@ public class LevenshteinMatching {
 				return (int) (1000*(Double.parseDouble(m2.get("cost").toString()) - Double.parseDouble(m1.get("cost").toString())));
 			}
 		});
-		CSVUtil.save(data, outFile);
+		return data;
 	}
 
 }

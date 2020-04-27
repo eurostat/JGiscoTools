@@ -77,8 +77,7 @@ public class MapNiger {
 		System.out.println(sum);
 
 		LOGGER.info("Save matching");
-		LevenshteinMatching.saveAsCSV(ms,"/home/juju/Bureau/niger/matching.csv");
-
+		CSVUtil.save(LevenshteinMatching.getCSVEntries(ms), "/home/juju/Bureau/niger/matching.csv");
 
 		//get list of secteurs
 		List<String> secteurs = FeatureUtil.getPropValuesAsList(ps, "secteur");

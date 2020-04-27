@@ -39,6 +39,29 @@
 			<artifactId>jgiscotools-regionsimplify</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-render</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-swing</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-brewer</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.europa.ec.eurostat</groupId>
+			<artifactId>java4eurostat</artifactId>
+			<version>1.18</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
