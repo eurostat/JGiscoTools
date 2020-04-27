@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>eu.europa.ec.eurostat</groupId>
-		<artifactId>jgiscotools</artifactId>
+		<artifactId>jgiscotools-modules</artifactId>
 		<version>0.9.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>jgiscotools-regionsimplify</artifactId>
