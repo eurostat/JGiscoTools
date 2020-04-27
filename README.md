@@ -94,7 +94,7 @@ For more information on how to setup a coding environment based on [Eclipse](htt
 
 ### Documentation
 
-See the [Javadoc API](/doc/site/apidocs/).
+See the [Javadoc API](https://eurostat.github.io/JGiscoTools/doc/site/apidocs/).
 
 ### Components
 
