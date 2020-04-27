@@ -40,12 +40,13 @@ public class TestTesselationGeneralisation {
 		String in = "src/test/resources/testTesselationGeneralisation.shp";
 		Collection<Feature> units = GeoData.getFeatures(in);
 		for(Feature unit : units) unit.setID( unit.getAttribute("id").toString() );
-		HashMap<String, Collection<Point>> points = TesselationGeneralisation.loadPoints("src/test/resources/testTesselationGeneralisationPoints.shp", "id");
+		Collection<Feature> points = GeoData.getFeatures("src/test/resources/testTesselationGeneralisationPoints.shp");
+		HashMap<String, Collection<Point>> pointsInd = TesselationGeneralisation.indexPoints(points, "id");
 
 		LOGGER.info("Launch generalisation");
 		double scaleDenominator = 1e6; int roundNb = 10;
 		CRSType crsType = ProjectionUtil.getCRSType(GeoData.getCRS(in));
-		units = TesselationGeneralisation.runGeneralisation(units, points, crsType, scaleDenominator, false, roundNb, 1000000, 1000);
+		units = TesselationGeneralisation.runGeneralisation(units, pointsInd, crsType, scaleDenominator, false, roundNb, 1000000, 1000);
 
 		LOGGER.info("Save output data");
 		GeoData.save(units, "target/testTesselationGeneralisation_out.shp", GeoData.getCRS(in));

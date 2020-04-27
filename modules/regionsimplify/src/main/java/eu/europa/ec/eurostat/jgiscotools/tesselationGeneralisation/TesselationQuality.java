@@ -23,7 +23,6 @@ import eu.europa.ec.eurostat.jgiscotools.algo.noding.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
  * @author julien gaffuri
@@ -102,10 +101,6 @@ public class TesselationQuality {
 			f.setGeometry( (MultiPolygon)JTSGeomUtil.toMulti(f.getGeometry().buffer(0)) );
 		return fs;
 	}
-	public static void makeMultiPolygonValid(String inputFile, String outputFile) {
-		GeoData.save(makeMultiPolygonValid(GeoData.getFeatures(inputFile)), outputFile, GeoData.getCRS(inputFile));
-	}
-
 
 	public static void clip(Collection<Feature> fs, Envelope env) {
 		Polygon extend = JTS.toGeometry(env);

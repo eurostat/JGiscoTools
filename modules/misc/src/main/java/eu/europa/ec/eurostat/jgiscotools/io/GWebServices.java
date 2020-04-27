@@ -9,9 +9,8 @@ import java.net.URLConnection;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -42,10 +41,10 @@ public class GWebServices {
 		try {
 			URLConnection conn = new URL("https://www.googleapis.com/customsearch/v1?key="+gKey+"&cx="+cs+"&q="+URIUtil.encodeQuery(searchQuery)).openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			JSONObject jsonObject = (JSONObject) new JSONParser().parse(in);
+			JSONObject jsonObject = new JSONObject(in);
 			JSONArray res = (JSONArray) jsonObject.get("items");
 
-			if(res.size()==0){
+			if(res.length()==0){
 				LOGGER.warn("   No site found for: "+searchQuery);
 				return null;
 			}
@@ -83,7 +82,7 @@ public class GWebServices {
 		try {
 			URLConnection conn = new URL( "https://maps.googleapis.com/maps/api/place/textsearch/json?sensor=false&key="+gKey+"&query="+URIUtil.encodeQuery(searchQuery)).openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			JSONObject jsonObject = (JSONObject) new JSONParser().parse(in);
+			JSONObject jsonObject = new JSONObject(in);
 
 			GGeocodingResult lres = new GGeocodingResult();
 			lres.status = (String) jsonObject.get("status");
@@ -92,7 +91,7 @@ public class GWebServices {
 
 			JSONArray res = (JSONArray) jsonObject.get("results");
 
-			if(res.size()>1){
+			if(res.length()>1){
 				System.err.println("   Warning: several locations found for "+searchQuery);
 				lres.severalFound=true;
 			}
@@ -116,7 +115,7 @@ public class GWebServices {
 		try {
 			URLConnection conn = new URL("https://maps.googleapis.com/maps/api/geocode/json?sensor=true&address="+URIUtil.encodeQuery(addressQuery)).openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			JSONObject jsonObject = (JSONObject) new JSONParser().parse(in);
+			JSONObject jsonObject = new JSONObject(in);
 
 			GGeocodingResult lres = new GGeocodingResult();
 			lres.status = (String) jsonObject.get("status");
@@ -125,8 +124,8 @@ public class GWebServices {
 
 			JSONArray res = (JSONArray) jsonObject.get("results");
 
-			if(res.size()>1){
-				System.err.println("   Warning: "+res.size()+" locations found for "+addressQuery);
+			if(res.length()>1){
+				System.err.println("   Warning: "+res.length()+" locations found for "+addressQuery);
 				lres.severalFound=true;
 			}
 

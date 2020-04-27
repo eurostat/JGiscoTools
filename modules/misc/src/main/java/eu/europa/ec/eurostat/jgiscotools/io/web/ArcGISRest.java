@@ -12,8 +12,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -246,8 +246,8 @@ public class ArcGISRest {
 		} else if("MultiPoint".equals(geomType) || "Multipoint".equals(geomType)){
 			//{"points":[[-78.1716999999549,31.0750000000501]],"spatialReference":{"wkid":4326}}
 			JSONArray pts = (JSONArray) geom.get("points");
-			Coordinate[] cs = new Coordinate[pts.size()];
-			for(int i=0;i<pts.size();i++) {
+			Coordinate[] cs = new Coordinate[pts.length()];
+			for(int i=0;i<pts.length();i++) {
 				JSONArray pt = (JSONArray)pts.get(i);
 				cs[i] = new Coordinate(((Number)pt.get(0)).doubleValue(), ((Number)pt.get(1)).doubleValue());
 			}
