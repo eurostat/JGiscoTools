@@ -5,10 +5,8 @@ package eu.europa.ec.eurostat.jgiscotools.geocoding;
 
 import java.net.URLEncoder;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
@@ -22,16 +20,16 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
  * @author clemoki
  *
  */
-public class GISCOGeocoderNominatimQuery extends Geocoder {
+public class GISCOGeocoderAPI extends Geocoder {
 
-	private GISCOGeocoderNominatimQuery() {}
-	private static final GISCOGeocoderNominatimQuery OBJ = new GISCOGeocoderNominatimQuery();
+	private GISCOGeocoderAPI() {}
+	private static final GISCOGeocoderAPI OBJ = new GISCOGeocoderAPI();
 	/** @return the instance. */
-	public static GISCOGeocoderNominatimQuery get() { return OBJ; }
+	public static GISCOGeocoderAPI get() { return OBJ; }
 
 	protected String toQueryURL(GeocodingAddress ad) {
 		try {
-			//version with: http(s)://europa.eu/webtools/rest/gisco/nominatim/search.php?q=
+			//version with https://europa.eu/webtools/rest/gisco/api?q=
 
 			String query = "";
 
@@ -56,7 +54,7 @@ public class GISCOGeocoderNominatimQuery extends Geocoder {
 
 			query = URLEncoder.encode(query, "UTF-8");
 
-			return "https://europa.eu/webtools/rest/gisco/nominatim/search.php?q=" + query + "&polygon=0&viewbox=&format=json&limit=1";
+			return "https://europa.eu/webtools/rest/gisco/api?q=" + query + "&limit=1";
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,23 +64,20 @@ public class GISCOGeocoderNominatimQuery extends Geocoder {
 
 	protected GeocodingResult decodeResult(String queryResult) {
 		GeocodingResult gr = new GeocodingResult();
-		try {
-			JSONArray arr = ((JSONArray)new JSONParser().parse(queryResult));
-			if(arr.size() == 0) {
-				gr.position = new Coordinate(0,0);
-				gr.quality = 3;
-				return gr;
-			}
-			JSONObject json = (JSONObject) arr.get(0);
-			double lon = Double.parseDouble(json.get("lon").toString());
-			double lat = Double.parseDouble(json.get("lat").toString());
-			gr.position = new Coordinate(lon, lat);
-			//TODO add quality indicator. base on importance?
-			gr.quality = -1;
-		} catch (ParseException e) {
-			System.err.println("Could not parse JSON: " + queryResult);
-			e.printStackTrace();
+		JSONObject json = (JSONObject) new JSONObject(queryResult);
+		JSONArray fs = (JSONArray)json.get("features");
+		if(fs.length() == 0) {
+			gr.position = new Coordinate(0,0);
+			gr.quality = 3;
+			return gr;
 		}
+		JSONObject f = (JSONObject)fs.get(0);
+		JSONArray c = (JSONArray)((JSONObject)f.get("geometry")).get("coordinates");
+		gr.position = new Coordinate(
+				Double.parseDouble(c.get(0).toString()),
+				Double.parseDouble(c.get(1).toString())
+				);
+		gr.quality = -1;
 		return gr;
 	}
 

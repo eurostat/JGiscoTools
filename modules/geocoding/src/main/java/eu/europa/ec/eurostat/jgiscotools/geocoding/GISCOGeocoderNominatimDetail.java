@@ -5,10 +5,8 @@ package eu.europa.ec.eurostat.jgiscotools.geocoding;
 
 import java.net.URLEncoder;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
@@ -32,7 +30,7 @@ public class GISCOGeocoderNominatimDetail extends Geocoder {
 	protected String toQueryURL(GeocodingAddress ad) {
 		try {
 			//version with https://europa.eu/webtools/rest/gisco/nominatim/search?addressdetails=1
-			
+
 			String query = "";
 
 			if(ad.street != null)
@@ -94,23 +92,18 @@ public class GISCOGeocoderNominatimDetail extends Geocoder {
 		}]
 		 */
 		GeocodingResult gr = new GeocodingResult();
-		try {
-			JSONArray arr = ((JSONArray)new JSONParser().parse(queryResult));
-			if(arr.size() == 0) {
-				gr.position = new Coordinate(0,0);
-				gr.quality = 3;
-				return gr;
-			}
-			JSONObject json = (JSONObject) arr.get(0);
-			double lon = Double.parseDouble(json.get("lon").toString());
-			double lat = Double.parseDouble(json.get("lat").toString());
-			gr.position = new Coordinate(lon, lat);
-			//TODO add quality indicator. base on importance?
-			gr.quality = -1;
-		} catch (ParseException e) {
-			System.err.println("Could not parse JSON: " + queryResult);
-			e.printStackTrace();
+		JSONArray arr = new JSONArray(queryResult);
+		if(arr.length() == 0) {
+			gr.position = new Coordinate(0,0);
+			gr.quality = 3;
+			return gr;
 		}
+		JSONObject json = (JSONObject) arr.get(0);
+		double lon = Double.parseDouble(json.get("lon").toString());
+		double lat = Double.parseDouble(json.get("lat").toString());
+		gr.position = new Coordinate(lon, lat);
+		//TODO add quality indicator. base on importance?
+		gr.quality = -1;
 		return gr;
 	}
 
