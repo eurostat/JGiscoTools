@@ -7,7 +7,7 @@ TODO example of code
 
 ## Documentation
 
-See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/eu/europa/ec/eurostat/jgiscotools/tesselationGeneralisation/package-summary.html).
+See the [Javadoc API](https://eurostat.github.io/JGiscoTools/doc/site/apidocs/eu/europa/ec/eurostat/jgiscotools/tesselationGeneralisation/package-summary.html).
 
 ## Use it as program
 

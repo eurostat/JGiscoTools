@@ -94,7 +94,7 @@ This extracts the difference features representing these superflous (deletion, i
 
 ## Documentation
 
-See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/eu/europa/ec/eurostat/jgiscotools/geodiff/DifferenceDetection.html).
+See the [Javadoc API](https://eurostat.github.io/JGiscoTools/doc/site/apidocs/eu/europa/ec/eurostat/jgiscotools/geodiff/DifferenceDetection.html).
 
 ## Use it as program
 

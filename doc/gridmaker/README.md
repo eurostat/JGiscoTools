@@ -35,7 +35,7 @@ Input geometries can be loaded from [*GeoPackage*](https://www.geopackage.org/),
 
 ## Documentation
 
-See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/eu/europa/ec/eurostat/jgiscotools/grid/package-summary.html).
+See the [Javadoc API](https://eurostat.github.io/JGiscoTools/doc/site/apidocs/eu/europa/ec/eurostat/jgiscotools/grid/package-summary.html).
 
 ## Use it as program
 
