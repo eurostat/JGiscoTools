@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.util.CRSType;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AEdge;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AFace;
@@ -26,7 +27,6 @@ import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CUnitContainP
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CUnitNoNarrowGaps;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisation;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisationSpecification;
-import eu.europa.ec.eurostat.jgiscotools.util.CRSTypeUtil.CRSType;
 
 /**
  * @author julien Gaffuri

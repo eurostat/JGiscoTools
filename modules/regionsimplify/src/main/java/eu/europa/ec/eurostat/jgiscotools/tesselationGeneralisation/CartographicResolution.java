@@ -6,7 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import eu.europa.ec.eurostat.jgiscotools.util.CRSTypeUtil.CRSType;
+import eu.europa.ec.eurostat.jgiscotools.feature.util.CRSType;
 
 /**
  * Threshold parameters for cartographic representations

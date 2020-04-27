@@ -20,7 +20,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.base.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.CRSTypeUtil.CRSType;
+import eu.europa.ec.eurostat.jgiscotools.feature.util.CRSType;
 
 /**
  * 

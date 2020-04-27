@@ -1,5 +1,5 @@
 
-package eu.europa.ec.eurostat.jgiscotools.feature;
+package eu.europa.ec.eurostat.jgiscotools.feature.util;
 
 /**
  * @author julien Gaffuri
