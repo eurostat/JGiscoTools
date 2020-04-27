@@ -3,6 +3,8 @@ package eu.europa.ec.eurostat.jgiscotools.algo.line;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 
+import eu.europa.ec.eurostat.jgiscotools.algo.base.DouglasPeuckerRamerFilter;
+
 /**
  * Line gaussian smoothing.
  * 

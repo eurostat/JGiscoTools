@@ -11,7 +11,7 @@ import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphBuilder;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.GraphQuality;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
@@ -38,7 +38,7 @@ public class MainRailwayQuality {
 		LOGGER.info(secs.size()+" sections - " + FeatureUtil.getVerticesNumber(secs)+" vertices.");
 
 		LOGGER.info("Quality fix");
-		secs = GraphBuilder.qualityFixForSections(secs);
+		secs = GraphQuality.qualityFixForSections(secs);
 
 		//LOGGER.info("Check section intersection");
 		//GraphBuilder.checkSectionsIntersection(secs);

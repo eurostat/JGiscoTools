@@ -16,6 +16,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>jgiscotools-graph-algo</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>jgiscotools-agent</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -6,7 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 import org.locationtech.jts.geom.LineString;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.line.GaussianLineSmoothing;
-import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphUtils;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
 

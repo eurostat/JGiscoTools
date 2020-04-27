@@ -5,10 +5,20 @@
 		<artifactId>jgiscotools</artifactId>
 		<version>0.9.3-SNAPSHOT</version>
 	</parent>
-	<artifactId>jgiscotools-graph-base</artifactId>
-	<name>JGiscoTools-graph-base</name>
+	<artifactId>jgiscotools-graph-algo</artifactId>
+	<name>JGiscoTools-graph-algo</name>
 
 	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>jgiscotools-graph-base</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>jgiscotools-algo-base</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 </project>

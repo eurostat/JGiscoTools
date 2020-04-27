@@ -209,11 +209,12 @@
 		<module>graphbase</module>
 		<module>graphalgo</module>
 		<module>geoio</module>
-		<module>grid</module>
 		<module>geocoding</module>
-		<module>agent</module>
-		<module>geodiff</module>
 		<module>misc</module>
+		<module>agent</module>
+
+		<module>grid</module>
+		<module>geodiff</module>
 		<module>regionsimplify</module>
 	</modules>
 

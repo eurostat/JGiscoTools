@@ -8,8 +8,8 @@ import org.locationtech.jts.geom.LineString;
 
 import eu.europa.ec.eurostat.jgiscotools.agent.TransformationCancellable;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.EdgeScaling;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.NodeDisplacement;
-import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.TopologyAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 

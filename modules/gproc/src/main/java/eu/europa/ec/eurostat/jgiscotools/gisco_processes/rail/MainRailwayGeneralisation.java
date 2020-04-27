@@ -14,6 +14,7 @@ import org.opengis.filter.Filter;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.EdgeCollapse;
+import eu.europa.ec.eurostat.jgiscotools.graph.algo.GraphQuality;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke.Stroke;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.stroke.StrokeAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphBuilder;
@@ -64,7 +65,7 @@ public class MainRailwayGeneralisation {
 
 		//can be useful for data filtered on countries
 		LOGGER.info("Make node reduction");
-		secs = GraphBuilder.ensureNodeReduction(secs);
+		secs = GraphQuality.ensureNodeReduction(secs);
 		LOGGER.info(secs.size());
 
 		//LOGGER.info("Collapse too short edges");
