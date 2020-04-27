@@ -21,9 +21,9 @@ import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.services.ServicesGeocoding;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.GeoDistanceUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 public class GeocodingTest {
 
@@ -42,19 +42,19 @@ public class GeocodingTest {
 			LocalParameters.loadProxySettings();
 			Collection<Feature> outB = validate(data, BingGeocoder.get(), "lon", "lat");
 			System.out.println("Save - " + outB.size());
-			GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			GeoData.save(outB, outPath + "geocoderValidationBing_"+cc+".gpkg", CRSUtil.getWGS_84_CRS());
 
 			Collection<Feature> outGAPI = validate(data, GISCOGeocoderAPI.get(), "lon", "lat");
 			System.out.println("Save - " + outGAPI.size());
-			GeoData.save(outGAPI, outPath + "geocoderValidationGISCO_API_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			GeoData.save(outGAPI, outPath + "geocoderValidationGISCO_API_"+cc+".gpkg", CRSUtil.getWGS_84_CRS());
 
 			Collection<Feature> outGQ = validate(data, GISCOGeocoderNominatimQuery.get(), "lon", "lat");
 			System.out.println("Save - " + outGQ.size());
-			GeoData.save(outGQ, outPath + "geocoderValidationGISCO_NominatimQuery_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			GeoData.save(outGQ, outPath + "geocoderValidationGISCO_NominatimQuery_"+cc+".gpkg", CRSUtil.getWGS_84_CRS());
 
 			Collection<Feature> outGD = validate(data, GISCOGeocoderNominatimDetail.get(), "lon", "lat");
 			System.out.println("Save - " + outGD.size());
-			GeoData.save(outGD, outPath + "geocoderValidationGISCO_NominatimDetail_"+cc+".gpkg", ProjectionUtil.getWGS_84_CRS());
+			GeoData.save(outGD, outPath + "geocoderValidationGISCO_NominatimDetail_"+cc+".gpkg", CRSUtil.getWGS_84_CRS());
 		}
 
 		System.out.println("End");

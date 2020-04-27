@@ -25,8 +25,8 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 /**
  * Examples to produce European grids based on ETRS89-LAEA coordinate reference system (EPSG:3035)
@@ -192,12 +192,12 @@ public class GridsProduction {
 			}
 
 			logger.info("Save cells as GPKG...");
-			GeoData.save(cells, outpath+"grid_"+resKM+"km_surf.gpkg", ProjectionUtil.getETRS89_LAEA_CRS(), true);
+			GeoData.save(cells, outpath+"grid_"+resKM+"km_surf.gpkg", CRSUtil.getETRS89_LAEA_CRS(), true);
 
 			//do not save as shapefile for smaller resolution, because the file size limit is reached
 			if(resKM>3) {
 				logger.info("Save cells as SHP...");
-				GeoData.save(cells, outpath + "grid_"+resKM+"km_surf_shp" + "/grid_"+resKM+"km.shp", ProjectionUtil.getETRS89_LAEA_CRS());
+				GeoData.save(cells, outpath + "grid_"+resKM+"km_surf_shp" + "/grid_"+resKM+"km.shp", CRSUtil.getETRS89_LAEA_CRS());
 			}
 
 			logger.info("Set cell geometries as points...");
@@ -206,11 +206,11 @@ public class GridsProduction {
 				cell.setGeometry( gf.createPoint(new Coordinate((Integer)cell.getAttribute("X_LLC")+resKM*500, (Integer)cell.getAttribute("Y_LLC")+resKM*500)) );
 
 			logger.info("Save cells (point) as GPKG...");
-			GeoData.save(cells, outpath+"grid_"+resKM+"km_point.gpkg", ProjectionUtil.getETRS89_LAEA_CRS(), true);
+			GeoData.save(cells, outpath+"grid_"+resKM+"km_point.gpkg", CRSUtil.getETRS89_LAEA_CRS(), true);
 
 			if(resKM>3) {
 				logger.info("Save cells (point) as SHP...");
-				GeoData.save(cells, outpath + "grid_"+resKM+"km_point_shp" + "/grid_"+resKM+"km_point.shp", ProjectionUtil.getETRS89_LAEA_CRS());
+				GeoData.save(cells, outpath + "grid_"+resKM+"km_point_shp" + "/grid_"+resKM+"km_point.shp", CRSUtil.getETRS89_LAEA_CRS());
 			}
 
 		}
