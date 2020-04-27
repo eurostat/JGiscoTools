@@ -7,9 +7,9 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.simplify.VWSimplifier;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.line.GaussianLineSmoothing;
+import eu.europa.ec.eurostat.jgiscotools.feature.Util;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.GraphUtils;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
-import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**
  * @author julien Gaffuri

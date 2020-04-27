@@ -47,8 +47,8 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
 
+import eu.europa.ec.eurostat.jgiscotools.feature.Util;
 import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**
  * 

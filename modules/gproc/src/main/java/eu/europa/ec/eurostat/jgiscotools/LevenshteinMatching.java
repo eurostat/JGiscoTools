@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.algo.matching;
+package eu.europa.ec.eurostat.jgiscotools;
 
 import java.util.ArrayList;
 import java.util.Collection;

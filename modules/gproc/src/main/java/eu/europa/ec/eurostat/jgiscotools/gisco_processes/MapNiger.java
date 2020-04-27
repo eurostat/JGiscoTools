@@ -11,8 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.matching.LevenshteinMatching;
-import eu.europa.ec.eurostat.jgiscotools.algo.matching.LevenshteinMatching.Match;
+import eu.europa.ec.eurostat.jgiscotools.LevenshteinMatching;
+import eu.europa.ec.eurostat.jgiscotools.LevenshteinMatching.Match;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;

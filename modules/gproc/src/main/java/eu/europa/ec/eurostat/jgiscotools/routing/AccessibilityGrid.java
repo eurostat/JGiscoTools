@@ -29,7 +29,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.Util;
+import eu.europa.ec.eurostat.jgiscotools.feature.Util;
 
 /**
  * Class to compute an accessibility grid to a set of points of interest, using a transport network.
