@@ -83,26 +83,26 @@ CoordinateReferenceSystem crsEPSG = CRS.decode("EPSG:3035")
 ```
 <dependency>
 	<groupId>eu.europa.ec.eurostat</groupId>
-	<artifactId>JGiscoTools</artifactId>
+	<artifactId>jgiscotools</artifactId>
 	<version>X.Y.Z</version>
 </dependency>
 ```
 
-Where *X.Y.Z* is the current version number, as available [Maven central repository](https://search.maven.org/artifact/eu.europa.ec.eurostat/JGiscoTools).
+Where *X.Y.Z* is the current version number, as available [Maven central repository](https://search.maven.org/artifact/eu.europa.ec.eurostat/jgiscotools).
 
-For more information on how to setup a coding environment based on Eclipse, see [this page](https://github.com/eurostat/README/blob/master/docs/howto/java_eclipse_maven_git_quick_guide.md).
+For more information on how to setup a coding environment based on [Eclipse](https://www.eclipse.org/), see [this page](https://github.com/eurostat/README/blob/master/docs/howto/java_eclipse_maven_git_quick_guide.md).
 
 ### Documentation
 
-See the [Javadoc API](https://eurostat.github.io/JGiscoTools/src/site/apidocs/).
+See the [Javadoc API](/doc/site/apidocs/).
 
 ### Components
 
 JGiscoTools allows:
 - Manipulation and transformation of vector geographical data such as clustering, generalisation, deformation, filtering, edge matching and partitionning.
-- [Generalisation of geographical tesselations](/src/site/regionsimplify) such as administrative units.
-- [Production of gridded datasets](/src/site/gridmaker) in various GIS formats.
-- [Detection of the differences between two versions of a same dataset](/src/site/geodiff).
+- [Generalisation of geographical tesselations](/doc/regionsimplify) such as administrative units.
+- [Production of gridded datasets](/doc/gridmaker) in various GIS formats.
+- [Detection of the differences between two versions of a same dataset](/doc/geodiff).
 - Routing and accessibility computation. (TODO document)
 - Automatic production statistical maps (with a focus on maps based on Eurostat data and NUTS regions). (TODO document)
 - Various analyses based on NUTS regions and NUTS codes. (TODO document)
