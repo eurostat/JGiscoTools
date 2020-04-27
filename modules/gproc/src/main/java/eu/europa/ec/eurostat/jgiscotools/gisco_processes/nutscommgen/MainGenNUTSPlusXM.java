@@ -31,7 +31,7 @@ import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CUnitNoNarrow
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CUnitNoTriangle;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisation;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisationSpecification;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
+import eu.europa.ec.eurostat.jgiscotools.util.CRSTypeUtil.CRSType;
 
 /**
  * @author julien Gaffuri

@@ -13,8 +13,8 @@ import org.locationtech.jts.geom.Point;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisation;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
+import eu.europa.ec.eurostat.jgiscotools.util.CRSTypeUtil;
+import eu.europa.ec.eurostat.jgiscotools.util.CRSTypeUtil.CRSType;
 
 /**
  * @author julien Gaffuri
@@ -45,7 +45,7 @@ public class TestTesselationGeneralisation {
 
 		LOGGER.info("Launch generalisation");
 		double scaleDenominator = 1e6; int roundNb = 10;
-		CRSType crsType = ProjectionUtil.getCRSType(GeoData.getCRS(in));
+		CRSType crsType = CRSTypeUtil.getCRSType(GeoData.getCRS(in));
 		units = TesselationGeneralisation.runGeneralisation(units, pointsInd, crsType, scaleDenominator, false, roundNb, 1000000, 1000);
 
 		LOGGER.info("Save output data");

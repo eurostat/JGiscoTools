@@ -3,7 +3,7 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
+import eu.europa.ec.eurostat.jgiscotools.util.CRSTypeUtil.CRSType;
 
 /**
  * @author julien Gaffuri

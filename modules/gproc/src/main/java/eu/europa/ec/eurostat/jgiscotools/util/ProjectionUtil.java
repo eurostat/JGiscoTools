@@ -6,13 +6,10 @@ package eu.europa.ec.eurostat.jgiscotools.util;
 import java.awt.Toolkit;
 import java.util.Collection;
 
-import javax.measure.Unit;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.util.CRSUtilities;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -29,7 +26,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
  *
  */
 public class ProjectionUtil {
-	public final static Logger LOGGER = LogManager.getLogger(ProjectionUtil.class.getName());
+	public final static Logger LOGGER = LogManager.getLogger(CRSTypeUtil.class.getName());
 
 	//geographic: ETRS89 4937 (3D) 4258(2D)
 	//# ETRS89
@@ -331,31 +328,6 @@ public class ProjectionUtil {
 	 */
 	public static double getScale(double lat, int zoomLevel) { return getPixelSize(lat, zoomLevel) / METERS_PER_PIXEL; }
 
-
-
-	public enum CRSType { GEOG, CARTO, UNKNOWN }
-
-	private static CRSType getCRSType(Unit<?> unit) {
-		if(unit == null) return CRSType.UNKNOWN;
-		switch (unit.toString()) {
-		case "": return CRSType.UNKNOWN;
-		case "°": return CRSType.GEOG;
-		case "deg": return CRSType.GEOG;
-		case "dms": return CRSType.GEOG;
-		case "degree": return CRSType.GEOG;
-		case "m": return CRSType.CARTO;
-		default:
-			LOGGER.warn("Unexpected unit of measure for projection: "+unit);
-			return CRSType.UNKNOWN;
-		}
-	}
-	public static CRSType getCRSType(CoordinateReferenceSystem crs) {
-		return getCRSType(CRSUtilities.getUnit(crs.getCoordinateSystem()));
-	}
-	public static CRSType getCRSType(int epsg) {
-		if(epsg==-1) return CRSType.UNKNOWN;
-		return getCRSType(getCRS(epsg));
-	}
 
 
 	public static int getEPSGCode(CoordinateReferenceSystem crs) {

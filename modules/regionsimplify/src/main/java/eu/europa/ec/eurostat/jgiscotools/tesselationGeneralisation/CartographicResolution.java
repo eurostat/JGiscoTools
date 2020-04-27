@@ -6,8 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil.CRSType;
+import eu.europa.ec.eurostat.jgiscotools.util.CRSTypeUtil.CRSType;
 
 /**
  * Threshold parameters for cartographic representations
@@ -42,7 +41,7 @@ public class CartographicResolution {
 
 		//resolution is 0.1mm map. 0.1mm at 1:1M -> 1e-4*1e6 = 1e2 = 100m
 		if(type == CRSType.CARTO) resolutionM = scaleDenominator*1e-4;
-		else if(type == CRSType.GEOG) resolutionM = scaleDenominator*1e-4 / ProjectionUtil.ED;
+		else if(type == CRSType.GEOG) resolutionM = scaleDenominator*1e-4 / (6378137 * Math.PI/180.0);
 		else {
 			LOGGER.warn("Could not define resolution for CRS of type: "+type+". CRS is assumed to be in meters.");
 			resolutionM = scaleDenominator*1e-4;
