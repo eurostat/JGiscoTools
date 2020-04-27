@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
@@ -14,13 +15,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 public class GeocodingUtil {
 	private final static Logger LOGGER = LogManager.getLogger(GeocodingUtil.class.getName());
 
 	public static ArrayList<Feature> geocodingComparison(Collection<Map<String,String>> hospitals, String lon1, String lat1, String lon2, String lat2) {
-		CoordinateReferenceSystem crs = ProjectionUtil.getWGS_84_CRS();
+		CoordinateReferenceSystem crs = null;
+		try { crs = CRS.decode("EPSG:4326"); } catch (Exception e) { e.printStackTrace(); }
 
 		//build linear features
 		ArrayList<Feature> fs = new ArrayList<>();

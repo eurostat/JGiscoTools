@@ -52,7 +52,7 @@ public class GISCOGeocoderAPI extends Geocoder {
 			if(ad.city != null)
 				query += " " + ad.city;
 			if(ad.countryCode != null)
-				query += ", " + ad.getCountryName();
+				query += ", " + ad.countryName;
 
 			query = URLEncoder.encode(query, "UTF-8");
 

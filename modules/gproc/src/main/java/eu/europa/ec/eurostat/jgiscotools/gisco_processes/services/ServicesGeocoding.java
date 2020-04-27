@@ -6,6 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.services;
 import java.util.Collection;
 import java.util.Map;
 
+import eu.europa.ec.eurostat.jgiscotools.deprecated.NUTSUtils;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.Geocoder;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingAddress;
 import eu.europa.ec.eurostat.jgiscotools.geocoding.base.GeocodingResult;
@@ -23,6 +24,7 @@ public class ServicesGeocoding {
 				s.get("street"),
 				s.get("city"),
 				s.get("cc"),
+				getCountryName(s.get("cc")),
 				usePostcode? s.get("postcode") : null
 				);
 	}
@@ -77,6 +79,20 @@ public class ServicesGeocoding {
 
 		if(print) System.out.println("Positionning improvement for " + s.get("id") + ". "+ geoqIni + " -> " + gr.quality);
 		ServicesGeocoding.set(s, gr, "lon", "lat");
+	}
+
+	public static String getCountryName(String cc) {
+		switch (cc) {
+		case "GP": return "Guadeloupe";
+		case "MQ": return "Martinique";
+		case "GF": return "Guyane française";
+		case "RE": return "Réunion";
+		case "PM": return "Saint-Pierre et Miquelon";
+		case "YT": return "Mayotte";
+		}
+		String name = NUTSUtils.getName(cc);
+		name = name.replace(" (until 1990 former territory of the FRG)", "");
+		return name;
 	}
 
 }

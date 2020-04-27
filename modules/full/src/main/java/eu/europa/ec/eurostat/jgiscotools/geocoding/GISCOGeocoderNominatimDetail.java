@@ -52,7 +52,7 @@ public class GISCOGeocoderNominatimDetail extends Geocoder {
 				query += "&city=" + URLEncoder.encode(ad.city, "UTF-8");
 			if(ad.countryCode != null) {
 				query += "&countrycode=" + URLEncoder.encode(ad.countryCode, "UTF-8");
-				query += "&country=" + URLEncoder.encode(ad.getCountryName(), "UTF-8");
+				query += "&country=" + URLEncoder.encode(ad.countryName, "UTF-8");
 			}
 
 			//query = URLEncoder.encode(query, "UTF-8");
