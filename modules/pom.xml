@@ -213,7 +213,6 @@
 		<module>geodiff</module>
 		<module>misc</module>
 		<module>regionsimplify</module>
-		<module>full</module>
 	</modules>
 
 </project>
