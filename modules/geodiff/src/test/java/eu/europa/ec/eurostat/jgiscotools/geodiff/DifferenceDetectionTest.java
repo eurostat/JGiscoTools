@@ -32,7 +32,7 @@ public class DifferenceDetectionTest extends TestCase {
 
 	/***  **/
 	public void testSurf() {
-		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
+		Configurator.setLevel(GeoDiff.class.getName(), Level.OFF);
 
 		//load datasets
 		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_surf.gpkg", "id");
@@ -50,7 +50,7 @@ public class DifferenceDetectionTest extends TestCase {
 
 		//build change detection object
 		double resolution = 1;
-		DifferenceDetection cd = new DifferenceDetection(fsIni, fsFin, resolution);
+		GeoDiff cd = new GeoDiff(fsIni, fsFin, resolution);
 		//cd.setAttributesToIgnore("id","name");
 
 		//check unchanged
@@ -74,7 +74,7 @@ public class DifferenceDetectionTest extends TestCase {
 		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomDifferences(), null).size());
 
 		//check id stability issues
-		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getDifferences(), 50);
+		Collection<Feature> sus = GeoDiff.findIdStabilityIssues(cd.getDifferences(), 50);
 		assertEquals(4, sus.size());
 		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiPolygon.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
@@ -90,14 +90,14 @@ public class DifferenceDetectionTest extends TestCase {
 		 */
 
 		//test equals function
-		assertFalse( DifferenceDetection.equals(fsIni, fsFin) );
-		assertFalse( DifferenceDetection.equals(fsFin, fsIni) );
-		assertTrue( DifferenceDetection.equals(fsIni, fsIni) );
-		assertTrue( DifferenceDetection.equals(fsFin, fsFin) );
+		assertFalse( GeoDiff.equals(fsIni, fsFin) );
+		assertFalse( GeoDiff.equals(fsFin, fsIni) );
+		assertTrue( GeoDiff.equals(fsIni, fsIni) );
+		assertTrue( GeoDiff.equals(fsFin, fsFin) );
 
 		//test change application
-		DifferenceDetection.applyChanges(fsIni, cd.getDifferences());
-		assertTrue( DifferenceDetection.equals(fsIni, fsFin, resolution) );
+		GeoDiff.applyChanges(fsIni, cd.getDifferences());
+		assertTrue( GeoDiff.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPolygon.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
 	}
@@ -107,7 +107,7 @@ public class DifferenceDetectionTest extends TestCase {
 
 	/***  **/
 	public void testPt() {
-		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
+		Configurator.setLevel(GeoDiff.class.getName(), Level.OFF);
 
 		//load datasets
 		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_pt.gpkg", "id");
@@ -127,7 +127,7 @@ public class DifferenceDetectionTest extends TestCase {
 
 		//build change detection object
 		double resolution = 1;
-		DifferenceDetection cd = new DifferenceDetection(fsIni, fsFin, resolution);
+		GeoDiff cd = new GeoDiff(fsIni, fsFin, resolution);
 		//cd.setAttributesToIgnore("id","name");
 
 		//check unchanged
@@ -151,7 +151,7 @@ public class DifferenceDetectionTest extends TestCase {
 		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomDifferences(), null).size());
 
 		//check id stability issues
-		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getDifferences(), 50);
+		Collection<Feature> sus = GeoDiff.findIdStabilityIssues(cd.getDifferences(), 50);
 		assertEquals(2, sus.size());
 		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiPoint.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
@@ -167,14 +167,14 @@ public class DifferenceDetectionTest extends TestCase {
 		 */
 
 		//test equals function
-		assertFalse( DifferenceDetection.equals(fsIni, fsFin) );
-		assertFalse( DifferenceDetection.equals(fsFin, fsIni) );
-		assertTrue( DifferenceDetection.equals(fsIni, fsIni) );
-		assertTrue( DifferenceDetection.equals(fsFin, fsFin) );
+		assertFalse( GeoDiff.equals(fsIni, fsFin) );
+		assertFalse( GeoDiff.equals(fsFin, fsIni) );
+		assertTrue( GeoDiff.equals(fsIni, fsIni) );
+		assertTrue( GeoDiff.equals(fsFin, fsFin) );
 
 		//test change application
-		DifferenceDetection.applyChanges(fsIni, cd.getDifferences());
-		assertTrue( DifferenceDetection.equals(fsIni, fsFin, resolution) );
+		GeoDiff.applyChanges(fsIni, cd.getDifferences());
+		assertTrue( GeoDiff.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiPoint.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
 	}
@@ -182,7 +182,7 @@ public class DifferenceDetectionTest extends TestCase {
 
 	/***  **/
 	public void testLin() {
-		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
+		Configurator.setLevel(GeoDiff.class.getName(), Level.OFF);
 
 		//load datasets
 		ArrayList<Feature> fsIni = GeoData.getFeatures(path+"ini_lin.gpkg", "id");
@@ -200,7 +200,7 @@ public class DifferenceDetectionTest extends TestCase {
 
 		//build change detection object
 		double resolution = 1;
-		DifferenceDetection cd = new DifferenceDetection(fsIni, fsFin, resolution);
+		GeoDiff cd = new GeoDiff(fsIni, fsFin, resolution);
 		//cd.setAttributesToIgnore("id","name");
 
 		//check unchanged
@@ -224,7 +224,7 @@ public class DifferenceDetectionTest extends TestCase {
 		assertEquals(0, FeatureUtil.checkIdentfier(cd.getGeomDifferences(), null).size());
 
 		//check id stability issues
-		Collection<Feature> sus = DifferenceDetection.findIdStabilityIssues(cd.getDifferences(), 50);
+		Collection<Feature> sus = GeoDiff.findIdStabilityIssues(cd.getDifferences(), 50);
 		assertEquals(2, sus.size());
 		assertTrue(JTSGeomUtil.checkGeometry(sus, true, MultiLineString.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(sus, null).size());
@@ -240,14 +240,14 @@ public class DifferenceDetectionTest extends TestCase {
 		 */
 
 		//test equals function
-		assertFalse( DifferenceDetection.equals(fsIni, fsFin) );
-		assertFalse( DifferenceDetection.equals(fsFin, fsIni) );
-		assertTrue( DifferenceDetection.equals(fsIni, fsIni) );
-		assertTrue( DifferenceDetection.equals(fsFin, fsFin) );
+		assertFalse( GeoDiff.equals(fsIni, fsFin) );
+		assertFalse( GeoDiff.equals(fsFin, fsIni) );
+		assertTrue( GeoDiff.equals(fsIni, fsIni) );
+		assertTrue( GeoDiff.equals(fsFin, fsFin) );
 
 		//test change application
-		DifferenceDetection.applyChanges(fsIni, cd.getDifferences());
-		assertTrue( DifferenceDetection.equals(fsIni, fsFin, resolution) );
+		GeoDiff.applyChanges(fsIni, cd.getDifferences());
+		assertTrue( GeoDiff.equals(fsIni, fsFin, resolution) );
 		assertTrue(JTSGeomUtil.checkGeometry(fsIni, true, MultiLineString.class));
 		assertEquals(0, FeatureUtil.checkIdentfier(fsIni, null).size());
 	}

@@ -6,7 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.graph.algo;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.distances.Distance;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.distance.Distance;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Node;

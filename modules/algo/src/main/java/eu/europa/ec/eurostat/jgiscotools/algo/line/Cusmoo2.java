@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.HausdorffDistance;
 
 public class Cusmoo2 {
 	private static Logger logger = Logger.getLogger(Cusmoo2.class.getName());

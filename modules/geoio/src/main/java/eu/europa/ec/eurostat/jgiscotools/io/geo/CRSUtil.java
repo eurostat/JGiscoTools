@@ -17,7 +17,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.feature.util.CRSType;
+import eu.europa.ec.eurostat.jgiscotools.util.CRSType;
 
 public class CRSUtil {
 	public final static Logger LOGGER = LogManager.getLogger(CRSUtil.class.getName());
