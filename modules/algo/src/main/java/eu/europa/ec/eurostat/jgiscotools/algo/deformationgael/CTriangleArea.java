@@ -1,32 +1,28 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.constraint;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GSimpleConstraint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GTriangle;
+public class CTriangleArea extends GAELSimpleConstraint {
+	private static Logger logger = Logger.getLogger(CTriangleArea.class.getName());
 
-public class TriangleArea extends GSimpleConstraint {
-	private static Logger logger = Logger.getLogger(TriangleArea.class.getName());
-
-	private GTriangle t;
+	private SMTriangle t;
 	private double goal;
 
-	public TriangleArea(GTriangle t, double imp){
+	public CTriangleArea(SMTriangle t, double imp){
 		this(t, imp, t.getInitialArea());
 	}
 
-	public TriangleArea(GTriangle t, double imp, double goalArea){
+	public CTriangleArea(SMTriangle t, double imp, double goalArea){
 		super(t, imp);
 		this.t = t;
 		this.goal = goalArea;
 	}
 
 	@Override
-	public Coordinate getDisplacement(GPoint pt, double alpha) {
-		GPoint pt1 = null, pt2 = null;
+	public Coordinate getDisplacement(GAELPoint pt, double alpha) {
+		GAELPoint pt1 = null, pt2 = null;
 		if (pt == t.getPt1()) { pt1=t.getPt2(); pt2=t.getPt3(); }
 		else if (pt == t.getPt2()) { pt1=t.getPt3(); pt2=t.getPt1(); }
 		else if (pt == t.getPt3()) { pt1=t.getPt1(); pt2=t.getPt2(); }

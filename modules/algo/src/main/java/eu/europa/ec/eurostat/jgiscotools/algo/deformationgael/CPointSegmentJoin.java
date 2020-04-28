@@ -1,28 +1,23 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.constraint;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GRelationnalConstraint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GSegment;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GSinglePoint;
+public class CPointSegmentJoin extends GAELRelationnalConstraint {
+	private static Logger logger = Logger.getLogger(CPointSegmentJoin.class.getName());
 
-public class PointSegmentJoin extends GRelationnalConstraint {
-	private static Logger logger = Logger.getLogger(PointSegmentJoin.class.getName());
+	private SMSinglePoint ps;
+	private SMSegment s;
 
-	private GSinglePoint ps;
-	private GSegment s;
-
-	public PointSegmentJoin(GSinglePoint ps, GSegment s, double importance){
+	public CPointSegmentJoin(SMSinglePoint ps, SMSegment s, double importance){
 		super(ps,s,importance);
 		this.ps = ps;
 		this.s = s;
 	}
 
 	@Override
-	public Coordinate getDisplacement(GPoint p, double alpha) {
+	public Coordinate getDisplacement(GAELPoint p, double alpha) {
 		double ps1, ps2;
 		//calculs des produits scalaires pour connaitre la configuration
 		ps1 = (this.s.getPt2().getX()-this.s.getPt1().getX())*(this.ps.getPoint().getX()-this.s.getPt1().getX())+(this.s.getPt2().getY()-this.s.getPt1().getY())*(this.ps.getPoint().getY()-this.s.getPt1().getY());

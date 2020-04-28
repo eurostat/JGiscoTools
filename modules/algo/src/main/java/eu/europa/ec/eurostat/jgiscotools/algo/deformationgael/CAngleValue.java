@@ -1,31 +1,27 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.constraint;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GSimpleConstraint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GAngle;
+public class CAngleValue extends GAELSimpleConstraint {
+	private static Logger logger = Logger.getLogger(CAngleValue.class.getName());
 
-public class AngleValue extends GSimpleConstraint {
-	private static Logger logger = Logger.getLogger(AngleValue.class.getName());
-
-	private GAngle ang;
+	private SMAngle ang;
 	private double goal;
 
-	public AngleValue(GAngle ang, double imp, double goalValue){
+	public CAngleValue(SMAngle ang, double imp, double goalValue){
 		super(ang, imp);
 		this.ang = ang;
 		this.goal = goalValue;
 	}
 
-	public AngleValue(GAngle ang, double imp){
+	public CAngleValue(SMAngle ang, double imp){
 		this(ang, imp, ang.getInitialValue());
 	}
 
 	@Override
-	public Coordinate getDisplacement(GPoint pt, double alpha) {
+	public Coordinate getDisplacement(GAELPoint pt, double alpha) {
 		double val = -0.5*alpha*ang.getValueDifference(this.goal);
 		double cos = Math.cos(val), sin = Math.sin(val);
 		if (pt == ang.getPt()) {

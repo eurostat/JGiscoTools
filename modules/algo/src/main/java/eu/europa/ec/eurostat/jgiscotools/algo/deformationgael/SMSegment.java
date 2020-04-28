@@ -1,22 +1,19 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.Submicro;
+public class SMSegment extends GAELSubmicro {
+	static Logger logger = Logger.getLogger(SMSegment.class.getName());
 
-public class GSegment extends Submicro {
-	static Logger logger = Logger.getLogger(GSegment.class.getName());
+	private GAELPoint pt1;
+	public GAELPoint getPt1() { return this.pt1; }
 
-	private GPoint pt1;
-	public GPoint getPt1() { return this.pt1; }
+	private GAELPoint pt2;
+	public GAELPoint getPt2() { return this.pt2; }
 
-	private GPoint pt2;
-	public GPoint getPt2() { return this.pt2; }
-
-	public GSegment(GPoint pt1, GPoint pt2){
+	public SMSegment(GAELPoint pt1, GAELPoint pt2){
 		this.pt1 = pt1;
 		this.pt2 = pt2;
 
@@ -63,13 +60,13 @@ public class GSegment extends Submicro {
 		return getOrientationGap(getPt1().getIniOrientation(getPt2()));
 	}
 
-	public double getDistance(GPoint p) {
+	public double getDistance(GAELPoint p) {
 		if      ((getPt2().getX()-getPt1().getX())*(p.getX()-getPt1().getX())+(getPt2().getY()-getPt1().getY())*(p.getY()-getPt1().getY()) <=0.0) return getDistance(getPt1());
 		else if ((getPt1().getX()-getPt2().getX())*(p.getX()-getPt2().getX())+(getPt1().getY()-getPt2().getY())*(p.getY()-getPt2().getY()) <=0.0) return getDistance(getPt2());
 		else return Math.abs(((getPt1().getX()-p.getX())*(getPt1().getY()-getPt2().getY())+(getPt1().getY()-p.getY())*(getPt2().getX()-getPt1().getX()))/Math.sqrt(Math.pow(getPt2().getX()-getPt1().getX(),2.0)+Math.pow(getPt2().getY()-getPt1().getY(),2.0)));
 	}
 
-	public Coordinate getProjected(GPoint p) {
+	public Coordinate getProjected(GAELPoint p) {
 		double ps = (getPt2().getX()-getPt1().getX())*(p.getX()-getPt1().getX())+(getPt2().getY()-getPt1().getY())*(p.getY()-getPt1().getY());
 		double dc = Math.pow(getPt2().getX()-getPt1().getX(), 2.0) + Math.pow(getPt2().getY()-getPt1().getY(), 2.0);
 		return new Coordinate(getPt1().getX()+ps*(getPt2().getX()-getPt1().getX())/dc, getPt1().getY()+ps*(getPt2().getY()-getPt1().getY())/dc);

@@ -1,22 +1,19 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.Submicro;
+public class SMTriangle extends GAELSubmicro {
 
-public class GTriangle extends Submicro {
+	private GAELPoint pt1;
+	public GAELPoint getPt1() { return this.pt1; }
 
-	private GPoint pt1;
-	public GPoint getPt1() { return this.pt1; }
+	private GAELPoint pt2;
+	public GAELPoint getPt2() { return this.pt2; }
 
-	private GPoint pt2;
-	public GPoint getPt2() { return this.pt2; }
+	private GAELPoint pt3;
+	public GAELPoint getPt3() { return this.pt3; }
 
-	private GPoint pt3;
-	public GPoint getPt3() { return this.pt3; }
-
-	public GTriangle(GPoint pt1, GPoint pt2, GPoint pt3){
+	public SMTriangle(GAELPoint pt1, GAELPoint pt2, GAELPoint pt3){
 		getPoints().add(pt1);
 		getPoints().add(pt2);
 		getPoints().add(pt3);

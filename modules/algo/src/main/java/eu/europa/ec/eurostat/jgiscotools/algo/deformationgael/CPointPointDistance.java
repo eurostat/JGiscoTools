@@ -1,24 +1,20 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.constraint;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GRelationnalConstraint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GSinglePoint;
-
-public class PointPointDistance extends GRelationnalConstraint {
-	private static Logger logger = Logger.getLogger(PointPointDistance.class.getName());
+public class CPointPointDistance extends GAELRelationnalConstraint {
+	private static Logger logger = Logger.getLogger(CPointPointDistance.class.getName());
 
 	private double distance;
-	private GSinglePoint ps1, ps2;
+	private SMSinglePoint ps1, ps2;
 
-	public PointPointDistance(GSinglePoint ps1, GSinglePoint ps2, double imp){
+	public CPointPointDistance(SMSinglePoint ps1, SMSinglePoint ps2, double imp){
 		this(ps1, ps2, imp, ps1.getPoint().getIniDistance(ps2.getPoint()));
 	}
 
-	public PointPointDistance(GSinglePoint ps1, GSinglePoint ps2, double imp, double distance){
+	public CPointPointDistance(SMSinglePoint ps1, SMSinglePoint ps2, double imp, double distance){
 		super(ps1,ps2,imp);
 		this.ps1 = ps1;
 		this.ps2 = ps2;
@@ -26,7 +22,7 @@ public class PointPointDistance extends GRelationnalConstraint {
 	}
 
 	@Override
-	public Coordinate getDisplacement(GPoint p, double alpha) {
+	public Coordinate getDisplacement(GAELPoint p, double alpha) {
 		double dist = this.ps1.getPoint().getDistance(this.ps2.getPoint());
 		double dx, dy;
 		if (dist==0) {

@@ -1,31 +1,27 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.constraint;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GSimpleConstraint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GSegment;
+public class CSegmentLength extends GAELSimpleConstraint {
+	private static Logger logger = Logger.getLogger(CSegmentLength.class.getName());
 
-public class SegmentLength extends GSimpleConstraint {
-	private static Logger logger = Logger.getLogger(SegmentLength.class.getName());
-
-	private GSegment s;
+	private SMSegment s;
 	private double goalLength;
 
-	public SegmentLength(GSegment s, double imp){
+	public CSegmentLength(SMSegment s, double imp){
 		this(s, imp, s.getIniLength());
 	}
 
-	public SegmentLength(GSegment s, double imp, double goalLength){
+	public CSegmentLength(SMSegment s, double imp, double goalLength){
 		super(s,imp);
 		this.s = s;
 		this.goalLength = goalLength;
 	}
 
 	@Override
-	public Coordinate getDisplacement(GPoint pt, double alpha) {
+	public Coordinate getDisplacement(GAELPoint pt, double alpha) {
 		double dx, dy, length = s.getLength();
 		if (length == 0) {
 			double a = 0.5 * alpha * this.goalLength / s.getIniLength();

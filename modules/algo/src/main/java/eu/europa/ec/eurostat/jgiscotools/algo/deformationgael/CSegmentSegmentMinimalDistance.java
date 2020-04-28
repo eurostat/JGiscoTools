@@ -1,20 +1,16 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.constraint;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GRelationnalConstraint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GSegment;
-
-public class SegmentSegmentMinimalDistance extends GRelationnalConstraint{
-	private static Logger logger=Logger.getLogger(SegmentSegmentMinimalDistance.class.getName());
+public class CSegmentSegmentMinimalDistance extends GAELRelationnalConstraint{
+	private static Logger logger=Logger.getLogger(CSegmentSegmentMinimalDistance.class.getName());
 
 	public double distance;
-	private GSegment s1, s2;
+	private SMSegment s1, s2;
 
-	public SegmentSegmentMinimalDistance(GSegment s1, GSegment s2, double importance, double distance){
+	public CSegmentSegmentMinimalDistance(SMSegment s1, SMSegment s2, double importance, double distance){
 		super(s1,s2,importance);
 		this.s1 = s1;
 		this.s2 = s2;
@@ -22,8 +18,8 @@ public class SegmentSegmentMinimalDistance extends GRelationnalConstraint{
 	}
 
 	@Override
-	public Coordinate getDisplacement(GPoint p, double alpha) {
-		GSegment s=null;
+	public Coordinate getDisplacement(GAELPoint p, double alpha) {
+		SMSegment s=null;
 		if      (p==this.s1.getPt1() || p==this.s1.getPt2())
 			s = this.s2;
 		else if (p==this.s2.getPt1() || p==this.s2.getPt2())

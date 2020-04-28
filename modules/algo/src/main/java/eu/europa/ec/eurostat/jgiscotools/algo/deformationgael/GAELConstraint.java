@@ -1,11 +1,11 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.base;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 
 import org.locationtech.jts.geom.Coordinate;
 
-public abstract class GConstraint {
+public abstract class GAELConstraint {
 
-	public GConstraint(double imp) {
+	public GAELConstraint(double imp) {
 		setImportance(imp);
 	}
 
@@ -13,9 +13,9 @@ public abstract class GConstraint {
 	public double getImportance() { return this.imp; }
 	public void setImportance(double imp) { this.imp = imp; }
 
-	protected abstract Coordinate getDisplacement(GPoint p, double alpha);
+	protected abstract Coordinate getDisplacement(GAELPoint p, double alpha);
 
-	public Coordinate getDisplacement(GPoint p){
+	public Coordinate getDisplacement(GAELPoint p){
 		return getDisplacement(p, getImportance() / p.getImportanceSum());
 	}
 

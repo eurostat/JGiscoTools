@@ -1,31 +1,27 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.constraint;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GSimpleConstraint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GSegment;
+public class CSegmentOrientation extends GAELSimpleConstraint {
+	private static Logger logger = Logger.getLogger(CSegmentOrientation.class.getName());
 
-public class SegmentOrientation extends GSimpleConstraint {
-	private static Logger logger = Logger.getLogger(SegmentOrientation.class.getName());
-
-	private GSegment s;
+	private SMSegment s;
 	private double goal;
 
-	public SegmentOrientation(GSegment s, double imp){
+	public CSegmentOrientation(SMSegment s, double imp){
 		this(s, imp, s.getPt1().getIniOrientation(s.getPt2()));
 	}
 
-	public SegmentOrientation(GSegment s, double imp, double goalOrientation){
+	public CSegmentOrientation(SMSegment s, double imp, double goalOrientation){
 		super(s, imp);
 		this.s = s;
 		this.goal = goalOrientation;
 	}
 
 	@Override
-	public Coordinate getDisplacement(GPoint pt, double alpha) {
+	public Coordinate getDisplacement(GAELPoint pt, double alpha) {
 		double angle = alpha*s.getOrientationGap(this.goal);
 		double cos = Math.cos(angle);
 		double sin = Math.sin(angle);

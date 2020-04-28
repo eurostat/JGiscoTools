@@ -1,39 +1,39 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.base;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.locationtech.jts.geom.Coordinate;
 
-public class GDeformable {
+public class GAELDeformable {
 	//private static Logger logger = Logger.getLogger(GDeformable.class.getName());
 
-	public GDeformable(HashSet<GPoint> pts) {
+	public GAELDeformable(HashSet<GAELPoint> pts) {
 		this.pts = pts;
 	}
 
-	private HashSet<GPoint> pts;
-	public HashSet<GPoint> getPoints(Coordinate c) {
-		HashSet<GPoint> pts_ = new HashSet<GPoint>();
-		for(GPoint pt : pts) if(pt.getPosition().x == c.x && pt.getPosition().y == c.y ) pts_.add(pt);
+	private HashSet<GAELPoint> pts;
+	public HashSet<GAELPoint> getPoints(Coordinate c) {
+		HashSet<GAELPoint> pts_ = new HashSet<GAELPoint>();
+		for(GAELPoint pt : pts) if(pt.getPosition().x == c.x && pt.getPosition().y == c.y ) pts_.add(pt);
 		return pts_;
 	}
 
-	private ArrayList<GPoint> activationStack = new ArrayList<GPoint>();
-	private Boolean isActivated = new Boolean(false);
+	private ArrayList<GAELPoint> activationStack = new ArrayList<GAELPoint>();
+	private Boolean isActivated = false;
 
 	public void activatePoints(int max, double resolution) {
 
 		synchronized (isActivated) {
-			if(isActivated.booleanValue()) return;
-			isActivated = new Boolean(true);
+			if(isActivated) return;
+			isActivated = true;
 		}
 
 		//if(logger.isLoggable(Level.FINE)) logger.fine("Load non balanced points of " + this);
 
 		activationStack.clear();
 		Coordinate c0 = new Coordinate(0,0);
-		for (GPoint p : pts) {
+		for (GAELPoint p : pts) {
 			if( p.isFrozen() ) continue;
 			Coordinate dis = p.getdisplacement();
 			if(dis.distance(c0) > resolution * 0.5) {
@@ -44,19 +44,19 @@ public class GDeformable {
 
 		//if(logger.isLoggable(Level.FINE)) logger.fine("Activation of the points of " + this + " (" + activationStack.size() + " initial non-balanced points).");
 
-		GPoint p;
+		GAELPoint p;
 		int i = 0;
 		c0 = new Coordinate(0,0);
 		while (true){
 			if (activationStack.isEmpty()) {
 				//if(logger.isLoggable(Level.FINE)) logger.fine("No more point to activate: deformation terminated.");
-				isActivated = new Boolean(false);
+				isActivated = false;
 				return;
 			}
 
 			if (max>0 && i>=max) {
 				//if(logger.isLoggable(Level.FINE)) logger.fine("Limit number of activation reached: deformation stopped.");
-				isActivated = new Boolean(false);
+				isActivated = false;
 				return;
 			}
 			i++;
@@ -94,8 +94,8 @@ public class GDeformable {
 	}
 
 	//diffuse activation to the points in relation
-	protected void diffuse(GPoint gp){
-		for (GPoint p : gp.getPointsRel()) {
+	protected void diffuse(GAELPoint gp){
+		for (GAELPoint p : gp.getPointsRel()) {
 			if ( p.isFrozen() || activationStack.contains(p) ) continue;
 			activationStack.add(p);
 		}
@@ -105,14 +105,14 @@ public class GDeformable {
 	public void clean(){
 		deleteConstraints();
 
-		for(GPoint p : pts)
+		for(GAELPoint p : pts)
 			p.clean();
 		if(activationStack != null) activationStack.clear();
 		pts = null;
 	}
 
 	public void deleteConstraints(){
-		for (GPoint gp : pts) if( gp.getConstraints() != null ) gp.getConstraints().clear();
+		for (GAELPoint gp : pts) if( gp.getConstraints() != null ) gp.getConstraints().clear();
 	}
 
 }

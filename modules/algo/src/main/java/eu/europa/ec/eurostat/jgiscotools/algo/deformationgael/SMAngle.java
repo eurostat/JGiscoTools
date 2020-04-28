@@ -1,18 +1,15 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.Submicro;
+public class SMAngle extends GAELSubmicro {
 
-public class GAngle extends Submicro {
+	private GAELPoint pt;
+	public GAELPoint getPt() { return this.pt; }
+	private GAELPoint pt1;
+	public GAELPoint getPt1() { return this.pt1; }
+	private GAELPoint pt2;
+	public GAELPoint getPt2() { return this.pt2; }
 
-	private GPoint pt;
-	public GPoint getPt() { return this.pt; }
-	private GPoint pt1;
-	public GPoint getPt1() { return this.pt1; }
-	private GPoint pt2;
-	public GPoint getPt2() { return this.pt2; }
-
-	public GAngle(GPoint pt1, GPoint pt, GPoint pt2){
+	public SMAngle(GAELPoint pt1, GAELPoint pt, GAELPoint pt2){
 		getPoints().add(pt1);
 		getPoints().add(pt);
 		getPoints().add(pt2);

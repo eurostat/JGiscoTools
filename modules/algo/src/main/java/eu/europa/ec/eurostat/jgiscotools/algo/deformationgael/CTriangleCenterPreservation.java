@@ -1,21 +1,17 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.constraint;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GSimpleConstraint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GTriangle;
+public class CTriangleCenterPreservation extends GAELSimpleConstraint {
+	private SMTriangle t;
 
-public class TriangleCenterPreservation extends GSimpleConstraint {
-	private GTriangle t;
-
-	public TriangleCenterPreservation(GTriangle t, double imp){
+	public CTriangleCenterPreservation(SMTriangle t, double imp){
 		super(t, imp);
 		this.t = t;
 	}
 
 	@Override
-	public Coordinate getDisplacement(GPoint pt, double alpha) {
+	public Coordinate getDisplacement(GAELPoint pt, double alpha) {
 
 		if (t.istReverted()) {
 			return new Coordinate(0,0);

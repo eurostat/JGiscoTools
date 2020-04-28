@@ -1,29 +1,25 @@
-package eu.europa.ec.eurostat.jgiscotools.algo.deformation.constraint;
+package eu.europa.ec.eurostat.jgiscotools.algo.deformationgael;
 
 import java.util.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GPoint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.base.GRelationnalConstraint;
-import eu.europa.ec.eurostat.jgiscotools.algo.deformation.submicro.GSegment;
+public class CSegmentSegmentJoin extends GAELRelationnalConstraint {
+	private static Logger logger = Logger.getLogger(CSegmentSegmentJoin.class.getName());
 
-public class SegmentSegmentJoin extends GRelationnalConstraint {
-	private static Logger logger = Logger.getLogger(SegmentSegmentJoin.class.getName());
+	private SMSegment s1, s2;
 
-	private GSegment s1, s2;
-
-	public SegmentSegmentJoin(GSegment s1, GSegment s2, double importance) {
+	public CSegmentSegmentJoin(SMSegment s1, SMSegment s2, double importance) {
 		super(s1,s2,importance);
 		this.s1 = s1;
 		this.s2 = s2;
 	}
 
 	@Override
-	public Coordinate getDisplacement(GPoint p, double alpha) {
+	public Coordinate getDisplacement(GAELPoint p, double alpha) {
 
 		//recupere le segment auquel le point n'appartient pas
-		GSegment s=null;
+		SMSegment s=null;
 		if      (p==this.s1.getPt1()||p==this.s1.getPt2())
 			s=this.s2;
 		else if (p==this.s2.getPt1()||p==this.s2.getPt2())
