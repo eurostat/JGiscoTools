@@ -10,8 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.referencing.CRS;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.Decomposer;
-import eu.europa.ec.eurostat.jgiscotools.algo.Partition.GeomType;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.Decomposer;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition.GeomType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 

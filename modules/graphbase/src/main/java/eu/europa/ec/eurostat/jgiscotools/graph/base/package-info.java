@@ -1,4 +1,4 @@
 /**
- * Graph structure and associated algorithms.
+ * Basic manipulation of graphs.
  */
 package eu.europa.ec.eurostat.jgiscotools.graph.base;

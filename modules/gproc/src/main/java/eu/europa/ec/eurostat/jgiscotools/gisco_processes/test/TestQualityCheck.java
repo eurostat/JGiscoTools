@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationQuality;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.TesselationQuality;
 
 /**
  * @author julien Gaffuri

@@ -1,5 +1,4 @@
 /**
- * Grid creation.
- * Code for GridMaker tool.
+ * Creation and manipulation of grids.
  */
 package eu.europa.ec.eurostat.jgiscotools.grid;

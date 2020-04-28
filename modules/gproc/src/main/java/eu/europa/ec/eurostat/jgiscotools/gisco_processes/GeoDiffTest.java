@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
+import eu.europa.ec.eurostat.jgiscotools.geodiff.GeoDiff;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 public class GeoDiffTest {
@@ -19,7 +19,7 @@ public class GeoDiffTest {
 		System.out.println(fin.size());
 		System.out.println(fin.get(0).getAttributes().keySet());
 
-		DifferenceDetection dd = new DifferenceDetection(ini, fin);
+		GeoDiff dd = new GeoDiff(ini, fin);
 
 		Collection<Feature> gd = dd.getDifferences();
 

@@ -9,24 +9,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.feature.util.CRSType;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AEdge;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AFace;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.ATesselation;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.AUnit;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CEdgeFaceSize;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CEdgeGranularity;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CEdgeNoTriangle;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CEdgeValidity;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CEdgesFacesContainPoints;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CFaceContainPoints;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CFaceSize;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CFaceValidity;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CUnitContainPoints;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.CUnitNoNarrowGaps;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisation;
-import eu.europa.ec.eurostat.jgiscotools.tesselationGeneralisation.TesselationGeneralisationSpecification;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.AEdge;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.AFace;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.ATesselation;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.AUnit;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CEdgeFaceSize;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CEdgeGranularity;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CEdgeNoTriangle;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CEdgeValidity;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CEdgesFacesContainPoints;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CFaceContainPoints;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CFaceSize;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CFaceValidity;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CUnitContainPoints;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.CUnitNoNarrowGaps;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.TesselationGeneralisation;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.TesselationGeneralisationSpecification;
+import eu.europa.ec.eurostat.jgiscotools.util.CRSType;
 
 /**
  * @author julien Gaffuri
