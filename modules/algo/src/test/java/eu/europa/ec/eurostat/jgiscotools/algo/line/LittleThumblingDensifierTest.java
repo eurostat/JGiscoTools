@@ -6,7 +6,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTFileReader;
 import org.locationtech.jts.io.WKTReader;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.line.LittleThumblingDensifier;
 import junit.framework.TestCase;
 
 /**
