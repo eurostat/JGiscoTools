@@ -18,9 +18,9 @@ public class LittleThumblingDensifierTest extends TestCase {
 	public LittleThumblingDensifierTest(String name) { super(name); }
 
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		junit.textui.TestRunner.run(LittleThumblingDensifierTest.class);
-	}
+	}*/
 
 	public void test0() throws Exception{
 		Geometry g = wr.read("LINESTRING(0 0, 1 0)");
