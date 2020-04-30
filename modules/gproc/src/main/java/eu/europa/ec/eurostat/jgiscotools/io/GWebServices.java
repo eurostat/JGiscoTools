@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import eu.europa.ec.eurostat.jgiscotools.feature.util.Util;
+import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.io.web.HTTPUtil;
 
 /**

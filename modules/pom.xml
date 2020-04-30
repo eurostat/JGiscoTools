@@ -22,6 +22,7 @@
 		<module>grid</module>
 		<module>geodiff</module>
 		<module>regionsimplify</module>
+		<module>full</module>
 	</modules>
 
 </project>

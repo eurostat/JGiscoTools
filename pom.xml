@@ -71,7 +71,7 @@
 				<version>3.1.1</version>
 				<configuration>
 					<source>8</source>
-					<reportOutputDirectory>../doc/site</reportOutputDirectory>
+					<reportOutputDirectory>doc/site</reportOutputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -155,9 +155,11 @@
 
 	<repositories>
 		<repository>
-			<id>osgeo</id>
-			<name>Open Source Geospatial Foundation Repository</name>
-			<url>http://download.osgeo.org/webdav/geotools/</url>
+		    <id>osgeo</id>
+		    <name>OSGeo Release Repository</name>
+		    <url>https://repo.osgeo.org/repository/release/</url>
+		    <snapshots><enabled>false</enabled></snapshots>
+		    <releases><enabled>true</enabled></releases>
 		</repository>
 	</repositories>
 

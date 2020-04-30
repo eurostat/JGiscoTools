@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.algorithm.Angle;
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.distances.SemanticDistance;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.distance.SemanticDistance;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;

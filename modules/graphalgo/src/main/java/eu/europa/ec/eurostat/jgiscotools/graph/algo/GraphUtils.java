@@ -11,7 +11,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.distances.HausdorffDistance;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.HausdorffDistance;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.TopologyAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;

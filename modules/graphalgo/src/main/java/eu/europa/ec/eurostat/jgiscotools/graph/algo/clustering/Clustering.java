@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.distances.Distance;
+import eu.europa.ec.eurostat.jgiscotools.algo.base.distance.Distance;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.ConnexComponents;
 import eu.europa.ec.eurostat.jgiscotools.graph.algo.MinimumSpanningTree;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;

@@ -6,6 +6,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTReader;
 
+import eu.europa.ec.eurostat.jgiscotools.algo.base.HausdorffDistance;
 import junit.framework.TestCase;
 
 /**
