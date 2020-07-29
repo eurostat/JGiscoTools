@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.util;
+package eu.europa.ec.eurostat.jgiscotools;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,6 +10,8 @@ import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import eu.europa.ec.eurostat.jgiscotools.util.ColorUtil;
 
 /**
  * Heat map builder algorithm
