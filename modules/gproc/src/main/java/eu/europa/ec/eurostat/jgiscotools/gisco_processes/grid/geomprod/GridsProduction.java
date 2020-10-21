@@ -158,8 +158,8 @@ public class GridsProduction {
 
 			logger.info("Assign NUTS codes...");
 			for(int level = 0; level <=3; level++) {
-				GridUtil.assignRegionCode(cells, "NUTS2016_"+level+"_ID", nuts2016[level], 0, "NUTS_ID");
-				GridUtil.assignRegionCode(cells, "NUTS2021_"+level+"_ID", nuts2021[level], 0, "NUTS_ID");
+				GridUtil.assignRegionCode(cells, "NUTS_2016_"+level, nuts2016[level], 0, "NUTS_ID");
+				GridUtil.assignRegionCode(cells, "NUTS_2021_"+level, nuts2021[level], 0, "NUTS_ID");
 			}
 
 			logger.info("Compute land proportion...");
