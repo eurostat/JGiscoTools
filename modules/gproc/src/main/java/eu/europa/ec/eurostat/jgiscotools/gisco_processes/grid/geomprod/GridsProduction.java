@@ -93,28 +93,21 @@ public class GridsProduction {
 		inlandWaterGeometries = null;
 
 		logger.info("Load NUTS regions...");
-		ArrayList<Feature> nuts2016_0 = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2016.gpkg", null, CQL.toFilter("STAT_LEVL_ = '0'"));
-		ArrayList<Feature> nuts2016_1 = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2016.gpkg", null, CQL.toFilter("STAT_LEVL_ = '1'"));
-		ArrayList<Feature> nuts2016_2 = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2016.gpkg", null, CQL.toFilter("STAT_LEVL_ = '2'"));
-		ArrayList<Feature> nuts2016_3 = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2016.gpkg", null, CQL.toFilter("STAT_LEVL_ = '3'"));
-		ArrayList<Feature> nuts2021_0 = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2021.gpkg", null, CQL.toFilter("STAT_LEVL_ = '0'"));
-		ArrayList<Feature> nuts2021_1 = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2021.gpkg", null, CQL.toFilter("STAT_LEVL_ = '1'"));
-		ArrayList<Feature> nuts2021_2 = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2021.gpkg", null, CQL.toFilter("STAT_LEVL_ = '2'"));
-		ArrayList<Feature> nuts2021_3 = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2021.gpkg", null, CQL.toFilter("STAT_LEVL_ = '3'"));
+		ArrayList<Feature>[] nuts2016 = new ArrayList[4], nuts2021 = new ArrayList[4];
+		for(int level = 0; level <=3; level++) {
+			nuts2016[level] = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2016_LAEA.gpkg", null, CQL.toFilter("STAT_LEVL_CODE = '"+level+"'"));
+			nuts2021[level] = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2021_LAEA.gpkg", null, CQL.toFilter("STAT_LEVL_CODE = '"+level+"'"));
+		}
 
 		logger.info("Sort nuts regions by id...");
 		Comparator<Feature> nutsComp = new Comparator<Feature>(){
 			@Override
 			public int compare(Feature f1, Feature f2) { return f1.getAttribute("NUTS_ID").toString().compareTo(f2.getAttribute("NUTS_ID").toString()); }
 		};
-		nuts2016_0.sort(nutsComp);
-		nuts2016_1.sort(nutsComp);
-		nuts2016_2.sort(nutsComp);
-		nuts2016_3.sort(nutsComp);
-		//nuts2021_0.sort(nutsComp);
-		//nuts2021_1.sort(nutsComp);
-		//nuts2021_2.sort(nutsComp);
-		//nuts2021_3.sort(nutsComp);
+		for(int level = 0; level <=3; level++) {
+			nuts2016[level].sort(nutsComp);
+			nuts2021[level].sort(nutsComp);
+		}
 
 
 
@@ -164,14 +157,10 @@ public class GridsProduction {
 
 
 			logger.info("Assign NUTS codes...");
-			GridUtil.assignRegionCode(cells, "NUTS_2016_0_ID", nuts2016_0, 0, "NUTS_ID");
-			GridUtil.assignRegionCode(cells, "NUTS_2016_1_ID", nuts2016_1, 0, "NUTS_ID");
-			GridUtil.assignRegionCode(cells, "NUTS_2016_2_ID", nuts2016_2, 0, "NUTS_ID");
-			GridUtil.assignRegionCode(cells, "NUTS_2016_3_ID", nuts2016_3, 0, "NUTS_ID");
-			GridUtil.assignRegionCode(cells, "NUTS_2021_0_ID", nuts2021_0, 0, "NUTS_ID");
-			GridUtil.assignRegionCode(cells, "NUTS_2021_1_ID", nuts2021_1, 0, "NUTS_ID");
-			GridUtil.assignRegionCode(cells, "NUTS_2021_2_ID", nuts2021_2, 0, "NUTS_ID");
-			GridUtil.assignRegionCode(cells, "NUTS_2021_3_ID", nuts2021_3, 0, "NUTS_ID");
+			for(int level = 0; level <=3; level++) {
+				GridUtil.assignRegionCode(cells, "NUTS2016_"+level+"_ID", nuts2016[level], 0, "NUTS_ID");
+				GridUtil.assignRegionCode(cells, "NUTS2021_"+level+"_ID", nuts2021[level], 0, "NUTS_ID");
+			}
 
 			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);
