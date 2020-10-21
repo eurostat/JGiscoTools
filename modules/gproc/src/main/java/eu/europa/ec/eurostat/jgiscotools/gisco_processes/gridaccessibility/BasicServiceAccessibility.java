@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility;
 
 import java.util.ArrayList;
 import java.util.Collection;

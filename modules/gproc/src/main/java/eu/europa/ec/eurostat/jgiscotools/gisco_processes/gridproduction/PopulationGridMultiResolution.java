@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.grid.geomprod;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -25,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 public class PopulationGridMultiResolution {
 	static Logger logger = LogManager.getLogger(PopulationGridMultiResolution.class.getName());
 
-	static String basePath = "E:/workspace/gridstat/data/";
+	static String basePath = "E:/workspace/gridstat/";
 
 	public static void main(String[] args) {
 		logger.info("Start");
@@ -89,7 +89,7 @@ public class PopulationGridMultiResolution {
 		logger.info("2006");
 		{
 			logger.info("Load data...");
-			StatsHypercube popData = CSV.load(basePath+"pop_grid_1km/2006.csv", "TOT_P");
+			StatsHypercube popData = CSV.load(basePath+"pop_grid_1km_geostat_raw/2006.csv", "TOT_P");
 
 			//popData.printInfo(false);
 			//Dimension: GRD_ID (1946461 dimension values)
@@ -116,7 +116,7 @@ public class PopulationGridMultiResolution {
 			//NB: for 2011, population figure are stored in two deparate files
 
 			logger.info("Load data 1...");
-			StatsHypercube popData = CSV.load(basePath+"pop_grid_1km/2011.csv", "TOT_P");
+			StatsHypercube popData = CSV.load(basePath+"pop_grid_1km_geostat_raw/2011.csv", "TOT_P");
 
 			//popData.printInfo(false);
 			//Dimension: GRD_ID (2024787 dimension values)
@@ -132,7 +132,7 @@ public class PopulationGridMultiResolution {
 			//  [0, other, 3, 4, 5, 10]
 
 			logger.info("Load data 2...");
-			StatsHypercube popDataJrc = CSV.load(basePath+"pop_grid_1km/2011_jrc.csv", "TOT_P");
+			StatsHypercube popDataJrc = CSV.load(basePath+"pop_grid_1km_geostat_raw/2011_jrc.csv", "TOT_P");
 
 			//popDataJrc.printInfo(false);
 			//Dimension: GRD_ID (81684 dimension values)
