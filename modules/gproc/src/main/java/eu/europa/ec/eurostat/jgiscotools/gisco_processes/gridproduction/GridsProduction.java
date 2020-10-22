@@ -49,6 +49,7 @@ public class GridsProduction {
 	//https://www.efgs.info/data/
 	//https://esdac.jrc.ec.europa.eu/content/european-reference-grids
 
+	//TODO make some processes parallel ?
 	//TODO use better info source for coast line / land area
 
 	//the different resolutions, in KM
