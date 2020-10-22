@@ -158,6 +158,7 @@ public class GridsProduction {
 
 			logger.info("Assign NUTS codes...");
 			for(int level = 0; level <=3; level++) {
+				logger.info("  level " + level);
 				GridUtil.assignRegionCode(cells, "NUTS2016_"+level, nuts2016[level], 0, "NUTS_ID");
 				GridUtil.assignRegionCode(cells, "NUTS2021_"+level, nuts2021[level], 0, "NUTS_ID");
 			}
