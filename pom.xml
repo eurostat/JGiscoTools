@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.europa.ec.eurostat</groupId>
 	<artifactId>jgiscotools</artifactId>
-	<version>0.9.6</version>
+	<version>0.9.7-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>JGiscoTools</name>
 	<url>https://github.com/eurostat/JGiscoTools</url>
@@ -19,7 +19,7 @@
 		<url>https://github.com/eurostat/JGiscoTools</url>
 		<connection>scm:git:git://github.com/eurostat/JGiscoTools.git</connection>
 		<developerConnection>scm:git:git@github.com:eurostat/JGiscoTools.git</developerConnection>
-		<tag>jgiscotools-0.9.6</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
