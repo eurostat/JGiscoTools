@@ -23,6 +23,7 @@
 		<module>geodiff</module>
 		<module>regionsimplify</module>
 		<module>full</module>
+		<module>gproc</module>
 	</modules>
 
 </project>
