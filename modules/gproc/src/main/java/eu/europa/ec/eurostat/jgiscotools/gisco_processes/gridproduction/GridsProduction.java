@@ -55,8 +55,7 @@ public class GridsProduction {
 	//the different resolutions, in KM
 	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
 
-	
-	
+
 	//use: -Xms2G -Xmx8G
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
@@ -203,7 +202,6 @@ public class GridsProduction {
 				logger.info("Save cells (point) as SHP...");
 				GeoData.save(cells, outpath + "grid_"+resKM+"km_point_shp" + "/grid_"+resKM+"km_point.shp", CRSUtil.getETRS89_LAEA_CRS());
 			}*/
-
 		}
 
 		logger.info("End");
