@@ -51,7 +51,7 @@ public class Education1Accessibility {
 
 		logger.info("Load network sections...");
 		//BD TOPO
-		Filter fil = CQL.toFilter("(NATURE is 'Sentier' AND NATURE is 'Chemin' AND NATURE is 'Piste Cyclable' AND NATURE is 'Escalier')");
+		Filter fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste Cyclable' AND NOT NATURE='Escalier')");
 		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "input_data/test_NMCA_FR_road_tn/roads.gpkg", null, fil);
 		SpeedCalculator sc = new SpeedCalculator() {
 			@Override
@@ -76,42 +76,25 @@ public class Education1Accessibility {
 			}
 		};
 		logger.info(networkSections.size() + " sections loaded.");
+		
+		String label = "schools";
 
-		final class Case {
-			String label, filter;
-			double minDurAccMinT;
-			public Case(String label, String filter, double minDurAccMinT) {
-				this.label = label;
-				this.filter = filter;
-				this.minDurAccMinT = minDurAccMinT;
-			}
-		};
+		logger.info("Load POIs");
+		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/education_services.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
+		logger.info(pois.size() + " POIs");
 
-		for(Case c : new Case[] {
-				new Case("healthcare", "GST = 'GF0703' OR GST = 'GF0306'", 15),
-				new Case("educ1", "GST = 'GF090102'", 10),
-				new Case("educ2", "GST = 'GF0902'", 20),
-				new Case("educ3", "GST = 'GF0904'", 60)
-		}) {
+		logger.info("Build accessibility...");
+		double minDurAccMinT = 40;
+		AccessibilityGrid ag = new AccessibilityGrid(cells, cellIdAtt, resKM*1000, pois, networkSections, "TOT_P_2011", minDurAccMinT);
+		ag.setEdgeWeighter(sc);
 
-			logger.info("Load POIs " + c.label + "...");
-			ArrayList<Feature> pois = GeoData.getFeatures("ERM/gpkg/ERM_2019.1_LAEA/GovservP.gpkg", null, CQL.toFilter("("+c.filter +")"+ (cnt==null?"":" AND (ICC = '"+cnt+"')") ));
-			logger.info(pois.size() + " POIs");
+		logger.info("Compute accessibility...");
+		ag.compute();
 
-
-			logger.info("Build accessibility...");
-			AccessibilityGrid ag = new AccessibilityGrid(cells, cellIdAtt, resKM*1000, pois, networkSections, "TOT_P_2011", c.minDurAccMinT);
-			ag.setEdgeWeighter(sc);
-
-			logger.info("Compute accessibility...");
-			ag.compute();
-
-			logger.info("Save data...");
-			CSVUtil.save(ag.getCellData(), outPath + "accessibility_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".csv");
-			logger.info("Save routes... Nb=" + ag.getRoutes().size());
-			GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".gpkg", crs, true);
-
-		}
+		logger.info("Save data...");
+		CSVUtil.save(ag.getCellData(), outPath + "accessibility_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+label+".csv");
+		logger.info("Save routes... Nb=" + ag.getRoutes().size());
+		GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+label+".gpkg", crs, true);
 
 		logger.info("End");
 	}
