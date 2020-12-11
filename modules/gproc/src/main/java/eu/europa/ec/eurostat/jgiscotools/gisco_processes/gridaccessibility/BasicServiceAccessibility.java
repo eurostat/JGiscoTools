@@ -10,15 +10,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
-import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculator;
+import eu.europa.ec.eurostat.jgiscotools.routing.SpeedCalculator;
 
 /**
  * @author julien Gaffuri
@@ -50,44 +48,9 @@ public class BasicServiceAccessibility {
 
 
 		logger.info("Load network sections...");
-		//Collection<Feature> networkSections = GeoData.getFeatures(egPath+ "ERM/gpkg/ERM_2019.1_LAEA/RoadL.gpkg", null, fil );
-
-		//ERM
-		//TODO add other transport networks (ferry, etc?)
-		//EXS Existence Category - RST Road Surface Type
-		Filter fil = CQL.toFilter("((EXS=28 OR EXS=0) AND (RST=1 OR RST=0))" + (cnt==null?"":" AND (ICC = '"+cnt+"')") );
-		Collection<Feature> networkSections = GeoData.getFeatures(egPath+ "ERM/gpkg/ERM_2019.1_LAEA/RoadL.gpkg", null, fil);
-		//Collection<Feature> networkSections = SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_14_15_16.shp", fil);
-		//networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_984.shp", fil) );
-		//networkSections.addAll( SHPUtil.getFeatures(egpath+"ERM/shp-gdb/ERM_2019.1_shp_LAEA/Data/RoadL_RTT_0.shp", fil) );
-
-		SpeedCalculator sc = new SpeedCalculator() {
-			@Override
-			public double getSpeedKMPerHour(SimpleFeature sf) {
-				//estimate speed of a transport section of ERM/EGM based on attributes
-				//COR - Category of Road - 0 Unknown - 1 Motorway - 2 Road inside built-up area - 999 Other road (outside built-up area)
-				//RTT - Route Intended Use - 0 Unknown - 16 National motorway - 14 Primary route - 15 Secondary route - 984 Local route
-				String cor = sf.getAttribute("COR").toString();
-				if(cor==null) { logger.warn("No COR attribute for feature "+sf.getID()); return 0; };
-				String rtt = sf.getAttribute("RTT").toString();
-				if(rtt==null) { logger.warn("No RTT attribute for feature "+sf.getID()); return 0; };
-
-				//motorways
-				if("1".equals(cor) || "16".equals(rtt)) return 110.0;
-				//city roads
-				if("2".equals(cor)) return 50.0;
-				//fast roads
-				if("14".equals(rtt) || "15".equals(rtt)) return 80.0;
-				//local road
-				if("984".equals(rtt)) return 80.0;
-				return 50.0;
-			}
-		};
+		Collection<Feature> networkSections = RoadERM.get(cnt);
+		SpeedCalculator sc = RoadERM.getSpeedCalculator();		
 		logger.info(networkSections.size() + " sections loaded.");
-
-
-
-
 
 
 		final class Case {

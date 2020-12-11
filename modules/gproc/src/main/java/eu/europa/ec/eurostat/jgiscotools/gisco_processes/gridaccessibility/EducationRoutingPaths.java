@@ -10,12 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
-import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths;
+import eu.europa.ec.eurostat.jgiscotools.routing.SpeedCalculator;
 
 /**
  * @author julien Gaffuri
@@ -46,9 +46,8 @@ public class EducationRoutingPaths {
 
 
 		logger.info("Load network sections...");
-		//BD TOPO
-		Filter fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste Cyclable' AND NOT NATURE='Escalier')");
-		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "input_data/test_NMCA_FR_road_tn/roads.gpkg", null, fil);
+		Collection<Feature> networkSections = RoadBDTopo.get();
+		SpeedCalculator sc = RoadBDTopo.getSpeedCalculator();
 		logger.info(networkSections.size() + " sections loaded.");
 
 		String label = "schools";
@@ -59,7 +58,7 @@ public class EducationRoutingPaths {
 
 		logger.info("Build accessibility...");
 		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", resKM*1000, pois, "id", networkSections, 5);
-		//ag.setEdgeWeighter(sc);
+		ag.setEdgeWeighter(sc);
 
 		logger.info("Compute accessibility...");
 		ag.compute();

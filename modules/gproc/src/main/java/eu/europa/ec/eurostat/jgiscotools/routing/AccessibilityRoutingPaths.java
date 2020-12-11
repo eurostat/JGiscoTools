@@ -57,7 +57,6 @@ public class AccessibilityRoutingPaths {
 	private EdgeWeighter edgeWeighter = null;
 	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
 
-	public interface SpeedCalculator { double getSpeedKMPerHour(SimpleFeature sf); }
 	public void setEdgeWeighter(SpeedCalculator sc) {
 		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
