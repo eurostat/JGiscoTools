@@ -14,16 +14,15 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
+import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths;
 
 /**
  * @author julien Gaffuri
  *
  */
-public class Education1Accessibility {
-	private static Logger logger = LogManager.getLogger(Education1Accessibility.class.getName());
+public class EducationRoutingPaths {
+	private static Logger logger = LogManager.getLogger(EducationRoutingPaths.class.getName());
 
 	//show where cross-border cooperation can improve accessibility
 
@@ -42,8 +41,7 @@ public class Education1Accessibility {
 		String cnt = "FR";
 
 		logger.info("Load grid cells " + resKM + "km ...");
-		String cellIdAtt = "GRD_ID";
-		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, cnt==null?null:CQL.toFilter("CNTR_ID = '"+cnt+"'"));
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
 		logger.info(cells.size() + " cells");
 
 
@@ -52,7 +50,7 @@ public class Education1Accessibility {
 		Filter fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste Cyclable' AND NOT NATURE='Escalier')");
 		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "input_data/test_NMCA_FR_road_tn/roads.gpkg", null, fil);
 		logger.info(networkSections.size() + " sections loaded.");
-		
+
 		String label = "schools";
 
 		logger.info("Load POIs");
@@ -60,15 +58,12 @@ public class Education1Accessibility {
 		logger.info(pois.size() + " POIs");
 
 		logger.info("Build accessibility...");
-		double minDurAccMinT = 40;
-		AccessibilityGrid ag = new AccessibilityGrid(cells, cellIdAtt, resKM*1000, pois, networkSections, "TOT_P_2011", minDurAccMinT);
+		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", resKM*1000, pois, "id", networkSections, 5);
 		//ag.setEdgeWeighter(sc);
 
 		logger.info("Compute accessibility...");
 		ag.compute();
 
-		logger.info("Save data...");
-		CSVUtil.save(ag.getCellData(), outPath + "accessibility_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+label+".csv");
 		logger.info("Save routes... Nb=" + ag.getRoutes().size());
 		GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+label+".gpkg", crs, true);
 
