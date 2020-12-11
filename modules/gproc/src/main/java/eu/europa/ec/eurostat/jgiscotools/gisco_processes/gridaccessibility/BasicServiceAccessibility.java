@@ -35,23 +35,23 @@ public class BasicServiceAccessibility {
 
 		//logger.setLevel(Level.ALL);
 
-		String basePath = "E:/workspace/gridstat/";
+		String basePath = "E:/workspace/basic_services_accessibility/";
 		String outPath = basePath + "accessibility_output/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 		int resKM = 10;
 
 		//set the country id (set to null for all countries)
-		String cnt = null;
+		String cnt = "FR";
 
 		logger.info("Load grid cells " + resKM + "km ...");
 		String cellIdAtt = "GRD_ID";
-		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km.gpkg",null, cnt==null?null:CQL.toFilter("CNTR_ID = '"+cnt+"'"));
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, cnt==null?null:CQL.toFilter("CNTR_ID = '"+cnt+"'"));
 		logger.info(cells.size() + " cells");
 
 
 		logger.info("Load network sections...");
 		//BD TOPO
-		Filter fil = CQL.toFilter("(NATURE != 'Sentier' AND NATURE != 'Chemin' AND NATURE != 'Piste Cyclable' AND NATURE != 'Escalier')");
+		Filter fil = CQL.toFilter("(NATURE!='Sentier' AND NATURE!='Chemin' AND NATURE!='Piste Cyclable' AND NATURE!='Escalier')");
 		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "input_data/test_NMCA_FR_road_tn/roads.gpkg", null, fil);
 		SpeedCalculator sc = new SpeedCalculator() {
 			@Override
