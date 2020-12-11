@@ -25,8 +25,6 @@ import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 public class PopulationGridMultiResolution {
 	static Logger logger = LogManager.getLogger(PopulationGridMultiResolution.class.getName());
 
-	static String basePath = "E:/workspace/gridstat/";
-
 	public static void main(String[] args) {
 		logger.info("Start");
 
@@ -42,7 +40,7 @@ public class PopulationGridMultiResolution {
 			logger.info(year);
 
 			//load 1km data
-			StatsHypercube popData = CSV.load(basePath+"pop_grid/pop_grid_"+year+"_1km_full.csv", "TOT_P");
+			StatsHypercube popData = CSV.load(GridsProduction.basePath+"pop_grid/pop_grid_"+year+"_1km_full.csv", "TOT_P");
 
 			//remove unnecessary dimensions
 			popData.delete("YEAR");
@@ -76,7 +74,7 @@ public class PopulationGridMultiResolution {
 					sh.stats.add( new Stat(e.getValue(), "GRD_ID", e.getKey()) );
 
 				//save
-				CSV.save(sh, "TOT_P", basePath+"pop_grid/pop_grid_"+year+"_"+resKM+"km.csv");
+				CSV.save(sh, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_"+year+"_"+resKM+"km.csv");
 			}
 		}
 
@@ -89,7 +87,7 @@ public class PopulationGridMultiResolution {
 		logger.info("2006");
 		{
 			logger.info("Load data...");
-			StatsHypercube popData = CSV.load(basePath+"pop_grid_1km_geostat_raw/2006.csv", "TOT_P");
+			StatsHypercube popData = CSV.load(GridsProduction.basePath+"pop_grid_1km_geostat_raw/2006.csv", "TOT_P");
 
 			//popData.printInfo(false);
 			//Dimension: GRD_ID (1946461 dimension values)
@@ -107,7 +105,7 @@ public class PopulationGridMultiResolution {
 				s.dims.put("GRD_ID", reformatGeostatGridId(s.dims.get("GRD_ID")));
 
 			logger.info("Save...");
-			CSV.save(popData, "TOT_P", basePath+"pop_grid/pop_grid_2006_1km_full.csv");
+			CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2006_1km_full.csv");
 		}
 
 
@@ -116,7 +114,7 @@ public class PopulationGridMultiResolution {
 			//NB: for 2011, population figure are stored in two deparate files
 
 			logger.info("Load data 1...");
-			StatsHypercube popData = CSV.load(basePath+"pop_grid_1km_geostat_raw/2011.csv", "TOT_P");
+			StatsHypercube popData = CSV.load(GridsProduction.basePath+"pop_grid_1km_geostat_raw/2011.csv", "TOT_P");
 
 			//popData.printInfo(false);
 			//Dimension: GRD_ID (2024787 dimension values)
@@ -132,7 +130,7 @@ public class PopulationGridMultiResolution {
 			//  [0, other, 3, 4, 5, 10]
 
 			logger.info("Load data 2...");
-			StatsHypercube popDataJrc = CSV.load(basePath+"pop_grid_1km_geostat_raw/2011_jrc.csv", "TOT_P");
+			StatsHypercube popDataJrc = CSV.load(GridsProduction.basePath+"pop_grid_1km_geostat_raw/2011_jrc.csv", "TOT_P");
 
 			//popDataJrc.printInfo(false);
 			//Dimension: GRD_ID (81684 dimension values)
@@ -162,7 +160,7 @@ public class PopulationGridMultiResolution {
 				s.dims.put("GRD_ID", reformatGeostatGridId(s.dims.get("GRD_ID")));
 
 			logger.info("Save...");
-			CSV.save(popData, "TOT_P", basePath+"pop_grid/pop_grid_2011_1km_full.csv");
+			CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2011_1km_full.csv");
 		}
 
 	}

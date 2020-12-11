@@ -44,6 +44,8 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class GridsProduction {
 	static Logger logger = LogManager.getLogger(GridsProduction.class.getName());
 
+	public static String basePath = "E:/workspace/statistical_grids/";
+
 	//see also:
 	//https://www.eea.europa.eu/data-and-maps/data/eea-reference-grids-2
 	//https://www.efgs.info/data/
@@ -63,9 +65,8 @@ public class GridsProduction {
 		logger.atLevel(Level.ALL);
 		Grid.logger.atLevel(Level.ALL);
 
-		String basePath = "E:/workspace/gridstat/";
-		String outpath = basePath + "grid/";
-		String path = basePath + "geo_grid_production/";
+		String outpath = basePath + "output/";
+		String path = basePath + "input_data/";
 		int bufferDistance = 1500;
 
 		logger.info("Get European countries (buffer) ...");
