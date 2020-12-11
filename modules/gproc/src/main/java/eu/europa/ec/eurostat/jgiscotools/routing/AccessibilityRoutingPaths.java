@@ -5,9 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.routing;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,10 +44,12 @@ public class AccessibilityRoutingPaths {
 	private String cellIdAtt = "GRD_ID";
 	//the grid resolution in m
 	private double resM = -1;
-	//the points of interest to measure the accessibility of
+	//the points of interest
 	private Collection<Feature> pois = null;
-	//the number of POIs to consider
-	private int nbNearestPOIs = 4;
+	//the POI id
+	private String poiIdAtt = "ID";
+	//the number of closest POIs
+	private int nbNearestPOIs = 3;
 	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
 
@@ -89,14 +89,14 @@ public class AccessibilityRoutingPaths {
 
 
 
-	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, Collection<Feature> networkSections,int nbNearestPOIs) {
+	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, String poiIdAtt, Collection<Feature> networkSections,int nbNearestPOIs) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.resM = resM;
 		this.pois = pois;
+		this.poiIdAtt = poiIdAtt;
 		this.networkSections = networkSections;
 		this.nbNearestPOIs = nbNearestPOIs;
-
 	}
 
 
@@ -138,11 +138,7 @@ public class AccessibilityRoutingPaths {
 
 
 
-
-	//compute the accessibility data
-	//-10: no transport node found for grid cell center
-	//-20: no transport node found close enough from grid cell center
-	//-30: no shortest path found to an hospital
+	//compute routes
 	public void compute() throws Exception {
 		//create output data structures
 		routes = new ArrayList<>();
@@ -196,40 +192,41 @@ public class AccessibilityRoutingPaths {
 			//TODO: improve and use AStar - ask GIS_SE ?
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
-			//compute the routes to all POIs to get the best
+			//compute the routes to all POIs
 			if(logger.isDebugEnabled()) logger.debug("Compute routes to POIs. Nb=" + pois_.length);
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
 				Coordinate dC = poi.getGeometry().getCentroid().getCoordinate();
 				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
 				//pf.calculate();
-				Path p = null; double duration;
 				//include POI in path? Cell is supposed to be small enough?
 				try {
 					//p = pf.getPath();
 					Node dN = rt.getNode(dC);
 
 					if(dN == oN) {
+						//TODO same origin and destination: do something.
 						break;
 					}
 
-					p = pf.getPath(dN);
-					duration = pf.getCost(dN);
+					Path p = pf.getPath(dN);
+					double duration = pf.getCost(dN);
 					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
+
+					//store route
+					Feature f = Routing.toFeature(p);
+					String poiId = poi.getAttribute(poiIdAtt).toString();
+					f.setID(cellId + "_" + poiId);
+					f.setAttribute(cellIdAtt, cellId);
+					f.setAttribute(poiIdAtt, poiId);
+					f.setAttribute("duration", duration);
+					f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
+					routes.add(f);
+
 				} catch (Exception e) {
 					//logger.warn("Could not compute path for cell " + cellId + ": " + e.getMessage());
 					continue;
 				}
-
-				//store route
-				Feature f = Routing.toFeature(p);
-				f.setID(cellId);
-				f.setAttribute(cellIdAtt, cellId);
-				//TODO save also POI id
-				f.setAttribute("duration", duration);
-				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
-				routes.add(f);
-
 			}
 		}
 	}

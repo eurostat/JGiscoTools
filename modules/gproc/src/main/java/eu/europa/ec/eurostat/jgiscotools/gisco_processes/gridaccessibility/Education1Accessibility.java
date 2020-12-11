@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -18,7 +17,6 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid;
-import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityGrid.SpeedCalculator;
 
 /**
  * @author julien Gaffuri
@@ -53,28 +51,6 @@ public class Education1Accessibility {
 		//BD TOPO
 		Filter fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste Cyclable' AND NOT NATURE='Escalier')");
 		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "input_data/test_NMCA_FR_road_tn/roads.gpkg", null, fil);
-		SpeedCalculator sc = new SpeedCalculator() {
-			@Override
-			public double getSpeedKMPerHour(SimpleFeature sf) {
-				//estimate speed of a transport section of ERM/EGM based on attributes
-				//COR - Category of Road - 0 Unknown - 1 Motorway - 2 Road inside built-up area - 999 Other road (outside built-up area)
-				//RTT - Route Intended Use - 0 Unknown - 16 National motorway - 14 Primary route - 15 Secondary route - 984 Local route
-				//String cor = sf.getAttribute("COR").toString();
-				//if(cor==null) { logger.warn("No COR attribute for feature "+sf.getID()); return 0; };
-				//String rtt = sf.getAttribute("RTT").toString();
-				//if(rtt==null) { logger.warn("No RTT attribute for feature "+sf.getID()); return 0; };
-
-				//motorways
-				//if("1".equals(cor) || "16".equals(rtt)) return 110.0;
-				//city roads
-				//if("2".equals(cor)) return 50.0;
-				//fast roads
-				//if("14".equals(rtt) || "15".equals(rtt)) return 80.0;
-				//local road
-				//if("984".equals(rtt)) return 80.0;
-				return 50.0;
-			}
-		};
 		logger.info(networkSections.size() + " sections loaded.");
 		
 		String label = "schools";
@@ -86,7 +62,7 @@ public class Education1Accessibility {
 		logger.info("Build accessibility...");
 		double minDurAccMinT = 40;
 		AccessibilityGrid ag = new AccessibilityGrid(cells, cellIdAtt, resKM*1000, pois, networkSections, "TOT_P_2011", minDurAccMinT);
-		ag.setEdgeWeighter(sc);
+		//ag.setEdgeWeighter(sc);
 
 		logger.info("Compute accessibility...");
 		ag.compute();
