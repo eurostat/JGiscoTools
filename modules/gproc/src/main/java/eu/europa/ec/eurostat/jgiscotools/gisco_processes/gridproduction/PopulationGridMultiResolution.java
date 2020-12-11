@@ -17,7 +17,7 @@ import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 
 /**
  * 
- * Derive EU population figures from 1km grid to other larger resolutions.
+ * Derive EU population figures from 1km grid to other coarser resolutions.
  * 
  * @author julien Gaffuri
  *
