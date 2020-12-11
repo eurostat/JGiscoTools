@@ -161,6 +161,8 @@ public class AccessibilityRoutingPaths {
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
+			//TODO consider when all POIs are within the cell
+
 			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearestPOIs + " nearest POIs");
 			Envelope netEnv = cell.getGeometry().getEnvelopeInternal();
 			netEnv.expandBy(resM*10); //TODO progressive increase
