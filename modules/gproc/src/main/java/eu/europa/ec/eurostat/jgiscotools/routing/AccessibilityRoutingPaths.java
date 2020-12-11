@@ -137,9 +137,14 @@ public class AccessibilityRoutingPaths {
 
 
 
-	//compute routes
+	/**
+	 * Compute routes.
+	 * 
+	 * @throws Exception //TODO remove that
+	 */
 	public void compute() throws Exception {
-		//create output data structures
+
+		//create output
 		routes = new ArrayList<>();
 
 		//compute spatial indexes
@@ -157,14 +162,15 @@ public class AccessibilityRoutingPaths {
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
 			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearestPOIs + " nearest POIs");
-			Envelope netEnv = cell.getGeometry().getEnvelopeInternal(); netEnv.expandBy(1000);
+			Envelope netEnv = cell.getGeometry().getEnvelopeInternal();
+			netEnv.expandBy(resM*10); //TODO progressive increase
 			Object[] pois_ = getPoisInd().nearestNeighbour(netEnv, cell, itemDist, nbNearestPOIs);
 
 			//get an envelope around the cell and surrounding POIs
 			netEnv = cell.getGeometry().getEnvelopeInternal();
 			for(Object poi_ : pois_)
 				netEnv.expandToInclude(((Feature)poi_).getGeometry().getEnvelopeInternal());
-			netEnv.expandBy(10000);
+			//netEnv.expandBy(10000); //TODO ?
 
 			//get network sections in the envelope around the cell and surrounding POIs
 			List<?> net_ = getNetworkSectionsInd().query(netEnv);
