@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -29,10 +30,13 @@ public class RoadBDTopo {
 		return fs;
 	}
 
-
 	public static SpeedCalculator getSpeedCalculator() {
-		//TODO
-		return null;
+		return new SpeedCalculator() {
+			@Override
+			public double getSpeedKMPerHour(SimpleFeature sf) {
+				return 70.0;
+			}
+		};
 	}
 
 }
