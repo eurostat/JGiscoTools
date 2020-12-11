@@ -80,21 +80,33 @@ public class GridsProduction {
 		};
 		cntsBuff.sort(cntComp);
 
-		logger.info("Get land area...");
+		logger.info("Load land area...");
 		Collection<Geometry> landGeometries = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"land_areas.gpkg") );
-
 		logger.info("Spatial index for land area...");
 		SpatialIndex landGeometriesIndex = new STRtree();
 		for(Geometry g : landGeometries) landGeometriesIndex.insert(g.getEnvelopeInternal(), g);
 		landGeometries = null;
 
-		logger.info("Get inland water area...");
+		logger.info("Load inland water area...");
 		Collection<Geometry> inlandWaterGeometries = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"inland_water_areas.gpkg") );
-
 		logger.info("Spatial index for inland water area...");
 		SpatialIndex inlandWaterGeometriesIndex = new STRtree();
 		for(Geometry g : inlandWaterGeometries) inlandWaterGeometriesIndex.insert(g.getEnvelopeInternal(), g);
 		inlandWaterGeometries = null;
+
+		logger.info("Load coastlines...");
+		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG = 'T'") ));
+		logger.info("Spatial index of coastlines...");
+		STRtree coastlineIndex = new STRtree();
+		for(Geometry g : coastLines) coastlineIndex.insert(g.getEnvelopeInternal(), g);
+		coastLines = null;
+
+		logger.info("Load country boundaries...");
+		Collection<Geometry> cntBn = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG='F'") ));
+		logger.info("Spatial index of country boundaries...");
+		STRtree cntbnIndex = new STRtree();
+		for(Geometry g : cntBn) cntbnIndex.insert(g.getEnvelopeInternal(), g);
+		cntBn = null;
 
 		logger.info("Load NUTS regions...");
 		ArrayList<Feature>[] nuts2016 = new ArrayList[4], nuts2021 = new ArrayList[4];
@@ -114,32 +126,6 @@ public class GridsProduction {
 		}
 
 
-
-		logger.info("Load coastlines...");
-		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG = 'T'") ));
-
-		logger.info("Index coastlines...");
-		STRtree coastlineIndex = new STRtree();
-		for(Geometry g : coastLines) coastlineIndex.insert(g.getEnvelopeInternal(), g);
-		coastLines = null;
-
-		logger.info("Load country boundaries...");
-		Collection<Geometry> cntBn = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG='F'") ));
-
-		logger.info("Index country boundaries...");
-		STRtree cntbnIndex = new STRtree();
-		for(Geometry g : cntBn) cntbnIndex.insert(g.getEnvelopeInternal(), g);
-		cntBn = null;
-
-
-
-
-		//TODO check that
-		//logger.info("Define output feature type...");
-		//SimpleFeatureType ftPolygon = SimpleFeatureUtil.getFeatureType("Polygon", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
-		//SimpleFeatureType ftPoint = SimpleFeatureUtil.getFeatureType("Point", 3035, "GRD_ID:String,CNTR_ID:String,LAND_PC:double,X_LLC:int,Y_LLC:int,TOT_P_2006:int,TOT_P_2011:int,NUTS_0_ID:String,NUTS_1_ID:String,NUTS_2_ID:String,NUTS_3_ID:String,DIST_COAST:double,DIST_BORD:double");
-
-
 		//build pan-European grids
 		for(int resKM : resKMs) {
 			logger.info("Make " + resKM + "km grid...");
@@ -155,10 +141,9 @@ public class GridsProduction {
 			logger.info("Assign country codes...");
 			GridUtil.assignRegionCode(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
 
-			logger.info("Filtering " + cells.size() + " cells...");
+			logger.info("Filtering " + cells.size() + " cells nor assigned to a country...");
 			GridUtil.filterCellsWithoutRegion(cells, "CNTR_ID");
 			logger.info(cells.size() + " cells left");
-
 
 			logger.info("Assign NUTS codes...");
 			for(int level = 0; level <=3; level++) {
@@ -201,10 +186,10 @@ public class GridsProduction {
 			GeoData.save(cells, outpath+"grid_"+resKM+"km_surf.gpkg", CRSUtil.getETRS89_LAEA_CRS(), true);
 
 			//do not save as shapefile for smaller resolution, because the file size limit is reached
-			if(resKM>3) {
+			/*if(resKM>3) {
 				logger.info("Save cells as SHP...");
 				GeoData.save(cells, outpath + "grid_"+resKM+"km_surf_shp" + "/grid_"+resKM+"km.shp", CRSUtil.getETRS89_LAEA_CRS());
-			}
+			}*/
 
 			logger.info("Set cell geometries as points...");
 			GeometryFactory gf = cells.iterator().next().getGeometry().getFactory();
@@ -214,42 +199,12 @@ public class GridsProduction {
 			logger.info("Save cells (point) as GPKG...");
 			GeoData.save(cells, outpath+"grid_"+resKM+"km_point.gpkg", CRSUtil.getETRS89_LAEA_CRS(), true);
 
-			if(resKM>3) {
+			/*if(resKM>3) {
 				logger.info("Save cells (point) as SHP...");
 				GeoData.save(cells, outpath + "grid_"+resKM+"km_point_shp" + "/grid_"+resKM+"km_point.shp", CRSUtil.getETRS89_LAEA_CRS());
-			}
+			}*/
 
 		}
-
-
-
-		/*
-		//build country 1km grids by country
-		for(String countryCode : CountriesUtil.EuropeanCountryCodes) {
-
-			logger.info("Make 1km grid for " + countryCode + "...");
-
-			//get country geometry (buffer)
-			Geometry countryGeom = SHPUtil.loadSHP(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.shp", CQL.toFilter("CNTR_ID = '"+countryCode+"'"))
-					.fs.iterator().next().getDefaultGeometry();
-
-			//build cells
-			StatGrid grid = new StatGrid()
-					.setResolution(1000)
-					.setEPSGCode("3035")
-					.setGeometryToCover(countryGeom)
-					;
-			Collection<Feature> cells = grid.getCells();
-
-			//set country code to cells
-			for(Feature cell : cells) cell.setAttribute("CNTR_ID", countryCode);
-
-			logger.info("Save " + cells.size() + " cells as SHP...");
-			SHPUtil.saveSHP(cells, outpath+"grid_1km_shp/grid_1km_"+countryCode+".shp", crs);
-			//logger.info("Save " + cells.size() + " cells as GPKG...");
-			//GeoPackageUtil.save(cells, outpath+"1km/grid_1km_"+countryCode+".gpkg", crs);
-		}
-		 */
 
 		logger.info("End");
 	}
