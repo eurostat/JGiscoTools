@@ -51,6 +51,7 @@ public class GridsProduction {
 
 	//TODO make some processes parallel ?
 	//TODO use better info source for coast line / land area
+	//TODO prepare/add pop 2018
 
 	//the different resolutions, in KM
 	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
