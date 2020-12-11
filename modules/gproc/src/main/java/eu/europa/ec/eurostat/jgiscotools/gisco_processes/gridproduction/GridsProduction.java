@@ -29,14 +29,16 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
- * Examples to produce European grids based on ETRS89-LAEA coordinate reference system (EPSG:3035)
- * for various resolutions.
+ * Production process of Eurostat-GISCO grids:
+ * https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/grids
+ * based on ETRS89-LAEA coordinate reference system (EPSG:3035)  * for various resolutions.
  * The grid cell data which is computed is:
  * - its standard grid code
- * - the geostat population figures, for both 2006 and 2011
+ * - the geostat population figures
  * - the countries and nuts regions it intersects
  * - the percentage of the cell which is land area
  * - minimum distance to border and coast
+ * ...
  * 
  * @author julien Gaffuri
  *
@@ -44,33 +46,32 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class GridsProduction {
 	static Logger logger = LogManager.getLogger(GridsProduction.class.getName());
 
-	public static String basePath = "E:/workspace/statistical_grids/";
-
-	//see also:
-	//https://www.eea.europa.eu/data-and-maps/data/eea-reference-grids-2
-	//https://www.efgs.info/data/
-	//https://esdac.jrc.ec.europa.eu/content/european-reference-grids
-
 	//TODO make some processes parallel ?
 	//TODO use better info source for coast line / land area
 	//TODO prepare/add pop 2018
 
+	public static String basePath = "E:/workspace/statistical_grids/";
+
 	//the different resolutions, in KM
 	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
 
+	
+	
 	//use: -Xms2G -Xmx8G
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
+		//set loggers
 		logger.atLevel(Level.ALL);
 		Grid.logger.atLevel(Level.ALL);
 
+		//set parameters
 		String outpath = basePath + "output/";
-		String path = basePath + "input_data/";
+		String inpath = basePath + "input_data/";
 		int bufferDistance = 1500;
 
 		logger.info("Get European countries (buffer) ...");
-		ArrayList<Feature> cntsBuff = GeoData.getFeatures(path+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.gpkg");
+		ArrayList<Feature> cntsBuff = GeoData.getFeatures(inpath+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.gpkg");
 
 		logger.info("Sort countries by id...");
 		Comparator<Feature> cntComp = new Comparator<Feature>(){
@@ -80,17 +81,17 @@ public class GridsProduction {
 		cntsBuff.sort(cntComp);
 
 		logger.info("Get land area...");
-		Collection<Geometry> landGeometries = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(path+"land_areas.gpkg") );
+		Collection<Geometry> landGeometries = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"land_areas.gpkg") );
 
-		logger.info("Index land area...");
+		logger.info("Spatial index for land area...");
 		SpatialIndex landGeometriesIndex = new STRtree();
 		for(Geometry g : landGeometries) landGeometriesIndex.insert(g.getEnvelopeInternal(), g);
 		landGeometries = null;
 
 		logger.info("Get inland water area...");
-		Collection<Geometry> inlandWaterGeometries = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(path+"inland_water_areas.gpkg") );
+		Collection<Geometry> inlandWaterGeometries = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"inland_water_areas.gpkg") );
 
-		logger.info("Index inland water area...");
+		logger.info("Spatial index for inland water area...");
 		SpatialIndex inlandWaterGeometriesIndex = new STRtree();
 		for(Geometry g : inlandWaterGeometries) inlandWaterGeometriesIndex.insert(g.getEnvelopeInternal(), g);
 		inlandWaterGeometries = null;
@@ -98,8 +99,8 @@ public class GridsProduction {
 		logger.info("Load NUTS regions...");
 		ArrayList<Feature>[] nuts2016 = new ArrayList[4], nuts2021 = new ArrayList[4];
 		for(int level = 0; level <=3; level++) {
-			nuts2016[level] = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2016_LAEA.gpkg", null, CQL.toFilter("STAT_LEVL_CODE = '"+level+"'"));
-			nuts2021[level] = GeoData.getFeatures(path+"GISCO.NUTS_RG_100K_2021_LAEA.gpkg", null, CQL.toFilter("STAT_LEVL_CODE = '"+level+"'"));
+			nuts2016[level] = GeoData.getFeatures(inpath+"GISCO.NUTS_RG_100K_2016_LAEA.gpkg", null, CQL.toFilter("STAT_LEVL_CODE = '"+level+"'"));
+			nuts2021[level] = GeoData.getFeatures(inpath+"GISCO.NUTS_RG_100K_2021_LAEA.gpkg", null, CQL.toFilter("STAT_LEVL_CODE = '"+level+"'"));
 		}
 
 		logger.info("Sort nuts regions by id...");
@@ -115,7 +116,7 @@ public class GridsProduction {
 
 
 		logger.info("Load coastlines...");
-		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG = 'T'") ));
+		Collection<Geometry> coastLines = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG = 'T'") ));
 
 		logger.info("Index coastlines...");
 		STRtree coastlineIndex = new STRtree();
@@ -123,7 +124,7 @@ public class GridsProduction {
 		coastLines = null;
 
 		logger.info("Load country boundaries...");
-		Collection<Geometry> cntBn = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(path+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG='F'") ));
+		Collection<Geometry> cntBn = FeatureUtil.getGeometriesSimple( GeoData.getFeatures(inpath+"CNTR_BN_100K_2016_LAEA_decomposed.gpkg", null, CQL.toFilter("COAS_FLAG='F'") ));
 
 		logger.info("Index country boundaries...");
 		STRtree cntbnIndex = new STRtree();
