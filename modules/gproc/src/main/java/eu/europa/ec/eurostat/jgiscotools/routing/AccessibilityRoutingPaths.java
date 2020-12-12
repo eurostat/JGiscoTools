@@ -180,7 +180,8 @@ public class AccessibilityRoutingPaths {
 			//get network sections in the envelope around the cell and surrounding POIs
 			List<?> net_ = getNetworkSectionsInd().query(searchEnv);
 			if(net_.size() == 0) {
-				//logger.warn("Could not find graph around cell center: " + cellPt.getGeometry().getCoordinate());
+				if(logger.isTraceEnabled())
+					logger.trace("Could not find graph around cell center: " + cellPt.getGeometry().getCoordinate());
 				continue;
 			}
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
@@ -195,11 +196,13 @@ public class AccessibilityRoutingPaths {
 			Coordinate oC = cellPt.getGeometry().getCoordinate();
 			Node oN = rt.getNode(oC);
 			if(oN == null) {
-				logger.error("Could not find graph node around cell center: " + oC);
+				if(logger.isTraceEnabled())
+					logger.trace("Could not find graph node around cell center: " + oC);
 				continue;
 			}
 			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
-				logger.trace("Cell center "+oC+" too far from closest network node: " + oN.getObject());
+				if(logger.isTraceEnabled())
+					logger.trace("Cell center "+oC+" too far from closest network node: " + oN.getObject());
 				continue;
 			}
 
@@ -225,7 +228,8 @@ public class AccessibilityRoutingPaths {
 
 					Path p = pf.getPath(dN);
 					if(p==null) {
-						//logger.warn("Null path found for cell: " + cellId + ". duration=" + duration);
+						if(logger.isTraceEnabled())
+							logger.trace("Null path found for cell: " + cellId);
 						continue;
 					}
 					double duration = pf.getCost(dN);
