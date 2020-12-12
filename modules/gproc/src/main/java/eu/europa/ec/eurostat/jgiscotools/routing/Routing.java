@@ -90,7 +90,7 @@ public class Routing {
 		buildGraph(fc);
 		this.edgeWeighter = edgeWeighter;
 	}
-	public Routing(FeatureCollection<?,?> fc, EdgeWeighter edgeWeighter) throws IOException {
+	public Routing(FeatureCollection<?,?> fc, EdgeWeighter edgeWeighter) {
 		buildGraph(fc);
 		this.edgeWeighter = edgeWeighter;
 	}
@@ -111,8 +111,8 @@ public class Routing {
 	}
 
 	public Routing(URL networkFileURL) throws IOException { this(networkFileURL, null); }
-	public Routing(FeatureCollection<?,?> fc) throws IOException { this(fc, null); }
-	public Routing(ArrayList<Feature> fs, SimpleFeatureType ft) throws IOException { this(SimpleFeatureUtil.get(fs, ft)); }
+	public Routing(FeatureCollection<?,?> fc) { this(fc, null); }
+	public Routing(ArrayList<Feature> fs, SimpleFeatureType ft) { this(SimpleFeatureUtil.get(fs, ft)); }
 
 
 

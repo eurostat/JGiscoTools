@@ -142,11 +142,9 @@ public class AccessibilityRoutingPaths {
 
 
 	/**
-	 * Compute routes.
-	 * 
-	 * @throws Exception //TODO remove that
+	 * Compute the routes.
 	 */
-	public void compute() throws Exception {
+	public void compute() {
 
 		//create output
 		routes = new ArrayList<>();
@@ -173,8 +171,10 @@ public class AccessibilityRoutingPaths {
 
 			//get an envelope around the cell and surrounding POIs
 			env = cell.getGeometry().getEnvelopeInternal();
-			for(Object poi_ : pois_)
-				env.expandToInclude(((Feature)poi_).getGeometry().getEnvelopeInternal());
+			for(Object poi_ : pois_) {
+				//TODO check that !
+				//if(logger.isTraceEnabled()) logger.trace("POIs nb: " + pois_.length);
+			}
 			//searchEnv.expandBy(5000); //TODO how to choose that? Expose parameter?
 			if(logger.isTraceEnabled()) logger.trace("Network search size (km): " + 0.001*Math.sqrt(env.getArea()));
 
@@ -219,41 +219,42 @@ public class AccessibilityRoutingPaths {
 				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
 				//pf.calculate();
 				//include POI in path? Cell is supposed to be small enough?
-				try {
-					//p = pf.getPath();
-					Node dN = rt.getNode(dC);
+				//try {
+				//p = pf.getPath();
+				Node dN = rt.getNode(dC);
 
-					if(dN == oN) {
-						//TODO same origin and destination: do something.
-						continue;
-					}
+				if(dN == oN) {
+					//same origin and destination					
+					//TODO do something.
+					continue;
+				}
 
-					Path p = pf.getPath(dN);
-					if(p==null) {
-						if(logger.isTraceEnabled())
-							logger.trace("Null path found for cell: " + cellId);
-						continue;
-					}
-					double duration = pf.getCost(dN);
-					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
+				Path p = pf.getPath(dN);
+				if(p==null) {
+					if(logger.isTraceEnabled()) logger.trace("No path found for cell: " + cellId + " to POI " + poi.getAttribute(poiIdAtt) );
+					continue;
+				}
+				double duration = pf.getCost(dN);
+				//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 
+				//store route
+				Feature f = Routing.toFeature(p);
+				String poiId = poi.getAttribute(poiIdAtt).toString();
+				f.setID(cellId + "_" + poiId);
+				f.setAttribute(cellIdAtt, cellId);
+				f.setAttribute(poiIdAtt, poiId);
+				f.setAttribute("duration", duration);
+				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
+				routes.add(f);
 
-					//store route
-					Feature f = Routing.toFeature(p);
-					String poiId = poi.getAttribute(poiIdAtt).toString();
-					f.setID(cellId + "_" + poiId);
-					f.setAttribute(cellIdAtt, cellId);
-					f.setAttribute(poiIdAtt, poiId);
-					f.setAttribute("duration", duration);
-					f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
-					routes.add(f);
-					//TODO keep only the fastest nbNearestPOIs
+				System.out.println(routes.size());
+				//TODO keep only the fastest nbNearestPOIs
 
-				} catch (Exception e) {
+				/*} catch (Exception e) {
 					e.printStackTrace();
 					logger.warn("Could not compute path for cell " + cellId + ": " + e.getClass().getSimpleName() + " " +  e.getMessage());
 					continue;
-				}
+				}*/
 			}
 		}
 	}
