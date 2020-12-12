@@ -38,7 +38,7 @@ public class EducationRoutingPaths {
 		String basePath = "E:/workspace/basic_services_accessibility/";
 		String outPath = basePath + "accessibility_output/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
-		int resKM = 10;
+		int resKM = 1;
 
 		//set the country id (set to null for all countries)
 		String cnt = "FR";

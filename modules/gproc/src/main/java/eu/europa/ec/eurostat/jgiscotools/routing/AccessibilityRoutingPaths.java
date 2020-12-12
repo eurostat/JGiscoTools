@@ -173,7 +173,7 @@ public class AccessibilityRoutingPaths {
 			env = cell.getGeometry().getEnvelopeInternal();
 			for(Object poi_ : pois_)
 				env.expandToInclude(((Feature) poi_).getGeometry().getEnvelopeInternal());
-			//searchEnv.expandBy(5000); //TODO how to choose that? Expose parameter?
+			env.expandBy(2000); //TODO how to choose that? Expose parameter?
 			if(logger.isTraceEnabled()) logger.trace("Network search size (km): " + 0.001*Math.sqrt(env.getArea()));
 
 			//get network sections in the envelope around the cell and surrounding POIs
