@@ -147,6 +147,7 @@ public class AccessibilityRoutingPaths {
 		//create output
 		routes = new ArrayList<>();
 
+
 		//compute spatial indexes
 		getPoisInd();
 		getNetworkSectionsInd();
