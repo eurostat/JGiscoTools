@@ -179,6 +179,10 @@ public class AccessibilityRoutingPaths {
 
 			//get network sections in the envelope around the cell and surrounding POIs
 			List<?> net_ = getNetworkSectionsInd().query(searchEnv);
+			if(net_.size() == 0) {
+				logger.error("Could not find graph around cell center: " + cellPt.getGeometry());
+				continue;
+			}
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
 			for(Object o : net_) net__.add((Feature)o);
 
@@ -188,7 +192,7 @@ public class AccessibilityRoutingPaths {
 
 			//get cell centroid as origin point
 			//possible improvement: take another position depending on the network state inside the cell? Cell is supposed to be small enough?
-			Coordinate oC = cell.getGeometry().getCentroid().getCoordinate();
+			Coordinate oC = cellPt.getGeometry().getCoordinate();
 			Node oN = rt.getNode(oC);
 			if(oN == null) {
 				logger.error("Could not find graph node around cell center: " + oC);

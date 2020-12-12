@@ -31,6 +31,7 @@ public class EducationRoutingPaths {
 		logger.info("Start");
 
 		//logger.setLevel(Level.ALL);
+		
 
 		String basePath = "E:/workspace/basic_services_accessibility/";
 		String outPath = basePath + "accessibility_output/";
