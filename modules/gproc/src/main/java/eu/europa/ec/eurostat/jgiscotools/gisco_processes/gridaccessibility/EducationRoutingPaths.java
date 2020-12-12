@@ -6,8 +6,10 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -30,8 +32,8 @@ public class EducationRoutingPaths {
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
-		//logger.setLevel(Level.ALL);
-		
+		//set logger level
+		Configurator.setLevel(AccessibilityRoutingPaths.class.getName(), Level.ALL);
 
 		String basePath = "E:/workspace/basic_services_accessibility/";
 		String outPath = basePath + "accessibility_output/";
@@ -58,7 +60,7 @@ public class EducationRoutingPaths {
 		logger.info(pois.size() + " POIs");
 
 		logger.info("Build accessibility...");
-		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", resKM*1000, pois, "id", networkSections, 5);
+		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", resKM, pois, "id", networkSections, 5);
 		ag.setEdgeWeighter(sc);
 
 		logger.info("Compute accessibility paths...");
