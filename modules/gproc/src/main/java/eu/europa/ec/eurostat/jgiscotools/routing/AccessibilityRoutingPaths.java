@@ -239,6 +239,7 @@ public class AccessibilityRoutingPaths {
 					//TODO keep only the fastest nbNearestPOIs
 
 				} catch (Exception e) {
+					e.printStackTrace();
 					logger.warn("Could not compute path for cell " + cellId + ": " + e.getClass().getSimpleName() + " " +  e.getMessage());
 					continue;
 				}
