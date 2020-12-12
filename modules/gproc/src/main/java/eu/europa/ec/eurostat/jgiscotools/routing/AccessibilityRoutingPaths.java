@@ -227,6 +227,11 @@ public class AccessibilityRoutingPaths {
 					double duration = pf.getCost(dN);
 					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 
+					if(p==null) {
+						logger.warn("Null path found for cell: " + cellId + ". duration=" + duration);
+						continue;
+					}
+
 					//store route
 					Feature f = Routing.toFeature(p);
 					String poiId = poi.getAttribute(poiIdAtt).toString();
