@@ -61,7 +61,7 @@ public class EducationRoutingPaths {
 		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", resKM*1000, pois, "id", networkSections, 5);
 		ag.setEdgeWeighter(sc);
 
-		logger.info("Compute accessibility...");
+		logger.info("Compute accessibility paths...");
 		ag.compute();
 
 		logger.info("Save routes... Nb=" + ag.getRoutes().size());
