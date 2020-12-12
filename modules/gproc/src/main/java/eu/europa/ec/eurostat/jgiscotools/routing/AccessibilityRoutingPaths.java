@@ -53,6 +53,10 @@ public class AccessibilityRoutingPaths {
 	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
 
+	//TODO
+	//straight distance from which we are sure to find the POIs 
+	double searchDistanceM = 50000;
+
 	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;
 	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
@@ -161,21 +165,20 @@ public class AccessibilityRoutingPaths {
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
-			//TODO consider when all POIs are within the cell
-
-			if(logger.isDebugEnabled()) logger.debug("Get " + nbNearestPOIs + " nearest POIs");
-			Envelope netEnv = cell.getGeometry().getEnvelopeInternal();
-			netEnv.expandBy(resM*10); //TODO progressive increase
-			Object[] pois_ = getPoisInd().nearestNeighbour(netEnv, cell, itemDist, nbNearestPOIs);
+			int nb = 2 * nbNearestPOIs;
+			if(logger.isDebugEnabled()) logger.debug("Get " + nb + " nearest POIs");
+			Envelope searchEnv = cell.getGeometry().getEnvelopeInternal(); searchEnv.expandBy(searchDistanceM);
+			Feature cellPt = new Feature(); cellPt.setGeometry(cell.getGeometry().getCentroid());
+			Object[] pois_ = getPoisInd().nearestNeighbour(searchEnv, cellPt, itemDist, nb);
 
 			//get an envelope around the cell and surrounding POIs
-			netEnv = cell.getGeometry().getEnvelopeInternal();
+			searchEnv = cell.getGeometry().getEnvelopeInternal();
 			for(Object poi_ : pois_)
-				netEnv.expandToInclude(((Feature)poi_).getGeometry().getEnvelopeInternal());
-			//netEnv.expandBy(10000); //TODO ?
+				searchEnv.expandToInclude(((Feature)poi_).getGeometry().getEnvelopeInternal());
+			searchEnv.expandBy(5000); //TODO how to choose that? Expose parameter?
 
 			//get network sections in the envelope around the cell and surrounding POIs
-			List<?> net_ = getNetworkSectionsInd().query(netEnv);
+			List<?> net_ = getNetworkSectionsInd().query(searchEnv);
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
 			for(Object o : net_) net__.add((Feature)o);
 
@@ -192,7 +195,7 @@ public class AccessibilityRoutingPaths {
 				continue;
 			}
 			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
-				logger.trace("Cell center "+oC+" too far from clodest network node: " + oN.getObject());
+				logger.trace("Cell center "+oC+" too far from closest network node: " + oN.getObject());
 				continue;
 			}
 
