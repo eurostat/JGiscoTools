@@ -200,12 +200,6 @@ public class AccessibilityRoutingPaths {
 					logger.trace("Could not find graph node around cell center: " + oC);
 				continue;
 			}
-
-			//System.out.println(cellId);
-			System.out.println( ((Point)oN.getObject() ).getCoordinate().distance(oC) );
-			//System.out.println(cellId);
-
-			//TODO pb here
 			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
 				if(logger.isTraceEnabled())
 					logger.trace("Cell center "+oC+" too far from closest network node: " + oN.getObject());
@@ -214,7 +208,6 @@ public class AccessibilityRoutingPaths {
 
 			//TODO: improve and use AStar - ask GIS_SE ?
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
-
 
 			//compute the routes to all POIs
 			if(logger.isDebugEnabled()) logger.debug("Compute routes to POIs. Nb=" + pois_.length);
