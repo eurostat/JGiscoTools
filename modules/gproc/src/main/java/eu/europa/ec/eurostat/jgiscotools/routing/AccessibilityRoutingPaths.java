@@ -232,9 +232,10 @@ public class AccessibilityRoutingPaths {
 					f.setAttribute("duration", duration);
 					f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
 					routes.add(f);
+					//TODO keep only the fastest nbNearestPOIs
 
 				} catch (Exception e) {
-					//logger.warn("Could not compute path for cell " + cellId + ": " + e.getMessage());
+					logger.warn("Could not compute path for cell " + cellId + ": " + e.getMessage());
 					continue;
 				}
 			}
