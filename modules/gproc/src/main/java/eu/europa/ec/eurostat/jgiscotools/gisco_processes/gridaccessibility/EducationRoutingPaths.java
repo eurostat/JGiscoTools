@@ -33,7 +33,7 @@ public class EducationRoutingPaths {
 		logger.info("Start");
 
 		//set logger level
-		Configurator.setLevel(AccessibilityRoutingPaths.class.getName(), Level.ALL);
+		//Configurator.setLevel(AccessibilityRoutingPaths.class.getName(), Level.ALL);
 
 		String basePath = "E:/workspace/basic_services_accessibility/";
 		String outPath = basePath + "accessibility_output/";
@@ -56,7 +56,7 @@ public class EducationRoutingPaths {
 		String label = "schools";
 
 		logger.info("Load POIs");
-		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/education_services.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
+		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/education_services_LAEA.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
 		logger.info(pois.size() + " POIs");
 
 		logger.info("Build accessibility...");

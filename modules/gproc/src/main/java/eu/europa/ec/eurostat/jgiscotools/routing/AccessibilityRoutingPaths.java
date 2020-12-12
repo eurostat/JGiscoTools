@@ -171,15 +171,8 @@ public class AccessibilityRoutingPaths {
 
 			//get an envelope around the cell and surrounding POIs
 			env = cell.getGeometry().getEnvelopeInternal();
-			for(Object poi_ : pois_) {
-				//TODO check that !
-				Feature poi = (Feature) poi_;
-				System.out.println(poi.getGeometry());
-				System.out.println(poi.getGeometry().getEnvelopeInternal().getArea());
-				//if(logger.isTraceEnabled()) logger.trace("POIs nb: " + pois_.length);
-				//env.expandToInclude(poi.getGeometry().getCoordinate());
-				
-			}
+			for(Object poi_ : pois_)
+				env.expandToInclude(((Feature) poi_).getGeometry().getEnvelopeInternal());
 			//searchEnv.expandBy(5000); //TODO how to choose that? Expose parameter?
 			if(logger.isTraceEnabled()) logger.trace("Network search size (km): " + 0.001*Math.sqrt(env.getArea()));
 
@@ -187,7 +180,7 @@ public class AccessibilityRoutingPaths {
 			List<?> net_ = getNetworkSectionsInd().query(env);
 			if(net_.size() == 0) {
 				if(logger.isTraceEnabled())
-					logger.trace("Could not find graph around cell center: " + cellPt.getGeometry().getCoordinate());
+					logger.trace("Could not find graph for cell: " + cellPt.getGeometry().getCoordinate());
 				continue;
 			}
 			if(logger.isTraceEnabled()) logger.trace("Local network size: " + net_.size());
@@ -207,6 +200,12 @@ public class AccessibilityRoutingPaths {
 					logger.trace("Could not find graph node around cell center: " + oC);
 				continue;
 			}
+
+			//System.out.println(cellId);
+			System.out.println( ((Point)oN.getObject() ).getCoordinate().distance(oC) );
+			//System.out.println(cellId);
+
+			//TODO pb here
 			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
 				if(logger.isTraceEnabled())
 					logger.trace("Cell center "+oC+" too far from closest network node: " + oN.getObject());
@@ -215,6 +214,7 @@ public class AccessibilityRoutingPaths {
 
 			//TODO: improve and use AStar - ask GIS_SE ?
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
+
 
 			//compute the routes to all POIs
 			if(logger.isDebugEnabled()) logger.debug("Compute routes to POIs. Nb=" + pois_.length);
@@ -251,8 +251,6 @@ public class AccessibilityRoutingPaths {
 				f.setAttribute("duration", duration);
 				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
 				routes.add(f);
-
-				System.out.println(routes.size());
 				//TODO keep only the fastest nbNearestPOIs
 
 				/*} catch (Exception e) {
@@ -264,72 +262,4 @@ public class AccessibilityRoutingPaths {
 		}
 	}
 
-
-
-	//from 0 (good accessibility) to infinity (bad accessibility)
-	//this value is in delay minute . person
-	public static double getDelayMinPerson(double durMin, double durT, double population) {
-		if(durMin<0) return -999;
-		double delay = durMin-durT;
-		if(delay<0) return 0;
-		return delay * population;
-	}
-
-
-
-	/**
-	 * An indicator combining accessibility and population.
-	 * 0 to 1 (well accessible)
-	 * -999 is returned when the population is null
-	 * 1 is returned when the duration indicator is equal to 1
-	 * This is the product of two indicators on accessibility and population
-	 * 
-	 * @param population
-	 * @param durMin
-	 * @return
-	 */
-	/*public static double getPopulationAccessibilityIndicator(double durMin, double durT1, double durT2, double population, double popT) {
-		if(population == 0) return -999;
-		double accInd = getAccessibilityIndicator(durMin, durT1, durT2);
-		if(accInd == 1) return 1;
-		return accInd * getPopulationIndicator(population, popT);
-	}*/
-
-	/**
-	 * An indicator on accessibility, within [0,1].
-	 * 0 is bad (long time), 1 is good (short time)
-	 * The higher the duration, the worst:
-	 * ___
-	 *    \
-	 *     \___
-	 * 
-	 * @param durMin
-	 * @param durT1
-	 * @param durT2
-	 * @return
-	 */
-	/*public static double getAccessibilityIndicator(double durMin, double durT1, double durT2) {
-		return Util.getIndicatorValue(durMin, durT1, durT2);
-	}*/
-
-
-	/**
-	 * An indicator on the gravity of having population taken into account, within [0,1].
-	 * 0 means low population value, which does not matter.
-	 * 1 means high population, which should be considered.
-	 * The higher the population, the worst:
-	 * 
-	 * \
-	 *  \___
-	 * 
-	 * -999 is returned when the population is null
-	 * 
-	 * @param population
-	 * @param popT
-	 * @return
-	 */
-	/*public static double getPopulationIndicator(double population, double popT) {
-		if(population == 0) return -999;
-		return Util.getIndicatorValue(population, 0, popT);
-	}*/
 }
