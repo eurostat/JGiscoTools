@@ -167,19 +167,19 @@ public class AccessibilityRoutingPaths {
 
 			int nb = (int)(1.3 * nbNearestPOIs);
 			//if(logger.isDebugEnabled()) logger.debug("Get " + nb + " nearest POIs");
-			Envelope searchEnv = cell.getGeometry().getEnvelopeInternal(); searchEnv.expandBy(searchDistanceM);
+			Envelope env = cell.getGeometry().getEnvelopeInternal(); env.expandBy(searchDistanceM);
 			Feature cellPt = new Feature(); cellPt.setGeometry(cell.getGeometry().getCentroid());
-			Object[] pois_ = getPoisInd().nearestNeighbour(searchEnv, cellPt, itemDist, nb);
+			Object[] pois_ = getPoisInd().nearestNeighbour(env, cellPt, itemDist, nb);
 
 			//get an envelope around the cell and surrounding POIs
-			searchEnv = cell.getGeometry().getEnvelopeInternal();
+			env = cell.getGeometry().getEnvelopeInternal();
 			for(Object poi_ : pois_)
-				searchEnv.expandToInclude(((Feature)poi_).getGeometry().getEnvelopeInternal());
-			searchEnv.expandBy(5000); //TODO how to choose that? Expose parameter?
-			if(logger.isTraceEnabled()) logger.trace("Network search size (m): " + 0.001*Math.sqrt(searchEnv.getArea()));
+				env.expandToInclude(((Feature)poi_).getGeometry().getEnvelopeInternal());
+			//searchEnv.expandBy(5000); //TODO how to choose that? Expose parameter?
+			if(logger.isTraceEnabled()) logger.trace("Network search size (km): " + 0.001*Math.sqrt(env.getArea()));
 
 			//get network sections in the envelope around the cell and surrounding POIs
-			List<?> net_ = getNetworkSectionsInd().query(searchEnv);
+			List<?> net_ = getNetworkSectionsInd().query(env);
 			if(net_.size() == 0) {
 				if(logger.isTraceEnabled())
 					logger.trace("Could not find graph around cell center: " + cellPt.getGeometry().getCoordinate());
