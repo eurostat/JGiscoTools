@@ -180,7 +180,7 @@ public class AccessibilityRoutingPaths {
 			//get network sections in the envelope around the cell and surrounding POIs
 			List<?> net_ = getNetworkSectionsInd().query(searchEnv);
 			if(net_.size() == 0) {
-				logger.error("Could not find graph around cell center: " + cellPt.getGeometry());
+				//logger.warn("Could not find graph around cell center: " + cellPt.getGeometry().getCoordinate());
 				continue;
 			}
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
@@ -220,17 +220,17 @@ public class AccessibilityRoutingPaths {
 
 					if(dN == oN) {
 						//TODO same origin and destination: do something.
-						break;
+						continue;
 					}
 
 					Path p = pf.getPath(dN);
+					if(p==null) {
+						//logger.warn("Null path found for cell: " + cellId + ". duration=" + duration);
+						continue;
+					}
 					double duration = pf.getCost(dN);
 					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 
-					if(p==null) {
-						logger.warn("Null path found for cell: " + cellId + ". duration=" + duration);
-						continue;
-					}
 
 					//store route
 					Feature f = Routing.toFeature(p);
