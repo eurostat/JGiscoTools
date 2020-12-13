@@ -47,7 +47,7 @@ public class RoadBDTopo {
 				if("Bretelle".equals(nat)) return 70.0;
 				if("4".equals(imp)) return 60.0;
 				if("Route � 2 chauss�es".equals(nat)) return 60.0;
-				if("Route empierr�e".equals(nat)) return 40.0;
+				if("Route empierr�e".equals(nat)) return 35.0;
 				if("5".equals(imp)) return 50.0;
 				if("6".equals(imp)) return 5.0;
 				System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
