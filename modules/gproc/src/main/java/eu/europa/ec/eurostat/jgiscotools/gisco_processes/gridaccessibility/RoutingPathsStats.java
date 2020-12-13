@@ -59,6 +59,7 @@ public class RoutingPathsStats {
 			for(Feature path : paths)
 				if(path.getAttribute(cellIdAtt).toString().equals(cellId))
 					paths_.add(path);
+			logger.info(paths_.size());
 
 			//remove
 			paths.removeAll(paths_);
