@@ -78,7 +78,7 @@ public class RoutingPathsStats {
 
 			//Compute indicator 2- Average transport time to the X nearest services
 			//accInd = ave3near
-			int x=3;
+			int x = Math.min(3, paths_.size());
 			val = 0;
 			for(int i=0; i<x; i++)
 				val += Double.parseDouble(paths_.get(i).getAttribute("durationMin").toString());

@@ -236,8 +236,9 @@ public class AccessibilityRoutingPaths {
 			//TODO: improve and use AStar - ask GIS_SE ?
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
-			//compute the routes to all POIs
+			//compute the routes to the selected POIs
 			if(logger.isDebugEnabled()) logger.debug("Compute routes to POIs. Nb=" + pois_.length);
+			ArrayList<Feature> routes_ = new ArrayList<>();
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
 				Coordinate dC = poi.getGeometry().getCentroid().getCoordinate();
@@ -260,7 +261,7 @@ public class AccessibilityRoutingPaths {
 					f.setAttribute("durationMin", Util.round(60.0 * 0.001*geom.getLength()/50, 2));
 					f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
 					f.setAttribute("avSpeedKMPerH", 50.0);
-					routes.add(f);
+					routes_.add(f);
 					continue;
 				}
 
@@ -281,10 +282,12 @@ public class AccessibilityRoutingPaths {
 				f.setAttribute("durationMin", Util.round(duration, 2));
 				f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
 				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
-				routes.add(f);
-				//TODO keep only the fastest nbNearestPOIs
-
+				routes_.add(f);
 			}
+
+			//TODO check number
+			//TODO keep only the fastest nbNearestPOIs
+			routes.addAll(routes_);
 		}
 	}
 
