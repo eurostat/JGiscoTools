@@ -64,22 +64,26 @@ public class RoutingPathsStats {
 			paths.removeAll(paths_);
 
 			//sort paths
-			paths.sort(c);
+			paths_.sort(c);
 
 			//compute stats on grid cell id
 			double val;
 
 			//Compute indicator 1 - Shortest transport time to the nearest service
 			//accInd = nearest
-			val = 0;
-			//TODO compute value
-			hc.stats.add(new Stat(0, "accInd", "nearest"));
+			val = Double.parseDouble(paths_.get(0).getAttribute("durationMin").toString());
+			hc.stats.add(new Stat(val, "accInd", "nearest"));
+			logger.info(val);
 
 			//Compute indicator 2- Average transport time to the X nearest services
 			//accInd = ave3near
+			int x=3;
 			val = 0;
-			//TODO compute value
-			hc.stats.add(new Stat(0, "accInd", "ave3near"));
+			for(int i=0; i<x; i++)
+				val += Double.parseDouble(paths_.get(i).getAttribute("durationMin").toString());
+			val = val/x;
+			hc.stats.add(new Stat(val, "accInd", "ave3near"));
+			logger.info(val);
 
 			//Compute indicator 3 - Service capacity within X, Y, Z minutes
 			//20', 45' and 60' for healthcare services.
@@ -88,7 +92,7 @@ public class RoutingPathsStats {
 				//accInd = cap+dur
 				val = 0;
 				//TODO compute value
-				hc.stats.add(new Stat(0, "accInd", "cap"+dur));
+				hc.stats.add(new Stat(val, "accInd", "cap"+dur));
 			}
 		}
 
