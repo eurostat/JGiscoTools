@@ -41,7 +41,7 @@ public class RoutingPathsStats {
 			public int compare(Feature f1, Feature f2) {
 				double d1 = Double.parseDouble(f1.getAttribute("durationMin").toString());
 				double d2 = Double.parseDouble(f2.getAttribute("durationMin").toString());
-				return (int)(1e6*(d2-d1));
+				return (int)(1e6*(d1-d2));
 			}
 		};
 
@@ -52,14 +52,13 @@ public class RoutingPathsStats {
 		while(paths.size() >0) {
 			//get cell id of the first path
 			String cellId = paths.get(0).getAttribute(cellIdAtt).toString();
-			logger.info(cellId);
+			if(logger.isDebugEnabled()) logger.debug(cellId);
 
 			//get all paths of the cell
 			ArrayList<Feature> paths_ = new ArrayList<Feature>();
 			for(Feature path : paths)
 				if(path.getAttribute(cellIdAtt).toString().equals(cellId))
 					paths_.add(path);
-			logger.info(paths_.size());
 
 			//remove
 			paths.removeAll(paths_);
@@ -74,7 +73,6 @@ public class RoutingPathsStats {
 			//accInd = nearest
 			val = Double.parseDouble(paths_.get(0).getAttribute("durationMin").toString());
 			hc.stats.add(new Stat(val, "accInd", "nearest"));
-			logger.info(val);
 
 			//Compute indicator 2- Average transport time to the X nearest services
 			//accInd = ave3near
@@ -84,7 +82,6 @@ public class RoutingPathsStats {
 				val += Double.parseDouble(paths_.get(i).getAttribute("durationMin").toString());
 			val = val/x;
 			hc.stats.add(new Stat(val, "accInd", "ave3near"));
-			logger.info(val);
 
 			//Compute indicator 3 - Service capacity within X, Y, Z minutes
 			//20', 45' and 60' for healthcare services.
