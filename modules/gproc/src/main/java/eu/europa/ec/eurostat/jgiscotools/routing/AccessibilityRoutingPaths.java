@@ -253,7 +253,6 @@ public class AccessibilityRoutingPaths {
 					Feature f = new Feature();
 					LineString geom = new GeometryFactory().createLineString(new Coordinate[] {oC,dC});
 					f.setGeometry(JTSGeomUtil.toMulti(geom));
-					System.out.println(geom.getLength());
 					String poiId = poi.getAttribute(poiIdAtt).toString();
 					f.setID(cellId + "_" + poiId);
 					f.setAttribute(cellIdAtt, cellId);
@@ -262,7 +261,6 @@ public class AccessibilityRoutingPaths {
 					f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
 					f.setAttribute("avSpeedKMPerH", 50.0);
 					routes.add(f);
-					System.out.println("  " + f.getAttribute("duration"));
 					continue;
 				}
 
