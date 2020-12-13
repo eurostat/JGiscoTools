@@ -24,7 +24,7 @@ public class RoadBDTopo {
 	public static Collection<Feature> get() {
 		Filter fil = null;
 		try {
-			fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste Cyclable' AND NOT NATURE='Escalier')");
+			fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste cyclable' AND NOT NATURE='Escalier')");
 		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_NMCA_FR_SE_road_tn/roads.gpkg", null, fil);
 		return fs;
@@ -50,6 +50,10 @@ public class RoadBDTopo {
 				if("Route empierr�e".equals(nat)) return 35.0;
 				if("5".equals(imp)) return 50.0;
 				if("6".equals(imp)) return 5.0;
+
+				if("Route � 1 chauss�es".equals(nat)) return 60.0;
+				if("Piste cyclable".equals(nat)) return 5.0;
+
 				System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
 				return 60.0;
 			}
