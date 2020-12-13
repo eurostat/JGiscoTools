@@ -243,9 +243,9 @@ public class AccessibilityRoutingPaths {
 				Coordinate dC = poi.getGeometry().getCentroid().getCoordinate();
 				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
 				//pf.calculate();
-				//include POI in path? Cell is supposed to be small enough?
-				//try {
 				//p = pf.getPath();
+
+				//include POI in path? Cell is supposed to be small enough?
 				Node dN = rt.getNode(dC);
 
 				if(dN == oN) {
@@ -258,7 +258,8 @@ public class AccessibilityRoutingPaths {
 					f.setID(cellId + "_" + poiId);
 					f.setAttribute(cellIdAtt, cellId);
 					f.setAttribute(poiIdAtt, poiId);
-					f.setAttribute("duration", Util.round(60.0 * 0.001*geom.getLength()/50, 2));
+					f.setAttribute("durationMin", Util.round(60.0 * 0.001*geom.getLength()/50, 2));
+					f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
 					f.setAttribute("avSpeedKMPerH", 50.0);
 					routes.add(f);
 					System.out.println("  " + f.getAttribute("duration"));
@@ -279,16 +280,12 @@ public class AccessibilityRoutingPaths {
 				f.setID(cellId + "_" + poiId);
 				f.setAttribute(cellIdAtt, cellId);
 				f.setAttribute(poiIdAtt, poiId);
-				f.setAttribute("duration", Util.round(duration, 2));
+				f.setAttribute("durationMin", Util.round(duration, 2));
+				f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
 				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
 				routes.add(f);
 				//TODO keep only the fastest nbNearestPOIs
 
-				/*} catch (Exception e) {
-					e.printStackTrace();
-					logger.warn("Could not compute path for cell " + cellId + ": " + e.getClass().getSimpleName() + " " +  e.getMessage());
-					continue;
-				}*/
 			}
 		}
 	}
