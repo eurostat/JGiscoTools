@@ -76,7 +76,7 @@ public class AccessibilityRoutingPaths {
 			public double getWeight(Edge e) {
 				//weight is the transport duration, in minutes
 				SimpleFeature sf = (SimpleFeature) e.getObject();
-				double speedMPerMinute = 0.001 * 60 * sc.getSpeedKMPerHour(sf);
+				double speedMPerMinute = 1000/60 * sc.getSpeedKMPerHour(sf);
 				double distanceM = ((Geometry) sf.getDefaultGeometry()).getLength();
 				return distanceM/speedMPerMinute;
 			}
