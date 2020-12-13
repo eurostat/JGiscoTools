@@ -41,8 +41,9 @@ public class RoadBDTopo {
 
 				if("Autoroute".equals(nat)) return 110.0;
 				if("Quasi-autoroute".equals(nat)) return 100.0;
-				if("Route à 2 chaussées".equals(nat)) return 80.0;
+				if("Route � 2 chauss�es".equals(nat)) return 80.0;
 				if("Bretelle".equals(nat)) return 70.0;
+				if("Route empierr�e".equals(nat)) return 40.0;
 				System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
 				return 60.0;
 			}
