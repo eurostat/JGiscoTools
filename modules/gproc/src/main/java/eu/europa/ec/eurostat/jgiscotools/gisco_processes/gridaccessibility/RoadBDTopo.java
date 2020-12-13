@@ -39,8 +39,6 @@ public class RoadBDTopo {
 				Object imp_ = sf.getAttribute("IMPORTANCE");
 				String imp = imp_==null?"":imp_.toString();
 
-				System.err.println(nat + " " + imp);
-
 				if("Autoroute".equals(nat)) return 110.0;
 				if("Quasi-autoroute".equals(nat)) return 100.0;
 				if("Route à 2 chaussées".equals(nat)) return 80.0;
