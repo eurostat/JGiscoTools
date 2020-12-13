@@ -24,6 +24,10 @@ public class RoadERM {
 	private static Logger logger = LogManager.getLogger(RoadERM.class.getName());
 	static String basePath = "E:/workspace/basic_services_accessibility/";
 
+	/**
+	 * @param cnt
+	 * @return
+	 */
 	public static Collection<Feature> get(String cnt) {
 		Filter fil = null;
 		try {
@@ -34,6 +38,9 @@ public class RoadERM {
 		return fs;
 	}
 
+	/**
+	 * @return
+	 */
 	public static SpeedCalculator getSpeedCalculator() {
 		return new SpeedCalculator() {
 			@Override

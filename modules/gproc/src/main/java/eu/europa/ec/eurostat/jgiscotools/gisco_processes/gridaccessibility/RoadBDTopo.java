@@ -21,6 +21,9 @@ import eu.europa.ec.eurostat.jgiscotools.routing.SpeedCalculator;
 public class RoadBDTopo {
 	static String basePath = "E:/workspace/basic_services_accessibility/";
 
+	/**
+	 * @return
+	 */
 	public static Collection<Feature> get() {
 		Filter fil = null;
 		try {
@@ -30,6 +33,9 @@ public class RoadBDTopo {
 		return fs;
 	}
 
+	/**
+	 * @return
+	 */
 	public static SpeedCalculator getSpeedCalculator() {
 		return new SpeedCalculator() {
 			@Override

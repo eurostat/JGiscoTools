@@ -6,10 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -29,6 +27,8 @@ public class EducationRoutingPaths {
 	//show where cross-border cooperation can improve accessibility
 
 	//use: -Xms2G -Xmx12G
+	/** @param args 
+	 * @throws Exception **/
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
