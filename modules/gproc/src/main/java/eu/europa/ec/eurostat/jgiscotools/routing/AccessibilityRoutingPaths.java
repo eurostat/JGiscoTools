@@ -50,12 +50,10 @@ public class AccessibilityRoutingPaths {
 	private String poiIdAtt = "ID";
 	//the number of closest POIs
 	private int nbNearestPOIs = 3;
+	//straight distance from which we are sure to find the nbNearestPOIs POIs
+	double searchDistanceM = 50000;
 	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
-
-	//TODO
-	//straight distance from which we are sure to find the POIs 
-	double searchDistanceM = 50000;
 
 	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;
@@ -92,7 +90,7 @@ public class AccessibilityRoutingPaths {
 
 
 
-	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, String poiIdAtt, Collection<Feature> networkSections,int nbNearestPOIs) {
+	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, String poiIdAtt, Collection<Feature> networkSections,int nbNearestPOIs, double searchDistanceM) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.resM = resM;
@@ -100,6 +98,7 @@ public class AccessibilityRoutingPaths {
 		this.poiIdAtt = poiIdAtt;
 		this.networkSections = networkSections;
 		this.nbNearestPOIs = nbNearestPOIs;
+		this.searchDistanceM = searchDistanceM;
 	}
 
 
