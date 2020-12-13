@@ -18,6 +18,8 @@ import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
@@ -222,7 +224,16 @@ public class AccessibilityRoutingPaths {
 
 				if(dN == oN) {
 					//same origin and destination					
-					//TODO do something.
+					Feature f = new Feature();
+					LineString geom = new GeometryFactory().createLineString(new Coordinate[] {oC,dC});
+					f.setGeometry(geom);
+					String poiId = poi.getAttribute(poiIdAtt).toString();
+					f.setID(cellId + "_" + poiId);
+					f.setAttribute(cellIdAtt, cellId);
+					f.setAttribute(poiIdAtt, poiId);
+					f.setAttribute("duration", (int) (60.0 * 0.001*geom.getLength()/50));
+					f.setAttribute("avSpeedKMPerH", 50);
+					routes.add(f);
 					continue;
 				}
 
@@ -240,7 +251,7 @@ public class AccessibilityRoutingPaths {
 				f.setID(cellId + "_" + poiId);
 				f.setAttribute(cellIdAtt, cellId);
 				f.setAttribute(poiIdAtt, poiId);
-				f.setAttribute("duration", duration);
+				f.setAttribute("duration", (int)duration);
 				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
 				routes.add(f);
 				//TODO keep only the fastest nbNearestPOIs
