@@ -15,6 +15,7 @@ import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Node;
 import org.geotools.graph.traverse.standard.DijkstraIterator;
 import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
+import org.geotools.graph.util.geom.GeometryUtil;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -29,6 +30,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 
 /**
@@ -226,13 +228,14 @@ public class AccessibilityRoutingPaths {
 					//same origin and destination					
 					Feature f = new Feature();
 					LineString geom = new GeometryFactory().createLineString(new Coordinate[] {oC,dC});
-					f.setGeometry(geom);
+					f.setGeometry(JTSGeomUtil.toMulti(geom));
+					System.out.println(geom.getLength());
 					String poiId = poi.getAttribute(poiIdAtt).toString();
 					f.setID(cellId + "_" + poiId);
 					f.setAttribute(cellIdAtt, cellId);
 					f.setAttribute(poiIdAtt, poiId);
-					f.setAttribute("duration", (int) (60.0 * 0.001*geom.getLength()/50));
-					f.setAttribute("avSpeedKMPerH", 50);
+					f.setAttribute("duration", 1 + (int) (60.0 * 0.001*geom.getLength()/50));
+					f.setAttribute("avSpeedKMPerH", 50.0);
 					routes.add(f);
 					continue;
 				}
@@ -251,7 +254,7 @@ public class AccessibilityRoutingPaths {
 				f.setID(cellId + "_" + poiId);
 				f.setAttribute(cellIdAtt, cellId);
 				f.setAttribute(poiIdAtt, poiId);
-				f.setAttribute("duration", (int)duration);
+				f.setAttribute("duration", 1 + (int)duration);
 				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
 				routes.add(f);
 				//TODO keep only the fastest nbNearestPOIs
