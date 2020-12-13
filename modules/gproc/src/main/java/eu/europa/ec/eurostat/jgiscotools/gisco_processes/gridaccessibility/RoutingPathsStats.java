@@ -17,15 +17,21 @@ public class RoutingPathsStats {
 	public static void main(String[] args) {
 		logger.info("Start");
 
+		//1
 		//load paths
-		//index paths by grid cell
-		//
+		//while there are paths
+		//pop first
+		//get grid cell id
+		//pop all others with same grid cell id
+		//compute stats on grid cell id
+		//next
 
+		//2
 		//for each grid cell
 		//get cell id
 		//get all paths from the grid cell
 		//get
-		
+
 		//Compute indicator 1 - Shortest transport time to the nearest service
 		//Compute indicator 2- Average transport time to the X nearest services
 		//Compute indicator 3 - Service capacity within X, Y, Z minutes
