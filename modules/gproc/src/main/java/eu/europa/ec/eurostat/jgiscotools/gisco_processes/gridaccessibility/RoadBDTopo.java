@@ -34,16 +34,18 @@ public class RoadBDTopo {
 		return new SpeedCalculator() {
 			@Override
 			public double getSpeedKMPerHour(SimpleFeature sf) {
-				Object nat_ = sf.getAttribute("nature");
-				String nat = nat_==null? "":nat_.toString();
-				Object imp_ = sf.getAttribute("importance");
-				String imp = imp_==null? "":imp_.toString();
+				Object nat_ = sf.getAttribute("NATURE");
+				String nat = nat_==null?"":nat_.toString();
+				Object imp_ = sf.getAttribute("IMPORTANCE");
+				String imp = imp_==null?"":imp_.toString();
+
+				System.err.println(nat + " " + imp);
 
 				if("Autoroute".equals(nat)) return 110.0;
 				if("Quasi-autoroute".equals(nat)) return 100.0;
 				if("Route à 2 chaussées".equals(nat)) return 80.0;
 				if("Bretelle".equals(nat)) return 70.0;
-				System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
+				//System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
 				return 60.0;
 			}
 		};
