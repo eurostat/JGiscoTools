@@ -285,8 +285,12 @@ public class AccessibilityRoutingPaths {
 				routes_.add(f);
 			}
 
-			//TODO check number
-			//TODO keep only the fastest nbNearestPOIs
+			int nb_ = routes_.size();
+			if(nb_ < this.nbNearestPOIs)
+				logger.info("Not enough POIs found for grid cell (nb="+nb_+"<"+nbNearestPOIs+") " + cellId + " around " + oC);
+			else if(nb_ > nbNearestPOIs) {
+				//TODO keep only the fastest nbNearestPOIs
+			}
 			routes.addAll(routes_);
 		}
 	}
