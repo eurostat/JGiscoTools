@@ -15,7 +15,6 @@ import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Node;
 import org.geotools.graph.traverse.standard.DijkstraIterator;
 import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
-import org.geotools.graph.util.geom.GeometryUtil;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -59,22 +58,34 @@ public class AccessibilityRoutingPaths {
 	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
 
-	//the weighter used to estimate the cost of each network section when computing shortest paths
 	private EdgeWeighter edgeWeighter = null;
+	/**
+	 * The weighter used to estimate the cost of each network section when computing shortest paths.
+	 * 
+	 * @param edgeWeighter
+	 */
 	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
 
+	/**
+	 * Set the weighter based on a speed calculator.
+	 * 
+	 * @param sc
+	 */
 	public void setEdgeWeighter(SpeedCalculator sc) {
 		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
 				//weight is the transport duration, in minutes
 				SimpleFeature sf = (SimpleFeature) e.getObject();
-				double speedMPerMinute = 1000/60 * sc.getSpeedKMPerHour(sf);
+				double speedMPerMinute = 0.001 * 60 * sc.getSpeedKMPerHour(sf);
 				double distanceM = ((Geometry) sf.getDefaultGeometry()).getLength();
 				return distanceM/speedMPerMinute;
 			}
 		};
 	}
 
+	/**
+	 * @return The edge weighter.
+	 */
 	public EdgeWeighter getEdgeWeighter() {
 		if(this.edgeWeighter == null) {
 			//set default weighter: All sections are walked at the same speed, 70km/h
@@ -87,13 +98,26 @@ public class AccessibilityRoutingPaths {
 	}
 
 
-	//the fastest route to one of the POIs for each grid cell
 	private Collection<Feature> routes = null;
+	/**
+	 * The fastest route to the nearest POIs, for each grid cell.
+	 * @return
+	 */
 	public Collection<Feature> getRoutes() { return routes; }
 
 
 
 
+	/**
+	 * @param cells
+	 * @param cellIdAtt
+	 * @param resM
+	 * @param pois
+	 * @param poiIdAtt
+	 * @param networkSections
+	 * @param nbNearestPOIs
+	 * @param searchDistanceM
+	 */
 	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, String poiIdAtt, Collection<Feature> networkSections,int nbNearestPOIs, double searchDistanceM) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
@@ -234,9 +258,10 @@ public class AccessibilityRoutingPaths {
 					f.setID(cellId + "_" + poiId);
 					f.setAttribute(cellIdAtt, cellId);
 					f.setAttribute(poiIdAtt, poiId);
-					f.setAttribute("duration", 1 + (int) (60.0 * 0.001*geom.getLength()/50));
+					f.setAttribute("duration", Util.round(60.0 * 0.001*geom.getLength()/50, 2));
 					f.setAttribute("avSpeedKMPerH", 50.0);
 					routes.add(f);
+					System.out.println("  " + f.getAttribute("duration"));
 					continue;
 				}
 
@@ -254,7 +279,7 @@ public class AccessibilityRoutingPaths {
 				f.setID(cellId + "_" + poiId);
 				f.setAttribute(cellIdAtt, cellId);
 				f.setAttribute(poiIdAtt, poiId);
-				f.setAttribute("duration", 1 + (int)duration);
+				f.setAttribute("duration", Util.round(duration, 2));
 				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
 				routes.add(f);
 				//TODO keep only the fastest nbNearestPOIs
