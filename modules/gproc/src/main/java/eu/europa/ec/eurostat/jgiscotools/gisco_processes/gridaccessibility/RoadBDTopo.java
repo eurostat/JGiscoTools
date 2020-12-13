@@ -54,7 +54,7 @@ public class RoadBDTopo {
 				if("Route � 1 chauss�es".equals(nat)) return 60.0;
 				if("Piste cyclable".equals(nat)) return 5.0;
 
-				System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
+				//System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
 				return 60.0;
 			}
 		};
