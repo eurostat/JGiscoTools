@@ -36,7 +36,7 @@ public class EducationRoutingPaths {
 		//Configurator.setLevel(AccessibilityRoutingPaths.class.getName(), Level.ALL);
 
 		String basePath = "E:/workspace/basic_services_accessibility/";
-		String outPath = basePath + "accessibility_output/";
+		String outPath = basePath + "routing_paths/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 		int resKM = 1;
 

@@ -27,7 +27,7 @@ public class RoutingPathsStats {
 		logger.info("Start");
 
 		String basePath = "E:/workspace/basic_services_accessibility/";
-		String outPath = basePath + "accessibility_output/";
+		String outPath = basePath + "routing_paths/";
 
 		String cellIdAtt = "GRD_ID";
 
