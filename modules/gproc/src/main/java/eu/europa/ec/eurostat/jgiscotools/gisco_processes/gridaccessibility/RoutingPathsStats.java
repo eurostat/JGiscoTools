@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
@@ -44,8 +45,8 @@ public class RoutingPathsStats {
 			}
 		};
 
-		//
-		StatsHypercube sh = new StatsHypercube(cellIdAtt, "accInd");
+		//output structure
+		StatsHypercube hc = new StatsHypercube(cellIdAtt, "accInd");
 
 		//while there are paths
 		while(paths.size() >0) {
@@ -72,33 +73,28 @@ public class RoutingPathsStats {
 			//accInd = nearest
 			val = 0;
 			//TODO compute value
-			sh.stats.add(new Stat(0, "accInd", "nearest"));
+			hc.stats.add(new Stat(0, "accInd", "nearest"));
 
 			//Compute indicator 2- Average transport time to the X nearest services
 			//accInd = ave3near
 			val = 0;
 			//TODO compute value
-			sh.stats.add(new Stat(0, "accInd", "ave3near"));
+			hc.stats.add(new Stat(0, "accInd", "ave3near"));
 
 			//Compute indicator 3 - Service capacity within X, Y, Z minutes
 			//20', 45' and 60' for healthcare services.
 			//10', 20', and 40' for primary and secondary education.
-			//accInd = cap10
-			val = 0;
-			//TODO compute value
-			sh.stats.add(new Stat(0, "accInd", "cap10"));
-			//accInd = cap20
-			val = 0;
-			//TODO compute value
-			sh.stats.add(new Stat(0, "accInd", "nearest"));
-			//accInd = cap40
-			val = 0;
-			//TODO compute value
-			sh.stats.add(new Stat(val, "accInd", "cap40"));
+			for(int dur : new int[] {10,20,40}) {
+				//accInd = cap+dur
+				val = 0;
+				//TODO compute value
+				hc.stats.add(new Stat(0, "accInd", "cap"+dur));
+			}
 		}
 
 		//save stats
-		//TODO
+		//TODO implement that in java4inspire
+		//CSV.saveMultiValues(hc, outPath+".csv", "accInd", "nearest", "ave3near", "cap10", "cap20", "cap40");
 
 		logger.info("End");
 	}
