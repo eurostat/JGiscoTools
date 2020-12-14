@@ -28,7 +28,7 @@ public class BasicServicesRoutingPathsStats {
 		String basePath = "E:/workspace/basic_services_accessibility/";
 
 		logger.info("Load routing paths...");
-		String serviceType = "education";
+		String serviceType = "healthcare";
 		ArrayList<Feature> paths = GeoData.getFeatures(basePath+"routing_paths/routes_FR_1km_"+serviceType+".gpkg");
 		logger.info(paths.size() + " paths");
 
