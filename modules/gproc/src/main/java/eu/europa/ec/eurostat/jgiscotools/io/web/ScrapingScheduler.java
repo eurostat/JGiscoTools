@@ -15,7 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import eu.europa.ec.eurostat.java4eurostat.io.IOUtil;
-import eu.europa.ec.eurostat.java4eurostat.io.XML;
+import eu.europa.ec.eurostat.jgiscotools.io.XMLUtils;
 
 
 /**
@@ -142,7 +142,7 @@ public class ScrapingScheduler {
 
 					//get data from url
 					Object data;
-					if(qu.type == QueryType.XML) data = XML.parseXMLfromURL(url);
+					if(qu.type == QueryType.XML) data = XMLUtils.parseXMLfromURL(url);
 					else data = IOUtil.getDataFromURL(url);
 
 					if(data != null){
