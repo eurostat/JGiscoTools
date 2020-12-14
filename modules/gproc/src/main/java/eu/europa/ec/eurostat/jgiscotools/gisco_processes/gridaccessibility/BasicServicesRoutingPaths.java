@@ -14,6 +14,8 @@ import org.geotools.referencing.CRS;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths;
@@ -28,8 +30,9 @@ public class BasicServicesRoutingPaths {
 
 	private static String basePath = "E:/workspace/basic_services_accessibility/";
 	private static String cnt = "FR";
+	private static boolean computeStats = true;
 
-	private static ArrayList<Case> cases = new ArrayList<Case>();
+	static ArrayList<Case> cases = new ArrayList<Case>();
 	static {
 		try {
 			cases.add(new Case("healthcare", basePath + "input_data/healthcare_services_LAEA.gpkg", cnt==null?null:CQL.toFilter("cc = '"+cnt+"'")));
@@ -81,13 +84,21 @@ public class BasicServicesRoutingPaths {
 
 			logger.info("Save routes... Nb=" + ag.getRoutes().size());
 			GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".gpkg", crs, true);
+
+			if(computeStats) {
+				logger.info("compute stats");
+				StatsHypercube hc = AccessibilityRoutingPaths.computeStats(ag.getRoutes(), "GRD_ID");
+
+				logger.info("save stats");
+				CSV.saveMultiValues(hc, basePath+"accessibility_output/routing_paths_"+c.label+"_stats.csv", "accInd");
+			}
 		}
 
 		logger.info("End");
 	}
 
 
-	private static class Case {
+	static class Case {
 		public String label;
 		public String gpkgPath;
 		public Filter filter;

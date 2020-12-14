@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility.BasicServicesRoutingPaths.Case;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths;
 
@@ -26,18 +27,17 @@ public class BasicServicesRoutingPathsStats {
 		logger.info("Start");
 
 		String basePath = "E:/workspace/basic_services_accessibility/";
+		String cnt = "FR";
 
-		logger.info("Load routing paths...");
-		String serviceType = "healthcare";
-		ArrayList<Feature> paths = GeoData.getFeatures(basePath+"routing_paths/routes_FR_1km_"+serviceType+".gpkg");
-		logger.info(paths.size() + " paths");
+		for(Case c : BasicServicesRoutingPaths.cases) {
+			logger.info("Case: " + c.label);
 
-		logger.info("computation");
-		StatsHypercube hc = AccessibilityRoutingPaths.computeStats(paths, "GRD_ID");
+			logger.info("Load routing paths...");
+			ArrayList<Feature> paths = GeoData.getFeatures(basePath + "routing_paths/routes_"+(cnt==null?"":cnt+"_")+"1km"+"_"+c.label+".gpkg");
 
-		logger.info("save");
-		CSV.saveMultiValues(hc, basePath+"accessibility_output/routing_paths_"+serviceType+"_stats.csv", "accInd");
+			logger.info(paths.size() + " paths");
 
+		}
 		logger.info("End");
 	}
 
