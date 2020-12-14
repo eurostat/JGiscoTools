@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
+import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -42,16 +43,6 @@ public class BasicServicesRoutingPaths {
 		//set the country id (set to null for all countries)
 		String cnt = "FR";
 
-		logger.info("Load POIs");
-		//TODO decompose by education type
-		//TODO make health as well
-		//TODO use more generalised road TN for healthcare
-		String serviceType = "healthcare";
-		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+serviceType+"_services_LAEA.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
-		//String serviceType = "education_1"; int level = 1;
-		//ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+serviceType+"_services_LAEA.gpkg",null, CQL.toFilter("levels LIKE '%"+level+"%'" + cnt==null?"":"AND cc = '"+cnt+"'") );
-		logger.info(pois.size() + " POIs");
-
 		logger.info("Load network sections...");
 		Collection<Feature> networkSections = RoadBDTopo.get();
 		SpeedCalculator sc = RoadBDTopo.getSpeedCalculator();
@@ -61,17 +52,41 @@ public class BasicServicesRoutingPaths {
 		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
 		logger.info(cells.size() + " cells");
 
-		logger.info("Build accessibility...");
-		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, 4, 50000);
-		ag.setEdgeWeighter(sc);
+		//TODO decompose by education type
+		//TODO use more generalised road TN for healthcare
+		ArrayList<Case> cases = new ArrayList<Case>();
+		cases.add(new Case("healthcare", basePath + "input_data/healthcare_services_LAEA.gpkg", cnt==null?null:CQL.toFilter("cc = '"+cnt+"'")));
+		//String serviceType = "education_1"; int level = 1;
+		//ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+serviceType+"_services_LAEA.gpkg",null, CQL.toFilter("levels LIKE '%"+level+"%'" + cnt==null?"":"AND cc = '"+cnt+"'") );
 
-		logger.info("Compute accessibility paths...");
-		ag.compute();
+		for(Case c : cases ) {
+			logger.info("Load POIs");
+			ArrayList<Feature> pois = GeoData.getFeatures(c.gpkgPath, null, c.filter);
+			logger.info(pois.size() + " POIs");
 
-		logger.info("Save routes... Nb=" + ag.getRoutes().size());
-		GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+serviceType+".gpkg", crs, true);
+			logger.info("Build accessibility...");
+			AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, 4, 50000);
+			ag.setEdgeWeighter(sc);
+
+			logger.info("Compute accessibility paths...");
+			ag.compute();
+
+			logger.info("Save routes... Nb=" + ag.getRoutes().size());
+			GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".gpkg", crs, true);
+		}
 
 		logger.info("End");
+	}
+
+	private static class Case {
+		public String label;
+		public String gpkgPath;
+		public Filter filter;
+		public Case(String label, String gpkgPath, Filter filter) {
+			this.label = label;
+			this.gpkgPath = gpkgPath;
+			this.filter = filter;
+		}
 	}
 
 }
