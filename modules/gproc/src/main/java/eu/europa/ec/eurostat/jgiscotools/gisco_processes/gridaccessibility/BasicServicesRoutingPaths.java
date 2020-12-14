@@ -9,6 +9,7 @@ import java.util.Collection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.referencing.CRS;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -25,7 +26,19 @@ import eu.europa.ec.eurostat.jgiscotools.routing.SpeedCalculator;
 public class BasicServicesRoutingPaths {
 	private static Logger logger = LogManager.getLogger(BasicServicesRoutingPaths.class.getName());
 
-	//show where cross-border cooperation can improve accessibility
+	private static String basePath = "E:/workspace/basic_services_accessibility/";
+	private static String cnt = "FR";
+
+	private static ArrayList<Case> cases = new ArrayList<Case>();
+	static {
+		try {
+			cases.add(new Case("healthcare", basePath + "input_data/healthcare_services_LAEA.gpkg", cnt==null?null:CQL.toFilter("cc = '"+cnt+"'")));
+			cases.add(new Case("educ_1", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%1%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
+			cases.add(new Case("educ_2", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%2%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
+			//cases.add(new Case("educ_3", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%3%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
+		} catch (CQLException e) { e.printStackTrace(); }
+	}
+
 
 	//use: -Xms2G -Xmx12G
 	/** @param args 
@@ -41,9 +54,9 @@ public class BasicServicesRoutingPaths {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 		int resKM = 1;
 		//set the country id (set to null for all countries)
-		String cnt = "FR";
 
 		logger.info("Load network sections...");
+		//TODO use more generalised road TN for healthcare ?
 		Collection<Feature> networkSections = RoadBDTopo.get();
 		SpeedCalculator sc = RoadBDTopo.getSpeedCalculator();
 		logger.info(networkSections.size() + " sections loaded.");
@@ -51,12 +64,6 @@ public class BasicServicesRoutingPaths {
 		logger.info("Load grid cells " + resKM + "km ...");
 		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
 		logger.info(cells.size() + " cells");
-
-		//TODO use more generalised road TN for healthcare
-		ArrayList<Case> cases = new ArrayList<Case>();
-		cases.add(new Case("healthcare", basePath + "input_data/healthcare_services_LAEA.gpkg", cnt==null?null:CQL.toFilter("cc = '"+cnt+"'")));
-		cases.add(new Case("educ_1", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%1%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
-		cases.add(new Case("educ_2", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%2%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
 
 		for(Case c : cases ) {
 			logger.info("Case: " + c.label);
@@ -78,6 +85,7 @@ public class BasicServicesRoutingPaths {
 
 		logger.info("End");
 	}
+
 
 	private static class Case {
 		public String label;
