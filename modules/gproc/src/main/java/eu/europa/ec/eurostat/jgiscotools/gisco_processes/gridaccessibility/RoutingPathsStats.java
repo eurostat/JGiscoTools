@@ -88,7 +88,7 @@ public class RoutingPathsStats {
 		}
 
 		//save stats
-		CSV.saveMultiValues(hc, outPath+"routing_paths_"+serviceType+"_stats.csv", ",", "", null, "accInd", "nearest", "ave3near", "cap10", "cap20", "cap40");
+		CSV.saveMultiValues(hc, outPath+"routing_paths_"+serviceType+"_stats.csv", "accInd");
 
 		logger.info("End");
 	}
