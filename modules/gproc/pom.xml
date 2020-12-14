@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>eu.europa.ec.eurostat</groupId>
 			<artifactId>java4eurostat</artifactId>
-			<version>1.21</version>
+			<version>1.21.1</version>
 		</dependency>
 
 		<dependency>
