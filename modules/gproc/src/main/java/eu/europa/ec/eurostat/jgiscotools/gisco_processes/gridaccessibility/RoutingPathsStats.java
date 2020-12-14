@@ -26,20 +26,17 @@ public class RoutingPathsStats {
 		logger.info("Start");
 
 		String basePath = "E:/workspace/basic_services_accessibility/";
-		String outPath = basePath + "routing_paths/";
-
-		String cellIdAtt = "GRD_ID";
 
 		logger.info("Load routing paths...");
 		String serviceType = "education";
-		ArrayList<Feature> paths = GeoData.getFeatures(outPath+"routes_FR_1km_"+serviceType+".gpkg");
+		ArrayList<Feature> paths = GeoData.getFeatures(basePath+"routing_paths/routes_FR_1km_"+serviceType+".gpkg");
 		logger.info(paths.size() + " paths");
 
 		logger.info("computation");
-		StatsHypercube hc = AccessibilityRoutingPaths.computeStats(paths, cellIdAtt);
+		StatsHypercube hc = AccessibilityRoutingPaths.computeStats(paths, "GRD_ID");
 
 		logger.info("save");
-		CSV.saveMultiValues(hc, outPath+"routing_paths_"+serviceType+"_stats.csv", "accInd");
+		CSV.saveMultiValues(hc, basePath+"accessibility_output/routing_paths_"+serviceType+"_stats.csv", "accInd");
 
 		logger.info("End");
 	}
