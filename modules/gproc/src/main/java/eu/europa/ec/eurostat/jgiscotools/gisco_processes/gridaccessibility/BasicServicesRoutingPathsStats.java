@@ -18,8 +18,8 @@ import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths;
  * @author clemoki
  *
  */
-public class RoutingPathsStats {
-	private static Logger logger = LogManager.getLogger(RoutingPathsStats.class.getName());
+public class BasicServicesRoutingPathsStats {
+	private static Logger logger = LogManager.getLogger(BasicServicesRoutingPathsStats.class.getName());
 
 	/** @param args **/
 	public static void main(String[] args) {
