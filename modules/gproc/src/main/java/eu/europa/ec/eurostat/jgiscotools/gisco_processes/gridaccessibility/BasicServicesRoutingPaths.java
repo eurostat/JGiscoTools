@@ -21,8 +21,8 @@ import eu.europa.ec.eurostat.jgiscotools.routing.SpeedCalculator;
  * @author julien Gaffuri
  *
  */
-public class EducationRoutingPaths {
-	private static Logger logger = LogManager.getLogger(EducationRoutingPaths.class.getName());
+public class BasicServicesRoutingPaths {
+	private static Logger logger = LogManager.getLogger(BasicServicesRoutingPaths.class.getName());
 
 	//show where cross-border cooperation can improve accessibility
 
@@ -39,25 +39,24 @@ public class EducationRoutingPaths {
 		String outPath = basePath + "routing_paths/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 		int resKM = 1;
-
 		//set the country id (set to null for all countries)
 		String cnt = "FR";
 
-		logger.info("Load grid cells " + resKM + "km ...");
-		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
-		logger.info(cells.size() + " cells");
-
+		logger.info("Load POIs");
+		//TODO decompose by education type
+		//TODO make health as well
+		String label = "education";
+		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+label+"_services_LAEA.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
+		logger.info(pois.size() + " POIs");
 
 		logger.info("Load network sections...");
 		Collection<Feature> networkSections = RoadBDTopo.get();
 		SpeedCalculator sc = RoadBDTopo.getSpeedCalculator();
 		logger.info(networkSections.size() + " sections loaded.");
 
-		String label = "schools";
-
-		logger.info("Load POIs");
-		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/education_services_LAEA.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
-		logger.info(pois.size() + " POIs");
+		logger.info("Load grid cells " + resKM + "km ...");
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
+		logger.info(cells.size() + " cells");
 
 		logger.info("Build accessibility...");
 		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, 4, 50000);
