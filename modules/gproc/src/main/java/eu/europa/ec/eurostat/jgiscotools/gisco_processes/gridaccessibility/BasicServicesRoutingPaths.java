@@ -52,18 +52,19 @@ public class BasicServicesRoutingPaths {
 		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
 		logger.info(cells.size() + " cells");
 
-		//TODO decompose by education type
 		//TODO use more generalised road TN for healthcare
 		ArrayList<Case> cases = new ArrayList<Case>();
 		cases.add(new Case("healthcare", basePath + "input_data/healthcare_services_LAEA.gpkg", cnt==null?null:CQL.toFilter("cc = '"+cnt+"'")));
-		//String serviceType = "education_1"; int level = 1;
-		//ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+serviceType+"_services_LAEA.gpkg",null, CQL.toFilter("levels LIKE '%"+level+"%'" + cnt==null?"":"AND cc = '"+cnt+"'") );
+		cases.add(new Case("educ_1", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%1%'" + cnt==null?"":"AND cc = '"+cnt+"'")));
+		cases.add(new Case("educ_2", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%2%'" + cnt==null?"":"AND cc = '"+cnt+"'")));
 
 		for(Case c : cases ) {
+			logger.info("Case: " + c.label);
+
 			logger.info("Load POIs");
 			ArrayList<Feature> pois = GeoData.getFeatures(c.gpkgPath, null, c.filter);
 			logger.info(pois.size() + " POIs");
-
+/*
 			logger.info("Build accessibility...");
 			AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, 4, 50000);
 			ag.setEdgeWeighter(sc);
@@ -73,7 +74,7 @@ public class BasicServicesRoutingPaths {
 
 			logger.info("Save routes... Nb=" + ag.getRoutes().size());
 			GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".gpkg", crs, true);
-		}
+		*/}
 
 		logger.info("End");
 	}
