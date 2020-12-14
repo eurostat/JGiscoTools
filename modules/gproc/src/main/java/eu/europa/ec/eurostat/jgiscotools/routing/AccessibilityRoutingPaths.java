@@ -28,6 +28,8 @@ import org.locationtech.jts.index.strtree.STRtree;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
+import eu.europa.ec.eurostat.java4eurostat.base.Stat;
+import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
@@ -309,5 +311,57 @@ public class AccessibilityRoutingPaths {
 			return (int)(1e6*(d1-d2));
 		}
 	};
+
+
+	/**
+	 * Compute statistics on a collection of routing paths.
+	 * 
+	 * @param paths
+	 * @param cellIdAtt
+	 * @return
+	 */
+	public static StatsHypercube computeStats(Collection<Feature> paths, String cellIdAtt) {
+		//output structure
+		StatsHypercube hc = new StatsHypercube(cellIdAtt, "accInd");
+
+		if(paths.size() == 0) return hc;
+
+		//while there are paths
+		while(paths.size() >0) {
+			//get cell id of the first path
+			String cellId = paths.iterator().next().getAttribute(cellIdAtt).toString();
+			if(logger.isDebugEnabled()) logger.debug(cellId);
+
+			//get all paths of the cell
+			ArrayList<Feature> paths_ = new ArrayList<Feature>();
+			for(Feature path : paths)
+				if(path.getAttribute(cellIdAtt).toString().equals(cellId))
+					paths_.add(path);
+
+			//remove
+			paths.removeAll(paths_);
+
+			//sort paths
+			paths_.sort(AccessibilityRoutingPaths.pathDurationComparator);
+
+			//compute stats on grid cell id
+			double val;
+
+			//Compute indicator 1 - Shortest transport time to the nearest service
+			//accInd = nearest
+			val = Double.parseDouble(paths_.get(0).getAttribute("durationMin").toString());
+			hc.stats.add(new Stat(val, cellIdAtt, cellId, "accInd", "nearest"));
+
+			//Compute indicator 2- Average transport time to the X nearest services
+			//accInd = ave3near
+			int x = Math.min(3, paths_.size());
+			val = 0;
+			for(int i=0; i<x; i++)
+				val += Double.parseDouble(paths_.get(i).getAttribute("durationMin").toString());
+			val = val/x;
+			hc.stats.add(new Stat(val, cellIdAtt, cellId, "accInd", "ave3near"));
+		}
+		return hc;
+	}
 
 }
