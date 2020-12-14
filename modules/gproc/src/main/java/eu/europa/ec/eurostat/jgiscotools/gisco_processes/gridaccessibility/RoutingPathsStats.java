@@ -4,7 +4,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +13,7 @@ import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths;
 
 /**
  * @author clemoki
@@ -36,16 +36,6 @@ public class RoutingPathsStats {
 		ArrayList<Feature> paths = GeoData.getFeatures(outPath+"routes_FR_1km_"+serviceType+".gpkg");
 		logger.info(paths.size() + " paths");
 
-		//comparator
-		Comparator<Feature> c = new Comparator<Feature>() {
-			@Override
-			public int compare(Feature f1, Feature f2) {
-				double d1 = Double.parseDouble(f1.getAttribute("durationMin").toString());
-				double d2 = Double.parseDouble(f2.getAttribute("durationMin").toString());
-				return (int)(1e6*(d1-d2));
-			}
-		};
-
 		//output structure
 		StatsHypercube hc = new StatsHypercube(cellIdAtt, "accInd");
 
@@ -65,7 +55,7 @@ public class RoutingPathsStats {
 			paths.removeAll(paths_);
 
 			//sort paths
-			paths_.sort(c);
+			paths_.sort(AccessibilityRoutingPaths.pathDurationComparator);
 
 			//compute stats on grid cell id
 			double val;

@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.routing;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -294,5 +295,19 @@ public class AccessibilityRoutingPaths {
 			routes.addAll(routes_);
 		}
 	}
+
+
+
+	/**
+	 * 
+	 */
+	public static Comparator<Feature> pathDurationComparator = new Comparator<Feature>() {
+		@Override
+		public int compare(Feature f1, Feature f2) {
+			double d1 = Double.parseDouble(f1.getAttribute("durationMin").toString());
+			double d2 = Double.parseDouble(f2.getAttribute("durationMin").toString());
+			return (int)(1e6*(d1-d2));
+		}
+	};
 
 }
