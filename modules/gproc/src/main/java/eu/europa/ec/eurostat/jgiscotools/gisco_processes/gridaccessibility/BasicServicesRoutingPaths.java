@@ -45,9 +45,10 @@ public class BasicServicesRoutingPaths {
 		logger.info("Load POIs");
 		//TODO decompose by education type
 		//TODO make health as well
-		String serviceType = "healthcare";
-		//String serviceType = "education";
-		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+serviceType+"_services_LAEA.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
+		//String serviceType = "healthcare";
+		//ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+serviceType+"_services_LAEA.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
+		String serviceType = "education_1"; int level = 1;
+		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+serviceType+"_services_LAEA.gpkg",null, CQL.toFilter("levels LIKE '%"+level+"%'" + cnt==null?"":"AND cc = '"+cnt+"'") );
 		logger.info(pois.size() + " POIs");
 
 		logger.info("Load network sections...");
