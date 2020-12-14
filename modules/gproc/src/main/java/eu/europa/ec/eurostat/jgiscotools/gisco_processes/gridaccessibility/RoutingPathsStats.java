@@ -36,6 +36,8 @@ public class RoutingPathsStats {
 		ArrayList<Feature> paths = GeoData.getFeatures(outPath+"routes_FR_1km_"+serviceType+".gpkg");
 		logger.info(paths.size() + " paths");
 
+
+
 		//output structure
 		StatsHypercube hc = new StatsHypercube(cellIdAtt, "accInd");
 
@@ -63,7 +65,7 @@ public class RoutingPathsStats {
 			//Compute indicator 1 - Shortest transport time to the nearest service
 			//accInd = nearest
 			val = Double.parseDouble(paths_.get(0).getAttribute("durationMin").toString());
-			hc.stats.add(new Stat(val, "accInd", "nearest"));
+			hc.stats.add(new Stat(val, cellIdAtt, cellId, "accInd", "nearest"));
 
 			//Compute indicator 2- Average transport time to the X nearest services
 			//accInd = ave3near
@@ -72,7 +74,7 @@ public class RoutingPathsStats {
 			for(int i=0; i<x; i++)
 				val += Double.parseDouble(paths_.get(i).getAttribute("durationMin").toString());
 			val = val/x;
-			hc.stats.add(new Stat(val, "accInd", "ave3near"));
+			hc.stats.add(new Stat(val, cellIdAtt, cellId, "accInd", "ave3near"));
 
 			//Compute indicator 3 - Service capacity within X, Y, Z minutes
 			//20', 45' and 60' for healthcare services.
@@ -81,12 +83,12 @@ public class RoutingPathsStats {
 				//accInd = cap+dur
 				val = 0;
 				//TODO compute value
-				hc.stats.add(new Stat(val, "accInd", "cap"+dur));
+				hc.stats.add(new Stat(val, cellIdAtt, cellId, "accInd", "cap"+dur));
 			}
 		}
 
 		//save stats
-		CSV.saveMultiValues(hc, outPath+"routing_paths_"+serviceType+"_stats.csv", "accInd");
+		CSV.saveMultiValues(hc, outPath+"routing_paths_"+serviceType+"_stats.csv", ",", "", null, "accInd", "nearest", "ave3near", "cap10", "cap20", "cap40");
 
 		logger.info("End");
 	}
