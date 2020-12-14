@@ -54,7 +54,7 @@ public class AccessibilityRoutingPaths {
 	//the number of closest POIs
 	private int nbNearestPOIs = 3;
 	//straight distance from which we are sure to find the nbNearestPOIs POIs
-	double searchDistanceM = 50000;
+	double searchDistanceM = 200000; //200km
 	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
 
@@ -190,7 +190,7 @@ public class AccessibilityRoutingPaths {
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
-			int nb = (int)(1.3 * nbNearestPOIs);
+			int nb = (int)(1.5 * nbNearestPOIs);
 			//if(logger.isDebugEnabled()) logger.debug("Get " + nb + " nearest POIs");
 			Envelope env = cell.getGeometry().getEnvelopeInternal(); env.expandBy(searchDistanceM);
 			Feature cellPt = new Feature(); cellPt.setGeometry(cell.getGeometry().getCentroid());
@@ -200,7 +200,7 @@ public class AccessibilityRoutingPaths {
 			env = cell.getGeometry().getEnvelopeInternal();
 			for(Object poi_ : pois_)
 				env.expandToInclude(((Feature) poi_).getGeometry().getEnvelopeInternal());
-			env.expandBy(2000); //TODO how to choose that? Expose parameter?
+			env.expandBy(5000); //TODO how to choose that? Expose parameter?
 			if(logger.isTraceEnabled()) logger.trace("Network search size (km): " + 0.001*Math.sqrt(env.getArea()));
 
 			//get network sections in the envelope around the cell and surrounding POIs
