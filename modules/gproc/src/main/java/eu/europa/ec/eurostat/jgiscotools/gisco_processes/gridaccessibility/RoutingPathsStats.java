@@ -95,7 +95,7 @@ public class RoutingPathsStats {
 		}
 
 		//save stats
-		//TODO implement that in java4inspire
+		//TODO
 		//CSV.saveMultiValues(hc, outPath+".csv", "accInd", "nearest", "ave3near", "cap10", "cap20", "cap40");
 
 		logger.info("End");
