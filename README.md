@@ -4,6 +4,8 @@
 
 [JGiscoTools](https://github.com/eurostat/JGiscoTools) is mainly based on [GeoTools](http://www.geotools.org/), [JTS Topology Suite](https://locationtech.github.io/jts/) and [java4eurostat](https://github.com/eurostat/java4eurostat) libraries.
 
+[![Maven Central](https://img.shields.io/maven-central/v/eu.europa.ec.eurostat/jgiscotools.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22eu.europa.ec.eurostat%22%20AND%20a:%22jgiscotools%22)
+
 ## Quick start
 
 ### Load
