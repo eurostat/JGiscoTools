@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
@@ -94,8 +95,7 @@ public class RoutingPathsStats {
 		}
 
 		//save stats
-		//TODO
-		//CSV.saveMultiValues(hc, outPath+".csv", "accInd", "nearest", "ave3near", "cap10", "cap20", "cap40");
+		CSV.saveMultiValues(hc, outPath+".csv", "accInd");
 
 		logger.info("End");
 	}
