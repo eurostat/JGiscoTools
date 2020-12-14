@@ -45,8 +45,8 @@ public class BasicServicesRoutingPaths {
 		logger.info("Load POIs");
 		//TODO decompose by education type
 		//TODO make health as well
-		String label = "education";
-		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+label+"_services_LAEA.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
+		String serviceType = "education";
+		ArrayList<Feature> pois = GeoData.getFeatures(basePath + "input_data/"+serviceType+"_services_LAEA.gpkg",null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
 		logger.info(pois.size() + " POIs");
 
 		logger.info("Load network sections...");
@@ -66,7 +66,7 @@ public class BasicServicesRoutingPaths {
 		ag.compute();
 
 		logger.info("Save routes... Nb=" + ag.getRoutes().size());
-		GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+label+".gpkg", crs, true);
+		GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+serviceType+".gpkg", crs, true);
 
 		logger.info("End");
 	}

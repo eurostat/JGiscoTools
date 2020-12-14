@@ -32,7 +32,8 @@ public class RoutingPathsStats {
 		String cellIdAtt = "GRD_ID";
 
 		logger.info("Load routing paths...");
-		ArrayList<Feature> paths = GeoData.getFeatures(outPath+"routes_FR_1km_schools.gpkg");
+		String serviceType = "education";
+		ArrayList<Feature> paths = GeoData.getFeatures(outPath+"routes_FR_1km_"+serviceType+".gpkg");
 		logger.info(paths.size() + " paths");
 
 		//comparator
@@ -95,7 +96,7 @@ public class RoutingPathsStats {
 		}
 
 		//save stats
-		CSV.saveMultiValues(hc, outPath+".csv", "accInd");
+		CSV.saveMultiValues(hc, outPath+"routing_paths_"+serviceType+"_stats.csv", "accInd");
 
 		logger.info("End");
 	}
