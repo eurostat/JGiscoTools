@@ -10,9 +10,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.graph.path.AStarShortestPathFinder;
 import org.geotools.graph.path.Path;
+import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Node;
+import org.geotools.graph.traverse.standard.AStarIterator.AStarFunctions;
+import org.geotools.graph.traverse.standard.AStarIterator.AStarNode;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -47,7 +51,7 @@ public class TestAStar {
 		Coordinate oC = new Coordinate(4041407, 2967034);
 		Node oN = rt.getNode(oC);
 
-/*
+		/*
 		logger.info("Dijskra");
 		DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
@@ -73,7 +77,7 @@ public class TestAStar {
 				f.setAttribute("durationMin", duration);
 				paths.add(f);
 			}
-*/
+		 */
 
 		logger.info("A*");
 
@@ -85,7 +89,26 @@ public class TestAStar {
 				Node dN = rt.getNode(dC);
 
 				//compute shortest path
-				AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oN, dN);
+				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oN, dN);
+
+				//define default A* functions
+				AStarFunctions afun = new AStarFunctions(dN) {
+					@Override
+					public double cost(AStarNode ns0, AStarNode ns1) {
+						//return the edge weighter value
+						Edge e = ns0.getNode().getEdge(ns1.getNode());
+						return rt.getEdgeWeighter().getWeight(e);
+					}
+					@Override
+					public double h(Node n) {
+						//return the point to point 'cost' TODO !!!
+						Point dP = (Point) dN.getObject();
+						Point p = (Point) n.getObject();
+						return p.distance(dP);
+					}
+				};
+				AStarShortestPathFinder pf = new AStarShortestPathFinder(rt.getGraph(), oN, dN, afun);
+
 				pf.calculate();
 				Path p = pf.getPath();
 				//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972

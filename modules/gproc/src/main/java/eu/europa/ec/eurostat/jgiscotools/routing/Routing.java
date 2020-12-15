@@ -6,7 +6,6 @@ package eu.europa.ec.eurostat.jgiscotools.routing;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -174,8 +173,7 @@ public class Routing {
 
 	public AStarShortestPathFinder getAStarShortestPathFinder(Node oN, Node dN){
 		//define default A* functions
-		AStarFunctions afun = null;
-		afun = new AStarFunctions(dN) {
+		AStarFunctions afun = new AStarFunctions(dN) {
 			@Override
 			public double cost(AStarNode ns0, AStarNode ns1) {
 				//return the edge weighter value
@@ -191,7 +189,6 @@ public class Routing {
 			}
 		};
 		AStarShortestPathFinder pf = new AStarShortestPathFinder(graph, oN, dN, afun);
-		pf.calculate();
 		return pf;
 	}
 
