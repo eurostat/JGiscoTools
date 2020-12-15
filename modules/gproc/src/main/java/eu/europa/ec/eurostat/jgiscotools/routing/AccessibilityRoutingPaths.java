@@ -19,8 +19,6 @@ import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
@@ -260,9 +258,9 @@ public class AccessibilityRoutingPaths {
 					f.setID(cellId + "_" + poiId);
 					f.setAttribute(cellIdAtt, cellId);
 					f.setAttribute(poiIdAtt, poiId);
-					f.setAttribute("durationMin", Util.round(60.0 * 0.001*geom.getLength()/50, 2));
-					f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
-					f.setAttribute("avSpeedKMPerH", 50.0);
+					f.setAttribute("durationMin", Util.round(60.0 * 0.001*f.getGeometry().getLength()/50, 2));
+					//f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
+					//f.setAttribute("avSpeedKMPerH", 50.0);
 					routes_.add(f);
 					continue;
 				}
@@ -285,8 +283,8 @@ public class AccessibilityRoutingPaths {
 				f.setAttribute(cellIdAtt, cellId);
 				f.setAttribute(poiIdAtt, poiId);
 				f.setAttribute("durationMin", Util.round(duration, 2));
-				f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
-				f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
+				//f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
+				//f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
 				routes_.add(f);
 			}
 
