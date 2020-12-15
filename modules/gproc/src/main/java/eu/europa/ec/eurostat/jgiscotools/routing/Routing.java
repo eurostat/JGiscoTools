@@ -112,7 +112,7 @@ public class Routing {
 
 	public Routing(URL networkFileURL) throws IOException { this(networkFileURL, null); }
 	public Routing(FeatureCollection<?,?> fc) { this(fc, null); }
-	public Routing(ArrayList<Feature> fs, SimpleFeatureType ft) { this(SimpleFeatureUtil.get(fs, ft)); }
+	public Routing(Collection<Feature> fs, SimpleFeatureType ft) { this(SimpleFeatureUtil.get(fs, ft)); }
 
 
 

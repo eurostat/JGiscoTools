@@ -30,7 +30,7 @@ public class BasicServicesRoutingPaths {
 
 	private static String basePath = "E:/workspace/basic_services_accessibility/";
 	private static String cnt = "FR";
-	private static boolean computeStats = true;
+	private static boolean computeStats = false;
 
 	static ArrayList<Case> cases = new ArrayList<Case>();
 	static {
