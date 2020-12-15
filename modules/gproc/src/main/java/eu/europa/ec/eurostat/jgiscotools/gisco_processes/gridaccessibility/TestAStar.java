@@ -55,8 +55,7 @@ public class TestAStar {
 		ArrayList<Feature> paths = new ArrayList<>();
 		Coordinate oC = new Coordinate(4041407, 2967034);
 		Node oN = rt.getNode(oC);
-		//int nb = 64; int rNb = 10; double rMax = 20000;
-		int nb = 10; int rNb = 1; double rMax = 20000;
+		int nb = 64; int rNb = 10; double rMax = 20000;
 
 		boolean astar = true;
 
@@ -83,29 +82,31 @@ public class TestAStar {
 
 					//rt.getEdgeWeighter().getWeight(e);
 
-					return 2 * p.distance(dP);
+					return 5 * p.distance(dP);
 				}
 			};
 
 			for(double r = rMax/rNb; r<=rMax; r += rMax/rNb)
-				for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
+				for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb)
+					try {
+						Coordinate dC = new Coordinate(oC.x+r*Math.cos(angle), oC.y+r*Math.sin(angle));
+						Node dN = rt.getNode(dC);
 
-					Coordinate dC = new Coordinate(oC.x+r*Math.cos(angle), oC.y+r*Math.sin(angle));
-					Node dN = rt.getNode(dC);
+						afun.setDestination(dN);
+						AStarShortestPathFinder pf = new AStarShortestPathFinder(rt.getGraph(), oN, dN, afun);
+						pf.calculate();
+						Path p = pf.getPath();
+						//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 
-					afun.setDestination(dN);
-					AStarShortestPathFinder pf = new AStarShortestPathFinder(rt.getGraph(), oN, dN, afun);
-					pf.calculate();
-					Path p = pf.getPath();
-					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
-
-					//store route
-					//Feature f = new Feature();
-					//f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
-					Feature f = Routing.toFeature(p);
-					//f.setAttribute("durationMin", duration);
-					paths.add(f);
-				}
+						//store route
+						//Feature f = new Feature();
+						//f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
+						Feature f = Routing.toFeature(p);
+						//f.setAttribute("durationMin", duration);
+						paths.add(f);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
 		} else {
 
