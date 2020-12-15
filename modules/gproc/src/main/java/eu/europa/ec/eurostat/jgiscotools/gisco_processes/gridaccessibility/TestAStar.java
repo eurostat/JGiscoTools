@@ -70,8 +70,9 @@ public class TestAStar {
 			//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 
 			//store route
-			Feature f = new Feature();
-			f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
+			//Feature f = new Feature();
+			//f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
+			Feature f = Routing.toFeature(p);
 			f.setAttribute("durationMin", duration);
 			paths.add(f);
 
