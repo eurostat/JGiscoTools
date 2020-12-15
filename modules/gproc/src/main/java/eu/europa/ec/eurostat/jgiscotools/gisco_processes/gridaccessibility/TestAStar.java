@@ -95,6 +95,7 @@ public class TestAStar {
 				}
 
 		} else {
+
 			logger.info("Dijskra");
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
