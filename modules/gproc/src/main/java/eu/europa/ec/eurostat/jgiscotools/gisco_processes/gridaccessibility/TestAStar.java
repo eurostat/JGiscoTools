@@ -9,6 +9,7 @@ import java.util.Collection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.graph.path.AStarShortestPathFinder;
+import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Node;
@@ -51,75 +52,80 @@ public class TestAStar {
 		Coordinate oC = new Coordinate(4041407, 2967034);
 		Node oN = rt.getNode(oC);
 
-		/*
-		logger.info("Dijskra");
-		DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
+		boolean astar = true;
+		if(astar) {
+			logger.info("A*");
+			for(double r = rMax/rNb; r<=rMax; r += rMax/rNb)
+				for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
 
-		logger.info("Compute");
-		for(double r = rMax/rNb; r<=rMax; r += rMax/rNb)
-			for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
+					Coordinate dC = new Coordinate(oC.x+r*Math.cos(angle), oC.y+r*Math.sin(angle));
+					Node dN = rt.getNode(dC);
 
-				Coordinate dC = new Coordinate(oC.x+r*Math.cos(angle), oC.y+r*Math.sin(angle));
-				Node dN = rt.getNode(dC);
+					//compute shortest path
+					//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oN, dN);
 
-				Path p = pf.getPath(dN);
-				if(p==null) {
-					logger.info("No path found to " + dC );
-					continue;
+					//define default A* functions
+					AStarFunctions afun = new AStarFunctions(dN) {
+						@Override
+						public double cost(AStarNode ns0, AStarNode ns1) {
+							//return the edge weighter value
+							Edge e = ns0.getNode().getEdge(ns1.getNode());
+							return rt.getEdgeWeighter().getWeight(e);
+						}
+						@Override
+						public double h(Node n) {
+							//return the point to point 'cost' TODO?
+							Point dP = (Point) dN.getObject();
+							Point p = (Point) n.getObject();
+							return p.distance(dP);
+						}
+					};
+					AStarShortestPathFinder pf = new AStarShortestPathFinder(rt.getGraph(), oN, dN, afun);
+					pf.calculate();
+
+					Path p = pf.getPath();
+					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
+
+					//store route
+					//Feature f = new Feature();
+					//f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
+					Feature f = Routing.toFeature(p);
+					//f.setAttribute("durationMin", duration);
+					paths.add(f);
 				}
 
-				double duration = pf.getCost(dN);
+		} else {
+			logger.info("Dijskra");
+			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
-				//store route
-				//Feature f = new Feature();
-				//f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
-				Feature f = Routing.toFeature(p);
-				f.setAttribute("durationMin", duration);
-				paths.add(f);
-			}
-		 */
+			logger.info("Compute");
+			for(double r = rMax/rNb; r<=rMax; r += rMax/rNb)
+				for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
 
-		logger.info("A*");
+					Coordinate dC = new Coordinate(oC.x+r*Math.cos(angle), oC.y+r*Math.sin(angle));
+					Node dN = rt.getNode(dC);
 
-		logger.info("Compute");
-		for(double r = rMax/rNb; r<=rMax; r += rMax/rNb)
-			for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
-
-				Coordinate dC = new Coordinate(oC.x+r*Math.cos(angle), oC.y+r*Math.sin(angle));
-				Node dN = rt.getNode(dC);
-
-				//compute shortest path
-				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oN, dN);
-
-				//define default A* functions
-				AStarFunctions afun = new AStarFunctions(dN) {
-					@Override
-					public double cost(AStarNode ns0, AStarNode ns1) {
-						//return the edge weighter value
-						Edge e = ns0.getNode().getEdge(ns1.getNode());
-						return rt.getEdgeWeighter().getWeight(e);
+					Path p = pf.getPath(dN);
+					if(p==null) {
+						logger.info("No path found to " + dC );
+						continue;
 					}
-					@Override
-					public double h(Node n) {
-						//return the point to point 'cost' TODO !!!
-						Point dP = (Point) dN.getObject();
-						Point p = (Point) n.getObject();
-						return p.distance(dP);
-					}
-				};
-				AStarShortestPathFinder pf = new AStarShortestPathFinder(rt.getGraph(), oN, dN, afun);
 
-				pf.calculate();
-				Path p = pf.getPath();
-				//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
+					double duration = pf.getCost(dN);
 
-				//store route
-				//Feature f = new Feature();
-				//f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
-				Feature f = Routing.toFeature(p);
-				//f.setAttribute("durationMin", duration);
-				paths.add(f);
-			}
+					//store route
+					//Feature f = new Feature();
+					//f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
+					Feature f = Routing.toFeature(p);
+					f.setAttribute("durationMin", duration);
+					paths.add(f);
+				}
+		}
+
+
+
+
+
 
 		logger.info("save");
 		GeoData.save(paths, "E:\\workspace\\basic_services_accessibility\\routing_paths\\test\\LU_test.gpkg", CRS.decode("EPSG:3035"), true);
