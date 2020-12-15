@@ -17,7 +17,9 @@ import org.geotools.graph.traverse.standard.AStarIterator.AStarFunctions;
 import org.geotools.graph.traverse.standard.AStarIterator.AStarNode;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -32,6 +34,10 @@ import eu.europa.ec.eurostat.jgiscotools.routing.Routing;
 public class TestAStar {
 	private static Logger logger = LogManager.getLogger(BasicServiceAccessibility.class.getName());
 
+	/**
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
@@ -47,42 +53,49 @@ public class TestAStar {
 
 		logger.info("Prepare");
 		ArrayList<Feature> paths = new ArrayList<>();
-		//int nb = 64; int rNb = 10; double rMax = 20000;
-		int nb = 16; int rNb = 2; double rMax = 20000;
 		Coordinate oC = new Coordinate(4041407, 2967034);
 		Node oN = rt.getNode(oC);
+		//int nb = 64; int rNb = 10; double rMax = 20000;
+		int nb = 10; int rNb = 1; double rMax = 20000;
 
 		boolean astar = true;
+
 		if(astar) {
 			logger.info("A*");
+
+			//define default A* functions
+			AStarFunctions afun = new AStarFunctions(null) {
+				//NB: both cost and h should return something in the same unit.
+				//h to be faster: straight line with highway...
+				@Override
+				public double cost(AStarNode ns0, AStarNode ns1) {
+					//return the edge weighter value
+					Edge e = ns0.getNode().getEdge(ns1.getNode());
+					//return rt.getEdgeWeighter().getWeight(e);
+					SimpleFeature sf = (SimpleFeature)e.getObject();
+					return ((Geometry)sf.getDefaultGeometry()).getLength();
+				}
+				@Override
+				public double h(Node n) {
+					//return the point to point 'cost' TODO?
+					Point dP = (Point) getDest().getObject();
+					Point p = (Point) n.getObject();
+
+					//rt.getEdgeWeighter().getWeight(e);
+
+					return 2 * p.distance(dP);
+				}
+			};
+
 			for(double r = rMax/rNb; r<=rMax; r += rMax/rNb)
 				for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
 
 					Coordinate dC = new Coordinate(oC.x+r*Math.cos(angle), oC.y+r*Math.sin(angle));
 					Node dN = rt.getNode(dC);
 
-					//compute shortest path
-					//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oN, dN);
-
-					//define default A* functions
-					AStarFunctions afun = new AStarFunctions(dN) {
-						@Override
-						public double cost(AStarNode ns0, AStarNode ns1) {
-							//return the edge weighter value
-							Edge e = ns0.getNode().getEdge(ns1.getNode());
-							return rt.getEdgeWeighter().getWeight(e);
-						}
-						@Override
-						public double h(Node n) {
-							//return the point to point 'cost' TODO?
-							Point dP = (Point) dN.getObject();
-							Point p = (Point) n.getObject();
-							return p.distance(dP);
-						}
-					};
+					afun.setDestination(dN);
 					AStarShortestPathFinder pf = new AStarShortestPathFinder(rt.getGraph(), oN, dN, afun);
 					pf.calculate();
-
 					Path p = pf.getPath();
 					//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 
@@ -98,8 +111,8 @@ public class TestAStar {
 
 			logger.info("Dijskra");
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
+			pf.calculate();
 
-			logger.info("Compute");
 			for(double r = rMax/rNb; r<=rMax; r += rMax/rNb)
 				for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
 
