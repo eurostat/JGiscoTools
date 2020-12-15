@@ -54,33 +54,34 @@ public class TestAStar {
 
 		logger.info("Compute");
 		ArrayList<Feature> paths = new ArrayList<>();
-		int nb = 16; double radius = 20000;
-		for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
+		int nb = 256; int rNb = 10; double rMax = 20000;
+		for(double r = rMax/rNb; r<=rMax; r += rMax/rNb)
+			for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
 
-			Coordinate dC = new Coordinate(oC.x+radius*Math.cos(angle), oC.y+radius*Math.sin(angle));
-			Node dN = rt.getNode(dC);
+				Coordinate dC = new Coordinate(oC.x+r*Math.cos(angle), oC.y+r*Math.sin(angle));
+				Node dN = rt.getNode(dC);
 
-			Path p = pf.getPath(dN);
-			if(p==null) {
-				logger.info("No path found to " + dC );
-				continue;
+				Path p = pf.getPath(dN);
+				if(p==null) {
+					logger.info("No path found to " + dC );
+					continue;
+				}
+
+				double duration = pf.getCost(dN);
+				//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
+
+				//store route
+				//Feature f = new Feature();
+				//f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
+				Feature f = Routing.toFeature(p);
+				f.setAttribute("durationMin", duration);
+				paths.add(f);
+
 			}
 
-			double duration = pf.getCost(dN);
-			//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
-
-			//store route
-			//Feature f = new Feature();
-			//f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
-			Feature f = Routing.toFeature(p);
-			f.setAttribute("durationMin", duration);
-			paths.add(f);
-
-		}
 
 
-		
-		
+
 		logger.info("save");
 		GeoData.save(paths, "E:\\workspace\\basic_services_accessibility\\routing_paths\\test\\LU_test.gpkg", CRS.decode("EPSG:3035"), true);
 
