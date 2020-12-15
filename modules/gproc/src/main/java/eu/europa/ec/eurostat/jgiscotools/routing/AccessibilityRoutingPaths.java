@@ -253,10 +253,9 @@ public class AccessibilityRoutingPaths {
 				Node dN = rt.getNode(dC);
 
 				if(dN == oN) {
-					//same origin and destination					
+					//same origin and destination
 					Feature f = new Feature();
-					LineString geom = new GeometryFactory().createLineString(new Coordinate[] {oC,dC});
-					f.setGeometry(JTSGeomUtil.toMulti(geom));
+					f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
 					String poiId = poi.getAttribute(poiIdAtt).toString();
 					f.setID(cellId + "_" + poiId);
 					f.setAttribute(cellIdAtt, cellId);
@@ -277,7 +276,10 @@ public class AccessibilityRoutingPaths {
 				//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 
 				//store route
-				Feature f = Routing.toFeature(p);
+				//TODO keep straight line as geometry ?
+				//Feature f = Routing.toFeature(p);
+				Feature f = new Feature();
+				f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
 				String poiId = poi.getAttribute(poiIdAtt).toString();
 				f.setID(cellId + "_" + poiId);
 				f.setAttribute(cellIdAtt, cellId);
