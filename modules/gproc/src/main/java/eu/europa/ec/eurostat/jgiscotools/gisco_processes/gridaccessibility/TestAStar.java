@@ -11,8 +11,11 @@ import org.apache.logging.log4j.Logger;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Node;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -28,7 +31,7 @@ import eu.europa.ec.eurostat.jgiscotools.routing.Routing;
 public class TestAStar {
 	private static Logger logger = LogManager.getLogger(BasicServiceAccessibility.class.getName());
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
 		logger.info("Loading");
@@ -41,38 +44,45 @@ public class TestAStar {
 		logger.info("Build network");
 		Routing rt = new Routing(networkSections, ft);
 
+
+
+
 		logger.info("Dijskra");
-		Coordinate oC = new Coordinate();
+		Coordinate oC = new Coordinate(4041407, 2967034);
 		Node oN = rt.getNode(oC);
 		DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
-
-
-		
+		logger.info("Compute");
 		ArrayList<Feature> paths = new ArrayList<>();
+		int nb = 16; double radius = 20000;
+		for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
 
-		Coordinate dC = new Coordinate();
-		Node dN = rt.getNode(dC);
+			Coordinate dC = new Coordinate(oC.x+radius*Math.cos(angle), oC.y+radius*Math.sin(angle));
+			Node dN = rt.getNode(dC);
 
-		Path p = pf.getPath(dN);
-		if(p==null) {
-			if(logger.isTraceEnabled()) logger.trace("No path found to " + dC );
-			//continue;
+			Path p = pf.getPath(dN);
+			if(p==null) {
+				logger.info("No path found to " + dC );
+				continue;
+			}
+
+			double duration = pf.getCost(dN);
+			//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
+
+			//store route
+			Feature f = new Feature();
+			f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
+			f.setAttribute("durationMin", duration);
+			paths.add(f);
+
 		}
 
-		double duration = pf.getCost(dN);
-		//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 
-		//store route
-		//TODO keep straight line as geometry ?
-		//Feature f = Routing.toFeature(p);
-		Feature f = new Feature();
-		f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
-		f.setAttribute("durationMin", Util.round(duration, 2));
-		//f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
-		//f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
-		paths.add(f);
 		
+		
+		logger.info("save");
+		GeoData.save(paths, "E:\\workspace\\basic_services_accessibility\\routing_paths\\test\\LU_test.gpkg", CRS.decode("EPSG:3035"), true);
+
 		logger.info("End");
 	}
 
