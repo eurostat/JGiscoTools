@@ -42,7 +42,8 @@ public class TestAStar {
 
 		logger.info("Prepare");
 		ArrayList<Feature> paths = new ArrayList<>();
-		int nb = 64; int rNb = 10; double rMax = 20000;
+		//int nb = 64; int rNb = 10; double rMax = 20000;
+		int nb = 16; int rNb = 2; double rMax = 20000;
 		Coordinate oC = new Coordinate(4041407, 2967034);
 		Node oN = rt.getNode(oC);
 
