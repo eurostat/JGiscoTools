@@ -196,7 +196,7 @@ public class AccessibilityRoutingPaths {
 			if(logger.isDebugEnabled()) logger.debug("Dijkstra computation");
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
-			if(logger.isDebugEnabled()) logger.debug("Compute routes to POIs. Nb=" + pois_.length);
+			if(logger.isDebugEnabled()) logger.debug("Compute paths to POIs. Nb=" + pois_.length);
 			ArrayList<Feature> paths_ = new ArrayList<>();
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
@@ -227,7 +227,7 @@ public class AccessibilityRoutingPaths {
 				}
 				double duration = pf.getCost(dN);
 
-				//store route
+				//store path
 				//Feature f = Routing.toFeature(p);
 				Feature f = new Feature();
 				f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
@@ -250,6 +250,7 @@ public class AccessibilityRoutingPaths {
 				while(paths_.size() > nbNearestPOIs)
 					paths_.remove(paths_.size()-1);
 			}
+			//System.out.println(cellId + " " + paths_.size());
 			paths.addAll(paths_);
 		});
 		st.close();
