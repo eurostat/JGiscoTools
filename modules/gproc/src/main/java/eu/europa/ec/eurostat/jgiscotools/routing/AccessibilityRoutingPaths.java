@@ -43,6 +43,7 @@ public class AccessibilityRoutingPaths {
 	//the grid resolution in m
 	private double resM = -1;
 	//the points of interest
+	//TODO hashmap with several families
 	private Collection<Feature> pois = null;
 	//the POI id
 	private String poiIdAtt = "ID";
