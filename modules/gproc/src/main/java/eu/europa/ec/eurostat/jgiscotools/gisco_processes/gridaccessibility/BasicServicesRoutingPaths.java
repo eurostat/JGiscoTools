@@ -19,7 +19,6 @@ import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths;
-import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths2;
 
 /**
  * @author julien Gaffuri
@@ -75,7 +74,7 @@ public class BasicServicesRoutingPaths {
 			logger.info(pois.size() + " POIs");
 
 			logger.info("Build accessibility...");
-			AccessibilityRoutingPaths2 ag = new AccessibilityRoutingPaths2(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, 4, 50000);
+			AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, 4, 50000);
 
 			logger.info("Compute accessibility paths...");
 			ag.compute();

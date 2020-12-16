@@ -156,6 +156,7 @@ public class Routing {
 		if(logger.isDebugEnabled()) logger.debug("Build graph from "+fc.size()+" lines.");
 		this.graph = null;
 		FeatureIterator<?> it = fc.features();
+		//TODO define and use own FeatureGraphGenerator
 		FeatureGraphGenerator gGen = new FeatureGraphGenerator(new LineStringGraphGenerator());
 		while(it.hasNext()) gGen.add(it.next());
 		this.graph = gGen.getGraph();
