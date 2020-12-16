@@ -150,7 +150,7 @@ public class AccessibilityRoutingPaths {
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
-			int nb = (int)(1.5 * nbNearestPOIs);
+			int nb = (int)(1.34 * nbNearestPOIs);
 			//if(logger.isDebugEnabled()) logger.debug("Get " + nb + " nearest POIs");
 			Envelope env = cell.getGeometry().getEnvelopeInternal(); env.expandBy(searchDistanceM);
 			Feature cellPt = new Feature(); cellPt.setGeometry(cell.getGeometry().getCentroid());
@@ -246,6 +246,9 @@ public class AccessibilityRoutingPaths {
 				if(logger.isDebugEnabled()) logger.debug("Not enough POIs found for grid cell (nb="+nb_+"<"+nbNearestPOIs+") " + cellId + " around " + oC);
 				else if(nb_ > nbNearestPOIs) {
 					//TODO keep only the fastest nbNearestPOIs
+					routes_.sort(pathDurationComparator);
+					System.out.println("---");
+					for(Feature f : routes_) System.out.println(f.getAttribute("durationMin"));
 				}
 			routes.addAll(routes_);
 		});
@@ -296,7 +299,7 @@ public class AccessibilityRoutingPaths {
 			paths.removeAll(paths_);
 
 			//sort paths
-			paths_.sort(AccessibilityRoutingPaths.pathDurationComparator);
+			paths_.sort(pathDurationComparator);
 
 			//compute stats on grid cell id
 			double val;

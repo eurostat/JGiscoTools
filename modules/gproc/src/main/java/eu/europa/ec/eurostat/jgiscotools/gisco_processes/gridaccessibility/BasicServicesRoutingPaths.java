@@ -42,7 +42,7 @@ public class BasicServicesRoutingPaths {
 	}
 
 
-	
+
 	//use: -Xms2G -Xmx12G
 	/** @param args 
 	 * @throws Exception **/
@@ -75,7 +75,7 @@ public class BasicServicesRoutingPaths {
 			logger.info(pois.size() + " POIs");
 
 			logger.info("Build accessibility...");
-			AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, 4, 50000);
+			AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, 3, 50000);
 
 			logger.info("Compute accessibility paths...");
 			ag.compute();
