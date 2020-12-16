@@ -53,6 +53,9 @@ public class Routing {
 	 * The graph structure used to compute routes.
 	 */
 	private Graph graph;
+	/**
+	 * @return
+	 */
 	public Graph getGraph() { return graph; }
 
 	/**
@@ -60,7 +63,47 @@ public class Routing {
 	 * By default, the weight is set as the length of the section.
 	 */
 	private EdgeWeighter edgeWeighter;
+	/**
+	 * @param edgeWeighter
+	 */
 	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
+
+	/**
+	 * Set the weighter based on a speed calculator.
+	 * 
+	 * @param sc
+	 */
+	public void setEdgeWeighter(SpeedCalculator sc) {
+		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
+			public double getWeight(Edge e) {
+				//weight is the transport duration, in minutes
+				SimpleFeature sf = (SimpleFeature) e.getObject();
+				double speedMPerMinute = 1000/60 * sc.getSpeedKMPerHour(sf);
+				double distanceM = ((Geometry) sf.getDefaultGeometry()).getLength();
+				return distanceM/speedMPerMinute;
+			}
+		};
+	}
+
+	/**
+	 * Set the weighter based on a attribute.
+	 * 
+	 * @param costAttribute
+	 */
+	public void setEdgeWeighter(String costAttribute) {
+		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
+			public double getWeight(Edge e) {
+				SimpleFeature sf = (SimpleFeature) e.getObject();
+				String costS = sf.getAttribute(costAttribute).toString();
+				double cost = Double.parseDouble(costS);
+				return cost;
+			}
+		};
+	}
+
+	/**
+	 * @return
+	 */
 	public EdgeWeighter getEdgeWeighter() {
 		if(edgeWeighter == null) {
 			edgeWeighter = new DijkstraIterator.EdgeWeighter() {
@@ -77,6 +120,11 @@ public class Routing {
 
 
 
+	/**
+	 * @param networkFileURL
+	 * @param edgeWeighter
+	 * @throws IOException
+	 */
 	public Routing(URL networkFileURL, EdgeWeighter edgeWeighter) throws IOException {
 		//load features
 		if(logger.isDebugEnabled()) logger.debug("Get line features");
@@ -89,6 +137,11 @@ public class Routing {
 		buildGraph(fc);
 		this.edgeWeighter = edgeWeighter;
 	}
+
+	/**
+	 * @param fc
+	 * @param edgeWeighter
+	 */
 	public Routing(FeatureCollection<?,?> fc, EdgeWeighter edgeWeighter) {
 		buildGraph(fc);
 		this.edgeWeighter = edgeWeighter;

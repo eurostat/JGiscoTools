@@ -50,6 +50,7 @@ public class TestAStar {
 
 		logger.info("Build network");
 		Routing rt = new Routing(networkSections, ft);
+		rt.setEdgeWeighter("cost");
 
 		logger.info("Prepare");
 		ArrayList<Feature> paths = new ArrayList<>();
@@ -57,6 +58,7 @@ public class TestAStar {
 		Node oN = rt.getNode(oC);
 		int nb = 64; int rNb = 10; double rMax = 20000;
 
+/*
 		logger.info("A*");
 
 		//define default A* functions
@@ -108,7 +110,7 @@ public class TestAStar {
 		logger.info("save");
 		GeoData.save(paths, "E:\\workspace\\basic_services_accessibility\\routing_paths\\test\\LU_test_astar.gpkg", CRS.decode("EPSG:3035"), true);
 		paths.clear();
-
+*/
 
 		logger.info("Dijskra");
 		DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);

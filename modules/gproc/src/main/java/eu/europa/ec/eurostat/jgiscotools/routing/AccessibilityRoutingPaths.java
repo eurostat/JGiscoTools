@@ -12,18 +12,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
-import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Node;
-import org.geotools.graph.traverse.standard.DijkstraIterator;
-import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
@@ -59,46 +54,6 @@ public class AccessibilityRoutingPaths {
 	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
 
-	private EdgeWeighter edgeWeighter = null;
-	/**
-	 * The weighter used to estimate the cost of each network section when computing shortest paths.
-	 * 
-	 * @param edgeWeighter
-	 */
-	public void setEdgeWeighter(EdgeWeighter edgeWeighter) { this.edgeWeighter = edgeWeighter; }
-
-	/**
-	 * Set the weighter based on a speed calculator.
-	 * 
-	 * @param sc
-	 */
-	public void setEdgeWeighter(SpeedCalculator sc) {
-		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
-			public double getWeight(Edge e) {
-				//weight is the transport duration, in minutes
-				SimpleFeature sf = (SimpleFeature) e.getObject();
-				double speedMPerMinute = 1000/60 * sc.getSpeedKMPerHour(sf);
-				double distanceM = ((Geometry) sf.getDefaultGeometry()).getLength();
-				return distanceM/speedMPerMinute;
-			}
-		};
-	}
-
-	/**
-	 * @return The edge weighter.
-	 */
-	public EdgeWeighter getEdgeWeighter() {
-		if(this.edgeWeighter == null) {
-			//set default weighter: All sections are walked at the same speed, 70km/h
-			setEdgeWeighter(new SpeedCalculator() {
-				@Override
-				public double getSpeedKMPerHour(SimpleFeature sf) { return 70.0; }
-			});
-		}
-		return this.edgeWeighter;
-	}
-
-
 	private Collection<Feature> routes = null;
 	/**
 	 * The fastest route to the nearest POIs, for each grid cell.
@@ -106,7 +61,10 @@ public class AccessibilityRoutingPaths {
 	 */
 	public Collection<Feature> getRoutes() { return routes; }
 
-
+	//the cost
+	private String costAttribute = "cost";
+	public String getCostAttribute() { return costAttribute; }
+	public void setCostAttribute(String costAttribute) { this.costAttribute = costAttribute; }
 
 
 	/**
@@ -217,7 +175,7 @@ public class AccessibilityRoutingPaths {
 
 			//build the surrounding network
 			Routing rt = new Routing(net__, ft);
-			rt.setEdgeWeighter(getEdgeWeighter());
+			rt.setEdgeWeighter(costAttribute);
 
 			//get cell centroid as origin point
 			//possible improvement: take another position depending on the network state inside the cell? Cell is supposed to be small enough?

@@ -24,12 +24,17 @@ public class RoadBDTopo {
 	/**
 	 * @return
 	 */
-	public static Collection<Feature> get() {
+	public static Collection<Feature> get(boolean computeCost) {
 		Filter fil = null;
 		try {
 			fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste cyclable' AND NOT NATURE='Escalier')");
 		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_NMCA_FR_SE_road_tn/roads.gpkg", null, fil);
+
+		if(computeCost) {
+			//TODO
+		}
+		
 		return fs;
 	}
 

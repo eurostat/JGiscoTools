@@ -19,7 +19,6 @@ import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths;
-import eu.europa.ec.eurostat.jgiscotools.routing.SpeedCalculator;
 
 /**
  * @author julien Gaffuri
@@ -60,8 +59,7 @@ public class BasicServicesRoutingPaths {
 
 		logger.info("Load network sections...");
 		//TODO use more generalised road TN for healthcare ?
-		Collection<Feature> networkSections = RoadBDTopo.get();
-		SpeedCalculator sc = RoadBDTopo.getSpeedCalculator();
+		Collection<Feature> networkSections = RoadBDTopo.get(true);
 		logger.info(networkSections.size() + " sections loaded.");
 
 		logger.info("Load grid cells " + resKM + "km ...");
@@ -77,7 +75,6 @@ public class BasicServicesRoutingPaths {
 
 			logger.info("Build accessibility...");
 			AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, 4, 50000);
-			ag.setEdgeWeighter(sc);
 
 			logger.info("Compute accessibility paths...");
 			ag.compute();
