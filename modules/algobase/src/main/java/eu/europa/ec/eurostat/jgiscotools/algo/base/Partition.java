@@ -96,7 +96,6 @@ public class Partition {
 			Collection<Partition> subPartitions = decompose();
 
 			//run process on sub-partitions
-			//TODO test
 			Stream<Partition> st = subPartitions.stream(); if(parallel) st = st.parallel();
 			st.forEach(sp -> {
 				sp.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
