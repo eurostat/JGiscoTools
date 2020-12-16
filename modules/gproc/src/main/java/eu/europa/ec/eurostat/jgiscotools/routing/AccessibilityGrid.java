@@ -24,7 +24,6 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
-import org.opengis.feature.simple.SimpleFeature;
 
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -62,9 +61,9 @@ public class AccessibilityGrid {
 		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
 				//weight is the transport duration, in minutes
-				SimpleFeature sf = (SimpleFeature) e.getObject();
+				Feature sf = (Feature) e.getObject();
 				double speedMPerMinute = 1000/60 * sc.getSpeedKMPerHour(sf);
-				double distanceM = ((Geometry) sf.getDefaultGeometry()).getLength();
+				double distanceM = ((Geometry) sf.getGeometry()).getLength();
 				return distanceM/speedMPerMinute;
 			}
 		};
@@ -75,7 +74,7 @@ public class AccessibilityGrid {
 			//set default weighter: All sections are walked at the same speed, 70km/h
 			setEdgeWeighter(new SpeedCalculator() {
 				@Override
-				public double getSpeedKMPerHour(SimpleFeature sf) { return 70.0; }
+				public double getSpeedKMPerHour(Feature sf) { return 70.0; }
 			});
 		}
 		return this.edgeWeighter;

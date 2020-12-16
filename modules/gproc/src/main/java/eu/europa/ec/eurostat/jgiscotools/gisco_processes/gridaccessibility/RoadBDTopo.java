@@ -7,7 +7,6 @@ import java.util.Collection;
 
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -47,7 +46,7 @@ public class RoadBDTopo {
 	public static SpeedCalculator getSpeedCalculator() {
 		return new SpeedCalculator() {
 			@Override
-			public double getSpeedKMPerHour(SimpleFeature sf) {
+			public double getSpeedKMPerHour(Feature sf) {
 				Object nat_ = sf.getAttribute("NATURE");
 				String nat = nat_==null?"":nat_.toString();
 				Object imp_ = sf.getAttribute("IMPORTANCE");

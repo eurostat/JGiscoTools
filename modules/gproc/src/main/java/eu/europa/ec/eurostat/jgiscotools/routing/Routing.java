@@ -4,32 +4,20 @@
 package eu.europa.ec.eurostat.jgiscotools.routing;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.geotools.graph.build.GraphBuilder;
 import org.geotools.graph.build.GraphGenerator;
 import org.geotools.graph.build.basic.BasicGraphGenerator;
-import org.geotools.graph.build.feature.FeatureGraphGenerator;
 import org.geotools.graph.build.line.LineStringGraphGenerator;
-import org.geotools.graph.path.AStarShortestPathFinder;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Graph;
 import org.geotools.graph.structure.Graphable;
 import org.geotools.graph.structure.Node;
-import org.geotools.graph.traverse.standard.AStarIterator.AStarFunctions;
-import org.geotools.graph.traverse.standard.AStarIterator.AStarNode;
 import org.geotools.graph.traverse.standard.DijkstraIterator;
 import org.geotools.graph.traverse.standard.DijkstraIterator.EdgeWeighter;
 import org.locationtech.jts.geom.Coordinate;
@@ -38,7 +26,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.operation.linemerge.LineMerger;
-import org.opengis.feature.simple.SimpleFeature;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
@@ -79,9 +66,9 @@ public class Routing {
 		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
 				//weight is the transport duration, in minutes
-				SimpleFeature sf = (SimpleFeature) e.getObject();
+				Feature sf = (Feature) e.getObject();
 				double speedMPerMinute = 1000/60 * sc.getSpeedKMPerHour(sf);
-				double distanceM = ((Geometry) sf.getDefaultGeometry()).getLength();
+				double distanceM = ((Geometry) sf.getGeometry()).getLength();
 				return distanceM/speedMPerMinute;
 			}
 		};
@@ -110,8 +97,8 @@ public class Routing {
 		if(edgeWeighter == null) {
 			edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 				public double getWeight(Edge e) {
-					SimpleFeature f = (SimpleFeature) e.getObject();
-					Geometry g = (Geometry) f.getDefaultGeometry();
+					Feature f = (Feature) e.getObject();
+					Geometry g = (Geometry) f.getGeometry();
 					return g.getLength();
 				}
 			};
@@ -127,7 +114,7 @@ public class Routing {
 	 * @param edgeWeighter
 	 * @throws IOException
 	 */
-	public Routing(URL networkFileURL, EdgeWeighter edgeWeighter) throws IOException {
+	/*public Routing(URL networkFileURL, EdgeWeighter edgeWeighter) throws IOException {
 		//load features
 		if(logger.isDebugEnabled()) logger.debug("Get line features");
 		Map<String, Serializable> map = new HashMap<>();
@@ -139,31 +126,10 @@ public class Routing {
 		buildGraph(fc);
 		this.edgeWeighter = edgeWeighter;
 	}
-
-	/**
-	 * @param fc
-	 * @param edgeWeighter
+	public Routing(URL networkFileURL) throws IOException { this(networkFileURL, null); }
 	 */
-	public Routing(FeatureCollection<?,?> fc, EdgeWeighter edgeWeighter) {
-		buildGraph(fc);
-		this.edgeWeighter = edgeWeighter;
-	}
 
-	/**
-	 * Build the graph from the input linear features.
-	 * 
-	 * @param fc
-	 */
-	private void buildGraph(FeatureCollection<?,?> fc) {
-		if(logger.isDebugEnabled()) logger.debug("Build graph from "+fc.size()+" lines.");
-		this.graph = null;
-		FeatureIterator<?> it = fc.features();
-		//TODO define and use own FeatureGraphGenerator
-		FeatureGraphGenerator gGen = new FeatureGraphGenerator(new LineStringGraphGenerator());
-		while(it.hasNext()) gGen.add(it.next());
-		this.graph = gGen.getGraph();
-		it.close();
-	}
+	public Routing(Collection<Feature> fs) { buildGraph(fs); }
 
 	/**
 	 * Build the graph from the input linear features.
@@ -177,12 +143,6 @@ public class Routing {
 		for(Feature f : fs) gGen.add(f);
 		this.graph = gGen.getGraph();
 	}
-
-	public Routing(URL networkFileURL) throws IOException { this(networkFileURL, null); }
-	public Routing(FeatureCollection<?,?> fc) { this(fc, null); }
-	//public Routing(Collection<Feature> fs, SimpleFeatureType ft) { this(SimpleFeatureUtil.get(fs, ft)); }
-	public Routing(Collection<Feature> fs) { buildGraph(fs); }
-
 
 
 
@@ -240,7 +200,7 @@ public class Routing {
 
 
 
-
+	/*
 	public AStarShortestPathFinder getAStarShortestPathFinder(Node oN, Node dN){
 		//define default A* functions
 		AStarFunctions afun = new AStarFunctions(dN) {
@@ -261,7 +221,7 @@ public class Routing {
 		AStarShortestPathFinder pf = new AStarShortestPathFinder(graph, oN, dN, afun);
 		return pf;
 	}
-
+	 */
 
 	/**
 	 * Get the shortest path from a origin to a destination position using A* algorithm.
@@ -270,7 +230,7 @@ public class Routing {
 	 * @param dC
 	 * @return
 	 */
-	public Path getAStarShortestPathFinder(Coordinate oC, Coordinate dC){
+	/*public Path getAStarShortestPathFinder(Coordinate oC, Coordinate dC){
 
 		//get origin node
 		Node oN = getNode(oC);
@@ -292,7 +252,7 @@ public class Routing {
 		} catch (Exception e) { e.printStackTrace(); }
 		return path;
 	}
-
+	 */
 
 
 	public DijkstraShortestPathFinder getDijkstraShortestPathFinder(Node oN){
@@ -388,8 +348,8 @@ public class Routing {
 		}
 
 		public Graphable get(Object obj) {
-			SimpleFeature feature = (SimpleFeature) obj;
-			return decorated.get(feature.getDefaultGeometry());
+			Feature feature = (Feature) obj;
+			return decorated.get(feature.getGeometry());
 		}
 	}
 

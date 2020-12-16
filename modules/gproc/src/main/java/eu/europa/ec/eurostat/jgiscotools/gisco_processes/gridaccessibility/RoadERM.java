@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -44,7 +43,7 @@ public class RoadERM {
 	public static SpeedCalculator getSpeedCalculator() {
 		return new SpeedCalculator() {
 			@Override
-			public double getSpeedKMPerHour(SimpleFeature sf) {
+			public double getSpeedKMPerHour(Feature sf) {
 				//estimate speed of a transport section of ERM/EGM based on attributes
 				//COR - Category of Road - 0 Unknown - 1 Motorway - 2 Road inside built-up area - 999 Other road (outside built-up area)
 				//RTT - Route Intended Use - 0 Unknown - 16 National motorway - 14 Primary route - 15 Secondary route - 984 Local route

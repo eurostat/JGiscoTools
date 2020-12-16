@@ -3,8 +3,8 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.routing;
 
-import org.opengis.feature.simple.SimpleFeature;
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 public interface SpeedCalculator {
-	double getSpeedKMPerHour(SimpleFeature sf);
+	double getSpeedKMPerHour(Feature f);
 }
