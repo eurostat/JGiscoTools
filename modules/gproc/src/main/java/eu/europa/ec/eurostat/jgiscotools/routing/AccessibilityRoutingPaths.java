@@ -150,7 +150,7 @@ public class AccessibilityRoutingPaths {
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
-			int nb = (int)(1.34 * nbNearestPOIs);
+			int nb = 5+(int)(1.34 * nbNearestPOIs);
 			//if(logger.isDebugEnabled()) logger.debug("Get " + nb + " nearest POIs");
 			Envelope env = cell.getGeometry().getEnvelopeInternal(); env.expandBy(searchDistanceM);
 			Feature cellPt = new Feature(); cellPt.setGeometry(cell.getGeometry().getCentroid());
@@ -174,7 +174,7 @@ public class AccessibilityRoutingPaths {
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
 			for(Object o : net_) net__.add((Feature)o);
 
-			//build the surrounding network
+			if(logger.isDebugEnabled()) logger.debug("Build the local network");
 			Routing rt = new Routing(net__);
 			rt.setEdgeWeighter(costAttribute);
 
@@ -193,9 +193,9 @@ public class AccessibilityRoutingPaths {
 				return;
 			}
 
+			if(logger.isDebugEnabled()) logger.debug("Dijkstra computation");
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
-			//compute the routes to the selected POIs
 			if(logger.isDebugEnabled()) logger.debug("Compute routes to POIs. Nb=" + pois_.length);
 			ArrayList<Feature> routes_ = new ArrayList<>();
 			for(Object poi_ : pois_) {
@@ -242,14 +242,16 @@ public class AccessibilityRoutingPaths {
 			}
 
 			int nb_ = routes_.size();
-			if(nb_ < this.nbNearestPOIs)
+			if(nb_ < nbNearestPOIs){
 				if(logger.isDebugEnabled()) logger.debug("Not enough POIs found for grid cell (nb="+nb_+"<"+nbNearestPOIs+") " + cellId + " around " + oC);
-				else if(nb_ > nbNearestPOIs) {
-					//TODO keep only the fastest nbNearestPOIs
-					routes_.sort(pathDurationComparator);
-					System.out.println("---");
-					for(Feature f : routes_) System.out.println(f.getAttribute("durationMin"));
-				}
+			} else if(nb_ > nbNearestPOIs) {
+				//TODO keep only the fastest nbNearestPOIs
+				routes_.sort(pathDurationComparator);
+				System.out.println("---");
+				for(Feature f : routes_) System.out.println(f.getAttribute("durationMin"));
+				while(routes_.size() > nbNearestPOIs)
+					routes_.remove(routes_.size()-1);
+			}
 			routes.addAll(routes_);
 		});
 		st.close();
