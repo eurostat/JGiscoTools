@@ -59,7 +59,7 @@ public class BasicServicesRoutingPaths {
 
 		logger.info("Load network sections...");
 		//TODO use more generalised road TN for healthcare ?
-		Collection<Feature> networkSections = RoadBDTopo.get(true);
+		Collection<Feature> networkSections = RoadBDTopo.get("cost");
 		logger.info(networkSections.size() + " sections loaded.");
 
 		logger.info("Load grid cells " + resKM + "km ...");

@@ -22,21 +22,21 @@ public class RoadBDTopo {
 	static String basePath = "E:/workspace/basic_services_accessibility/";
 
 	/**
-	 * @param computeCost 
+	 * @param costAttribute
 	 * @return
 	 */
-	public static Collection<Feature> get(boolean computeCost) {
+	public static Collection<Feature> get(String costAttribute) {
 		Filter fil = null;
 		try {
 			fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste cyclable' AND NOT NATURE='Escalier')");
 		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_NMCA_FR_SE_road_tn/roads.gpkg", null, fil);
 
-		if(computeCost)
+		if(costAttribute != null)
 			for(Feature f : fs) {
 				double speed = getSpeed(f.getAttribute("NATURE").toString(), f.getAttribute("IMPORTANCE").toString());
 				double duration = f.getGeometry().getLength() * 1000.0/60.0 * speed;
-				f.setAttribute("cost", duration);
+				f.setAttribute("costAttribute", duration);
 			}
 		return fs;
 	}
@@ -56,7 +56,7 @@ public class RoadBDTopo {
 			}
 		};
 	}
-	
+
 	private static double getSpeed(String nat, String imp) {
 		if("Autoroute".equals(nat)) return 110.0;
 		if("Quasi-autoroute".equals(nat)) return 100.0;
