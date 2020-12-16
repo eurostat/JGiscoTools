@@ -34,9 +34,9 @@ public class BasicServicesRoutingPaths {
 	static ArrayList<Case> cases = new ArrayList<Case>();
 	static {
 		try {
-			cases.add(new Case("healthcare", basePath + "input_data/healthcare_services_LAEA.gpkg", cnt==null?null:CQL.toFilter("cc = '"+cnt+"'")));
+			//cases.add(new Case("healthcare", basePath + "input_data/healthcare_services_LAEA.gpkg", cnt==null?null:CQL.toFilter("cc = '"+cnt+"'")));
 			cases.add(new Case("educ_1", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%1%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
-			cases.add(new Case("educ_2", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%2%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
+			//cases.add(new Case("educ_2", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%2%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
 			//cases.add(new Case("educ_3", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%3%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
 		} catch (CQLException e) { e.printStackTrace(); }
 	}
