@@ -138,6 +138,7 @@ public class AccessibilityRoutingPaths {
 		getNetworkSectionsInd();
 
 		logger.info("Compute accessibility routing paths...");
+		//TODO parallelisation
 		for(Feature cell : cells) {
 
 			//get cell id
@@ -158,7 +159,6 @@ public class AccessibilityRoutingPaths {
 			if(logger.isTraceEnabled()) logger.trace("Network search size (km): " + 0.001*Math.sqrt(env.getArea()));
 
 			//get network sections in the envelope around the cell and surrounding POIs
-			//TODO get as simplefeatures instead
 			List<?> net_ = getNetworkSectionsInd().query(env);
 			if(net_.size() == 0) {
 				if(logger.isTraceEnabled())
@@ -170,8 +170,6 @@ public class AccessibilityRoutingPaths {
 			for(Object o : net_) net__.add((Feature)o);
 
 			//build the surrounding network
-			//TODO build from simplefeatures instead
-			//TODO or (better) define own FeatureGraphGenerator...
 			Routing rt = new Routing(net__);
 			rt.setEdgeWeighter(costAttribute);
 
@@ -190,7 +188,6 @@ public class AccessibilityRoutingPaths {
 				continue;
 			}
 
-			//TODO: improve and use AStar - ask GIS_SE ?
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
 			//compute the routes to the selected POIs
