@@ -201,9 +201,6 @@ public class AccessibilityRoutingPaths {
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
 				Coordinate dC = poi.getGeometry().getCentroid().getCoordinate();
-				//AStarShortestPathFinder pf = rt.getAStarShortestPathFinder(oC, dC);
-				//pf.calculate();
-				//p = pf.getPath();
 
 				//include POI in path? Cell is supposed to be small enough?
 				Node dN = rt.getNode(dC);
@@ -229,10 +226,8 @@ public class AccessibilityRoutingPaths {
 					continue;
 				}
 				double duration = pf.getCost(dN);
-				//For A*: see https://gis.stackexchange.com/questions/337968/how-to-get-path-cost-in/337972#337972
 
 				//store route
-				//TODO keep straight line as geometry ?
 				//Feature f = Routing.toFeature(p);
 				Feature f = new Feature();
 				f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
