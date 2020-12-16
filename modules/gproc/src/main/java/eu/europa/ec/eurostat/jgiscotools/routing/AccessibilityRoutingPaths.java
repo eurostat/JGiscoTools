@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,6 +64,11 @@ public class AccessibilityRoutingPaths {
 	private String costAttribute = "cost";
 	public String getCostAttribute() { return costAttribute; }
 	public void setCostAttribute(String costAttribute) { this.costAttribute = costAttribute; }
+
+	//set to true to enable multiprecessor computation
+	boolean parallel = true;
+	public boolean isParallel() { return parallel; }
+	public void setParallel(boolean parallel) { this.parallel = parallel; }
 
 
 	/**
@@ -138,9 +144,8 @@ public class AccessibilityRoutingPaths {
 		getNetworkSectionsInd();
 
 		logger.info("Compute accessibility routing paths...");
-		//TODO parallelisation
-		for(Feature cell : cells) {
-
+		Stream<Feature> st = cells.stream(); if(parallel) st = st.parallel();
+		st.forEach(cell -> {
 			//get cell id
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
@@ -163,7 +168,7 @@ public class AccessibilityRoutingPaths {
 			if(net_.size() == 0) {
 				if(logger.isTraceEnabled())
 					logger.trace("Could not find graph for cell: " + cellPt.getGeometry().getCoordinate());
-				continue;
+				return;
 			}
 			if(logger.isTraceEnabled()) logger.trace("Local network size: " + net_.size());
 			ArrayList<Feature> net__ = new ArrayList<Feature>();
@@ -180,12 +185,12 @@ public class AccessibilityRoutingPaths {
 			if(oN == null) {
 				if(logger.isTraceEnabled())
 					logger.trace("Could not find graph node around cell center: " + oC);
-				continue;
+				return;
 			}
 			if( ( (Point)oN.getObject() ).getCoordinate().distance(oC) > 1.3 * resM ) {
 				if(logger.isTraceEnabled())
 					logger.trace("Cell center "+oC+" too far from closest network node: " + oN.getObject());
-				continue;
+				return;
 			}
 
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
@@ -243,7 +248,8 @@ public class AccessibilityRoutingPaths {
 					//TODO keep only the fastest nbNearestPOIs
 				}
 			routes.addAll(routes_);
-		}
+		});
+		st.close();
 	}
 
 
