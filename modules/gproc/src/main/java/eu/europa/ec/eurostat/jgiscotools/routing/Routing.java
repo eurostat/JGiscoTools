@@ -94,8 +94,6 @@ public class Routing {
 		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
 				SimpleFeature sf = (SimpleFeature) e.getObject();
-				System.out.println(costAttribute);
-				System.out.println(sf.getAttribute(costAttribute));
 				String costS = sf.getAttribute(costAttribute).toString();
 				double cost = Double.parseDouble(costS);
 				return cost;
