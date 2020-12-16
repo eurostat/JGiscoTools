@@ -53,12 +53,12 @@ public class AccessibilityRoutingPaths {
 	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
 
-	private Collection<Feature> routes = null;
+	private Collection<Feature> paths = null;
 	/**
-	 * The fastest route to the nearest POIs, for each grid cell.
+	 * The fastest path to the nearest POIs, for each grid cell.
 	 * @return
 	 */
-	public Collection<Feature> getRoutes() { return routes; }
+	public Collection<Feature> getRoutes() { return paths; }
 
 	//the cost
 	private String costAttribute = "cost";
@@ -132,12 +132,12 @@ public class AccessibilityRoutingPaths {
 
 
 	/**
-	 * Compute the routes.
+	 * Compute the paths.
 	 */
 	public void compute() {
 
 		//create output
-		routes = new ArrayList<>();
+		paths = new ArrayList<>();
 
 		//compute spatial indexes
 		getPoisInd();
@@ -150,7 +150,7 @@ public class AccessibilityRoutingPaths {
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
-			int nb = 5+(int)(1.34 * nbNearestPOIs);
+			int nb = (int)( 1 + 1.34 * nbNearestPOIs);
 			//if(logger.isDebugEnabled()) logger.debug("Get " + nb + " nearest POIs");
 			Envelope env = cell.getGeometry().getEnvelopeInternal(); env.expandBy(searchDistanceM);
 			Feature cellPt = new Feature(); cellPt.setGeometry(cell.getGeometry().getCentroid());
@@ -197,7 +197,7 @@ public class AccessibilityRoutingPaths {
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
 			if(logger.isDebugEnabled()) logger.debug("Compute routes to POIs. Nb=" + pois_.length);
-			ArrayList<Feature> routes_ = new ArrayList<>();
+			ArrayList<Feature> paths_ = new ArrayList<>();
 			for(Object poi_ : pois_) {
 				Feature poi = (Feature) poi_;
 				Coordinate dC = poi.getGeometry().getCentroid().getCoordinate();
@@ -216,7 +216,7 @@ public class AccessibilityRoutingPaths {
 					f.setAttribute("durationMin", Util.round(60.0 * 0.001*f.getGeometry().getLength()/50, 2));
 					//f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
 					//f.setAttribute("avSpeedKMPerH", 50.0);
-					routes_.add(f);
+					paths_.add(f);
 					continue;
 				}
 
@@ -238,21 +238,19 @@ public class AccessibilityRoutingPaths {
 				f.setAttribute("durationMin", duration);
 				//f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
 				//f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
-				routes_.add(f);
+				paths_.add(f);
 			}
 
-			int nb_ = routes_.size();
+			int nb_ = paths_.size();
 			if(nb_ < nbNearestPOIs){
 				if(logger.isDebugEnabled()) logger.debug("Not enough POIs found for grid cell (nb="+nb_+"<"+nbNearestPOIs+") " + cellId + " around " + oC);
 			} else if(nb_ > nbNearestPOIs) {
-				//TODO keep only the fastest nbNearestPOIs
-				routes_.sort(pathDurationComparator);
-				System.out.println("---");
-				for(Feature f : routes_) System.out.println(f.getAttribute("durationMin"));
-				while(routes_.size() > nbNearestPOIs)
-					routes_.remove(routes_.size()-1);
+				//keep only the nbNearestPOIs fastest paths
+				paths_.sort(pathDurationComparator);
+				while(paths_.size() > nbNearestPOIs)
+					paths_.remove(paths_.size()-1);
 			}
-			routes.addAll(routes_);
+			paths.addAll(paths_);
 		});
 		st.close();
 	}
