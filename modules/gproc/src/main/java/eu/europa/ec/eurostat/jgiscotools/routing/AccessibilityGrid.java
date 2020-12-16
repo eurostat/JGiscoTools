@@ -25,11 +25,9 @@ import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 
 /**
  * Class to compute an accessibility grid to a set of points of interest, using a transport network.
@@ -161,9 +159,6 @@ public class AccessibilityGrid {
 		getPoisInd();
 		getNetworkSectionsInd();
 
-		//make network sections feat
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections, "the_geom", null);
-
 		logger.info("Compute cell data...");
 		for(Feature cell : cells) {
 
@@ -199,7 +194,7 @@ public class AccessibilityGrid {
 			for(Object o : net_) net__.add((Feature)o);
 
 			//build the surrounding network
-			Routing rt = new Routing(net__, ft);
+			Routing rt = new Routing(net__);
 			rt.setEdgeWeighter(getEdgeWeighter());
 
 			//get cell population, if provided

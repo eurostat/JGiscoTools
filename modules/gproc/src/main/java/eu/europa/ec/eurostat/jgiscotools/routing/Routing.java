@@ -16,6 +16,9 @@ import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.graph.build.GraphBuilder;
+import org.geotools.graph.build.GraphGenerator;
+import org.geotools.graph.build.basic.BasicGraphGenerator;
 import org.geotools.graph.build.feature.FeatureGraphGenerator;
 import org.geotools.graph.build.line.LineStringGraphGenerator;
 import org.geotools.graph.path.AStarShortestPathFinder;
@@ -23,6 +26,7 @@ import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
 import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Graph;
+import org.geotools.graph.structure.Graphable;
 import org.geotools.graph.structure.Node;
 import org.geotools.graph.traverse.standard.AStarIterator.AStarFunctions;
 import org.geotools.graph.traverse.standard.AStarIterator.AStarNode;
@@ -35,10 +39,8 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 
 /**
  * A class to compute 'shortest' pathes from a network composed of linear features.
@@ -93,7 +95,7 @@ public class Routing {
 	public void setEdgeWeighter(String costAttribute) {
 		this.edgeWeighter = new DijkstraIterator.EdgeWeighter() {
 			public double getWeight(Edge e) {
-				SimpleFeature sf = (SimpleFeature) e.getObject();
+				Feature sf = (Feature) e.getObject();
 				String costS = sf.getAttribute(costAttribute).toString();
 				double cost = Double.parseDouble(costS);
 				return cost;
@@ -163,9 +165,23 @@ public class Routing {
 		it.close();
 	}
 
+	/**
+	 * Build the graph from the input linear features.
+	 * 
+	 * @param fs
+	 */
+	private void buildGraph(Collection<Feature> fs) {
+		if(logger.isDebugEnabled()) logger.debug("Build graph from "+fs.size()+" lines.");
+		this.graph = null;
+		FeatureGraphGenerator2 gGen = new FeatureGraphGenerator2(new LineStringGraphGenerator());
+		for(Feature f : fs) gGen.add(f);
+		this.graph = gGen.getGraph();
+	}
+
 	public Routing(URL networkFileURL) throws IOException { this(networkFileURL, null); }
 	public Routing(FeatureCollection<?,?> fc) { this(fc, null); }
-	public Routing(Collection<Feature> fs, SimpleFeatureType ft) { this(SimpleFeatureUtil.get(fs, ft)); }
+	//public Routing(Collection<Feature> fs, SimpleFeatureType ft) { this(SimpleFeatureUtil.get(fs, ft)); }
+	public Routing(Collection<Feature> fs) { buildGraph(fs); }
 
 
 
@@ -322,9 +338,9 @@ public class Routing {
 		LineMerger lm = new LineMerger();
 		for(Object o : path.getEdges()){
 			Edge e = (Edge)o;
-			SimpleFeature f = (SimpleFeature) e.getObject();
+			Feature f = (Feature) e.getObject();
 			if(f==null) continue;
-			Geometry mls = (Geometry)f.getDefaultGeometry();
+			Geometry mls = (Geometry)f.getGeometry();
 			lm.add(mls);
 		}
 		Collection<?> lss = lm.getMergedLineStrings();
@@ -335,6 +351,46 @@ public class Routing {
 		f.setGeometry(geom);
 
 		return f;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	private static class FeatureGraphGenerator2 extends BasicGraphGenerator {
+		GraphGenerator decorated;
+		public FeatureGraphGenerator2(GraphGenerator decorated) { this.decorated = decorated; }
+		public Graph getGraph() { return decorated.getGraph(); }
+		public GraphBuilder getGraphBuilder() { return decorated.getGraphBuilder(); }
+		public GraphGenerator getDecorated() { return decorated; }
+
+		public Graphable add(Object obj) {
+			Feature feature = (Feature)obj;
+			Graphable g = decorated.add(feature.getGeometry());
+			Geometry geom = (Geometry) g.getObject();
+			feature.setGeometry(geom);
+			g.setObject(feature);
+			return g;
+		}
+
+		public Graphable remove(Object obj) {
+			Feature feature = (Feature)obj;
+			return decorated.remove(feature.getGeometry());
+		}
+
+		public Graphable get(Object obj) {
+			SimpleFeature feature = (SimpleFeature) obj;
+			return decorated.get(feature.getDefaultGeometry());
+		}
 	}
 
 }

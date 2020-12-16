@@ -8,18 +8,11 @@ import java.util.Collection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.geotools.graph.path.AStarShortestPathFinder;
 import org.geotools.graph.path.DijkstraShortestPathFinder;
 import org.geotools.graph.path.Path;
-import org.geotools.graph.structure.Edge;
 import org.geotools.graph.structure.Node;
-import org.geotools.graph.traverse.standard.AStarIterator.AStarFunctions;
-import org.geotools.graph.traverse.standard.AStarIterator.AStarNode;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Point;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -43,13 +36,14 @@ public class TestAStar {
 
 		logger.info("Loading");
 		Collection<Feature> networkSections = GeoData.getFeatures("E:/workspace/basic_services_accessibility/input_data/test_tomtom_LU/luxlux_nw.gpkg", null, null);
+		for(Feature f : networkSections) f.setAttribute("cost", f.getGeometry().getLength());
 		logger.info("Loaded: " + networkSections.size());
 
 		logger.info("Feature type");
 		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections, "the_geom", null);
 
 		logger.info("Build network");
-		Routing rt = new Routing(networkSections, ft);
+		Routing rt = new Routing(networkSections);
 		rt.setEdgeWeighter("cost");
 
 		logger.info("Prepare");
@@ -58,7 +52,7 @@ public class TestAStar {
 		Node oN = rt.getNode(oC);
 		int nb = 64; int rNb = 10; double rMax = 20000;
 
-
+		/*
 		logger.info("A*");
 
 		//define default A* functions
@@ -110,7 +104,7 @@ public class TestAStar {
 		logger.info("save");
 		GeoData.save(paths, "E:\\workspace\\basic_services_accessibility\\routing_paths\\test\\LU_test_astar.gpkg", CRS.decode("EPSG:3035"), true);
 		paths.clear();
-
+		 */
 
 		logger.info("Dijskra");
 		DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);

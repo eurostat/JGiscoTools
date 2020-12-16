@@ -19,14 +19,12 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.index.strtree.ItemBoundable;
 import org.locationtech.jts.index.strtree.ItemDistance;
 import org.locationtech.jts.index.strtree.STRtree;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
-import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
 
 /**
  * Class to compute accessiblity paths from grid cells to points of interest, using a transport network.
@@ -139,9 +137,6 @@ public class AccessibilityRoutingPaths {
 		getPoisInd();
 		getNetworkSectionsInd();
 
-		//get network sections feature type
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections, "the_geom", null);
-
 		logger.info("Compute accessibility routing paths...");
 		for(Feature cell : cells) {
 
@@ -177,7 +172,7 @@ public class AccessibilityRoutingPaths {
 			//build the surrounding network
 			//TODO build from simplefeatures instead
 			//TODO or (better) define own FeatureGraphGenerator...
-			Routing rt = new Routing(net__, ft);
+			Routing rt = new Routing(net__);
 			rt.setEdgeWeighter(costAttribute);
 
 			//get cell centroid as origin point
