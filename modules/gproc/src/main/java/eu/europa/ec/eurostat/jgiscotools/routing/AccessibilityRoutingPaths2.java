@@ -6,7 +6,6 @@ package eu.europa.ec.eurostat.jgiscotools.routing;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -88,20 +87,6 @@ public class AccessibilityRoutingPaths2 {
 		this.searchDistanceM = searchDistanceM;
 	}
 
-
-	//a spatial index for network sections
-	private STRtree networkSectionsInd = null;
-	private STRtree getNetworkSectionsInd() {
-		if(networkSectionsInd == null) {
-			logger.info("Index network sections");
-			networkSectionsInd = new STRtree();
-			for(Feature f : networkSections)
-				if(f.getGeometry() != null)
-					networkSectionsInd.insert(f.getGeometry().getEnvelopeInternal(), f);
-		}
-		return networkSectionsInd;
-	}
-
 	//a spatial index for the POIs
 	private STRtree poisInd = null;
 	private STRtree getPoisInd() {
@@ -137,10 +122,11 @@ public class AccessibilityRoutingPaths2 {
 
 		//compute spatial indexes
 		getPoisInd();
-		getNetworkSectionsInd();
 
-		//get network sections feature type
+		logger.info("Build network...");
 		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections, "the_geom", null);
+		Routing rt = new Routing(networkSections, ft);
+		rt.setEdgeWeighter(costAttribute);
 
 		logger.info("Compute accessibility routing paths...");
 		for(Feature cell : cells) {
@@ -154,28 +140,6 @@ public class AccessibilityRoutingPaths2 {
 			Envelope env = cell.getGeometry().getEnvelopeInternal(); env.expandBy(searchDistanceM);
 			Feature cellPt = new Feature(); cellPt.setGeometry(cell.getGeometry().getCentroid());
 			Object[] pois_ = getPoisInd().nearestNeighbour(env, cellPt, itemDist, nb);
-
-			//get an envelope around the cell and surrounding POIs
-			env = cell.getGeometry().getEnvelopeInternal();
-			for(Object poi_ : pois_)
-				env.expandToInclude(((Feature) poi_).getGeometry().getEnvelopeInternal());
-			env.expandBy(5000); //TODO how to choose that? Expose parameter?
-			if(logger.isTraceEnabled()) logger.trace("Network search size (km): " + 0.001*Math.sqrt(env.getArea()));
-
-			//get network sections in the envelope around the cell and surrounding POIs
-			List<?> net_ = getNetworkSectionsInd().query(env);
-			if(net_.size() == 0) {
-				if(logger.isTraceEnabled())
-					logger.trace("Could not find graph for cell: " + cellPt.getGeometry().getCoordinate());
-				continue;
-			}
-			if(logger.isTraceEnabled()) logger.trace("Local network size: " + net_.size());
-			ArrayList<Feature> net__ = new ArrayList<Feature>();
-			for(Object o : net_) net__.add((Feature)o);
-
-			//build the surrounding network
-			Routing rt = new Routing(net__, ft);
-			rt.setEdgeWeighter(costAttribute);
 
 			//get cell centroid as origin point
 			//possible improvement: take another position depending on the network state inside the cell? Cell is supposed to be small enough?
@@ -192,7 +156,7 @@ public class AccessibilityRoutingPaths2 {
 				continue;
 			}
 
-			//TODO: improve and use AStar - ask GIS_SE ?
+			if(logger.isDebugEnabled()) logger.debug("Compute dijkstra");
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
 			//compute the routes to the selected POIs
