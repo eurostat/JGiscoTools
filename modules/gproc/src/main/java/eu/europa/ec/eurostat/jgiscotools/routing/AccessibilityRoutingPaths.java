@@ -146,6 +146,7 @@ public class AccessibilityRoutingPaths {
 		logger.info("Compute accessibility routing paths...");
 		Stream<Feature> st = cells.stream(); if(parallel) st = st.parallel();
 		st.forEach(cell -> {
+
 			//get cell id
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);

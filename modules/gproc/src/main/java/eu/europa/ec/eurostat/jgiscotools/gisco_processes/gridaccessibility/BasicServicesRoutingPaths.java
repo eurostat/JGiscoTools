@@ -6,8 +6,10 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.referencing.CRS;
@@ -50,7 +52,7 @@ public class BasicServicesRoutingPaths {
 		logger.info("Start");
 
 		//set logger level
-		//Configurator.setLevel(AccessibilityRoutingPaths.class.getName(), Level.ALL);
+		Configurator.setLevel(AccessibilityRoutingPaths.class.getName(), Level.ALL);
 
 		String basePath = "E:/workspace/basic_services_accessibility/";
 		String outPath = basePath + "routing_paths/";
@@ -64,7 +66,9 @@ public class BasicServicesRoutingPaths {
 		logger.info(networkSections.size() + " sections loaded.");
 
 		logger.info("Load grid cells " + resKM + "km ...");
-		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
+		//ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_1km_surf_FRL0.gpkg",null);
+
 		logger.info(cells.size() + " cells");
 
 		for(Case c : cases ) {
