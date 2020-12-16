@@ -250,7 +250,6 @@ public class AccessibilityRoutingPaths {
 				while(paths_.size() > nbNearestPOIs)
 					paths_.remove(paths_.size()-1);
 			}
-			//System.out.println(cellId + " " + paths_.size());
 			paths.addAll(paths_);
 		});
 		st.close();
