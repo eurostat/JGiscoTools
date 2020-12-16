@@ -78,18 +78,22 @@ public class AccessibilityRoutingPaths {
 	 * @param pois
 	 * @param poiIdAtt
 	 * @param networkSections
+	 * @param costAttribute 
 	 * @param nbNearestPOIs
 	 * @param searchDistanceM
+	 * @param parallel 
 	 */
-	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, String poiIdAtt, Collection<Feature> networkSections,int nbNearestPOIs, double searchDistanceM) {
+	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, String poiIdAtt, Collection<Feature> networkSections, String costAttribute, int nbNearestPOIs, double searchDistanceM, boolean parallel) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.resM = resM;
 		this.pois = pois;
 		this.poiIdAtt = poiIdAtt;
 		this.networkSections = networkSections;
+		this.costAttribute = costAttribute;
 		this.nbNearestPOIs = nbNearestPOIs;
 		this.searchDistanceM = searchDistanceM;
+		this.parallel = parallel;
 	}
 
 
