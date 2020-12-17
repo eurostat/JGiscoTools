@@ -69,7 +69,7 @@ public class Routing {
 				Feature sf = (Feature) e.getObject();
 				double speedMPerMinute = 1000/60 * sc.getSpeedKMPerHour(sf);
 				double distanceM = ((Geometry) sf.getGeometry()).getLength();
-				return distanceM/speedMPerMinute;
+				return distanceM / speedMPerMinute;
 			}
 		};
 	}

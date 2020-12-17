@@ -34,7 +34,7 @@ public class RoadBDTopo {
 		if(costAttribute != null)
 			for(Feature f : fs) {
 				double speedkmh = getSpeedKmH(f.getAttribute("NATURE").toString(), f.getAttribute("IMPORTANCE").toString());
-				double duration = f.getGeometry().getLength() * 1000.0/60.0 * speedkmh;
+				double duration = f.getGeometry().getLength() * 1000.0/60.0 / speedkmh;
 				f.setAttribute(costAttribute, duration);
 			}
 		return fs;
