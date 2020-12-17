@@ -33,8 +33,8 @@ public class RoadBDTopo {
 
 		if(costAttribute != null)
 			for(Feature f : fs) {
-				double speed = getSpeed(f.getAttribute("NATURE").toString(), f.getAttribute("IMPORTANCE").toString());
-				double duration = f.getGeometry().getLength() * 1000.0/60.0 * speed;
+				double speedkmh = getSpeedKmH(f.getAttribute("NATURE").toString(), f.getAttribute("IMPORTANCE").toString());
+				double duration = f.getGeometry().getLength() * 1000.0/60.0 * speedkmh;
 				f.setAttribute(costAttribute, duration);
 			}
 		return fs;
@@ -51,12 +51,12 @@ public class RoadBDTopo {
 				String nat = nat_==null?"":nat_.toString();
 				Object imp_ = sf.getAttribute("IMPORTANCE");
 				String imp = imp_==null?"":imp_.toString();
-				return getSpeed(nat, imp);
+				return getSpeedKmH(nat, imp);
 			}
 		};
 	}
 
-	private static double getSpeed(String nat, String imp) {
+	private static double getSpeedKmH(String nat, String imp) {
 		if("Autoroute".equals(nat)) return 110.0;
 		if("Quasi-autoroute".equals(nat)) return 100.0;
 		if("1".equals(imp)) return 90.0;
