@@ -52,14 +52,14 @@ public class AccessibilityRoutingPaths {
 	private int nbNearestPOIs = 3;
 	//straight distance from which we are sure to find the nbNearestPOIs POIs
 	double searchDistanceM = 200000; //200km
-	//the linear features composing the network
-	private Collection<Feature> networkSections = null;
 
 	public void addPOIs(String label, Collection<Feature> pois_) {
 		if(pois == null) pois = new HashMap<String,Collection<Feature>>();
 		pois.put(label, pois_);
 	}
 
+	//the linear features composing the network
+	private Collection<Feature> networkSections = null;
 
 	private HashMap<String,ArrayList<Feature>> paths = null;
 	/**
