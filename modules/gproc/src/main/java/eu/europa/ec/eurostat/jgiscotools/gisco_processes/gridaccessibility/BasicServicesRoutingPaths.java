@@ -5,14 +5,11 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.referencing.CRS;
-import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
@@ -31,18 +28,7 @@ public class BasicServicesRoutingPaths {
 	private static String basePath = "E:/workspace/basic_services_accessibility/";
 	private static String cnt = "FR";
 	private static boolean computeStats = true;
-
-	static ArrayList<Case> cases = new ArrayList<Case>();
-	static {
-		try {
-			//TODO group them
-			cases.add(new Case("healthcare", basePath + "input_data/healthcare_services_LAEA.gpkg", cnt==null?null:CQL.toFilter("cc = '"+cnt+"'")));
-			cases.add(new Case("educ_1", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%1%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
-			cases.add(new Case("educ_2", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%2%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
-			//cases.add(new Case("educ_3", basePath + "input_data/education_services_LAEA.gpkg", CQL.toFilter("levels LIKE '%3%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
-		} catch (CQLException e) { e.printStackTrace(); }
-	}
-
+	private static int resKM = 1;
 
 
 	//use: -Xms2G -Xmx12G
@@ -54,10 +40,8 @@ public class BasicServicesRoutingPaths {
 		//set logger level
 		//Configurator.setLevel(AccessibilityRoutingPaths.class.getName(), Level.ALL);
 
-		String basePath = "E:/workspace/basic_services_accessibility/";
 		String outPath = basePath + "routing_paths/";
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
-		int resKM = 1;
 		//set the country id (set to null for all countries)
 
 		logger.info("Load network sections...");
@@ -71,44 +55,43 @@ public class BasicServicesRoutingPaths {
 
 		logger.info(cells.size() + " cells");
 
-		for(Case c : cases ) {
-			logger.info("Case: " + c.label);
+		logger.info("Build accessibility...");
+		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, "id", networkSections, "cost", 3, 50000, true);
 
-			logger.info("Load POIs");
-			ArrayList<Feature> pois = GeoData.getFeatures(c.gpkgPath, null, c.filter);
-			logger.info(pois.size() + " POIs");
+		logger.info("Load POI and add POIs");
+		ArrayList<Feature> pois;
 
-			logger.info("Build accessibility...");
-			AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, pois, "id", networkSections, "cost", 3, 50000, true);
+		/*/pois = GeoData.getFeatures(basePath + "input_data/healthcare_services_LAEA.gpkg", null, cnt==null?null:CQL.toFilter("cc = '"+cnt+"'"));
+		logger.info(pois.size() + " POIs");
+		ag.addPOIs("healthcare", pois);*/
+		pois = GeoData.getFeatures(basePath + "input_data/education_services_LAEA.gpkg", null, CQL.toFilter("levels LIKE '%1%'" + (cnt==null?"":" AND cc = '"+cnt+"'")));
+		logger.info(pois.size() + " POIs");
+		ag.addPOIs("educ_1", pois);
+		/*pois = GeoData.getFeatures(basePath + "input_data/education_services_LAEA.gpkg", null, CQL.toFilter("levels LIKE '%2%'" + (cnt==null?"":" AND cc = '"+cnt+"'")));
+		logger.info(pois.size() + " POIs");
+		ag.addPOIs("educ_2", pois);*/
 
-			logger.info("Compute accessibility paths...");
-			ag.compute();
+		logger.info("Compute accessibility paths...");
+		ag.compute();
 
-			logger.info("Save routes... Nb=" + ag.getRoutes().size());
-			GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".gpkg", crs, true);
+		//logger.info("Save routes healthcare... Nb=" + ag.getRoutes("healthcare").size());
+		//GeoData.save(ag.getRoutes("healthcare"), outPath + "routes_"+(cnt==null?"":cnt+"_")+"_healthcare.gpkg", crs, true);
+		logger.info("Save routes educ_1... Nb=" + ag.getRoutes("educ_1").size());
+		GeoData.save(ag.getRoutes("educ_1"), outPath + "routes_"+(cnt==null?"":cnt+"_")+"_educ_1.gpkg", crs, true);
+		//logger.info("Save routes educ_2... Nb=" + ag.getRoutes("educ_2").size());
+		//GeoData.save(ag.getRoutes("educ_2"), outPath + "routes_"+(cnt==null?"":cnt+"_")+"_educ_2.gpkg", crs, true);
 
-			if(computeStats) {
+		if(computeStats) {
+			for(String poiType : new String[] {/*"healthcare",*/ "educ_1"/*, "educ_2"*/}) {
 				logger.info("compute stats");
-				StatsHypercube hc = AccessibilityRoutingPaths.computeStats(ag.getRoutes(), "GRD_ID");
+				StatsHypercube hc = AccessibilityRoutingPaths.computeStats(ag.getRoutes(poiType), "GRD_ID");
 
 				logger.info("save stats");
-				CSV.saveMultiValues(hc, basePath+"accessibility_output/routing_paths_"+c.label+"_stats.csv", "accInd");
+				CSV.saveMultiValues(hc, basePath+"accessibility_output/routing_paths_"+poiType+"_stats.csv", "accInd");
 			}
 		}
 
 		logger.info("End");
-	}
-
-
-	static class Case {
-		public String label;
-		public String gpkgPath;
-		public Filter filter;
-		public Case(String label, String gpkgPath, Filter filter) {
-			this.label = label;
-			this.gpkgPath = gpkgPath;
-			this.filter = filter;
-		}
 	}
 
 }

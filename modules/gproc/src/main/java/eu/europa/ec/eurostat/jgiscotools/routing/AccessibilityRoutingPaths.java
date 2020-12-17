@@ -6,7 +6,9 @@ package eu.europa.ec.eurostat.jgiscotools.routing;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,8 +45,7 @@ public class AccessibilityRoutingPaths {
 	//the grid resolution in m
 	private double resM = -1;
 	//the points of interest
-	//TODO hashmap with several families
-	private Collection<Feature> pois = null;
+	private HashMap<String,Collection<Feature>> pois = null;
 	//the POI id
 	private String poiIdAtt = "ID";
 	//the number of closest POIs
@@ -54,12 +55,18 @@ public class AccessibilityRoutingPaths {
 	//the linear features composing the network
 	private Collection<Feature> networkSections = null;
 
-	private Collection<Feature> paths = null;
+	public void addPOIs(String label, Collection<Feature> pois_) {
+		if(pois == null) pois = new HashMap<String,Collection<Feature>>();
+		pois.put(label, pois_);
+	}
+
+
+	private HashMap<String,ArrayList<Feature>> paths = null;
 	/**
 	 * The fastest path to the nearest POIs, for each grid cell.
 	 * @return
 	 */
-	public Collection<Feature> getRoutes() { return paths; }
+	public Collection<Feature> getRoutes(String poiType) { return paths.get(poiType); }
 
 	//the cost
 	private String costAttribute = "cost";
@@ -84,11 +91,10 @@ public class AccessibilityRoutingPaths {
 	 * @param searchDistanceM
 	 * @param parallel 
 	 */
-	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, Collection<Feature> pois, String poiIdAtt, Collection<Feature> networkSections, String costAttribute, int nbNearestPOIs, double searchDistanceM, boolean parallel) {
+	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, String poiIdAtt, Collection<Feature> networkSections, String costAttribute, int nbNearestPOIs, double searchDistanceM, boolean parallel) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.resM = resM;
-		this.pois = pois;
 		this.poiIdAtt = poiIdAtt;
 		this.networkSections = networkSections;
 		this.costAttribute = costAttribute;
@@ -111,16 +117,21 @@ public class AccessibilityRoutingPaths {
 		return networkSectionsInd;
 	}
 
-	//a spatial index for the POIs
-	private STRtree poisInd = null;
-	private STRtree getPoisInd() {
+
+	//spatial indexes for the POIs
+	private HashMap<String,STRtree> poisInd = null;
+	private STRtree getPoisInd(String poiType) {
 		if(poisInd == null) {
-			logger.info("Index POIs");
-			poisInd = new STRtree();
-			for(Feature f : pois)
-				poisInd.insert(f.getGeometry().getEnvelopeInternal(), f);
+			poisInd = new HashMap<String,STRtree>();
+			for(Entry<String,Collection<Feature>> poi : pois.entrySet()) {
+				logger.info("Index POIs " + poi.getKey());
+				STRtree ind = new STRtree();
+				for(Feature f : poi.getValue())
+					ind.insert(f.getGeometry().getEnvelopeInternal(), f);
+				poisInd.put(poi.getKey(), ind);
+			}
 		}
-		return poisInd;
+		return poisInd.get(poiType);
 	}
 
 	//used to get nearest POIs from a location
@@ -141,11 +152,13 @@ public class AccessibilityRoutingPaths {
 	 */
 	public void compute() {
 
-		//create output
-		paths = new ArrayList<>();
+		//initialise output
+		String[] poiTypes = pois.keySet().toArray(new String[pois.keySet().size()]);
+		paths = new HashMap<String,ArrayList<Feature>>();
+		for(String poiType : poiTypes) paths.put(poiType, new ArrayList<Feature>());
 
-		//compute spatial indexes
-		getPoisInd();
+		logger.info("Compute spatial indexes...");
+		getPoisInd("");
 		getNetworkSectionsInd();
 
 		logger.info("Compute accessibility routing paths...");
@@ -156,20 +169,27 @@ public class AccessibilityRoutingPaths {
 			String cellId = cell.getAttribute(cellIdAtt).toString();
 			if(logger.isDebugEnabled()) logger.debug(cellId);
 
+			//get candidate nearest POIs
 			int nb = (int)( 1 + 1.34 * nbNearestPOIs);
-			//if(logger.isDebugEnabled()) logger.debug("Get " + nb + " nearest POIs");
-			Envelope env = cell.getGeometry().getEnvelopeInternal(); env.expandBy(searchDistanceM);
+			Envelope env = cell.getGeometry().getEnvelopeInternal();
+			env.expandBy(searchDistanceM);
 			Feature cellPt = new Feature(); cellPt.setGeometry(cell.getGeometry().getCentroid());
-			Object[] pois_ = getPoisInd().nearestNeighbour(env, cellPt, itemDist, nb);
+			HashMap<String,Object[]> pois_ = new HashMap<String,Object[]>();
+			for(String poiType : poiTypes) {
+				if(logger.isDebugEnabled()) logger.debug("Get " + nb + " nearest POIs " + poiType);
+				Object[] obs = getPoisInd(poiType).nearestNeighbour(env, cellPt, itemDist, nb);
+				pois_.put(poiType, obs);
+			}
 
-			//get an envelope around the cell and surrounding POIs
+			//get an envelope around the cell and candidate nearest POIs
 			env = cell.getGeometry().getEnvelopeInternal();
-			for(Object poi_ : pois_)
-				env.expandToInclude(((Feature) poi_).getGeometry().getEnvelopeInternal());
+			for(String poiType : poiTypes)
+				for(Object poi_ : pois_.get(poiType))
+					env.expandToInclude(((Feature) poi_).getGeometry().getEnvelopeInternal());
 			env.expandBy(5000); //TODO how to choose that? Expose parameter?
 			if(logger.isTraceEnabled()) logger.trace("Network search size (km): " + 0.001*Math.sqrt(env.getArea()));
 
-			//get network sections in the envelope around the cell and surrounding POIs
+			//get network sections in the envelope around the cell and candidate nearest POIs
 			List<?> net_ = getNetworkSectionsInd().query(env);
 			if(net_.size() == 0) {
 				if(logger.isTraceEnabled())
@@ -185,7 +205,6 @@ public class AccessibilityRoutingPaths {
 			rt.setEdgeWeighter(costAttribute);
 
 			//get cell centroid as origin point
-			//possible improvement: take another position depending on the network state inside the cell? Cell is supposed to be small enough?
 			Coordinate oC = cellPt.getGeometry().getCoordinate();
 			Node oN = rt.getNode(oC);
 			if(oN == null) {
@@ -202,61 +221,64 @@ public class AccessibilityRoutingPaths {
 			if(logger.isDebugEnabled()) logger.debug("Dijkstra computation");
 			DijkstraShortestPathFinder pf = rt.getDijkstraShortestPathFinder(oN);
 
-			if(logger.isDebugEnabled()) logger.debug("Compute paths to POIs. Nb=" + pois_.length);
-			ArrayList<Feature> paths_ = new ArrayList<>();
-			for(Object poi_ : pois_) {
-				Feature poi = (Feature) poi_;
-				Coordinate dC = poi.getGeometry().getCentroid().getCoordinate();
 
-				//include POI in path? Cell is supposed to be small enough?
-				Node dN = rt.getNode(dC);
+			if(logger.isDebugEnabled()) logger.debug("Compute paths to POIs. Nb=" + poiTypes.length);
+			for(String poiType : poiTypes) {
+				ArrayList<Feature> paths_ = new ArrayList<Feature>();
+				for(Object poi_ : pois_.get(poiType)) {
+					Feature poi = (Feature) poi_;
+					Coordinate dC = poi.getGeometry().getCentroid().getCoordinate();
 
-				if(dN == oN) {
-					//same origin and destination
+					//include POI in path? Cell is supposed to be small enough?
+					Node dN = rt.getNode(dC);
+
+					if(dN == oN) {
+						//same origin and destination
+						Feature f = new Feature();
+						f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
+						String poiId = poi.getAttribute(poiIdAtt).toString();
+						f.setID(cellId + "_" + poiId);
+						f.setAttribute(cellIdAtt, cellId);
+						f.setAttribute(poiIdAtt, poiId);
+						f.setAttribute("durationMin", Util.round(60.0 * 0.001*f.getGeometry().getLength()/50, 2));
+						//f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
+						//f.setAttribute("avSpeedKMPerH", 50.0);
+						paths_.add(f);
+						continue;
+					}
+
+					Path p = pf.getPath(dN);
+					if(p==null) {
+						if(logger.isTraceEnabled()) logger.trace("No path found for cell: " + cellId + " to POI " + poi.getAttribute(poiIdAtt) );
+						continue;
+					}
+					double duration = pf.getCost(dN);
+
+					//store path
+					//Feature f = Routing.toFeature(p);
 					Feature f = new Feature();
 					f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
 					String poiId = poi.getAttribute(poiIdAtt).toString();
 					f.setID(cellId + "_" + poiId);
 					f.setAttribute(cellIdAtt, cellId);
 					f.setAttribute(poiIdAtt, poiId);
-					f.setAttribute("durationMin", Util.round(60.0 * 0.001*f.getGeometry().getLength()/50, 2));
+					f.setAttribute("durationMin", duration);
 					//f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
-					//f.setAttribute("avSpeedKMPerH", 50.0);
+					//f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
 					paths_.add(f);
-					continue;
 				}
 
-				Path p = pf.getPath(dN);
-				if(p==null) {
-					if(logger.isTraceEnabled()) logger.trace("No path found for cell: " + cellId + " to POI " + poi.getAttribute(poiIdAtt) );
-					continue;
+				int nb_ = paths_.size();
+				if(nb_ < nbNearestPOIs){
+					if(logger.isDebugEnabled()) logger.debug("Not enough POIs found for grid cell (nb="+nb_+"<"+nbNearestPOIs+") " + cellId + " around " + oC);
+				} else if(nb_ > nbNearestPOIs) {
+					//keep only the nbNearestPOIs fastest paths
+					paths_.sort(pathDurationComparator);
+					while(paths_.size() > nbNearestPOIs)
+						paths_.remove(paths_.size()-1);
 				}
-				double duration = pf.getCost(dN);
-
-				//store path
-				//Feature f = Routing.toFeature(p);
-				Feature f = new Feature();
-				f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
-				String poiId = poi.getAttribute(poiIdAtt).toString();
-				f.setID(cellId + "_" + poiId);
-				f.setAttribute(cellIdAtt, cellId);
-				f.setAttribute(poiIdAtt, poiId);
-				f.setAttribute("durationMin", duration);
-				//f.setAttribute("distanceM", Util.round(f.getGeometry().getLength(), 2));
-				//f.setAttribute("avSpeedKMPerH", Util.round(0.06 * f.getGeometry().getLength()/duration, 2));
-				paths_.add(f);
+				paths.get(poiType).addAll(paths_);
 			}
-
-			int nb_ = paths_.size();
-			if(nb_ < nbNearestPOIs){
-				if(logger.isDebugEnabled()) logger.debug("Not enough POIs found for grid cell (nb="+nb_+"<"+nbNearestPOIs+") " + cellId + " around " + oC);
-			} else if(nb_ > nbNearestPOIs) {
-				//keep only the nbNearestPOIs fastest paths
-				paths_.sort(pathDurationComparator);
-				while(paths_.size() > nbNearestPOIs)
-					paths_.remove(paths_.size()-1);
-			}
-			paths.addAll(paths_);
 		});
 		st.close();
 	}
