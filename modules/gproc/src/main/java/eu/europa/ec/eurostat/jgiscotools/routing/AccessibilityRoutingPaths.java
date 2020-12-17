@@ -73,11 +73,6 @@ public class AccessibilityRoutingPaths {
 	public String getCostAttribute() { return costAttribute; }
 	public void setCostAttribute(String costAttribute) { this.costAttribute = costAttribute; }
 
-	//set to true to enable multiprecessor computation
-	boolean parallel = true;
-	public boolean isParallel() { return parallel; }
-	public void setParallel(boolean parallel) { this.parallel = parallel; }
-
 
 	/**
 	 * @param cells
@@ -91,7 +86,7 @@ public class AccessibilityRoutingPaths {
 	 * @param searchDistanceM
 	 * @param parallel 
 	 */
-	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, String poiIdAtt, Collection<Feature> networkSections, String costAttribute, int nbNearestPOIs, double searchDistanceM, boolean parallel) {
+	public AccessibilityRoutingPaths(Collection<Feature> cells, String cellIdAtt, double resM, String poiIdAtt, Collection<Feature> networkSections, String costAttribute, int nbNearestPOIs, double searchDistanceM) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.resM = resM;
@@ -100,7 +95,6 @@ public class AccessibilityRoutingPaths {
 		this.costAttribute = costAttribute;
 		this.nbNearestPOIs = nbNearestPOIs;
 		this.searchDistanceM = searchDistanceM;
-		this.parallel = parallel;
 	}
 
 
@@ -150,7 +144,7 @@ public class AccessibilityRoutingPaths {
 	/**
 	 * Compute the paths.
 	 */
-	public void compute() {
+	public void compute(boolean parallel) {
 
 		//initialise output
 		String[] poiTypes = pois.keySet().toArray(new String[pois.keySet().size()]);

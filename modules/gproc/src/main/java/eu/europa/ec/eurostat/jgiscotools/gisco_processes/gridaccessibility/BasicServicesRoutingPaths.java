@@ -58,7 +58,7 @@ public class BasicServicesRoutingPaths {
 		logger.info(cells.size() + " cells");
 
 		logger.info("Build accessibility...");
-		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, "id", networkSections, "cost", 3, 50000, true);
+		AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, "id", networkSections, "cost", 3, 50000);
 
 		logger.info("Load POI and add POIs");
 		if(poiTypes.contains("healthcare"))
@@ -69,7 +69,7 @@ public class BasicServicesRoutingPaths {
 			ag.addPOIs("educ_2", GeoData.getFeatures(basePath + "input_data/education_services_LAEA.gpkg", null, CQL.toFilter("levels LIKE '%2%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
 
 		logger.info("Compute accessibility paths...");
-		ag.compute();
+		ag.compute(true);
 
 		//save ouput paths
 		if(poiTypes.contains("healthcare")) {
