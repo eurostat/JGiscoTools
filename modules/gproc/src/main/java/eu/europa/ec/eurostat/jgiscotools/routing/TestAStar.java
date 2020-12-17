@@ -21,7 +21,7 @@ import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility.Basic
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
- * @author clemoki
+ * @author julien gaffuri
  *
  */
 public class TestAStar {
@@ -53,6 +53,7 @@ public class TestAStar {
 		int nb = 64; int rNb = 10; double rMax = 20000;
 
 		/*
+		//TODO test http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
 		logger.info("A*");
 
 		//define default A* functions
