@@ -71,6 +71,7 @@ public class BasicServicesRoutingPaths {
 		logger.info("Compute accessibility paths...");
 		ag.compute();
 
+		//save ouput paths
 		if(poiTypes.contains("healthcare")) {
 			logger.info("Save routes healthcare... Nb=" + ag.getRoutes("healthcare").size());
 			GeoData.save(ag.getRoutes("healthcare"), outPath + "routes_"+(cnt==null?"":cnt+"_")+"_healthcare.gpkg", crs, true);
