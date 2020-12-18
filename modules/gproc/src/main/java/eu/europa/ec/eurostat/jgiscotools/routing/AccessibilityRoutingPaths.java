@@ -30,7 +30,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 
 /**
- * Class to compute accessiblity paths from grid cells to points of interest, using a transport network.
+ * Compute accessiblity paths from grid cells to points of interest, using a transport network.
  * 
  * @author julien Gaffuri
  *
