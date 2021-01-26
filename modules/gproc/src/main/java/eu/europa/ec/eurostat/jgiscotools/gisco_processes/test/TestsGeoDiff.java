@@ -21,13 +21,15 @@ public class TestsGeoDiff {
 
 		System.out.println("load");
 
-		Collection<Feature> fs1 = GeoData.getFeatures("E:\\dissemination\\shared-data\\EBM\\gpkg\\EBM_2020_LAEA\\LAU.gpkg");
+		Collection<Feature> fs1 = GeoData.getFeatures("E:\\dissemination\\shared-data\\EBM\\gpkg\\EBM_2020_LAEA\\LAU.gpkg", "inspireId");
 		System.out.println(fs1.size());
-		Collection<Feature> fs2 = GeoData.getFeatures("E:\\dissemination\\shared-data\\EBM\\gpkg\\EBM_2021_LAEA\\LAU.gpkg");
+		Collection<Feature> fs2 = GeoData.getFeatures("E:\\dissemination\\shared-data\\EBM\\gpkg\\EBM_2021_LAEA\\LAU.gpkg", "inspireId");
 		System.out.println(fs2.size());
 
 		System.out.println("compute diff");
-		GeoDiff gd = new GeoDiff(fs1, fs2, 0.1);
+		GeoDiff gd = new GeoDiff(fs1, fs2, 1);
+		gd.setAttributesToIgnore("OBJECTID", "Shape_Length", "Shape_Area", "beginLifespanVersion");
+
 		Collection<Feature> diff = gd.getDifferences();
 		System.out.println(diff.size());
 
