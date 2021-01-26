@@ -543,6 +543,13 @@ public class GeoDiff {
 			LOGGER.warn("Unexpected number of attribute changes ("+nbAtt_+" instead of "+nbAtt+") for feature id="+f.getID()+".");		
 	}
 
+	/**
+	 * Get common attributes between two feature collections.
+	 * 
+	 * @param fs1
+	 * @param fs2
+	 * @return
+	 */
 	public static HashMap<String,Class<?>> getCommonAttributes(Collection<Feature> fs1, Collection<Feature> fs2) {
 		//get schemas of both collections
 		HashMap<String,Class<?>> types1 = SimpleFeatureUtil.getAttributeGeomTypes(fs1);
