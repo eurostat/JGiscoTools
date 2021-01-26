@@ -2,11 +2,14 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.test;
 
 import java.util.Collection;
 
+import org.geotools.feature.type.GeometryTypeImpl;
 import org.geotools.referencing.CRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.locationtech.jts.geom.Geometry;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.geodiff.GeoDiff;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
@@ -17,6 +20,7 @@ public class TestsGeoDiff {
 		System.out.println("Start");
 
 		System.out.println("load");
+
 		Collection<Feature> fs1 = GeoData.getFeatures("E:\\dissemination\\shared-data\\EBM\\gpkg\\EBM_2020_LAEA\\LAU.gpkg");
 		System.out.println(fs1.size());
 		Collection<Feature> fs2 = GeoData.getFeatures("E:\\dissemination\\shared-data\\EBM\\gpkg\\EBM_2021_LAEA\\LAU.gpkg");
@@ -28,7 +32,11 @@ public class TestsGeoDiff {
 		System.out.println(diff.size());
 
 		for(Feature f : diff) {
-			System.out.println(f.getGeometry().getGeometryType());
+			Geometry g = f.getGeometry();
+			if(g.getGeometryType() == "POINT")
+				System.out.println(f.getGeometry());
+			g = JTSGeomUtil.getPolygonal(g);
+			f.setGeometry(g);
 		}
 
 		GeoData.save(diff, "C:\\Users\\gaffuju\\Desktop\\LAU\\aaaaaaa.gpkg", CRS.decode("EPSG:3035"));
