@@ -18,11 +18,12 @@ public class TestsGeoDiff {
 
 		System.out.println("load");
 		Collection<Feature> fs1 = GeoData.getFeatures("E:\\dissemination\\shared-data\\EBM\\gpkg\\EBM_2020_LAEA\\LAU.gpkg");
+		System.out.println(fs1.size());
 		Collection<Feature> fs2 = GeoData.getFeatures("E:\\dissemination\\shared-data\\EBM\\gpkg\\EBM_2021_LAEA\\LAU.gpkg");
-
-		GeoDiff gd = new GeoDiff(fs1, fs2, 0.1);
+		System.out.println(fs2.size());
 
 		System.out.println("compute diff");
+		GeoDiff gd = new GeoDiff(fs1, fs2, 0.1);
 		Collection<Feature> diff = gd.getDifferences();
 		System.out.println(diff.size());
 
@@ -30,7 +31,7 @@ public class TestsGeoDiff {
 			System.out.println(f.getGeometry().getGeometryType());
 		}
 
-		GeoData.save(diff, "C:\\Users\\gaffuju\\Desktop\\LAU", CRS.decode("EPSG:3035"));
+		GeoData.save(diff, "C:\\Users\\gaffuju\\Desktop\\LAU\\aaaaaaa.gpkg", CRS.decode("EPSG:3035"));
 
 		System.out.println("End");
 	}
