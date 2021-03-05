@@ -46,10 +46,17 @@ public class BasicServicesRoutingPaths {
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
 		//set the country id (set to null for all countries)
 
+
+		logger.info("Load grid cells " + resKM + "km ...");
+		//ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_1km_surf_FRL0.gpkg",null);
+
+		logger.info(cells.size() + " cells");
+
+
 		for(String rnw : new String[] { "nmca" } ) {
 
 			logger.info("Load network sections...");
-			//TODO use more generalised road TN for healthcare ?
 			Collection<Feature> networkSections =
 					rnw.equals("nmca") ? RoadBDTopo.get("cost")
 							: rnw.equals("tomtom") ? RoadTomtom.get("cost")
@@ -57,12 +64,6 @@ public class BasicServicesRoutingPaths {
 											: null;
 			//TODO
 			logger.info(networkSections.size() + " sections loaded.");
-
-			logger.info("Load grid cells " + resKM + "km ...");
-			//ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_"+resKM+"km_surf.gpkg",null, CQL.toFilter("NOT TOT_P_2011=0" + (cnt==null?"":"AND CNTR_ID = '"+cnt+"'")));
-			ArrayList<Feature> cells = GeoData.getFeatures(basePath + "input_data/grid_1km_surf_FRL0.gpkg",null);
-
-			logger.info(cells.size() + " cells");
 
 			logger.info("Build accessibility...");
 			AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, "id", networkSections, "cost", 3, 50000);
@@ -75,8 +76,10 @@ public class BasicServicesRoutingPaths {
 			if(poiTypes.contains("educ_2"))
 				ag.addPOIs("educ_2", GeoData.getFeatures(basePath + "input_data/education_services_LAEA.gpkg", null, CQL.toFilter("levels LIKE '%2%'" + (cnt==null?"":" AND cc = '"+cnt+"'"))));
 
+
 			logger.info("Compute accessibility paths...");
 			ag.compute(true);
+
 
 			//save ouput paths
 			if(poiTypes.contains("healthcare")) {
