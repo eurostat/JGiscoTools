@@ -54,7 +54,7 @@ public class BasicServicesRoutingPaths {
 		logger.info(cells.size() + " cells");
 
 
-		for(String rnw : new String[] { "nmca" } ) {
+		for(String rnw : new String[] { "osm" } ) {
 
 			logger.info("Load network sections...");
 			Collection<Feature> networkSections =
@@ -62,7 +62,6 @@ public class BasicServicesRoutingPaths {
 							: rnw.equals("tomtom") ? RoadTomtom.get("cost")
 									: rnw.equals("osm") ? RoadOSM.get("cost")
 											: null;
-			//TODO
 			logger.info(networkSections.size() + " sections loaded.");
 
 			logger.info("Build accessibility...");
