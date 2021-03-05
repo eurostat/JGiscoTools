@@ -19,10 +19,10 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class RoadTomtom {
 	static String basePath = "E:/workspace/basic_services_accessibility/";
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Collection<Feature> fs = get(null);
 		System.out.println(fs.size());
-	}
+	}*/
 
 	public static Collection<Feature> get(String costAttribute) {
 		Filter fil = null;
