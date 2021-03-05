@@ -3,17 +3,19 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility;
 
+import java.util.Collection;
+
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+
 /**
- * @author clemoki
+ * @author gaffuju
  *
  */
 public class RoadTomtom {
 
-	public static void main(String[] args) {
-		System.out.println("Start");
-		
-		
-		
-		System.out.println("End");
+	public static Collection<Feature> get(String costAttribute) {
+		//TODO
+		return null;
 	}
+
 }
