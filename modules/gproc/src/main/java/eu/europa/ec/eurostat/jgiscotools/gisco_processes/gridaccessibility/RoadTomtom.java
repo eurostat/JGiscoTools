@@ -27,7 +27,7 @@ public class RoadTomtom {
 	public static Collection<Feature> get(String costAttribute) {
 		Filter fil = null;
 		try {
-			fil = CQL.toFilter("(NOT SPEEDCAT='0' AND NOT FEATTYP='4130' AND NOT FEATTYP='4165' AND NOT FRC='8'");
+			fil = CQL.toFilter("(NOT SPEEDCAT=0 AND NOT FEATTYP=4130 AND NOT FEATTYP=4165 AND NOT FRC=8)");
 		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_tomtom_FR_SE/roads.gpkg", null, fil);
 
