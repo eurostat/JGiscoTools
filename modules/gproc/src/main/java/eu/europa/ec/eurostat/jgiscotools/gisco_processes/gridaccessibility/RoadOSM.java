@@ -20,10 +20,10 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class RoadOSM {
 	static String basePath = "E:/workspace/basic_services_accessibility/";
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Collection<Feature> fs = get(null);
 		System.out.println(fs.size());
-	}
+	}*/
 
 	public static Collection<Feature> get(String costAttribute) {
 		Filter fil = null;
@@ -32,21 +32,27 @@ public class RoadOSM {
 		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_osm_road_FR_SE/roads.gpkg", null, fil);
 
-
 		if(costAttribute != null)
 			for(Feature f : fs) {
 				double speedkmh = getSpeedKmH(f.getAttribute("maxspeed").toString(), f.getAttribute("fclass").toString());
+				if(speedkmh == 0) {
+					System.err.println("Pb: speed=0. " + f);
+					speedkmh = 5;
+				}
 				double speedmmin = speedkmh *1000.0/60.0;
 				double duration = f.getGeometry().getLength() / speedmmin;
 				f.setAttribute(costAttribute, duration);
 			}
-		
+
 		return fs;
 	}
 
 	private static double getSpeedKmH(String maxspeed, String fclass) {
 
-		if(!"".equals(maxspeed)) return Double.parseDouble(maxspeed);
+		if(!"".equals(maxspeed)) {
+			double ms = Double.parseDouble(maxspeed);
+			if(ms>0) return ms;
+		}
 
 		if("motorway".equals(fclass)) return 110.0;
 		if("motorway_link".equals(fclass)) return 70.0;
