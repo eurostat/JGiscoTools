@@ -5,7 +5,10 @@ import java.util.Collection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
 import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
@@ -25,13 +28,17 @@ public class BuildingStatsComputation {
 
 		String basePath = "E:/workspace/building_stats/test/";
 
+		//TODO only populated ones ?
 		logger.info("Load cells...");
 		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grid_1km_surf_FRL0.gpkg",null);
 		logger.info(cells.size() + " cells");
 
 		logger.info("Load buildings...");
-		//TODO filter - ETAT = En service - USAGE1 - USAGE2 - Résidentiel
-		Collection<Feature> fs = GeoData.getFeatures(basePath + "04/buildings.gpkg",null);
+		Filter fil = null;
+		/*try {
+			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
+		} catch (CQLException e) { e.printStackTrace(); }*/
+		Collection<Feature> fs = GeoData.getFeatures(basePath + "04/buildings.gpkg", null, fil);
 		logger.info(fs.size() + " buildings");
 
 		logger.info("Define feature contribution calculator");
@@ -40,8 +47,9 @@ public class BuildingStatsComputation {
 			public double getContribution(Feature f, Geometry inter) {
 				if(inter == null || inter.isEmpty()) return 0;
 				double area = inter.getArea();
+				System.out.println(f.getAttribute("USAGE1"));
 				Integer nb = (Integer) f.getAttribute("NB_ETAGES");
-				System.out.println(nb);
+				if(nb == null) return 0; //TODO ???
 				// TODO use also USAGE1 + USAGE2 Résidentiel
 				return nb*area;
 			}
