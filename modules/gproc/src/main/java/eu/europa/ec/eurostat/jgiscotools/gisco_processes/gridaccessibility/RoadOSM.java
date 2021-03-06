@@ -30,7 +30,7 @@ public class RoadOSM {
 		try {
 			fil = CQL.toFilter("(NOT fclass='bridleway' AND NOT fclass='track_grade1' AND NOT fclass='track_grade2' AND NOT fclass='track_grade3' AND NOT fclass='track_grade4' AND NOT fclass='track_grade5')");
 		} catch (CQLException e) { e.printStackTrace(); }
-		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_osm_road_FR_SE/main_roads.shp", null, fil);
+		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_osm_road_FR_SE/roads_integrate.shp", null, fil);
 
 		if(costAttribute != null)
 			for(Feature f : fs) {

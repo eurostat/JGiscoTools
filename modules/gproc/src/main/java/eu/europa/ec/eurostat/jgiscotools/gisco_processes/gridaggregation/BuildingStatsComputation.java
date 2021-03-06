@@ -99,7 +99,7 @@ public class BuildingStatsComputation {
 
 	/**
 	 * Remove the duplicates, that is the features that have same attributes.
-	 * TODO move to featureutil
+	 * TODO use the one from featureutil instead
 	 * 
 	 * @param fs
 	 * @param idAtt
