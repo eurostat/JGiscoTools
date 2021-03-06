@@ -5,8 +5,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility;
 
 import java.util.Collection;
 
-import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -25,10 +23,11 @@ public class RoadBDTopo {
 	 * @return
 	 */
 	public static Collection<Feature> get(String costAttribute) {
+
 		Filter fil = null;
-		try {
-			fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste cyclable' AND NOT NATURE='Escalier')");
-		} catch (CQLException e) { e.printStackTrace(); }
+		//try {
+		//	fil = CQL.toFilter("(NOT NATURE='Sentier' AND NOT NATURE='Chemin' AND NOT NATURE='Piste cyclable' AND NOT NATURE='Escalier')");
+		//} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_NMCA_FR_SE_road_tn/roads.gpkg", null, fil);
 
 		if(costAttribute != null)
@@ -77,7 +76,12 @@ public class RoadBDTopo {
 		if("Route � 1 chauss�es".equals(nat)) return 50.0;
 		if("Piste cyclable".equals(nat)) return 5.0;
 
-		//System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
+		if("Sentier".equals(nat)) return 5.0;
+		if("Chemin".equals(nat)) return 15.0;
+		if("Piste cyclable".equals(nat)) return 15.0;
+		if("Escalier".equals(nat)) return 5.0;
+
+		System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
 		return 60.0;
 	}
 

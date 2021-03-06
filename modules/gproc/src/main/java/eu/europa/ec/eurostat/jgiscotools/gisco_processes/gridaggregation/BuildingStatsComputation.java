@@ -104,7 +104,7 @@ public class BuildingStatsComputation {
 	 * @param fs
 	 * @param idAtt
 	 */
-	private static ArrayList<Feature> removeDuplicates(Collection<Feature> fs, String idAtt) {
+	public static ArrayList<Feature> removeDuplicates(Collection<Feature> fs, String idAtt) {
 
 		ArrayList<Feature> out = new ArrayList<Feature>();
 		HashSet<String> ids = new HashSet<String>();
