@@ -53,8 +53,6 @@ public class BuildingStatsComputation {
 		logger.info("Remove duplicates");
 		fs = removeDuplicates(fs, "ID");
 		logger.info(fs.size() + " buildings");
-		fs = removeDuplicates(fs, "ID");
-		logger.info(fs.size() + " buildings");
 
 		logger.info("Define feature contribution calculator");
 		FeatureContributionCalculator fcc = new FeatureContributionCalculator() {
@@ -97,6 +95,7 @@ public class BuildingStatsComputation {
 
 		logger.info("End");
 	}
+
 
 	/**
 	 * Remove the duplicates, that is the features that have same attributes.
