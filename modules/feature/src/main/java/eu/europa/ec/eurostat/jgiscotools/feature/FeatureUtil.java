@@ -92,7 +92,7 @@ public class FeatureUtil {
 		}
 		return c;
 	}
-*/
+	 */
 
 
 	public static void setId(ArrayList<Feature> fs, String idAtt) {
@@ -136,6 +136,31 @@ public class FeatureUtil {
 			if(e.getValue() > 1) out.put(e.getKey(), e.getValue());
 		return out;
 	}
+
+
+	/**
+	 * Remove the duplicates, that is the features that have same attributes.
+	 * 
+	 * @param fs
+	 * @param idAtt
+	 */
+	public static ArrayList<Feature> removeDuplicates(Collection<Feature> fs, String idAtt) {
+
+		ArrayList<Feature> out = new ArrayList<Feature>();
+		HashSet<String> ids = new HashSet<String>();
+
+		for(Feature f : fs) {
+			String id = idAtt==null? f.getID() : f.getAttribute(idAtt).toString();
+			if(ids.contains(id)) continue;
+			ids.add(id);
+			out.add(f);
+		}
+
+		return out;
+	}
+
+
+
 
 	//check if an attribute is an identifier (that is it is unique)
 	public static <T extends Feature> int getVerticesNumber(Collection<T> fs) {
