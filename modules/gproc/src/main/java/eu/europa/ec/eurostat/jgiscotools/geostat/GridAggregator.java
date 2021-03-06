@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaggregation;
+package eu.europa.ec.eurostat.jgiscotools.geostat;
 
 import java.util.Collection;
 import java.util.List;
