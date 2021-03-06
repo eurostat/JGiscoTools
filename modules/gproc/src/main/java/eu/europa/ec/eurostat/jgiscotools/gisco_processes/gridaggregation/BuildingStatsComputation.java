@@ -50,7 +50,7 @@ public class BuildingStatsComputation {
 
 		//compute aggregation
 		GridAggregator ga = new GridAggregator(cells, "GRD_ID", fs, fcc);
-		ga.compute(true);
+		ga.compute(false); //TODO true
 
 		logger.info("Round values...");
 		for(Stat s : ga.getStats().stats)

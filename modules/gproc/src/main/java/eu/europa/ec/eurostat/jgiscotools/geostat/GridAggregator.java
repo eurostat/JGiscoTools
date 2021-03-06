@@ -84,7 +84,8 @@ public class GridAggregator {
 	public void compute(boolean parallel) {
 
 		//initialise stats
-		stats = new StatsHypercube();
+		String cia = cellIdAtt==null? "id" : cellIdAtt;
+		stats = new StatsHypercube(cia);
 
 		logger.info("Compute grid aggregation...");
 		Stream<Feature> st = cells.stream(); if(parallel) st = st.parallel();
@@ -95,9 +96,7 @@ public class GridAggregator {
 			String cId = cellIdAtt==null? c.getID() : c.getAttribute(cellIdAtt).toString();
 
 			//prepare stat object for the cell
-			String cia = cellIdAtt==null? "id" : cellIdAtt;
-			Stat s = new Stat(0, cia);
-			s.dims.put(cia, cId);
+			Stat s = new Stat(0, cia, cId);
 
 			//go through features within the cell (using spatial index)
 			List<?> fs_ = getFeaturesInd().query(cGeom.getEnvelopeInternal());
