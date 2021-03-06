@@ -68,12 +68,14 @@ public class GridAggregator {
 	//the spatial index of the input features
 	private STRtree featuresInd = null;
 	private STRtree getFeaturesInd() {
-		if(featuresInd == null) {
-			logger.info("Index features");
-			featuresInd = new STRtree();
-			for(Feature f : features)
-				if(f.getGeometry() != null)
-					featuresInd.insert(f.getGeometry().getEnvelopeInternal(), f);
+		synchronized(featuresInd) {
+			if(featuresInd == null) {
+				logger.info("Index features");
+				featuresInd = new STRtree();
+				for(Feature f : features)
+					if(f.getGeometry() != null)
+						featuresInd.insert(f.getGeometry().getEnvelopeInternal(), f);
+			}
 		}
 		return featuresInd;
 	}

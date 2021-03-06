@@ -28,9 +28,7 @@ public class BuildingStatsComputation {
 
 		String basePath = "E:/workspace/building_stats/test/";
 
-		//TODO only populated ones ?
 		logger.info("Load cells...");
-		//TODO filter by region NUTS_1_ID
 		Filter fil = null;
 		try {
 			fil = CQL.toFilter("(NUTS_1_ID='FRL')");
@@ -61,7 +59,7 @@ public class BuildingStatsComputation {
 
 		//compute aggregation
 		GridAggregator ga = new GridAggregator(cells, "GRD_ID", fs, fcc);
-		ga.compute(false); //TODO true
+		ga.compute(true);
 
 		logger.info("Round values...");
 		for(Stat s : ga.getStats().stats)
