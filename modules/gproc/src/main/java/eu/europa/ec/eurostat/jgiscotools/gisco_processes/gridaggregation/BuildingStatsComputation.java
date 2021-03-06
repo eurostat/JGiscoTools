@@ -30,14 +30,14 @@ public class BuildingStatsComputation {
 
 		//TODO only populated ones ?
 		logger.info("Load cells...");
-		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grid_1km_surf_FRL0.gpkg",null);
+		ArrayList<Feature> cells = GeoData.getFeatures("E:\\dissemination\\shared-data\\grid\\grid_1km_surf.gpkg",null);
 		logger.info(cells.size() + " cells");
 
 		logger.info("Load buildings...");
 		Filter fil = null;
-		/*try {
-			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
-		} catch (CQLException e) { e.printStackTrace(); }*/
+		try {
+			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='RÃ©sidentiel' OR USAGE2='RÃ©sidentiel'))");
+		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = GeoData.getFeatures(basePath + "04/buildings.gpkg", null, fil);
 		logger.info(fs.size() + " buildings");
 
@@ -47,9 +47,8 @@ public class BuildingStatsComputation {
 			public double getContribution(Feature f, Geometry inter) {
 				if(inter == null || inter.isEmpty()) return 0;
 				double area = inter.getArea();
-				System.out.println(f.getAttribute("USAGE1"));
 				Integer nb = (Integer) f.getAttribute("NB_ETAGES");
-				if(nb == null) return 0; //TODO ???
+				if(nb == null) return 0; //TODO check that ???
 				// TODO use also USAGE1 + USAGE2 Résidentiel
 				return nb*area;
 			}
