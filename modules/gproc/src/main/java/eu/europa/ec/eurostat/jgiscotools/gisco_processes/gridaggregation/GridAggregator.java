@@ -44,11 +44,20 @@ public class GridAggregator {
 	};
 
 
-	//output stats
+	//
+	/** output statistics. */
 	StatsHypercube stats = null;
+	/** @return The ouput statistics. */
 	public StatsHypercube getStats() { return stats; }
 
-	//the constructor
+	/**
+	 * Build a grid aggregator, to compute grid level statistics from features.
+	 * 
+	 * @param cells The grid cells.
+	 * @param cellIdAtt The identifier of the grid cell. can be set to null if the getId() value should be used.
+	 * @param features The features to compute the statistics from.
+	 * @param fcc The function to compute the contribution of the feature to the final statistic.
+	 */
 	public GridAggregator(Collection<Feature> cells, String cellIdAtt, Collection<Feature> features, FeatureContributionCalculator fcc) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
@@ -104,7 +113,7 @@ public class GridAggregator {
 				if(inter.isEmpty())
 					continue;
 
-				//compute feature contribution
+				//add feature contribution
 				s.value += fcc.getContribution(f, inter);
 			}
 
