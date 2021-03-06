@@ -30,8 +30,9 @@ public class BuildingStatsComputation {
 		logger.info(cells.size() + " cells");
 
 		logger.info("Load buildings...");
-		//TODO filter - 
+		//TODO filter - ETAT = En service - USAGE1 - USAGE2 - Résidentiel
 		Collection<Feature> fs = GeoData.getFeatures(basePath + "04/buildings.gpkg",null);
+		logger.info(fs.size() + " buildings");
 
 		logger.info("Define feature contribution calculator");
 		FeatureContributionCalculator fcc = new FeatureContributionCalculator() {
@@ -39,8 +40,10 @@ public class BuildingStatsComputation {
 			public double getContribution(Feature f, Geometry inter) {
 				if(inter == null || inter.isEmpty()) return 0;
 				double area = inter.getArea();
-				// TODO use NB_ETAGES + USAGE1 + USAGE2 Résidentiel
+				String nbS = f.getAttribute("NB_ETAGES").toString();
 				int nb = 1;
+				nb = Integer.parseInt(nbS);
+				// TODO use also USAGE1 + USAGE2 Résidentiel
 				return nb*area;
 			}
 		};
