@@ -30,11 +30,16 @@ public class BuildingStatsComputation {
 
 		//TODO only populated ones ?
 		logger.info("Load cells...");
-		ArrayList<Feature> cells = GeoData.getFeatures("E:\\dissemination\\shared-data\\grid\\grid_1km_surf.gpkg",null);
+		//TODO filter by region NUTS_1_ID
+		Filter fil = null;
+		try {
+			fil = CQL.toFilter("(NUTS_1_ID='FRL')");
+		} catch (CQLException e) { e.printStackTrace(); }
+		ArrayList<Feature> cells = GeoData.getFeatures("E:\\dissemination\\shared-data\\grid\\grid_1km_surf.gpkg", null, fil);
 		logger.info(cells.size() + " cells");
 
 		logger.info("Load buildings...");
-		Filter fil = null;
+		fil = null;
 		try {
 			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='RÃ©sidentiel' OR USAGE2='RÃ©sidentiel'))");
 		} catch (CQLException e) { e.printStackTrace(); }
