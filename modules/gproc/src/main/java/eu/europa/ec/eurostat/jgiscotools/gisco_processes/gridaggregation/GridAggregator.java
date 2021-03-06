@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaggregation;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,12 +27,12 @@ public class GridAggregator {
 	private static Logger logger = LogManager.getLogger(GridAggregator.class.getName());
 
 	//the grid cells
-	Collection<Feature> cells = null;
+	private Collection<Feature> cells = null;
 	//grid id
-	String cellIdAtt = "id";
+	private String cellIdAtt = "GRD_ID";
 
 	//the geo features
-	Collection<Feature> features = null;
+	private Collection<Feature> features = null;
 
 	private STRtree featuresInd = null;
 	private STRtree getFeaturesInd() {
@@ -67,13 +68,18 @@ public class GridAggregator {
 		//TODO
 	}
 
-	private void compute() {
+
+	/**
+	 * @param parallel
+	 */
+	public void compute(boolean parallel) {
 
 		//initialise stats
 		sh = new StatsHypercube();
 
-		//TODO parallel
-		for(Feature c : cells) {
+		logger.info("Compute grid aggregation...");
+		Stream<Feature> st = cells.stream(); if(parallel) st = st.parallel();
+		st.forEach(c -> {
 
 			//get cell data
 			Geometry cGeom = c.getGeometry();
@@ -104,7 +110,7 @@ public class GridAggregator {
 
 			//store stat
 			sh.stats.add(s);
-		}
+		});
 	}
 
 }

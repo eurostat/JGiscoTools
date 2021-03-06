@@ -143,6 +143,7 @@ public class AccessibilityRoutingPaths {
 
 	/**
 	 * Compute the paths.
+	 * @param parallel
 	 */
 	public void compute(boolean parallel) {
 
