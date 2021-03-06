@@ -2,8 +2,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaggregation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.HashSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +14,6 @@ import org.opengis.filter.Filter;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.FeatureContributionCalculator;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
@@ -53,9 +51,9 @@ public class BuildingStatsComputation {
 		}
 
 		logger.info("Remove duplicates");
-		removeDuplicates(fs, "ID");
+		fs = removeDuplicates(fs, "ID");
 		logger.info(fs.size() + " buildings");
-		removeDuplicates(fs, "ID");
+		fs = removeDuplicates(fs, "ID");
 		logger.info(fs.size() + " buildings");
 
 		logger.info("Define feature contribution calculator");
@@ -103,45 +101,23 @@ public class BuildingStatsComputation {
 	/**
 	 * Remove the duplicates, that is the features that have same attributes.
 	 * TODO move to featureutil
-	 * TODO idAtt = null to use getId()
 	 * 
 	 * @param fs
 	 * @param idAtt
 	 */
-	private static void removeDuplicates(Collection<Feature> fs, String idAtt) {
+	private static ArrayList<Feature> removeDuplicates(Collection<Feature> fs, String idAtt) {
 
-		//get ids of duplicates and number
-		HashMap<String, Integer> dic = FeatureUtil.checkIdentfier(fs, idAtt);
+		ArrayList<Feature> out = new ArrayList<Feature>();
+		HashSet<String> ids = new HashSet<String>();
 
-
-		for(Entry<String, Integer> e : dic.entrySet()) {
-			String id = e.getKey();
-			Integer nb = e.getValue();
-
-			if(nb<2) {
-				logger.warn("Unexpected number of duplicates - should be >=2. " + id + " -> " + nb);
-				continue;
-			}
-
-			//get all features with id
-			ArrayList<Feature> dup = new ArrayList<Feature>();
-			for(Feature f : fs)
-				if(id.equals(f.getAttribute(idAtt))) dup.add(f);
-
-			if(nb != dup.size()) {
-				logger.warn("Unexpected number of duplicates "+nb+"<>"+dup.size()+". id=" + id);
-				continue;
-			}
-
-			//keep one
-			Feature fUnique = dup.get(0);
-
-			//remove all
-			fs.removeAll(dup);
-
-			//add the unique
-			fs.add(fUnique);
+		for(Feature f : fs) {
+			String id = idAtt==null? f.getID() : f.getAttribute(idAtt).toString();
+			if(ids.contains(id)) continue;
+			ids.add(id);
+			out.add(f);
 		}
+
+		return out;
 	}
 
 }
