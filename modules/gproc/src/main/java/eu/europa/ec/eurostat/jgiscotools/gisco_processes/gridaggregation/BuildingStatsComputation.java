@@ -2,6 +2,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaggregation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +14,7 @@ import org.opengis.filter.Filter;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.FeatureContributionCalculator;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
@@ -49,7 +51,9 @@ public class BuildingStatsComputation {
 			logger.info(fs.size() + " buildings");
 		}
 
-		//TODO remove duplicates
+		logger.info("Remove duplicates");
+		removeDuplicates(fs, "ID");
+		logger.info(fs.size() + " buildings");
 
 		logger.info("Define feature contribution calculator");
 		FeatureContributionCalculator fcc = new FeatureContributionCalculator() {
@@ -91,6 +95,17 @@ public class BuildingStatsComputation {
 		CSV.save(ga.getStats(), "bu_res_area", basePath + "/building_residential_area.csv");
 
 		logger.info("End");
+	}
+
+	/**
+	 * Remove the duplicates, that is the features that have same attributes.
+	 * 
+	 * @param fs
+	 * @param idAtt
+	 */
+	private static void removeDuplicates(Collection<Feature> fs, String idAtt) {
+		HashMap<String, Integer> dup = FeatureUtil.checkIdentfier(fs, idAtt);
+		System.out.println(dup);
 	}
 
 }

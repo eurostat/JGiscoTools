@@ -15,6 +15,7 @@ import org.locationtech.jts.index.strtree.STRtree;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 
 /**
  * 
@@ -70,10 +71,7 @@ public class GridAggregator {
 	private synchronized STRtree getFeaturesInd() {
 		if(featuresInd == null) {
 			logger.info("Index features");
-			featuresInd = new STRtree();
-			for(Feature f : features)
-				if(f.getGeometry() != null)
-					featuresInd.insert(f.getGeometry().getEnvelopeInternal(), f);
+			featuresInd = FeatureUtil.getSTRtree(features);
 		}
 		return featuresInd;
 	}
