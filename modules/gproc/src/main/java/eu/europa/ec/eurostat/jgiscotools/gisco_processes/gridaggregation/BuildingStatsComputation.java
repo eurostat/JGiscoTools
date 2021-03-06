@@ -1,28 +1,38 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaggregation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
+import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.FeatureContributionCalculator;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 public class BuildingStatsComputation {
+	private static Logger logger = LogManager.getLogger(BuildingStatsComputation.class.getName());
 
+	//use: -Xms2G -Xmx12G
+	/** @param args 
+	 * @throws Exception **/
 	public static void main(String[] args) {
-		System.out.println("Start");
+		logger.info("Start");
 
-		String outPutFolder = "";  //TODO
+		String basePath = "E:/workspace/building_stats/test/";
 
-		System.out.println("Load cells...");
-		Collection<Feature> cells = null; //TODO
+		logger.info("Load cells...");
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grid_1km_surf_FRL0.gpkg",null);
+		logger.info(cells.size() + " cells");
 
-		System.out.println("Load buildings...");
-		Collection<Feature> fs = null; //TODO
+		logger.info("Load buildings...");
+		Collection<Feature> fs = GeoData.getFeatures(basePath + "bu_prov.gpkg",null);
 
-		System.out.println("Define feature contribution calculator");
+		logger.info("Define feature contribution calculator");
 		FeatureContributionCalculator fcc = new FeatureContributionCalculator() {
 			@Override
 			public double getContribution(Feature f, Geometry inter) {
@@ -31,18 +41,21 @@ public class BuildingStatsComputation {
 				// TODO get height/nb of floors
 				int nb = 1;
 				return nb*area;
-			}};
+			}
+		};
 
-			//compute aggregation
-			GridAggregator ga = new GridAggregator(cells, "GRD_ID", fs, fcc);
-			ga.compute(true);
+		//compute aggregation
+		GridAggregator ga = new GridAggregator(cells, "GRD_ID", fs, fcc);
+		ga.compute(true);
 
-			//TODO round stat values?
+		logger.info("Round values...");
+		for(Stat s : ga.getStats().stats)
+			s.value = (int) Math.round(s.value);
 
-			System.out.println("Save...");
-			CSV.save(ga.getStats(), "bu_res_area", outPutFolder + "/building_residential_area.csv");
+		logger.info("Save...");
+		CSV.save(ga.getStats(), "bu_res_area", basePath + "/building_residential_area.csv");
 
-			System.out.println("End");
+		logger.info("End");
 	}
 
 }
