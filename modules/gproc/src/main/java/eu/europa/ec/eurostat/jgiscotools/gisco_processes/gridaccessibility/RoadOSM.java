@@ -20,17 +20,17 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class RoadOSM {
 	static String basePath = "E:/workspace/basic_services_accessibility/";
 
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		Collection<Feature> fs = get(null);
 		System.out.println(fs.size());
-	}*/
+	}
 
 	public static Collection<Feature> get(String costAttribute) {
 		Filter fil = null;
 		try {
 			fil = CQL.toFilter("(NOT fclass='bridleway' AND NOT fclass='track_grade1' AND NOT fclass='track_grade2' AND NOT fclass='track_grade3' AND NOT fclass='track_grade4' AND NOT fclass='track_grade5')");
 		} catch (CQLException e) { e.printStackTrace(); }
-		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_osm_road_FR_SE/roads.gpkg", null, fil);
+		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_osm_road_FR_SE/main_roads.shp", null, fil);
 
 		if(costAttribute != null)
 			for(Feature f : fs) {
