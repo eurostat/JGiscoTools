@@ -40,9 +40,8 @@ public class BuildingStatsComputation {
 			public double getContribution(Feature f, Geometry inter) {
 				if(inter == null || inter.isEmpty()) return 0;
 				double area = inter.getArea();
-				String nbS = f.getAttribute("NB_ETAGES").toString();
-				int nb = 1;
-				nb = Integer.parseInt(nbS);
+				Integer nb = (Integer) f.getAttribute("NB_ETAGES");
+				System.out.println(nb);
 				// TODO use also USAGE1 + USAGE2 Résidentiel
 				return nb*area;
 			}
