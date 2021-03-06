@@ -41,18 +41,38 @@ public class BuildingStatsComputation {
 		try {
 			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='RÃ©sidentiel' OR USAGE2='RÃ©sidentiel'))");
 		} catch (CQLException e) { e.printStackTrace(); }
-		Collection<Feature> fs = GeoData.getFeatures(basePath + "04/buildings.gpkg", null, fil);
-		logger.info(fs.size() + " buildings");
+		Collection<Feature> fs = null;
+		for(String dep : new String[] {"04"/*,"05","06","84","83","13"*/}) {
+			logger.info("   "+dep);
+			if(fs == null) fs = GeoData.getFeatures(basePath + dep + "/buildings.gpkg", null, fil);
+			else fs.addAll( GeoData.getFeatures(basePath + dep + "/buildings.gpkg", null, fil) );
+			logger.info(fs.size() + " buildings");
+		}
 
 		logger.info("Define feature contribution calculator");
 		FeatureContributionCalculator fcc = new FeatureContributionCalculator() {
 			@Override
 			public double getContribution(Feature f, Geometry inter) {
 				if(inter == null || inter.isEmpty()) return 0;
+
+				//area
 				double area = inter.getArea();
+				String u1 = (String) f.getAttribute("USAGE1");
+				String u2 = (String) f.getAttribute("USAGE2");
+				if(u1==null && u2==null) {}
+				else if("RÃ©sidentiel".equals(u1) && u2==null) {}
+				else if("RÃ©sidentiel".equals(u1) && u2!=null) {area = area*0.7; }
+				else if(!"RÃ©sidentiel".equals(u1) && u2==null) { area = area*0.3; }
+				else if(!"RÃ©sidentiel".equals(u1) && "RÃ©sidentiel".equals(u2)) { area = area*0.3; }
+				else logger.warn(" "+u1+" "+u2);
+
 				Integer nb = (Integer) f.getAttribute("NB_ETAGES");
-				if(nb == null) return 0; //TODO check that ???
-				// TODO use also USAGE1 + USAGE2 Résidentiel
+				if(nb == null) {
+					//try to get it from height
+					Double h = (Double) f.getAttribute("HAUTEUR");
+					if(h==null) return area;
+					return area * h/3.5;
+				}
 				return nb*area;
 			}
 		};
