@@ -31,9 +31,32 @@ public class GridAggregator {
 	//grid id
 	private String cellIdAtt = "GRD_ID";
 
-	//the geo features
+	//the geo features from which to compute aggregates
 	private Collection<Feature> features = null;
 
+	//
+	private FeatureContributionCalculator fcc = dfcc;
+
+	public interface FeatureContributionCalculator { double getContribution(Feature f, Geometry inter); }
+	private static FeatureContributionCalculator dfcc = new FeatureContributionCalculator() {
+		@Override
+		public double getContribution(Feature f, Geometry inter) { return 1; }
+	};
+
+
+	//output stats
+	StatsHypercube stats = null;
+	public StatsHypercube getStats() { return stats; }
+
+	//the constructor
+	public GridAggregator(Collection<Feature> cells, String cellIdAtt, Collection<Feature> features, FeatureContributionCalculator fcc) {
+		this.cells = cells;
+		this.cellIdAtt = cellIdAtt;
+		this.features = features;
+		this.fcc = fcc;
+	}
+
+	//the spatial index of the input features
 	private STRtree featuresInd = null;
 	private STRtree getFeaturesInd() {
 		if(featuresInd == null) {
@@ -46,36 +69,13 @@ public class GridAggregator {
 		return featuresInd;
 	}
 
-
-	FeatureContributionCalculator fcc = dfcc;
-
-	public interface FeatureContributionCalculator { double getContribution(Feature f); }
-
-	//just count
-	public static FeatureContributionCalculator dfcc = new FeatureContributionCalculator() {
-		@Override
-		public double getContribution(Feature f) { return 1; }
-	};
-
-
-
-
-	//output stats
-	StatsHypercube sh = null;
-
-	//the constructor
-	public GridAggregator() {
-		//TODO
-	}
-
-
 	/**
 	 * @param parallel
 	 */
 	public void compute(boolean parallel) {
 
 		//initialise stats
-		sh = new StatsHypercube();
+		stats = new StatsHypercube();
 
 		logger.info("Compute grid aggregation...");
 		Stream<Feature> st = cells.stream(); if(parallel) st = st.parallel();
@@ -105,11 +105,11 @@ public class GridAggregator {
 					continue;
 
 				//compute feature contribution
-				s.value += fcc.getContribution(f);
+				s.value += fcc.getContribution(f, inter);
 			}
 
 			//store stat
-			sh.stats.add(s);
+			stats.stats.add(s);
 		});
 	}
 
