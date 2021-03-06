@@ -3,6 +3,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaggregation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,6 +55,8 @@ public class BuildingStatsComputation {
 		logger.info("Remove duplicates");
 		removeDuplicates(fs, "ID");
 		logger.info(fs.size() + " buildings");
+		removeDuplicates(fs, "ID");
+		logger.info(fs.size() + " buildings");
 
 		logger.info("Define feature contribution calculator");
 		FeatureContributionCalculator fcc = new FeatureContributionCalculator() {
@@ -99,13 +102,46 @@ public class BuildingStatsComputation {
 
 	/**
 	 * Remove the duplicates, that is the features that have same attributes.
+	 * TODO move to featureutil
+	 * TODO idAtt = null to use getId()
 	 * 
 	 * @param fs
 	 * @param idAtt
 	 */
 	private static void removeDuplicates(Collection<Feature> fs, String idAtt) {
-		HashMap<String, Integer> dup = FeatureUtil.checkIdentfier(fs, idAtt);
-		System.out.println(dup);
+
+		//get ids of duplicates and number
+		HashMap<String, Integer> dic = FeatureUtil.checkIdentfier(fs, idAtt);
+
+
+		for(Entry<String, Integer> e : dic.entrySet()) {
+			String id = e.getKey();
+			Integer nb = e.getValue();
+
+			if(nb<2) {
+				logger.warn("Unexpected number of duplicates - should be >=2. " + id + " -> " + nb);
+				continue;
+			}
+
+			//get all features with id
+			ArrayList<Feature> dup = new ArrayList<Feature>();
+			for(Feature f : fs)
+				if(id.equals(f.getAttribute(idAtt))) dup.add(f);
+
+			if(nb != dup.size()) {
+				logger.warn("Unexpected number of duplicates "+nb+"<>"+dup.size()+". id=" + id);
+				continue;
+			}
+
+			//keep one
+			Feature fUnique = dup.get(0);
+
+			//remove all
+			fs.removeAll(dup);
+
+			//add the unique
+			fs.add(fUnique);
+		}
 	}
 
 }
