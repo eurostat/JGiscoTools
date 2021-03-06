@@ -64,17 +64,17 @@ public class RoadBDTopo {
 	private static double getSpeedKmH(String nat, String imp) {
 		if("Autoroute".equals(nat)) return 110.0;
 		if("Quasi-autoroute".equals(nat)) return 100.0;
-		if("1".equals(imp)) return 90.0;
-		if("2".equals(imp)) return 80.0;
-		if("3".equals(imp)) return 70.0;
-		if("Bretelle".equals(nat)) return 70.0;
+		if("1".equals(imp)) return 85.0;
+		if("2".equals(imp)) return 75.0;
+		if("3".equals(imp)) return 75.0;
+		if("Bretelle".equals(nat)) return 65.0;
 		if("4".equals(imp)) return 60.0;
 		if("Route � 2 chauss�es".equals(nat)) return 60.0;
-		if("Route empierr�e".equals(nat)) return 35.0;
-		if("5".equals(imp)) return 50.0;
+		if("Route empierr�e".equals(nat)) return 20.0;
+		if("5".equals(imp)) return 35.0;
 		if("6".equals(imp)) return 5.0;
 
-		if("Route � 1 chauss�es".equals(nat)) return 60.0;
+		if("Route � 1 chauss�es".equals(nat)) return 50.0;
 		if("Piste cyclable".equals(nat)) return 5.0;
 
 		//System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
