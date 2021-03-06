@@ -45,6 +45,20 @@ public class GridAggregator {
 		return featuresInd;
 	}
 
+
+	FeatureContributionCalculator fcc = dfcc;
+
+	public interface FeatureContributionCalculator { double getContribution(Feature f); }
+
+	//just count
+	public static FeatureContributionCalculator dfcc = new FeatureContributionCalculator() {
+		@Override
+		public double getContribution(Feature f) { return 1; }
+	};
+
+
+
+
 	//output stats
 	StatsHypercube sh = null;
 
@@ -59,33 +73,33 @@ public class GridAggregator {
 		sh = new StatsHypercube();
 
 		//TODO parallel
-		for(Feature cell : cells) {
+		for(Feature c : cells) {
 
 			//get cell data
-			Geometry cellGeom = cell.getGeometry();
-			String cellId = cell.getAttribute(cellIdAtt).toString();
+			Geometry cGeom = c.getGeometry();
+			String cId = cellIdAtt==null? c.getID() : c.getAttribute(cellIdAtt).toString();
 
 			//prepare stat object for the cell
-			Stat s = new Stat(0, cellIdAtt);
-			s.dims.put(cellIdAtt, cellId);
-
-			//get features intersecting (using spatial index)
+			String cia = cellIdAtt==null? "id" : cellIdAtt;
+			Stat s = new Stat(0, cia);
+			s.dims.put(cia, cId);
 
 			//go through features within the cell (using spatial index)
-			List<?> fs_ = getFeaturesInd().query(cellGeom.getEnvelopeInternal());
+			List<?> fs_ = getFeaturesInd().query(cGeom.getEnvelopeInternal());
 			for(Object f_ : fs_) {
 				Feature f = (Feature)f_;
 				Geometry geom = f.getGeometry();
 
-				if(! geom.getEnvelopeInternal().intersects(cellGeom.getEnvelopeInternal()))
+				if(! geom.getEnvelopeInternal().intersects(cGeom.getEnvelopeInternal()))
 					continue;
 
 				//compute intersection
-				Geometry inter = cell.getGeometry().intersection(geom);
+				Geometry inter = c.getGeometry().intersection(geom);
 				if(inter.isEmpty())
 					continue;
 
-				//TODO compute feature contribution
+				//compute feature contribution
+				s.value += fcc.getContribution(f);
 			}
 
 			//store stat
