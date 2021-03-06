@@ -42,7 +42,7 @@ public class BuildingStatsComputation {
 			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='RÃ©sidentiel' OR USAGE2='RÃ©sidentiel'))");
 		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = null;
-		for(String dep : new String[] {"04","05","06","84","83","13"}) {
+		for(String dep : new String[] { "04", "05", "06", "84", "83", "13" }) {
 			logger.info("   "+dep);
 			if(fs == null) fs = GeoData.getFeatures(basePath + dep + "/buildings.gpkg", null, fil);
 			else fs.addAll( GeoData.getFeatures(basePath + dep + "/buildings.gpkg", null, fil) );
