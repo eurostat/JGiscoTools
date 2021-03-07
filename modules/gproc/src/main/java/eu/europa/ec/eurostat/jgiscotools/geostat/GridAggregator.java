@@ -25,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
  * @author Julien Gaffuri
  *
  */
-public class GridAggregator {
+public class GridAggregator<T> {
 	private static Logger logger = LogManager.getLogger(GridAggregator.class.getName());
 
 	//the grid cells
@@ -37,13 +37,8 @@ public class GridAggregator {
 	private Collection<Feature> features = null;
 
 	//
-	private FeatureContributionCalculator fcc = dfcc;
-
-	public interface FeatureContributionCalculator { double getContribution(Feature f, Geometry inter); }
-	private static FeatureContributionCalculator dfcc = new FeatureContributionCalculator() {
-		@Override
-		public double getContribution(Feature f, Geometry inter) { return 1; }
-	};
+	private MapOperation<T> map = null;
+	public interface MapOperation<T> { T map(Feature f, Geometry inter); }
 
 
 	//
@@ -58,13 +53,13 @@ public class GridAggregator {
 	 * @param cells The grid cells.
 	 * @param cellIdAtt The identifier of the grid cell. can be set to null if the getId() value should be used.
 	 * @param features The features to compute the statistics from.
-	 * @param fcc The function to compute the contribution of the feature to the final statistic.
+	 * @param map The function to compute the contribution of the feature to the final statistic.
 	 */
-	public GridAggregator(Collection<Feature> cells, String cellIdAtt, Collection<Feature> features, FeatureContributionCalculator fcc) {
+	public GridAggregator(Collection<Feature> cells, String cellIdAtt, Collection<Feature> features, MapOperation<T> map) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.features = features;
-		this.fcc = fcc;
+		this.map = map;
 	}
 
 	//the spatial index of the input features
@@ -96,7 +91,7 @@ public class GridAggregator {
 
 
 			//map
-			
+
 			//go through features within the cell (using spatial index)
 			List<?> fs_ = getFeaturesInd().query(cGeom.getEnvelopeInternal());
 			ArrayList<Object> mapData = new ArrayList<Object>();
@@ -113,11 +108,10 @@ public class GridAggregator {
 					continue;
 
 				//map
-				//TODO rename
-				Object map = fcc.getContribution(f, inter);
-				mapData.add(map);
+				T data = map.map(f, inter);
+				mapData.add(data);
 			}
-			
+
 			//reduce
 
 			//prepare stat object for the cell

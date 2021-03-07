@@ -15,7 +15,7 @@ import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
-import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.FeatureContributionCalculator;
+import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 public class BuildingStatsComputation {
@@ -55,10 +55,10 @@ public class BuildingStatsComputation {
 		logger.info(fs.size() + " buildings");
 
 		logger.info("Define feature contribution calculator");
-		FeatureContributionCalculator fcc = new FeatureContributionCalculator() {
+		MapOperation<Double> fcc = new MapOperation<>() {
 			@Override
-			public double getContribution(Feature f, Geometry inter) {
-				if(inter == null || inter.isEmpty()) return 0;
+			public Double map(Feature f, Geometry inter) {
+				if(inter == null || inter.isEmpty()) return 0.0;
 
 				//area
 				double area = inter.getArea();
@@ -83,7 +83,7 @@ public class BuildingStatsComputation {
 		};
 
 		//compute aggregation
-		GridAggregator ga = new GridAggregator(cells, "GRD_ID", fs, fcc);
+		GridAggregator<Double> ga = new GridAggregator<>(cells, "GRD_ID", fs, fcc);
 		ga.compute(true);
 
 		logger.info("Round values...");
