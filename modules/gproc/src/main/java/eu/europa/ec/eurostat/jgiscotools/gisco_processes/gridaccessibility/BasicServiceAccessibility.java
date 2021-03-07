@@ -92,56 +92,7 @@ public class BasicServiceAccessibility {
 			GeoData.save(ag.getRoutes(), outPath + "routes_"+(cnt==null?"":cnt+"_")+resKM+"km"+"_"+c.label+".gpkg", crs, true);
 
 		}
-
 		logger.info("End");
 	}
-
-
-
-
-	//TODO move to graph builder
-	public Collection<Feature> decomposeSectionsRoutable(Collection<Feature> sections) {
-
-		//build line merger
-		LineMerger lm = new LineMerger();
-		for(Feature f : sections)
-			if(f.getGeometry()!=null && !f.getGeometry().isEmpty())
-				lm.add(f.getGeometry());
-
-		//run linemerger
-		Collection<?> ls_ = lm.getMergedLineStrings();
-		lm = null;
-
-		//index lines
-		STRtree index = new STRtree();
-		for(Object ls : ls_) index.insert(((Geometry)ls).getEnvelopeInternal(), ls);
-		ls_.clear(); ls_ = null;
-
-		//build output features
-		Collection<Feature> out = new ArrayList<>();
-		for(Feature f : sections) {
-			Geometry g = f.getGeometry();
-			if(g==null || g.isEmpty()) continue;
-
-			//get lines nearby feature geometry
-			List<?> ls = index.query(g.getEnvelopeInternal());
-			for(Object line_ : ls) {
-				Geometry line = (Geometry)line_;
-				if(! g.getEnvelopeInternal().intersects(line.getEnvelopeInternal())) continue;
-				if(! g.contains(line)) continue;
-
-				//make new feature
-				Feature f2 = new Feature();
-				f2.setGeometry(line);
-				f2.getAttributes().putAll(f.getAttributes());
-				out.add(f2);
-			}
-		}
-
-		return out;
-	}
-
-
-
 
 }
