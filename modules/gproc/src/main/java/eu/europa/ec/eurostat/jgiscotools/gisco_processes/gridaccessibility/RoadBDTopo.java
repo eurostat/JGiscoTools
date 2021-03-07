@@ -74,12 +74,15 @@ public class RoadBDTopo {
 		if("6".equals(imp)) return 5.0;
 
 		if("Route � 1 chauss�es".equals(nat)) return 50.0;
+		if("Route � 1 chauss�e".equals(nat)) return 50.0;
 		if("Piste cyclable".equals(nat)) return 5.0;
 
 		if("Sentier".equals(nat)) return 5.0;
 		if("Chemin".equals(nat)) return 15.0;
 		if("Piste cyclable".equals(nat)) return 15.0;
 		if("Escalier".equals(nat)) return 5.0;
+
+		if("NC".equals(imp)) return 40.0;
 
 		System.err.println("Could not find speed for BD TOPO road section " + nat + " " + imp);
 		return 60.0;

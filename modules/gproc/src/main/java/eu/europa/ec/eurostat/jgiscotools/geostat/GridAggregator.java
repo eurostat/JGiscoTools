@@ -82,7 +82,7 @@ public class GridAggregator {
 	 */
 	public void compute(boolean parallel) {
 
-		//initialise stats
+		//initialise output statistics
 		String cia = cellIdAtt==null? "id" : cellIdAtt;
 		stats = new StatsHypercube(cia);
 
