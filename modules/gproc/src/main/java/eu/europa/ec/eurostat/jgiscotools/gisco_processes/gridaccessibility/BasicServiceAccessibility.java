@@ -5,11 +5,15 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.index.strtree.STRtree;
+import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -91,5 +95,53 @@ public class BasicServiceAccessibility {
 
 		logger.info("End");
 	}
+
+
+
+
+	//TODO move to graph builder
+	public Collection<Feature> decomposeSectionsRoutable(Collection<Feature> sections) {
+
+		//build line merger
+		LineMerger lm = new LineMerger();
+		for(Feature f : sections)
+			if(f.getGeometry()!=null && !f.getGeometry().isEmpty())
+				lm.add(f.getGeometry());
+
+		//run linemerger
+		Collection<?> ls_ = lm.getMergedLineStrings();
+		lm = null;
+
+		//index lines
+		STRtree index = new STRtree();
+		for(Object ls : ls_) index.insert(((Geometry)ls).getEnvelopeInternal(), ls);
+		ls_.clear(); ls_ = null;
+
+		//build output features
+		Collection<Feature> out = new ArrayList<>();
+		for(Feature f : sections) {
+			Geometry g = f.getGeometry();
+			if(g==null || g.isEmpty()) continue;
+
+			//get lines nearby feature geometry
+			List<?> ls = index.query(g.getEnvelopeInternal());
+			for(Object line_ : ls) {
+				Geometry line = (Geometry)line_;
+				if(! g.getEnvelopeInternal().intersects(line.getEnvelopeInternal())) continue;
+				if(! g.contains(line)) continue;
+
+				//make new feature
+				Feature f2 = new Feature();
+				f2.setGeometry(line);
+				f2.getAttributes().putAll(f.getAttributes());
+				out.add(f2);
+			}
+		}
+
+		return out;
+	}
+
+
+
 
 }

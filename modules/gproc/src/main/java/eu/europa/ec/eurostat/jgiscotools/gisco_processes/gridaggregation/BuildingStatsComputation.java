@@ -64,23 +64,31 @@ public class BuildingStatsComputation {
 
 				//area
 				double area = inter.getArea();
+				if(area == 0 ) return 0.0;
+
+				//nb floors
+				Integer nb = (Integer) f.getAttribute("NB_ETAGES");
+				if(nb == null) {
+					//compute floors nb from height
+					Double h = (Double) f.getAttribute("HAUTEUR");
+					if(h==null) nb = 1;
+					else nb = Math.max( (int)(h/3.5), 1);
+				}
+
+				//type contribution
+				//TODO extract
+				double r = 1;
 				String u1 = (String) f.getAttribute("USAGE1");
 				String u2 = (String) f.getAttribute("USAGE2");
 				if(u1==null && u2==null) {}
 				else if("RÃ©sidentiel".equals(u1) && u2==null) {}
-				else if("RÃ©sidentiel".equals(u1) && u2!=null) {area = area*0.7; }
-				else if(!"RÃ©sidentiel".equals(u1) && u2==null) { area = area*0.3; }
-				else if(!"RÃ©sidentiel".equals(u1) && "RÃ©sidentiel".equals(u2)) { area = area*0.3; }
+				else if("RÃ©sidentiel".equals(u1) && u2!=null) { r=0.7; }
+				else if(!"RÃ©sidentiel".equals(u1) && u2==null) { r=0.3; }
+				else if(!"RÃ©sidentiel".equals(u1) && "RÃ©sidentiel".equals(u2)) { r=0.3; }
 				else logger.warn(" "+u1+" "+u2);
 
-				Integer nb = (Integer) f.getAttribute("NB_ETAGES");
-				if(nb == null) {
-					//try to get it from height
-					Double h = (Double) f.getAttribute("HAUTEUR");
-					if(h==null) return area;
-					return area * h/3.5;
-				}
-				return nb*area;
+				//
+				return nb*area*r;
 			}
 		};
 
