@@ -16,6 +16,7 @@ import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
+import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.ReduceOperation;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 public class BuildingStatsComputation {
@@ -54,8 +55,8 @@ public class BuildingStatsComputation {
 		fs = removeDuplicates(fs, "ID");
 		logger.info(fs.size() + " buildings");
 
-		logger.info("Define feature contribution calculator");
-		MapOperation<Double> fcc = new MapOperation<>() {
+		logger.info("Define map operation");
+		MapOperation<Double> mapOp = new MapOperation<>() {
 			@Override
 			public Double map(Feature f, Geometry inter) {
 				if(inter == null || inter.isEmpty()) return 0.0;
@@ -82,19 +83,19 @@ public class BuildingStatsComputation {
 			}
 		};
 
+		logger.info("Define reduce operation");
+		ReduceOperation<Double> reduceOp = new ReduceOperation<>() {
+			@Override
+			public Stat reduce(String cellIdAtt, String cellId, Collection<Double> data) {
+				Stat s = new Stat(0, cellIdAtt, cellId);
+				for(Double map : data) s.value += map;
+				return s;
+			}
+		};
 
-//TODO
-		//prepare stat object for the cell
-		//TODO extract that in reducer that returns stat object
-		/*Stat s = new Stat(0, cia, cId);
-		for(Object map : mapData) {
-			//add feature contribution
-			s.value += (Double)map;
-		}*/
 
-		
 		//compute aggregation
-		GridAggregator<Double> ga = new GridAggregator<>(cells, "GRD_ID", fs, fcc);
+		GridAggregator<Double> ga = new GridAggregator<>(cells, "GRD_ID", fs, mapOp, reduceOp);
 		ga.compute(true);
 
 		logger.info("Round values...");
