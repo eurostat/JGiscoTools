@@ -55,6 +55,7 @@ public class BuildingStatsComputation {
 		fs = removeDuplicates(fs, "ID");
 		logger.info(fs.size() + " buildings");
 
+		//TODO compute more info - industrial/commercial, etc.
 		logger.info("Define map operation");
 		MapOperation<Double> mapOp = new MapOperation<>() {
 			@Override
