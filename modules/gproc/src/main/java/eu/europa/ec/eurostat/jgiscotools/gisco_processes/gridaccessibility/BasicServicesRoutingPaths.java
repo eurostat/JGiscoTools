@@ -55,7 +55,7 @@ public class BasicServicesRoutingPaths {
 		logger.info(cells.size() + " cells");
 
 
-		for(String rnw : new String[] { "osm"/*, "nmca", "tomtom"*/ } ) {
+		for(String rnw : new String[] { "osm", "nmca", "tomtom" } ) {
 
 			logger.info("Load network sections " + rnw + "...");
 			Collection<Feature> networkSections =
@@ -64,6 +64,13 @@ public class BasicServicesRoutingPaths {
 									: rnw.equals("tomtom") ? RoadTomtom.get("cost")
 											: null;
 			logger.info(networkSections.size() + " sections loaded.");
+
+			logger.info("Make routable");
+			networkSections = decomposeSectionsRoutable(networkSections);
+			logger.info(networkSections.size() + " sections.");
+			GeoData.save(networkSections, outPath + "test_routable_networks/"+rnw+".gpkg", crs);
+
+			if(true) continue;
 
 			logger.info("Build accessibility...");
 			AccessibilityRoutingPaths ag = new AccessibilityRoutingPaths(cells, "GRD_ID", 1000*resKM, "id", networkSections, "cost", 3, 50000);
@@ -113,7 +120,7 @@ public class BasicServicesRoutingPaths {
 
 
 	//TODO move to graph builder
-	public Collection<Feature> decomposeSectionsRoutable(Collection<Feature> sections) {
+	public static Collection<Feature> decomposeSectionsRoutable(Collection<Feature> sections) {
 
 		//build line merger
 		LineMerger lm = new LineMerger();
