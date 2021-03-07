@@ -49,9 +49,6 @@ public class RoadOSM {
 
 	private static double getSpeedKmH(String maxspeed, String fclass) {
 
-		//TODO check that
-		//TODO run integrate ?
-		
 		if(!"".equals(maxspeed)) {
 			double ms = Double.parseDouble(maxspeed);
 			if(ms>0) return ms;

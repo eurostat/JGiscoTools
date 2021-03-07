@@ -82,6 +82,17 @@ public class BuildingStatsComputation {
 			}
 		};
 
+
+//TODO
+		//prepare stat object for the cell
+		//TODO extract that in reducer that returns stat object
+		/*Stat s = new Stat(0, cia, cId);
+		for(Object map : mapData) {
+			//add feature contribution
+			s.value += (Double)map;
+		}*/
+
+		
 		//compute aggregation
 		GridAggregator<Double> ga = new GridAggregator<>(cells, "GRD_ID", fs, fcc);
 		ga.compute(true);

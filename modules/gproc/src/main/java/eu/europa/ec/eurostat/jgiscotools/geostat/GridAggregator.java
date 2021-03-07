@@ -37,9 +37,12 @@ public class GridAggregator<T> {
 	private Collection<Feature> features = null;
 
 	//
-	private MapOperation<T> map = null;
+	private MapOperation<T> mapOp = null;
 	public interface MapOperation<T> { T map(Feature f, Geometry inter); }
 
+	//
+	private ReduceOperation<T> reduceOp = null;
+	public interface ReduceOperation<T> { Stat reduce(String cellIdAtt, String cellId, Collection<T> data); }
 
 	//
 	/** output statistics. */
@@ -53,13 +56,15 @@ public class GridAggregator<T> {
 	 * @param cells The grid cells.
 	 * @param cellIdAtt The identifier of the grid cell. can be set to null if the getId() value should be used.
 	 * @param features The features to compute the statistics from.
-	 * @param map The function to compute the contribution of the feature to the final statistic.
+	 * @param mapOp The function to compute the contribution of the feature to the final statistic.
+	 * @param reduceOp The function to aggregate the contribution of the feature into a stat.
 	 */
-	public GridAggregator(Collection<Feature> cells, String cellIdAtt, Collection<Feature> features, MapOperation<T> map) {
+	public GridAggregator(Collection<Feature> cells, String cellIdAtt, Collection<Feature> features, MapOperation<T> mapOp, ReduceOperation<T> reduceOp) {
 		this.cells = cells;
 		this.cellIdAtt = cellIdAtt;
 		this.features = features;
-		this.map = map;
+		this.mapOp = mapOp;
+		this.reduceOp = reduceOp;
 	}
 
 	//the spatial index of the input features
@@ -91,10 +96,9 @@ public class GridAggregator<T> {
 
 
 			//map
-
 			//go through features within the cell (using spatial index)
 			List<?> fs_ = getFeaturesInd().query(cGeom.getEnvelopeInternal());
-			ArrayList<Object> mapData = new ArrayList<Object>();
+			ArrayList<T> mapData = new ArrayList<>();
 			for(Object f_ : fs_) {
 				Feature f = (Feature)f_;
 				Geometry geom = f.getGeometry();
@@ -108,19 +112,12 @@ public class GridAggregator<T> {
 					continue;
 
 				//map
-				T data = map.map(f, inter);
+				T data = mapOp.map(f, inter);
 				mapData.add(data);
 			}
 
 			//reduce
-
-			//prepare stat object for the cell
-			//TODO extract that in reducer that returns stat object
-			Stat s = new Stat(0, cia, cId);
-			for(Object map : mapData) {
-				//add feature contribution
-				s.value += (Double)map;
-			}
+			Stat s = reduceOp.reduce(cia, cId, mapData);
 
 			//store stat
 			stats.stats.add(s);
