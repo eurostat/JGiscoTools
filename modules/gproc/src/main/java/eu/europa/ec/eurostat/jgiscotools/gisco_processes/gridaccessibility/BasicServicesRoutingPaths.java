@@ -54,7 +54,7 @@ public class BasicServicesRoutingPaths {
 
 		for(String rnw : new String[] { "osm", "nmca", "tomtom" } ) {
 
-			logger.info("Load network sections...");
+			logger.info("Load network sections " + rnw + "...");
 			Collection<Feature> networkSections =
 					rnw.equals("nmca") ? RoadBDTopo.get("cost")
 							: rnw.equals("osm") ? RoadOSM.get("cost")
