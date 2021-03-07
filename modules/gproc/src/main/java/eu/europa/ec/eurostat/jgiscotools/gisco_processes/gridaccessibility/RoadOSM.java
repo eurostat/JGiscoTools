@@ -27,9 +27,9 @@ public class RoadOSM {
 
 	public static Collection<Feature> get(String costAttribute) {
 		Filter fil = null;
-		try {
-			fil = CQL.toFilter("(NOT fclass='bridleway' AND NOT fclass='track_grade1' AND NOT fclass='track_grade2' AND NOT fclass='track_grade3' AND NOT fclass='track_grade4' AND NOT fclass='track_grade5')");
-		} catch (CQLException e) { e.printStackTrace(); }
+		/*try {
+			fil = CQL.toFilter("(NOT fclass='bridleway')");
+		} catch (CQLException e) { e.printStackTrace(); }*/
 		Collection<Feature> fs = GeoData.getFeatures(basePath + "input_data/test_osm_road_FR_SE/road_integrate2.shp", null, fil);
 
 		if(costAttribute != null)
@@ -71,11 +71,19 @@ public class RoadOSM {
 		if("residential".equals(fclass)) return 35.0;
 		if("living_street".equals(fclass)) return 20.0;
 		if("pedestrian".equals(fclass)) return 5.0;
-		if("track".equals(fclass)) return 15.0;
+		if("track".equals(fclass)) return 10.0;
 		if("cycleway".equals(fclass)) return 10.0;
 		if("footway".equals(fclass)) return 5.0;
 		if("path".equals(fclass)) return 5.0;
 		if("steps".equals(fclass)) return 5.0;
+
+		if("track_grade1".equals(fclass)) return 5.0;
+		if("track_grade2".equals(fclass)) return 5.0;
+		if("track_grade3".equals(fclass)) return 5.0;
+		if("track_grade4".equals(fclass)) return 5.0;
+		if("track_grade5".equals(fclass)) return 5.0;
+
+		if("bridleway".equals(fclass)) return 5.0;
 
 		if("unknown".equals(fclass)) return 20.0;
 

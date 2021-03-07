@@ -52,7 +52,7 @@ public class BasicServicesRoutingPaths {
 		logger.info(cells.size() + " cells");
 
 
-		for(String rnw : new String[] { "osm", "nmca", "tomtom" } ) {
+		for(String rnw : new String[] { "osm"/*, "nmca", "tomtom"*/ } ) {
 
 			logger.info("Load network sections " + rnw + "...");
 			Collection<Feature> networkSections =

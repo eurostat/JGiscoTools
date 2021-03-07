@@ -250,8 +250,8 @@ public class AccessibilityRoutingPaths {
 					double duration = pf.getCost(dN);
 
 					//store path
-					//Feature f = Routing.toFeature(p);
 					Feature f = new Feature();
+					//f.setGeometry(JTSGeomUtil.toMulti( Routing.toFeature(p).getGeometry() ));
 					f.setGeometry(JTSGeomUtil.toMulti( JTSGeomUtil.createLineString(oC.x, oC.y, dC.x, dC.y) ));
 					String poiId = poi.getAttribute(poiIdAtt).toString();
 					f.setID(cellId + "_" + poiId);
