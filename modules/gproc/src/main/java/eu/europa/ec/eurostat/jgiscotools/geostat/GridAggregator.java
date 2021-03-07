@@ -3,6 +3,7 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.geostat;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -93,11 +94,12 @@ public class GridAggregator {
 			Geometry cGeom = c.getGeometry();
 			String cId = cellIdAtt==null? c.getID() : c.getAttribute(cellIdAtt).toString();
 
-			//prepare stat object for the cell
-			Stat s = new Stat(0, cia, cId);
 
+			//map
+			
 			//go through features within the cell (using spatial index)
 			List<?> fs_ = getFeaturesInd().query(cGeom.getEnvelopeInternal());
+			ArrayList<Object> mapData = new ArrayList<Object>();
 			for(Object f_ : fs_) {
 				Feature f = (Feature)f_;
 				Geometry geom = f.getGeometry();
@@ -110,8 +112,20 @@ public class GridAggregator {
 				if(inter.isEmpty())
 					continue;
 
+				//map
+				//TODO rename
+				Object map = fcc.getContribution(f, inter);
+				mapData.add(map);
+			}
+			
+			//reduce
+
+			//prepare stat object for the cell
+			//TODO extract that in reducer that returns stat object
+			Stat s = new Stat(0, cia, cId);
+			for(Object map : mapData) {
 				//add feature contribution
-				s.value += fcc.getContribution(f, inter);
+				s.value += (Double)map;
 			}
 
 			//store stat
