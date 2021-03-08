@@ -110,67 +110,57 @@ public class BuildingStatsComputation {
 				}
 
 				//add stats
-				out.add( new Stat(v[0], cellIdAtt, cellId, "building_type", "res") );
-				out.add( new Stat(v[1], cellIdAtt, cellId, "building_type", "agri") );
-				out.add( new Stat(v[2], cellIdAtt, cellId, "building_type", "indus") );
-				out.add( new Stat(v[3], cellIdAtt, cellId, "building_type", "comm_serv") );
+				out.add( new Stat(v[0], cellIdAtt, cellId, "bu_stat", "res") );
+				out.add( new Stat(v[1], cellIdAtt, cellId, "bu_stat", "agri") );
+				out.add( new Stat(v[2], cellIdAtt, cellId, "bu_stat", "indus") );
+				out.add( new Stat(v[3], cellIdAtt, cellId, "bu_stat", "comm_serv") );
 
 				//add total
 				double total = v[0]+v[1]+v[2]+v[3];
-				out.add( new Stat(total, cellIdAtt, cellId, "building_type", "total") );
+				out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
+				double totalActivity = v[1]+v[2]+v[3];
+				out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
 
 				//add percentages
-				out.add( new Stat(100*v[0]/total, cellIdAtt, cellId, "building_type", "p_res") );
-				out.add( new Stat(100*v[1]/total, cellIdAtt, cellId, "building_type", "p_agri") );
-				out.add( new Stat(100*v[2]/total, cellIdAtt, cellId, "building_type", "p_indus") );
-				out.add( new Stat(100*v[3]/total, cellIdAtt, cellId, "building_type", "p_comm_serv") );
+				out.add( new Stat(100*v[0]/total, cellIdAtt, cellId, "bu_stat", "p_res") );
+				out.add( new Stat(100*v[1]/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
+				out.add( new Stat(100*v[2]/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
+				out.add( new Stat(100*v[3]/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
+				out.add( new Stat(100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
 
-				//typology
-				int typology = getBuildingTypology(v[0]/total, v[1]/total, v[2]/total, v[3]/total);
-				out.add( new Stat(typology, cellIdAtt, cellId, "building_type", "bulding_typology") );
+				//typologies
+				int typResAct = getBuildingTypologyResAct(v[0]/total, totalActivity/total);
+				out.add( new Stat(typResAct, cellIdAtt, cellId, "bu_stat", "typology_res_act") );
+				int typAct = getBuildingTypologyAct(v[1]/totalActivity, v[2]/totalActivity, v[3]/totalActivity );
+				out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );
 
 				return out;
 			}
 
-			private int getBuildingTypology(double pRes, double pAgri, double pIndus, double pCommServ) {
-				double th = 0;
+			//typology res/activity
+			private int getBuildingTypologyResAct(double pRes, double pAct) {
+				if(pRes==0 && pAct==0) return 0;
+				if(pRes>0.75) return 9;
+				if(pAct>0.75) return 8;
+				return 98;
+			}
 
-				//pure
-				th = 0.7;
-				if(pRes >= th) return 9;
-				if(pAgri >= th) return 1;
-				if(pIndus >= th) return 2;
-				if(pCommServ >= th) return 3;
+			//typology res/activity
+			private int getBuildingTypologyAct(double pAgri, double pIndus, double pComServ) {
+				if(pAgri==0 && pIndus==0 && pComServ==0) return 0;
 
-				//quadri
-				th = 0.2;
-				if(pRes >= th && pAgri >= th && pIndus >= th && pCommServ >= th)
-					return 9123;
+				if(pAgri>0.7) return 1;
+				if(pIndus>0.7) return 2;
+				if(pComServ>0.7) return 3;
 
-				//bi
-				th = 0.35;
-				if(pRes >= th && pAgri >= th)
-					return 91;
-				if(pRes >= th && pIndus >= th)
-					return 92;
-				if(pRes >= th && pCommServ >= th)
-					return 93;
-				if(pAgri >= th && pIndus >= th)
-					return 12;
-				if(pAgri >= th && pCommServ >= th)
-					return 13;
-				if(pIndus >= th && pCommServ >= th)
-					return 23;
+				if(pAgri>0.25 && pIndus>0.25 && pComServ>0.25) return 123;
 
-				//tri
-				double min = Math.min(pRes, Math.min(pAgri, Math.min(pIndus, pCommServ)));
-				if (min == pRes) return 123;
-				if (min == pAgri) return 923;
-				if (min == pIndus) return 913;
-				if (min == pCommServ) return 912;
+				double min = Math.min(pAgri, Math.min(pIndus, pComServ));
+				if(min == pAgri) return 23;
+				if(min == pIndus) return 13;
+				if(min == pComServ) return 12;
 
-				logger.warn("Unhandled case for getBuildingTypology");
-				return 0;
+				return -999;
 			}
 		};
 
@@ -184,7 +174,8 @@ public class BuildingStatsComputation {
 			s.value = (int) Math.round(s.value);
 
 		logger.info("Save...");
-		CSV.saveMultiValues(ga.getStats(), basePath + "/building_area.csv", "building_type");
+		//TODO order columns
+		CSV.saveMultiValues(ga.getStats(), basePath + "/building_area.csv", "bu_stat");
 
 		logger.info("End");
 	}
