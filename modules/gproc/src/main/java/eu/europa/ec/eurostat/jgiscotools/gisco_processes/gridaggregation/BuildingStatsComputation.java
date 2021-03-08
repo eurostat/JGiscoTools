@@ -140,8 +140,8 @@ public class BuildingStatsComputation {
 			//typology res/activity
 			private int getBuildingTypologyResAct(double pRes, double pAct) {
 				if(pRes==0.0 && pAct==0.0) return 0;
-				if(pRes>0.75) return 9;
-				if(pAct>0.75) return 8;
+				if(pRes>0.7) return 9;
+				if(pAct>0.7) return 8;
 				return 98;
 			}
 
@@ -149,9 +149,9 @@ public class BuildingStatsComputation {
 			private int getBuildingTypologyAct(double pAgri, double pIndus, double pComServ) {
 				if(pAgri==0.0 && pIndus==0.0 && pComServ==0.0) return 0;
 
-				if(pAgri>0.7) return 1;
-				if(pIndus>0.7) return 2;
-				if(pComServ>0.7) return 3;
+				if(pAgri>0.65) return 1;
+				if(pIndus>0.65) return 2;
+				if(pComServ>0.65) return 3;
 
 				if(pAgri>0.25 && pIndus>0.25 && pComServ>0.25) return 123;
 
