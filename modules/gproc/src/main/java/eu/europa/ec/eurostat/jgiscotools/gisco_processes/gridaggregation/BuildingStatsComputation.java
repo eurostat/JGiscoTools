@@ -133,15 +133,43 @@ public class BuildingStatsComputation {
 			}
 
 			private int getBuildingTypology(double pRes, double pAgri, double pIndus, double pCommServ) {
-				//pure
-				if(pRes >= 0.7) return 9;
-				if(pRes >= 0.7) return 1;
-				if(pRes >= 0.7) return 2;
-				if(pRes >= 0.7) return 3;
-				//if>0.7
-				//if all >0.25
-				//2 largest
+				double th = 0;
 
+				//pure
+				th = 0.7;
+				if(pRes >= th) return 9;
+				if(pAgri >= th) return 1;
+				if(pIndus >= th) return 2;
+				if(pCommServ >= th) return 3;
+
+				//quadri
+				th = 0.2;
+				if(pRes >= th && pAgri >= th && pIndus >= th && pCommServ >= th)
+					return 9123;
+
+				//bi
+				th = 0.35;
+				if(pRes >= th && pAgri >= th)
+					return 91;
+				if(pRes >= th && pIndus >= th)
+					return 92;
+				if(pRes >= th && pCommServ >= th)
+					return 93;
+				if(pAgri >= th && pIndus >= th)
+					return 12;
+				if(pAgri >= th && pCommServ >= th)
+					return 13;
+				if(pIndus >= th && pCommServ >= th)
+					return 23;
+
+				//tri
+				double min = Math.min(pRes, Math.min(pAgri, Math.min(pIndus, pCommServ)));
+				if (min == pRes) return 123;
+				if (min == pAgri) return 923;
+				if (min == pIndus) return 913;
+				if (min == pCommServ) return 912;
+
+				logger.warn("Unhandled case for getBuildingTypology");
 				return 0;
 			}
 		};
