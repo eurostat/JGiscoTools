@@ -101,13 +101,33 @@ public class BuildingStatsComputation {
 			@Override
 			public Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<double[]> data) {
 				Collection<Stat> out = new ArrayList<>();
+
+				//compute sums, for each building type
+				double[] v = new double[4];
 				for(int i=0; i<4; i++) {
-					String type = i==0? "res" : i==1? "agri" : i==2? "indus" : "comm_serv";
-					Stat s = new Stat(0, cellIdAtt, cellId, "building_type", type);
-					for(double[] map : data)
-						s.value += map[i];
-					out.add(s);
+					v[i] = 0;
+					for(double[] map : data) v[i] += map[i];
 				}
+
+				//add stats
+				out.add( new Stat(v[0], cellIdAtt, cellId, "building_type", "res") );
+				out.add( new Stat(v[1], cellIdAtt, cellId, "building_type", "agri") );
+				out.add( new Stat(v[2], cellIdAtt, cellId, "building_type", "indus") );
+				out.add( new Stat(v[3], cellIdAtt, cellId, "building_type", "comm_serv") );
+
+				//add total
+				double total = v[0]+v[1]+v[2]+v[3];
+				out.add( new Stat(total, cellIdAtt, cellId, "building_type", "total") );
+
+				//add percentages
+				out.add( new Stat(100*v[0]/total, cellIdAtt, cellId, "building_type", "p_res") );
+				out.add( new Stat(100*v[1]/total, cellIdAtt, cellId, "building_type", "p_agri") );
+				out.add( new Stat(100*v[2]/total, cellIdAtt, cellId, "building_type", "p_indus") );
+				out.add( new Stat(100*v[3]/total, cellIdAtt, cellId, "building_type", "p_comm_serv") );
+
+				//typology
+				//TODO
+
 				return out;
 			}
 		};
