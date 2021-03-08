@@ -129,9 +129,9 @@ public class BuildingStatsComputation {
 				out.add( new Stat(100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
 
 				//typologies
-				int typResAct = getBuildingTypologyResAct(v[0]/total, totalActivity/total);
+				int typResAct = total==0.0? 0 : getBuildingTypologyResAct(v[0]/total, totalActivity/total);
 				out.add( new Stat(typResAct, cellIdAtt, cellId, "bu_stat", "typology_res_act") );
-				int typAct = getBuildingTypologyAct(v[1]/totalActivity, v[2]/totalActivity, v[3]/totalActivity );
+				int typAct = totalActivity==0.0? 0 : getBuildingTypologyAct(v[1]/totalActivity, v[2]/totalActivity, v[3]/totalActivity );
 				out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );
 
 				return out;
@@ -139,7 +139,7 @@ public class BuildingStatsComputation {
 
 			//typology res/activity
 			private int getBuildingTypologyResAct(double pRes, double pAct) {
-				if(pRes==0 && pAct==0) return 0;
+				if(pRes==0.0 && pAct==0.0) return 0;
 				if(pRes>0.75) return 9;
 				if(pAct>0.75) return 8;
 				return 98;
@@ -147,7 +147,7 @@ public class BuildingStatsComputation {
 
 			//typology res/activity
 			private int getBuildingTypologyAct(double pAgri, double pIndus, double pComServ) {
-				if(pAgri==0 && pIndus==0 && pComServ==0) return 0;
+				if(pAgri==0.0 && pIndus==0.0 && pComServ==0.0) return 0;
 
 				if(pAgri>0.7) return 1;
 				if(pIndus>0.7) return 2;
