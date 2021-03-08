@@ -122,10 +122,20 @@ public class BuildingStatsComputation {
 			s.value = (int) Math.round(s.value);
 
 		logger.info("Save...");
-		CSV.save(ga.getStats(), "bu_res_area", basePath + "/building_residential_area.csv");
+		CSV.saveMultiValues(ga.getStats(), basePath + "/building_area.csv", "building_type");
 
 		logger.info("End");
 	}
+
+	private static double getBDTopoTypeRatio(String type, String u1, String u2) {
+		if(type.equals(u1) && u2==null) return 1;
+		if(type.equals(u1) && u2!=null) return 0.7;
+		if(type.equals(u2)) return 0.3;
+		return 0;
+	}	
+
+
+
 
 
 	/**
@@ -150,12 +160,4 @@ public class BuildingStatsComputation {
 		return out;
 	}
 
-
-	private static double getBDTopoTypeRatio(String type, String u1, String u2) {
-		if(type.equals(u1) && u2==null) return 1;
-		if(type.equals(u1) && u2!=null) return 0.7;
-		if(!type.equals(u1) && type.equals(u2)) return 0.3;
-		logger.warn(" "+u1+" "+u2);
-		return 0;
-	}
 }
