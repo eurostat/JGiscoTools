@@ -42,7 +42,7 @@ public class GridAggregator<T> {
 
 	//
 	private ReduceOperation<T> reduceOp = null;
-	public interface ReduceOperation<T> { Stat reduce(String cellIdAtt, String cellId, Collection<T> data); }
+	public interface ReduceOperation<T> { Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<T> data); }
 
 	//
 	/** output statistics. */
@@ -117,10 +117,10 @@ public class GridAggregator<T> {
 			}
 
 			//reduce
-			Stat s = reduceOp.reduce(cia, cId, mapData);
+			Collection<Stat> s = reduceOp.reduce(cia, cId, mapData);
 
 			//store stat
-			stats.stats.add(s);
+			stats.stats.addAll(s);
 		});
 	}
 

@@ -55,16 +55,19 @@ public class BuildingStatsComputation {
 		fs = removeDuplicates(fs, "ID");
 		logger.info(fs.size() + " buildings");
 
-		//TODO compute more info - industrial/commercial, etc.
 		logger.info("Define map operation");
-		MapOperation<Double> mapOp = new MapOperation<>() {
+		MapOperation<double[]> mapOp = new MapOperation<>() {
 			@Override
-			public Double map(Feature f, Geometry inter) {
-				if(inter == null || inter.isEmpty()) return 0.0;
+			public double[] map(Feature f, Geometry inter) {
+
+				double[] out = new double[4];
+				for(int i=0; i<4; i++) out[i]=0;
+
+				if(inter == null || inter.isEmpty()) return out;
 
 				//area
 				double area = inter.getArea();
-				if(area == 0 ) return 0.0;
+				if(area == 0 ) return out;
 
 				//nb floors
 				Integer nb = (Integer) f.getAttribute("NB_ETAGES");
@@ -75,36 +78,43 @@ public class BuildingStatsComputation {
 					else nb = Math.max( (int)(h/3.5), 1);
 				}
 
-				//type contribution
-				//TODO extract
-				double r = 1;
+				//type contributions
 				String u1 = (String) f.getAttribute("USAGE1");
 				String u2 = (String) f.getAttribute("USAGE2");
-				if(u1==null && u2==null) {}
-				else if("RÃ©sidentiel".equals(u1) && u2==null) {}
-				else if("RÃ©sidentiel".equals(u1) && u2!=null) { r=0.7; }
-				else if(!"RÃ©sidentiel".equals(u1) && u2==null) { r=0.3; }
-				else if(!"RÃ©sidentiel".equals(u1) && "RÃ©sidentiel".equals(u2)) { r=0.3; }
-				else logger.warn(" "+u1+" "+u2);
+				double r0 = getBDTopoTypeRatio("RÃ©sidentiel", u1, u2);
+				double r1 = getBDTopoTypeRatio("Agricole", u1, u2);
+				double r2 = getBDTopoTypeRatio("Industriel", u1, u2);
+				double r3 = getBDTopoTypeRatio("Commercial et services", u1, u2);
 
 				//
-				return nb*area*r;
+				return new double[] {
+						nb*area*r0,
+						nb*area*r1,
+						nb*area*r2,
+						nb*area*r3
+				};
 			}
 		};
 
 		logger.info("Define reduce operation");
-		ReduceOperation<Double> reduceOp = new ReduceOperation<>() {
+		ReduceOperation<double[]> reduceOp = new ReduceOperation<>() {
 			@Override
-			public Stat reduce(String cellIdAtt, String cellId, Collection<Double> data) {
-				Stat s = new Stat(0, cellIdAtt, cellId);
-				for(Double map : data) s.value += map;
-				return s;
+			public Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<double[]> data) {
+				Collection<Stat> out = new ArrayList<>();
+				for(int i=0; i<4; i++) {
+					String type = i==0? "res" : i==1? "agri" : i==2? "indus" : "comm_serv";
+					Stat s = new Stat(0, cellIdAtt, cellId, "building_type", type);
+					for(double[] map : data)
+						s.value += map[i];
+					out.add(s);
+				}
+				return out;
 			}
 		};
 
 
 		//compute aggregation
-		GridAggregator<Double> ga = new GridAggregator<>(cells, "GRD_ID", fs, mapOp, reduceOp);
+		GridAggregator<double[]> ga = new GridAggregator<>(cells, "GRD_ID", fs, mapOp, reduceOp);
 		ga.compute(true);
 
 		logger.info("Round values...");
@@ -140,4 +150,12 @@ public class BuildingStatsComputation {
 		return out;
 	}
 
+
+	private static double getBDTopoTypeRatio(String type, String u1, String u2) {
+		if(type.equals(u1) && u2==null) return 1;
+		if(type.equals(u1) && u2!=null) return 0.7;
+		if(!type.equals(u1) && type.equals(u2)) return 0.3;
+		logger.warn(" "+u1+" "+u2);
+		return 0;
+	}
 }
