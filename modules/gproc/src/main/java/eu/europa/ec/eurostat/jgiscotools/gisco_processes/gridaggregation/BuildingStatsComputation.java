@@ -122,11 +122,11 @@ public class BuildingStatsComputation {
 				out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
 
 				//add percentages
-				out.add( new Stat(100*v[0]/total, cellIdAtt, cellId, "bu_stat", "p_res") );
-				out.add( new Stat(100*v[1]/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
-				out.add( new Stat(100*v[2]/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
-				out.add( new Stat(100*v[3]/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
-				out.add( new Stat(100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
+				out.add( new Stat(total==0? 0 : 100*v[0]/total, cellIdAtt, cellId, "bu_stat", "p_res") );
+				out.add( new Stat(total==0? 0 : 100*v[1]/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
+				out.add( new Stat(total==0? 0 : 100*v[2]/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
+				out.add( new Stat(total==0? 0 : 100*v[3]/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
+				out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
 
 				//typologies
 				int typResAct = total==0.0? 0 : getBuildingTypologyResAct(v[0]/total, totalActivity/total);
@@ -149,9 +149,9 @@ public class BuildingStatsComputation {
 			private int getBuildingTypologyAct(double pAgri, double pIndus, double pComServ) {
 				if(pAgri==0.0 && pIndus==0.0 && pComServ==0.0) return 0;
 
-				if(pAgri>0.65) return 1;
-				if(pIndus>0.65) return 2;
-				if(pComServ>0.65) return 3;
+				if(pAgri>0.7) return 1;
+				if(pIndus>0.7) return 2;
+				if(pComServ>0.7) return 3;
 
 				if(pAgri>0.25 && pIndus>0.25 && pComServ>0.25) return 123;
 
