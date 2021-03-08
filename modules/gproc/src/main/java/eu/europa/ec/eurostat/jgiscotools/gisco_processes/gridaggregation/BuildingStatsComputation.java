@@ -126,9 +126,23 @@ public class BuildingStatsComputation {
 				out.add( new Stat(100*v[3]/total, cellIdAtt, cellId, "building_type", "p_comm_serv") );
 
 				//typology
-				//TODO
+				int typology = getBuildingTypology(v[0]/total, v[1]/total, v[2]/total, v[3]/total);
+				out.add( new Stat(typology, cellIdAtt, cellId, "building_type", "bulding_typology") );
 
 				return out;
+			}
+
+			private int getBuildingTypology(double pRes, double pAgri, double pIndus, double pCommServ) {
+				//pure
+				if(pRes >= 0.7) return 9;
+				if(pRes >= 0.7) return 1;
+				if(pRes >= 0.7) return 2;
+				if(pRes >= 0.7) return 3;
+				//if>0.7
+				//if all >0.25
+				//2 largest
+
+				return 0;
 			}
 		};
 
