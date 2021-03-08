@@ -17,7 +17,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.SimpleFeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility.BasicServiceAccessibility;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaccessibility.ZZZBasicServiceAccessibility;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
@@ -25,7 +25,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
  *
  */
 public class TestAStar {
-	private static Logger logger = LogManager.getLogger(BasicServiceAccessibility.class.getName());
+	private static Logger logger = LogManager.getLogger(ZZZBasicServiceAccessibility.class.getName());
 
 	/**
 	 * @param args

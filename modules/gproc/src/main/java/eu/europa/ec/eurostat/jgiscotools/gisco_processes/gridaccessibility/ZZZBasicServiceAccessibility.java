@@ -26,8 +26,8 @@ import eu.europa.ec.eurostat.jgiscotools.routing.SpeedCalculator;
  * @author julien Gaffuri
  *
  */
-public class BasicServiceAccessibility {
-	private static Logger logger = LogManager.getLogger(BasicServiceAccessibility.class.getName());
+public class ZZZBasicServiceAccessibility {
+	private static Logger logger = LogManager.getLogger(ZZZBasicServiceAccessibility.class.getName());
 
 	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Exception {
