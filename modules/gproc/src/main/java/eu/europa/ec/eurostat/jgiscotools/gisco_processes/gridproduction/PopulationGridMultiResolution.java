@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
-import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 
@@ -28,8 +27,8 @@ public class PopulationGridMultiResolution {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		reFormatGeostatFiles();
-		//produceMultiResolutionPopGrids();
+		//reFormatGeostatFiles();
+		produceMultiResolutionPopGrids();
 
 		logger.info("End");
 	}
@@ -166,13 +165,22 @@ public class PopulationGridMultiResolution {
 		logger.info("2018");
 		{
 			logger.info("Load data...");
-			StatsHypercube popData = CSV.load(GridsProduction.basePath+"pop_grid_1km_geostat_raw/2018.csv", "TOT_P");
+			StatsHypercube popData = CSV.load(GridsProduction.basePath+"pop_grid_1km_geostat_raw/2018.csv", "TOT_P_2018");
 
-			popData.printInfo(false);
-			
-			//TODO
+			//popData.printInfo(false);
+			//   Dimension: OBJECTID (2416631 dimension values)
+			//   Dimension: CNTR_ID (147 dimension values)
+			//   Dimension: TOT_P_2018 (12608 dimension values)
+			//   Dimension: TOT_P_2006 (11722 dimension values)
+			//   Dimension: Shape_Area (1 dimension values)
+			//   Dimension: Country (39 dimension values)
+			//   Dimension: GRD_ID (2416631 dimension values)
+			//   Dimension: Method (7 dimension values)
+			//   Dimension: Shape_Length (1 dimension values)
+			//   Dimension: TOT_P_2011 (12591 dimension values)
+			//   Dimension: Date (8 dimension values)
 
-			//logger.info("Save...");
+			logger.info("Save...");
 			CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2018_1km_full.csv");
 		}
 
