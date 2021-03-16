@@ -36,7 +36,7 @@ public class PopulationGridMultiResolution {
 
 	private static void produceMultiResolutionPopGrids() {
 
-		for(int year : new int[] { 2006, 2011 }) {
+		for(int year : new int[] { 2006, 2011, 2018 }) {
 			logger.info(year);
 
 			//load 1km data
@@ -161,6 +161,19 @@ public class PopulationGridMultiResolution {
 
 			logger.info("Save...");
 			CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2011_1km_full.csv");
+		}
+
+		logger.info("2018");
+		{
+			logger.info("Load data...");
+			StatsHypercube popData = CSV.load(GridsProduction.basePath+"pop_grid_1km_geostat_raw/2018.csv", "TOT_P");
+
+			popData.printInfo(false);
+			
+			//TODO
+
+			//logger.info("Save...");
+			//CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2018_1km_full.csv");
 		}
 
 	}
