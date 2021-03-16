@@ -29,14 +29,14 @@ public class PopulationGridMultiResolution {
 		logger.info("Start");
 
 		reFormatGeostatFiles();
-		produceMultiResolutionPopGrids();
+		//produceMultiResolutionPopGrids();
 
 		logger.info("End");
 	}
 
 	private static void produceMultiResolutionPopGrids() {
 
-		for(int year : new int[] { 2006, 2011, 2018 }) {
+		for(int year : new int[] { /*2006, 2011, */2018 }) {
 			logger.info(year);
 
 			//load 1km data
@@ -84,7 +84,7 @@ public class PopulationGridMultiResolution {
 
 	private static void reFormatGeostatFiles() {
 
-		logger.info("2006");
+		/*logger.info("2006");
 		{
 			logger.info("Load data...");
 			StatsHypercube popData = CSV.load(GridsProduction.basePath+"pop_grid_1km_geostat_raw/2006.csv", "TOT_P");
@@ -106,10 +106,10 @@ public class PopulationGridMultiResolution {
 
 			logger.info("Save...");
 			CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2006_1km_full.csv");
-		}
+		}*/
 
 
-		logger.info("2011");
+		/*logger.info("2011");
 		{
 			//NB: for 2011, population figure are stored in two deparate files
 
@@ -161,7 +161,7 @@ public class PopulationGridMultiResolution {
 
 			logger.info("Save...");
 			CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2011_1km_full.csv");
-		}
+		}*/
 
 		logger.info("2018");
 		{
@@ -173,7 +173,7 @@ public class PopulationGridMultiResolution {
 			//TODO
 
 			//logger.info("Save...");
-			//CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2018_1km_full.csv");
+			CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2018_1km_full.csv");
 		}
 
 	}
