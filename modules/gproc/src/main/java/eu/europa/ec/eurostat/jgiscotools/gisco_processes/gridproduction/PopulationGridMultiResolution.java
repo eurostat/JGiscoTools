@@ -42,11 +42,18 @@ public class PopulationGridMultiResolution {
 			StatsHypercube popData = CSV.load(GridsProduction.basePath+"pop_grid/pop_grid_"+year+"_1km_full.csv", "TOT_P");
 
 			//remove unnecessary dimensions
-			popData.delete("YEAR");
-			popData.delete("CNTR_CODE");
-			popData.delete("METHD_CL");
-			popData.delete("DATA_SRC");
+			if(year==2006 || year==2011) {
+				popData.delete("YEAR");
+				popData.delete("CNTR_CODE");
+				popData.delete("METHD_CL");
+				popData.delete("DATA_SRC");
+			}
 			if(year==2011) popData.delete("TOT_P_CON_DT");
+			if(year==2018) {
+				popData.delete("CNTR_ID");
+				popData.delete("Method");
+				popData.delete("Date");
+			}
 
 			for(int resKM : GridsProduction.resKMs) {
 				logger.info(resKM);
@@ -167,7 +174,6 @@ public class PopulationGridMultiResolution {
 			logger.info("Load data...");
 			StatsHypercube popData = CSV.load(GridsProduction.basePath+"pop_grid_1km_geostat_raw/2018.csv", "TOT_P_2018");
 
-			//popData.printInfo(false);
 			//   Dimension: OBJECTID (2416631 dimension values)
 			//   Dimension: CNTR_ID (147 dimension values)
 			//   Dimension: TOT_P_2018 (12608 dimension values)
@@ -179,6 +185,15 @@ public class PopulationGridMultiResolution {
 			//   Dimension: Shape_Length (1 dimension values)
 			//   Dimension: TOT_P_2011 (12591 dimension values)
 			//   Dimension: Date (8 dimension values)
+
+			popData.delete("OBJECTID");
+			popData.delete("TOT_P_2006");
+			popData.delete("Shape_Area");
+			popData.delete("Country");
+			popData.delete("Shape_Length");
+			popData.delete("TOT_P_2011");
+
+			popData.printInfo(false);
 
 			logger.info("Save...");
 			CSV.save(popData, "TOT_P", GridsProduction.basePath+"pop_grid/pop_grid_2018_1km_full.csv");
