@@ -170,6 +170,9 @@ public class GridsProduction {
 				logger.info("Load 2011 population data...");
 				StatsIndex pop2011 = getPopulationData(basePath+"pop_grid/pop_grid_2011_"+resKM+"km.csv");
 
+				logger.info("Load 2018 population data...");
+				StatsIndex pop2018 = getPopulationData(basePath+"pop_grid/pop_grid_2018_"+resKM+"km.csv");
+
 				logger.info("Assign population figures...");
 				Stat pop;
 				for(Feature cell : cells) {
@@ -178,6 +181,8 @@ public class GridsProduction {
 					cell.setAttribute("TOT_P_2006", pop==null? 0 : pop.value);
 					pop = pop2011.getSingleStat(id);
 					cell.setAttribute("TOT_P_2011", pop==null? 0 : pop.value);
+					pop = pop2018.getSingleStat(id);
+					cell.setAttribute("TOT_P_2018", pop==null? 0 : pop.value);
 				}
 			}
 
