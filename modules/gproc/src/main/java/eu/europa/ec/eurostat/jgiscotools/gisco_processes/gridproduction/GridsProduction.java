@@ -47,14 +47,12 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class GridsProduction {
 	static Logger logger = LogManager.getLogger(GridsProduction.class.getName());
 
-	//TODO make some processes parallel ?
 	//TODO use better info source for coast line / land area
-	//TODO prepare/add pop 2018
 
 	public static String basePath = "E:/workspace/statistical_grids/";
 
 	//the different resolutions, in KM
-	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
+	public static int[] resKMs = new int[] {/*100,50,20,10,5,2,*/1};
 
 
 	//use: -Xms2G -Xmx8G
