@@ -52,7 +52,7 @@ public class GridsProduction {
 	public static String basePath = "E:/workspace/statistical_grids/";
 
 	//the different resolutions, in KM
-	public static int[] resKMs = new int[] {/*100,50,20,10,5,2,*/1};
+	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
 
 
 	//use: -Xms2G -Xmx8G
