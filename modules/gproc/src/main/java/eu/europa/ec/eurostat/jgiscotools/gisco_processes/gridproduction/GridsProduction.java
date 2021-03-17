@@ -6,6 +6,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -68,6 +69,7 @@ public class GridsProduction {
 		String outpath = basePath + "output/";
 		String inpath = basePath + "input_data/";
 		int bufferDistance = 1500;
+		boolean parallel = true;
 
 		logger.info("Get European countries (buffer) ...");
 		ArrayList<Feature> cntsBuff = GeoData.getFeatures(inpath+"CNTR_RG_100K_union_buff_"+bufferDistance+"_LAEA.gpkg");
@@ -138,7 +140,7 @@ public class GridsProduction {
 			Collection<Feature> cells = grid.getCells();
 
 			logger.info("Assign country codes...");
-			GridUtil.assignRegionCode(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID");
+			GridUtil.assignRegionCode(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID", parallel);
 
 			logger.info("Filtering " + cells.size() + " cells nor assigned to a country...");
 			GridUtil.filterCellsWithoutRegion(cells, "CNTR_ID");
@@ -147,20 +149,20 @@ public class GridsProduction {
 			logger.info("Assign NUTS codes...");
 			for(int level = 0; level <=3; level++) {
 				logger.info("  level " + level);
-				GridUtil.assignRegionCode(cells, "NUTS2016_"+level, nuts2016[level], 0, "NUTS_ID");
-				GridUtil.assignRegionCode(cells, "NUTS2021_"+level, nuts2021[level], 0, "NUTS_ID");
+				GridUtil.assignRegionCode(cells, "NUTS2016_"+level, nuts2016[level], 0, "NUTS_ID", parallel);
+				GridUtil.assignRegionCode(cells, "NUTS2021_"+level, nuts2021[level], 0, "NUTS_ID", parallel);
 			}
 
 			logger.info("Compute land proportion...");
-			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2);
+			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2, parallel);
 			//TODO make LAND_PC a nice decimal number (in gpkg)
 
 			logger.info("Compute distance to coast...");
-			GridUtil.assignDistanceToLines(cells, "DIST_COAST", coastlineIndex, 2);
+			GridUtil.assignDistanceToLines(cells, "DIST_COAST", coastlineIndex, 2, parallel);
 			//TODO deal with fully maritime cells. Should they have coast dist equal to 0 ?
 
 			logger.info("Compute distance country boundaries...");
-			GridUtil.assignDistanceToLines(cells, "DIST_BORD", cntbnIndex, 2);
+			GridUtil.assignDistanceToLines(cells, "DIST_BORD", cntbnIndex, 2, parallel);
 			//NB: Vatican and san marino are excluded
 
 			{
@@ -174,8 +176,9 @@ public class GridsProduction {
 				StatsIndex pop2018 = getPopulationData(basePath+"pop_grid/pop_grid_2018_"+resKM+"km.csv");
 
 				logger.info("Assign population figures...");
-				Stat pop;
-				for(Feature cell : cells) {
+				Stream<Feature> st = cells.stream(); if(parallel) st = st.parallel();
+				st.forEach(cell -> {
+					Stat pop;
 					String id = cell.getAttribute("GRD_ID").toString();
 					pop = pop2006.getSingleStat(id);
 					cell.setAttribute("TOT_P_2006", pop==null? 0 : pop.value);
@@ -183,7 +186,7 @@ public class GridsProduction {
 					cell.setAttribute("TOT_P_2011", pop==null? 0 : pop.value);
 					pop = pop2018.getSingleStat(id);
 					cell.setAttribute("TOT_P_2018", pop==null? 0 : pop.value);
-				}
+				});
 			}
 
 			logger.info("Save cells as GPKG...");

@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.grid;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +39,7 @@ public class GridUtil {
 	 * @param toleranceDistance
 	 * @param regionCodeAttribute
 	 */
-	public static void assignRegionCode(Collection<Feature> cells, String cellRegionAttribute, Collection<Feature> regions, double toleranceDistance, String regionCodeAttribute) {
+	public static void assignRegionCode(Collection<Feature> cells, String cellRegionAttribute, Collection<Feature> regions, double toleranceDistance, String regionCodeAttribute, boolean parallel) {
 
 		//initialise cell region attribute
 		for(Feature cell : cells)
@@ -50,7 +51,9 @@ public class GridUtil {
 			index.insert(cell.getGeometry().getEnvelopeInternal(), cell);
 
 		//get codes
-		for(Feature reg : regions) {
+		//for(Feature reg : regions) {
+		Stream<Feature> st = regions.stream(); if(parallel) st = st.parallel();
+		st.forEach(reg -> {
 
 			//get region cover and code
 			Geometry regCover = reg.getGeometry();
@@ -74,7 +77,7 @@ public class GridUtil {
 				else
 					cell.setAttribute(cellRegionAttribute, att+"-"+regCode);
 			}
-		}
+		});
 
 	}
 
@@ -107,12 +110,13 @@ public class GridUtil {
 	 * @param inlandWaterGeometriesIndex
 	 * @param decimalNB The number of decimal places to keep for the percentage
 	 */
-	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, SpatialIndex landGeometries, SpatialIndex inlandWaterGeometriesIndex, int decimalNB) {
+	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, SpatialIndex landGeometries, SpatialIndex inlandWaterGeometriesIndex, int decimalNB, boolean parallel) {
 
 		//compute cell area once
 		double cellArea = cells.iterator().next().getGeometry().getArea();
 
-		for(Feature cell : cells) {
+		Stream<Feature> st = cells.stream(); if(parallel) st = st.parallel();
+		st.forEach(cell -> {
 			logger.debug(cell.getAttribute("GRD_ID"));
 
 			//compute land part
@@ -122,7 +126,7 @@ public class GridUtil {
 			double prop = 100.0 * landCellGeom.getArea() / cellArea;
 			prop = round(prop, decimalNB);
 			cell.setAttribute(cellLandPropAttribute, prop);
-		}
+		});
 
 	}
 
@@ -195,10 +199,11 @@ public class GridUtil {
 	 * @param linesInd
 	 * @param decimalNB
 	 */
-	public static void assignDistanceToLines(Collection<Feature> cells, String distanceAttribute, STRtree linesInd, int decimalNB) {
+	public static void assignDistanceToLines(Collection<Feature> cells, String distanceAttribute, STRtree linesInd, int decimalNB, boolean parallel) {
 
 		//go through the list of cells
-		for(Feature cell : cells) {
+		Stream<Feature> st = cells.stream(); if(parallel) st = st.parallel();
+		st.forEach(cell -> {
 
 			//get the lines that are nearby the cell
 			Envelope netEnv = cell.getGeometry().getEnvelopeInternal();
@@ -215,7 +220,7 @@ public class GridUtil {
 			//store the distance
 			minDist = round(minDist, decimalNB);
 			cell.setAttribute(distanceAttribute, minDist);
-		}
+		});
 
 	}
 	private static ItemDistance itemDist = new ItemDistance() {
