@@ -140,7 +140,7 @@ public class GridsProduction {
 			logger.info("Assign country codes...");
 			GridUtil.assignRegionCode(cells, "CNTR_ID", cntsBuff, 0, "CNTR_ID", parallel);
 
-			logger.info("Filtering " + cells.size() + " cells nor assigned to a country...");
+			logger.info("Filtering " + cells.size() + " cells not assigned to a country...");
 			GridUtil.filterCellsWithoutRegion(cells, "CNTR_ID");
 			logger.info(cells.size() + " cells left");
 
