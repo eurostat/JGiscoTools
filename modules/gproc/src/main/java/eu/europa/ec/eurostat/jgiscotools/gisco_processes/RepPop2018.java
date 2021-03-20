@@ -8,6 +8,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 public class RepPop2018 {
 
+	//-Xms2G -Xmx8G
 	public static void main(String[] args) {
 		System.out.println("Start");
 
