@@ -14,7 +14,7 @@ public class RepPop2018 {
 
 		String folder = "C:\\Users\\gaffuju\\Desktop\\";
 
-		for(String g : new String[] {"surf","point"}) {
+		for(String g : new String[] {"surf", "point"}) {
 			System.out.println(g);
 
 			System.out.println("Load...");
