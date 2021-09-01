@@ -5,6 +5,8 @@ package eu.europa.ec.eurostat.jgiscotools.graph.algo;
 
 import java.util.Collection;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.operation.linemerge.LineMerger;
@@ -24,7 +26,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
  *
  */
 public class GraphSimplify {
-	//private final static Logger LOGGER = Logger.getLogger(GraphSimplify.class.getName());
+	private final static Logger LOGGER = LogManager.getLogger(GraphSimplify.class.getName());
 
 
 	/**
@@ -88,6 +90,11 @@ public class GraphSimplify {
 
 
 
+	/**
+	 * @param lines
+	 * @param haussdorffDistance
+	 * @return
+	 */
 	public static Collection<LineString> removeSimilarDuplicateEdges(Collection<LineString> lines, double haussdorffDistance) {
 		Graph g = GraphBuilder.buildFromLinearGeometriesNonPlanar(lines);
 		GraphUtils.removeSimilarDuplicateEdges(g, haussdorffDistance);
@@ -97,12 +104,20 @@ public class GraphSimplify {
 
 
 
+	/**
+	 * @param <T>
+	 * @param lines
+	 * @param res
+	 * @param startWithShortestEdge
+	 * @param planifyGraph
+	 * @return
+	 */
 	public static <T extends Geometry> Collection<LineString> collapseTooShortEdgesAndPlanifyLines(Collection<LineString> lines, double res, boolean startWithShortestEdge, boolean planifyGraph) {
 		lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planifyGraph);
 		lines = planifyLines(lines);
 		int sI=1,sF=0;
 		while(sF<sI) {
-			System.out.println(" dtsePlanifyLines loop " + lines.size());
+			LOGGER.debug(" dtsePlanifyLines loop " + lines.size());
 			sI=lines.size();
 			lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planifyGraph);
 			lines = planifyLines(lines);
@@ -111,7 +126,13 @@ public class GraphSimplify {
 		return lines;
 	}
 
-	//TODO extract to logger
+
+	/**
+	 * @param lines
+	 * @param res
+	 * @param withRDPFiltering
+	 * @return
+	 */
 	public static Collection<LineString> resPlanifyLines(Collection<LineString> lines, double res, boolean withRDPFiltering) {
 
 		//***
@@ -122,7 +143,7 @@ public class GraphSimplify {
 
 		int sI=1,sF=0;
 		while(sF<sI) {
-			System.out.println(" resPlanifyLines loop " + lines.size());
+			LOGGER.debug(" resPlanifyLines loop " + lines.size());
 			sI = lines.size();
 
 			//***
