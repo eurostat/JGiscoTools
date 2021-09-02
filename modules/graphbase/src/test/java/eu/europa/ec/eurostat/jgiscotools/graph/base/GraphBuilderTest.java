@@ -192,8 +192,8 @@ public class GraphBuilderTest {
 		assertNotNull(out);
 		assertEquals(1, out.size());
 		LineString g = out.iterator().next();
-		assertTrue( g.equalsTopo( JTSGeomUtil.createLineString(0,0 , 3,0) ));
-		assertEquals(2, g.getNumPoints());
+		assertTrue( g.equalsTopo( JTSGeomUtil.createLineString(0,0 , 1,0, 2,0, 3,0) ));
+		assertEquals(4, g.getNumPoints());
 	}
 
 	@Test
@@ -203,10 +203,7 @@ public class GraphBuilderTest {
 
 		Collection<LineString> out = GraphBuilder.planifyLines(in);
 		assertNotNull(out);
-		assertEquals(1, out.size());
-		LineString g = out.iterator().next();
-		assertTrue( g.equalsTopo( JTSGeomUtil.createLineString(0,0 , 3,0) ));
-		assertEquals(2, g.getNumPoints());
+		assertEquals(3, out.size());
 	}
 
 	@Test
@@ -219,4 +216,14 @@ public class GraphBuilderTest {
 		assertEquals(3, out.size());
 	}
 
+	@Test
+	public void testPlanifyT() {
+		Collection<LineString> in = new ArrayList<LineString>();
+		in.add( JTSGeomUtil.createLineString(1,0 , 1,2) );
+		in.add( JTSGeomUtil.createLineString(0,2 , 2,2) );
+
+		Collection<LineString> out = GraphBuilder.planifyLines(in);
+		assertNotNull(out);
+		assertEquals(3, out.size());
+	}
 }

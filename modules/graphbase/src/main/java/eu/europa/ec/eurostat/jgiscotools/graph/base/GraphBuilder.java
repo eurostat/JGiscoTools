@@ -326,5 +326,4 @@ public class GraphBuilder {
 		return JTSGeomUtil.getLineStrings(u);
 	}
 
-
 }
