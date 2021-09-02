@@ -13,7 +13,6 @@ import org.locationtech.jts.geom.LineString;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.DouglasPeuckerRamerFilter;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Resolutionise;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphBuilder;
-import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
 
 /**
  * Some functions to simplify linear meshes.
@@ -24,8 +23,6 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
  */
 public class GraphSimplify {
 	private final static Logger LOGGER = LogManager.getLogger(GraphSimplify.class.getName());
-
-
 
 
 	/*
@@ -58,20 +55,6 @@ public class GraphSimplify {
 		}*/
 	//return null;
 	//}
-
-
-
-
-	/**
-	 * @param lines
-	 * @param haussdorffDistance
-	 * @return
-	 */
-	public static Collection<LineString> removeSimilarDuplicateEdges(Collection<LineString> lines, double haussdorffDistance) {
-		Graph g = GraphBuilder.buildFromLinearGeometriesNonPlanar(lines);
-		GraphUtils.removeSimilarDuplicateEdges(g, haussdorffDistance);
-		return GraphUtils.getEdgeGeometries(g);
-	}
 
 
 
