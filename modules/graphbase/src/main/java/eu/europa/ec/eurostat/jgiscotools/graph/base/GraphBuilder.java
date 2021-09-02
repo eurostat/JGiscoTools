@@ -25,6 +25,7 @@ import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.locationtech.jts.operation.polygonize.Polygonizer;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 
+import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
@@ -215,10 +216,7 @@ public class GraphBuilder {
 		Geometry union = new GeometryFactory().buildGeometry(geoms).union();
 
 		if(LOGGER.isDebugEnabled()) LOGGER.debug("     run linemerger...");
-		LineMerger lm = new LineMerger();
-		lm.add(union); union = null;
-		@SuppressWarnings("unchecked")
-		Collection<LineString> lines = lm.getMergedLineStrings(); lm = null;
+		Collection<LineString> lines = lineMerge(union);
 		if(LOGGER.isDebugEnabled()) LOGGER.debug("     done. " + lines.size() + " lines obtained");
 
 		return build(lines, buildFaces);
@@ -260,10 +258,7 @@ public class GraphBuilder {
 		lineCol.clear(); lineCol = null;
 
 		if(LOGGER.isDebugEnabled()) LOGGER.debug("     run linemerger...");
-		LineMerger lm = new LineMerger();
-		lm.add(union); union = null;
-		@SuppressWarnings("unchecked")
-		Collection<LineString> lines = lm.getMergedLineStrings(); lm = null;
+		Collection<LineString> lines = lineMerge(union);
 		if(LOGGER.isDebugEnabled()) LOGGER.debug("     done. " + lines.size() + " lines obtained");
 
 
@@ -284,5 +279,45 @@ public class GraphBuilder {
 
 		return build(lines, true);
 	}
+
+
+	/**
+	 * Run JTS line merger (see JTS doc)
+	 * 
+	 * @param lines
+	 * @return
+	 */
+	public static <T extends Geometry> Collection<LineString> lineMerge(T line) {
+		LineMerger lm = new LineMerger();
+		lm.add(line);
+		@SuppressWarnings("unchecked")
+		Collection<LineString> out = (Collection<LineString>) lm.getMergedLineStrings();
+		return out;
+	}
+
+	/**
+	 * Run JTS line merger (see JTS doc)
+	 * 
+	 * @param lines
+	 * @return
+	 */
+	public static <T extends Geometry> Collection<LineString> lineMerge(Collection<T> lines) {
+		LineMerger lm = new LineMerger();
+		lm.add(lines);
+		@SuppressWarnings("unchecked")
+		Collection<LineString> out = (Collection<LineString>) lm.getMergedLineStrings();
+		return out;
+	}
+
+
+	/**
+	 * @param lines
+	 * @return
+	 */
+	public static Collection<LineString> planifyLines(Collection<LineString> lines) {
+		Geometry u = Union.getLineUnion(lines);
+		return JTSGeomUtil.getLineStrings(u);
+	}
+
 
 }

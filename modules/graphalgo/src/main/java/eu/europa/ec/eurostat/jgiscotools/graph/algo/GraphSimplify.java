@@ -9,12 +9,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.operation.linemerge.LineMerger;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.DouglasPeuckerRamerFilter;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Resolutionise;
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
-import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphBuilder;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
 
@@ -27,31 +24,6 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
  */
 public class GraphSimplify {
 	private final static Logger LOGGER = LogManager.getLogger(GraphSimplify.class.getName());
-
-
-	/**
-	 * Run JTS line merger (see JTS doc)
-	 * 
-	 * @param lines
-	 * @return
-	 */
-	public static <T extends Geometry> Collection<LineString> lineMerge(Collection<T> lines) {
-		LineMerger lm = new LineMerger();
-		lm.add(lines);
-		@SuppressWarnings("unchecked")
-		Collection<LineString> out = (Collection<LineString>) lm.getMergedLineStrings();
-		return out;
-	}
-
-	/**
-	 * @param lines
-	 * @return
-	 */
-	public static Collection<LineString> planifyLines(Collection<LineString> lines) {
-		Geometry u = Union.getLineUnion(lines);
-		return JTSGeomUtil.getLineStrings(u);
-	}
-
 
 
 
@@ -114,13 +86,13 @@ public class GraphSimplify {
 	 */
 	public static <T extends Geometry> Collection<LineString> collapseTooShortEdgesAndPlanifyLines(Collection<LineString> lines, double res, boolean startWithShortestEdge, boolean planifyGraph) {
 		lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planifyGraph);
-		lines = planifyLines(lines);
+		lines = GraphBuilder.planifyLines(lines);
 		int sI=1,sF=0;
 		while(sF<sI) {
 			LOGGER.debug(" dtsePlanifyLines loop " + lines.size());
 			sI=lines.size();
 			lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planifyGraph);
-			lines = planifyLines(lines);
+			lines = GraphBuilder.planifyLines(lines);
 			sF=lines.size();
 		}
 		return lines;
@@ -136,10 +108,10 @@ public class GraphSimplify {
 	public static Collection<LineString> resPlanifyLines(Collection<LineString> lines, double res, boolean withRDPFiltering) {
 
 		//***
-		lines = lineMerge(lines);
+		lines = GraphBuilder.lineMerge(lines);
 		if(withRDPFiltering) lines = DouglasPeuckerRamerFilter.get(lines, res);
 		lines = Resolutionise.getLine(lines, res);
-		lines = planifyLines(lines);
+		lines = GraphBuilder.planifyLines(lines);
 
 		int sI=1,sF=0;
 		while(sF<sI) {
@@ -147,10 +119,10 @@ public class GraphSimplify {
 			sI = lines.size();
 
 			//***
-			lines = lineMerge(lines);
+			lines = GraphBuilder.lineMerge(lines);
 			if(withRDPFiltering) lines = DouglasPeuckerRamerFilter.get(lines, res);
 			lines = Resolutionise.getLine(lines, res);
-			lines = planifyLines(lines);
+			lines = GraphBuilder.planifyLines(lines);
 
 			sF = lines.size();
 		}
