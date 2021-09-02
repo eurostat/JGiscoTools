@@ -297,6 +297,7 @@ public class GraphBuilder {
 
 	/**
 	 * Run JTS line merger (see JTS doc)
+	 * Connect pairs of lines that have common extremities.
 	 * 
 	 * @param lines
 	 * @return
@@ -311,10 +312,12 @@ public class GraphBuilder {
 
 
 	/**
+	 * From a spaghetti plate, return a set of lines which are noded (when they intersects) and do not intersect as lines ???
+	 * 
 	 * @param lines
 	 * @return
 	 */
-	public static Collection<LineString> planifyLines(Collection<LineString> lines) {
+	public static <T extends Geometry> Collection<LineString> planifyLines(Collection<T> lines) {
 		Geometry u = Union.getLineUnion(lines);
 		return JTSGeomUtil.getLineStrings(u);
 	}
