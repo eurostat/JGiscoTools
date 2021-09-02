@@ -76,6 +76,43 @@ public class GraphBuilderTest {
 		assertEquals(3, out.size());
 	}
 
+	@Test
+	public void testLineMergerSelfIntersectsPoint() {
+		Collection<LineString> in = new ArrayList<LineString>();
+		in.add( JTSGeomUtil.createLineString(0,0 , 1,1, 0,1, 1,0) );
+
+		Collection<LineString> out = GraphBuilder.lineMerge(in);
+		assertNotNull(out);
+		assertEquals(1, out.size());
+		LineString g = out.iterator().next();
+		assertTrue( g.equalsTopo( JTSGeomUtil.createLineString(0,0 , 1,1, 0,1, 1,0) ));
+	}
+
+	@Test
+	public void testLineMergerSelfIntersectsLine() {
+		Collection<LineString> in = new ArrayList<LineString>();
+		in.add( JTSGeomUtil.createLineString(0,0 , 2,0, 1,0, 3,0) );
+
+		Collection<LineString> out = GraphBuilder.lineMerge(in);
+		assertNotNull(out);
+		assertEquals(1, out.size());
+		LineString g = out.iterator().next();
+		assertTrue( g.equalsTopo( JTSGeomUtil.createLineString(0,0 , 2,0, 1,0, 3,0) ));
+	}
+
+	@Test
+	public void testLineMergerSelfIntersectsLine2() {
+		Collection<LineString> in = new ArrayList<LineString>();
+		in.add( JTSGeomUtil.createLineString(0,0 , 2,0) );
+		in.add( JTSGeomUtil.createLineString(2,0, 1,0) );
+		in.add( JTSGeomUtil.createLineString(1,0, 3,0) );
+
+		Collection<LineString> out = GraphBuilder.lineMerge(in);
+		assertNotNull(out);
+		assertEquals(1, out.size());
+		LineString g = out.iterator().next();
+		assertTrue( g.equalsTopo( JTSGeomUtil.createLineString(0,0 , 2,0, 1,0, 3,0) ));
+	}
 
 
 
@@ -156,6 +193,7 @@ public class GraphBuilderTest {
 		assertEquals(1, out.size());
 		LineString g = out.iterator().next();
 		assertTrue( g.equalsTopo( JTSGeomUtil.createLineString(0,0 , 3,0) ));
+		assertEquals(2, g.getNumPoints());
 	}
 
 	@Test
@@ -165,10 +203,20 @@ public class GraphBuilderTest {
 
 		Collection<LineString> out = GraphBuilder.planifyLines(in);
 		assertNotNull(out);
-		System.out.println(out);
 		assertEquals(1, out.size());
 		LineString g = out.iterator().next();
 		assertTrue( g.equalsTopo( JTSGeomUtil.createLineString(0,0 , 3,0) ));
+		assertEquals(2, g.getNumPoints());
+	}
+
+	@Test
+	public void testPlanifyLinesSelfIntersect() {
+		Collection<LineString> in = new ArrayList<LineString>();
+		in.add( JTSGeomUtil.createLineString(0,0 , 1,1, 0,1, 1,0) );
+
+		Collection<LineString> out = GraphBuilder.planifyLines(in);
+		assertNotNull(out);
+		assertEquals(3, out.size());
 	}
 
 }
