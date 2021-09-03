@@ -58,7 +58,7 @@ public class Node extends GraphElement{
 	//get list of faces (computed on-the-fly)
 	public HashSet<Face> getFaces(){
 		HashSet<Face> faces = new HashSet<Face>();
-		for(Edge e : getOutEdges()) faces.addAll(e.getFaces());
+		for(Edge e : getEdges()) faces.addAll(e.getFaces());
 		return faces;
 	}
 

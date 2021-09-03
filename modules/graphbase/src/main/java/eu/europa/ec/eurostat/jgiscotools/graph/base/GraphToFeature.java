@@ -48,7 +48,7 @@ public class GraphToFeature {
 		for(Edge e:n.getOutEdges()) txt=(txt==null?"":txt+";")+e.getId();
 		f.setAttribute("edges_out", txt);
 		Collection<Face> faces = n.getFaces();
-		f.setAttribute("face_nb", faces .size());
+		f.setAttribute("face_nb", faces.size());
 		txt=null;
 		for(Face d:faces) txt=(txt==null?"":txt+";")+d.getId();
 		f.setAttribute("faces", txt);
