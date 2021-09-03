@@ -84,8 +84,15 @@ public class EdgeCollapse {
 		return null;
 	}
 
-	//collapse too short edges
-	//return the locations where edges have been collapsed, for debugging purposes
+	//return 
+	/**
+	 * Collapse too short edges
+	 * 
+	 * @param g
+	 * @param d
+	 * @param startWithShortestEdge
+	 * @return the locations where edges have been collapsed, for debugging purposes
+	 */
 	public static Collection<LineString> collapseTooShortEdges(Graph g, double d, boolean startWithShortestEdge) {
 		Collection<LineString> out = new ArrayList<LineString>();
 		Edge e = startWithShortestEdge? findShortestEdge(g.getEdges(), d) : findTooShortEdge(g.getEdges(), d);
@@ -97,6 +104,13 @@ public class EdgeCollapse {
 		return out;
 	}
 
+	/**
+	 * @param lines
+	 * @param d the threshold length
+	 * @param startWithShortestEdge
+	 * @param planarGraph
+	 * @return
+	 */
 	public static Collection<LineString> collapseTooShortEdges(Collection<LineString> lines, double d, boolean startWithShortestEdge, boolean planarGraph) {
 		//create graph
 		Graph g = planarGraph? GraphBuilder.buildFromLinearGeometriesPlanar(lines, false) : GraphBuilder.buildFromLinearGeometriesNonPlanar(lines);

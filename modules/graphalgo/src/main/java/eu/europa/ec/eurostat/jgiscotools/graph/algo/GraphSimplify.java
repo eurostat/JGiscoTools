@@ -64,17 +64,17 @@ public class GraphSimplify {
 	 * @param lines
 	 * @param res
 	 * @param startWithShortestEdge
-	 * @param planifyGraph
+	 * @param planarGraph
 	 * @return
 	 */
-	public static <T extends Geometry> Collection<LineString> collapseTooShortEdgesAndPlanifyLines(Collection<LineString> lines, double res, boolean startWithShortestEdge, boolean planifyGraph) {
-		lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planifyGraph);
+	public static <T extends Geometry> Collection<LineString> collapseTooShortEdgesAndPlanifyLines(Collection<LineString> lines, double res, boolean startWithShortestEdge, boolean planarGraph) {
+		lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planarGraph);
 		lines = GraphBuilder.planifyLines(lines);
 		int sI=1,sF=0;
 		while(sF<sI) {
 			LOGGER.debug(" dtsePlanifyLines loop " + lines.size());
 			sI=lines.size();
-			lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planifyGraph);
+			lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planarGraph);
 			lines = GraphBuilder.planifyLines(lines);
 			sF=lines.size();
 		}

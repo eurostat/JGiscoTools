@@ -39,6 +39,11 @@ public class Graph {
 		return n;
 	}
 
+	//build a node
+	public Node buildNode(double x, double y){
+		return buildNode(new Coordinate(x, y));
+	}
+
 	//build an edge
 	public Edge buildEdge(Node n1, Node n2){ return buildEdge(n1, n2, null); }
 	public Edge buildEdge(Node n1, Node n2, Coordinate[] coords){
@@ -59,6 +64,11 @@ public class Graph {
 		return f;
 	}
 
+	public Face buildFace(Edge... edges) {
+		Set<Edge> es = new HashSet<>();
+		for(Edge e : edges) es.add(e);
+		return buildFace(es);
+	}
 
 
 

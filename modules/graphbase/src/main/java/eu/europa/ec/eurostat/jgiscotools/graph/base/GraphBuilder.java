@@ -26,6 +26,7 @@ import org.locationtech.jts.operation.linemerge.LineMerger;
 import org.locationtech.jts.operation.polygonize.Polygonizer;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 
+import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
@@ -318,11 +319,16 @@ public class GraphBuilder {
 	 * @return
 	 */
 	public static <T extends Geometry> Collection<LineString> planifyLines(Collection<T> lines) {
+
+		//make union
+		Geometry u = Union.getLineUnion(lines);
+
+		//force noding
 		GeometryFactory gf = new GeometryFactory();
-		Geometry mls = gf.buildGeometry(lines);
-		Point pt = gf.createPoint(mls.getCoordinate());
-		//Geometry u = Union.getLineUnion();
-		Geometry u = mls.union(pt);
+		Point pt = gf.createPoint(u.getCoordinate());
+		u = u.union(pt);
+
+		//return lines
 		return JTSGeomUtil.getLineStrings(u);
 	}
 
