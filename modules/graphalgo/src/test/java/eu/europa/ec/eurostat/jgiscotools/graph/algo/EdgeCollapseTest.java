@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
 
+import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphValidity;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
@@ -44,10 +45,21 @@ public class EdgeCollapseTest {
 		Face f1 = g.buildFace(e12, e23, e13);
 		Face f2 = g.buildFace(e12, e41, e42);
 
+		//check input graph validity
+		assertTrue( GraphValidity.checkValidity(g) );
 
-		//collapse
+
+
+		//collapse edge e12
 		Coordinate c = EdgeCollapse.collapseEdge(e12);
 
+
+
+
+		//check output graph validity
+		assertTrue( GraphValidity.checkValidity(g) );
+
+		//check collapsed node position
 		assertTrue( c.distance(new Coordinate(1.0,0)) == 0 );
 
 		//g
