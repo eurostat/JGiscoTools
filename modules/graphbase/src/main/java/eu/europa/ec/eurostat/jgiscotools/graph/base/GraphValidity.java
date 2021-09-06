@@ -25,7 +25,7 @@ public class GraphValidity {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static boolean checkValidity(Graph g) {
+	public static boolean isValid(Graph g) {
 
 		//nodes -> edges
 		for(Node n : g.getNodes()) {

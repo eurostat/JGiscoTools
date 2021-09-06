@@ -46,7 +46,7 @@ public class EdgeCollapseTest {
 		Face f2 = g.buildFace(e12, e41, e42);
 
 		//check input graph validity
-		assertTrue( GraphValidity.checkValidity(g) );
+		assertTrue( GraphValidity.isValid(g) );
 
 
 
@@ -57,7 +57,7 @@ public class EdgeCollapseTest {
 
 
 		//check output graph validity
-		assertTrue( GraphValidity.checkValidity(g) );
+		assertTrue( GraphValidity.isValid(g) );
 
 		//check collapsed node position
 		assertTrue( c.distance(new Coordinate(1.0,0)) == 0 );
