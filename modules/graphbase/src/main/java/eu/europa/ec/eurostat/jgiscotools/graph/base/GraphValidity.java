@@ -73,10 +73,70 @@ public class GraphValidity {
 			for(Edge e : f.getEdges()) {
 				if(e.f1 == f || e.f2 == f) continue;
 				LOGGER.error("Unvalid graph: unexpected face-edge connection.");
+				return false;
 			}
 		}
 
 		//TODO check also consistency between geometries ?
+
+
+
+		//node -> graph
+		for(Edge e : g.getEdges()) {
+			if(!g.getNodes().contains(e.getN1())) {
+				LOGGER.error("Unvalid graph: missing node-graph connection.");
+				return false;
+			}
+			if(!g.getNodes().contains(e.getN2())) {
+				LOGGER.error("Unvalid graph: missing node-graph connection.");
+				return false;
+			}
+		}
+		for(Face f : g.getFaces()) {
+			for(Node n : f.getNodes()) {				
+				if(!g.getNodes().contains(n)) {
+					LOGGER.error("Unvalid graph: missing node-graph connection.");
+					return false;
+				}
+			}
+		}
+
+		//edge -> graph
+		for(Node n : g.getNodes()) {
+			for(Edge e : n.getEdges()) {				
+				if(!g.getEdges().contains(e)) {
+					LOGGER.error("Unvalid graph: missing edge-graph connection.");
+					return false;
+				}
+			}
+		}
+		for(Face f : g.getFaces()) {
+			for(Edge e : f.getEdges()) {				
+				if(!g.getEdges().contains(e)) {
+					LOGGER.error("Unvalid graph: missing edge-graph connection.");
+					return false;
+				}
+			}
+		}
+
+		//face -> graph
+		for(Node n : g.getNodes()) {
+			for(Face f : n.getFaces()) {				
+				if(!g.getFaces().contains(f)) {
+					LOGGER.error("Unvalid graph: missing face-graph connection.");
+					return false;
+				}
+			}
+		}
+		for(Edge e : g.getEdges()) {
+			for(Face f : e.getFaces()) {				
+				if(!g.getFaces().contains(f)) {
+					LOGGER.error("Unvalid graph: missing face-graph connection.");
+					return false;
+				}
+			}		
+		}
+
 
 		return true;
 	}

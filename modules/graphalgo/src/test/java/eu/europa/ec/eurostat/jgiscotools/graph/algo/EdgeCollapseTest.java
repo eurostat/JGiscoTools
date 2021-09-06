@@ -51,7 +51,7 @@ public class EdgeCollapseTest {
 
 
 		//collapse edge e12
-		Coordinate c = EdgeCollapse.collapseEdge(e12);
+		Node n = EdgeCollapse.collapseEdge(e12);
 
 
 
@@ -60,7 +60,7 @@ public class EdgeCollapseTest {
 		assertTrue( GraphValidity.isValid(g) );
 
 		//check collapsed node position
-		assertTrue( c.distance(new Coordinate(1.0,0)) == 0 );
+		assertTrue( n.getC().distance(new Coordinate(1.0,0)) == 0 );
 
 		//g
 		assertTrue( g.getFaces().size() == 2 );
@@ -83,26 +83,26 @@ public class EdgeCollapseTest {
 		assertTrue( e12.getN2() == null );
 
 		//other edges - nodes
-		assertTrue( e13.getN1() == n1 );
+		assertTrue( e13.getN1() == n );
 		assertTrue( e13.getN2() == n3 );
-		assertTrue( e23.getN1() == n1 );
+		assertTrue( e23.getN1() == n );
 		assertTrue( e23.getN2() == n3 );
 		assertTrue( e41.getN1() == n4 );
-		assertTrue( e41.getN2() == n1 );
+		assertTrue( e41.getN2() == n );
 		assertTrue( e42.getN1() == n4 );
-		assertTrue( e42.getN2() == n1 );
+		assertTrue( e42.getN2() == n );
 
 		assertTrue( e111.getN1() == n11 );
-		assertTrue( e111.getN2() == n1 );
-		assertTrue( e112.getN1() == n1 );
+		assertTrue( e111.getN2() == n );
+		assertTrue( e112.getN1() == n );
 		assertTrue( e112.getN2() == n12 );
 		assertTrue( e131.getN1() == n13 );
-		assertTrue( e131.getN2() == n1 );
-		assertTrue( e221.getN1() == n1 );
+		assertTrue( e131.getN2() == n );
+		assertTrue( e221.getN1() == n );
 		assertTrue( e221.getN2() == n21 );
 		assertTrue( e222.getN1() == n22 );
-		assertTrue( e222.getN2() == n1 );
-		assertTrue( e223.getN1() == n1 );
+		assertTrue( e222.getN2() == n );
+		assertTrue( e223.getN1() == n );
 		assertTrue( e223.getN2() == n23 );
 
 		//other edges - faces
@@ -124,10 +124,17 @@ public class EdgeCollapseTest {
 
 
 		//n1
-		assertTrue( n1.getFaces().size() == 2 );
-		assertTrue( n1.getEdges().size() == 10 );
-		assertTrue( n1.getOutEdges().size() == 5 );
-		assertTrue( n1.getInEdges().size() == 5 );
+		assertTrue( n.getFaces().size() == 2 );
+		assertTrue( n.getEdges().size() == 10 );
+		assertTrue( n.getOutEdges().size() == 5 );
+		assertTrue( n.getInEdges().size() == 5 );
+
+		//n1 - deleted ?
+		assertFalse( g.getNodes().contains(n1) );
+		assertTrue( n1.getFaces().size() == 0 );
+		assertTrue( n1.getEdges().size() == 0 );
+		assertTrue( n1.getOutEdges().size() == 0 );
+		assertTrue( n1.getInEdges().size() == 0 );
 
 		//n2 - deleted ?
 		assertFalse( g.getNodes().contains(n2) );

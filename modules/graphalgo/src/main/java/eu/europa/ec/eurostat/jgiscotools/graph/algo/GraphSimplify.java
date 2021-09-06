@@ -68,14 +68,13 @@ public class GraphSimplify {
 	 * @return
 	 */
 	public static <T extends Geometry> Collection<LineString> collapseTooShortEdgesAndPlanifyLines(Collection<LineString> lines, double res, boolean startWithShortestEdge, boolean planarGraph) {
-		lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planarGraph);
-		lines = GraphBuilder.planifyLines(lines);
-		int sI=1,sF=0;
-		while(sF<sI) {
-			LOGGER.debug(" dtsePlanifyLines loop " + lines.size());
-			sI=lines.size();
+		int sI=lines.size(), sF=0;
+		while(sF < sI) {
+			LOGGER.debug(" dtsePlanifyLines loop " + sI);
 			lines = EdgeCollapse.collapseTooShortEdges(lines, res, startWithShortestEdge, planarGraph);
 			lines = GraphBuilder.planifyLines(lines);
+			lines = GraphBuilder.lineMerge(lines);
+			sI=sF;
 			sF=lines.size();
 		}
 		return lines;

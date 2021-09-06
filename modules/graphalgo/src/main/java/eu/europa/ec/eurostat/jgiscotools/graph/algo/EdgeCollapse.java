@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 
 import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphBuilder;
@@ -24,9 +23,50 @@ public class EdgeCollapse {
 	//private final static Logger LOGGER = Logger.getLogger(EdgeCollapse.class.getName());
 
 
-	//both nodes are collapsed to the center of the edge
-	//return the center of the edge, as a trace for debugging purposes
-	public static Coordinate collapseEdge(Edge e) {
+	/**
+	 * Collapse an edge.
+	 * both nodes are collapsed to the center of the edge
+	 * 
+	 * @param e The edge to collapse.
+	 * @return The new central node
+	 */
+	public static Node collapseEdge(Edge e) {
+		Graph g = e.getGraph();
+
+		//get nodes
+		Node n1 = e.getN1(), n2 = e.getN2();
+
+		//break link edge/faces
+		if(e.f1 != null) { e.f1.getEdges().remove(e); e.f1=null; }
+		if(e.f2 != null) { e.f2.getEdges().remove(e); e.f2=null; }
+
+		//remove edge
+		g.remove(e);
+
+		//make new node
+		Node n = e.getGraph().buildNode( 0.5*(n1.getC().x+n2.getC().x), 0.5*(n1.getC().y+n2.getC().y) );
+
+		//make n point to edges
+		Set<Edge> es;
+		es = new HashSet<Edge>(); es.addAll(n1.getOutEdges());
+		for(Edge e_ : es) e_.setN1(n);
+		es = new HashSet<Edge>(); es.addAll(n1.getInEdges());
+		for(Edge e_ : es) e_.setN2(n);
+		es = new HashSet<Edge>(); es.addAll(n2.getOutEdges());
+		for(Edge e_ : es) e_.setN1(n);
+		es = new HashSet<Edge>(); es.addAll(n2.getInEdges());
+		for(Edge e_ : es) e_.setN2(n);
+
+		//remove old nodes
+		g.remove(n1);
+		if(n1 != n2) g.remove(n2);
+
+		return n;
+	}
+
+
+
+	/*public static Coordinate collapseEdge(Edge e) {
 		Graph g = e.getGraph();
 
 		//get nodes
@@ -43,21 +83,24 @@ public class EdgeCollapse {
 		NodeDisplacement.moveTo( n1, 0.5*(n1.getC().x+n2.getC().x), 0.5*(n1.getC().y+n2.getC().y) );
 
 		//make n1 origin of all edges starting from node n2
-		Set<Edge> es;
-		es = new HashSet<Edge>(); es.addAll(n2.getOutEdges());
+		Set<Edge> es = new HashSet<Edge>(); es.addAll(n2.getOutEdges());
 		for(Edge e_ : es) e_.setN1(n1);
 
 		//make n1 destination of all edges going to n2
 		es = new HashSet<Edge>(); es.addAll(n2.getInEdges());
 		for(Edge e_ : es) e_.setN2(n1);
 
-		//System.out.println(n2.getOutEdges().size() +"   "+ n2.getInEdges().size());
+		System.out.println("   " + n2.getOutEdges().size() + "   " + n2.getInEdges().size());
 
 		//remove n2
 		g.remove(n2);
 
+		System.err.println(GraphValidity.isValid(g));
+
 		return new Coordinate(n1.getC().x, n1.getC().y);
-	}
+	}*/
+
+
 
 	//find one edge shorter than a threshold values
 	public static Edge findTooShortEdge(Collection<Edge> es, double d) {
@@ -100,6 +143,7 @@ public class EdgeCollapse {
 			out.add(e.getGeometry());
 			collapseEdge(e);
 			e = startWithShortestEdge? findShortestEdge(g.getEdges(), d) : findTooShortEdge(g.getEdges(), d);
+			//System.err.println(GraphValidity.isValid(g));
 		}
 		return out;
 	}

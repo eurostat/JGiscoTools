@@ -313,7 +313,7 @@ public class GraphBuilder {
 
 
 	/**
-	 * From a spaghetti plate, return a set of lines which are noded (when they intersects) and do not intersect as lines ???
+	 * From a spaghetti plate, return a set of lines which are noded (when they intersects) and do not intersect as lines.
 	 * 
 	 * @param lines
 	 * @return
