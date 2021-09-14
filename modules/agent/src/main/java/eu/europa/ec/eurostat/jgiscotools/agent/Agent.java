@@ -81,7 +81,6 @@ public abstract class Agent {
 
 
 	//retrieve list of candidate transformations to try improving agent's satisfaction
-	@SuppressWarnings("unchecked")
 	public List<Transformation<?>> getTransformations(){
 		List<Transformation<?>> tr = new ArrayList<Transformation<?>>();
 		if(isDeleted()) return tr;

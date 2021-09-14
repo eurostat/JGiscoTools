@@ -83,13 +83,13 @@ public abstract class Constraint<T extends Agent> implements Comparable<Constrai
 			return c0.compareTo(c1);
 		}
 	}
-	public static final ConstraintPriorityComparator COMPARATOR_CONSTR = new ConstraintPriorityComparator();
+	public static final Comparator<? super Constraint<?>> COMPARATOR_CONSTR = new ConstraintPriorityComparator<>();
 
 	public static class ConstraintSatisfactionComparator<R extends Agent> implements Comparator<Constraint<R>> {
 		public int compare(Constraint<R> c0, Constraint<R> c1) {
 			return (int)(100000000*(c1.getSatisfaction()-c0.getSatisfaction()));
 		}
 	}
-	public static final ConstraintSatisfactionComparator COMPARATOR_CONSTR_BY_SATISFACTION = new ConstraintSatisfactionComparator();
+	public static final Comparator<? super Constraint<?>> COMPARATOR_CONSTR_BY_SATISFACTION = new ConstraintSatisfactionComparator<>();
 
 }

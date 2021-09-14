@@ -10,19 +10,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * An engine for the orchestration of agents executions.
+ * 
  * @author julien Gaffuri
  *
  */
 public class Engine<T extends Agent> {
 	public final static Logger LOGGER = LogManager.getLogger(Engine.class.getName());
 
-	private ArrayList<T> agents;
-	public Engine<T> shuffle() { Collections.shuffle(agents); return this; }
+	/**
+	 * The agents to process
+	 */
+	private List<T> agents;
 
 	public Engine(Collection<T> agents/*, String logFilePath*/){
 		this.agents = new ArrayList<T>();
@@ -31,15 +36,98 @@ public class Engine<T extends Agent> {
 	}
 
 	//TODO implement/test other activation methods
+	/**
+	 * Activate the agents as a queue (FIFO)
+	 * 
+	 * @return this
+	 */
 	public Engine<T> activateQueue(){
 		for(Agent agent : agents) {
-			if(!agent.isFrozen()) {
-				if(LOGGER.isTraceEnabled()) LOGGER.trace("Activate agent "+agent.getId());
-				agent.activate(/*getLogWriter()*/);
-			}
+			if(agent.isFrozen()) continue;
+			if(LOGGER.isTraceEnabled()) LOGGER.trace("Activate agent "+agent.getId());
+			agent.activate(/*getLogWriter()*/);
 		}
 		return this;
 	}
+
+	/**
+	 * Sort agents by id.
+	 * 
+	 * @return this
+	 */
+	public Engine<T> sort() {
+		if(agents == null) return this;
+		agents.sort(new Comparator<T>() {
+			public int compare(T a0, T a1) { return a0.getId().compareTo(a1.getId()); }
+		});
+		return this;
+	}
+
+	/**
+	 * Shuffle the list of agents.
+	 * 
+	 * @return this
+	 */
+	public Engine<T> shuffle() { Collections.shuffle(agents); return this; }
+
+	/**
+	 * Clear list of agents.
+	 * 
+	 * @return this
+	 */
+	public Engine<T> clear() {
+		if(this.agents != null) this.agents.clear();
+		return this;
+	}
+
+
+
+	
+	/**
+	 * Get the list of insatisfied constraints of some agents, ordered by satisfaction.
+	 * 
+	 * @param agents
+	 * @param satisfactionThreshold
+	 * @return
+	 */
+	public static <T extends Agent> ArrayList<Constraint<?>> getUnsatisfiedConstraints(Collection<T> agents, double satisfactionThreshold){
+		ArrayList<Constraint<?>> out = new ArrayList<Constraint<?>>();
+		if(agents == null) return out;
+		for(Agent ag : agents){
+			ag.computeSatisfaction();
+			if(ag.isSatisfied()) continue;
+			for(Constraint<?> c : ag.getConstraints())
+				if(!c.isSatisfied(satisfactionThreshold)) out.add(c);
+		}
+		Collections.sort(out, Constraint.COMPARATOR_CONSTR_BY_SATISFACTION);
+		Collections.reverse(out);
+		return out;
+	}
+
+
+	public Engine<T> runEvaluation(String outFilePath, boolean overrideFile){
+		try {
+			File f = new File(outFilePath);
+			if(overrideFile && f.exists()) f.delete();
+			if(!f.exists()) f.createNewFile();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
+
+			for(Agent ag : agents) {
+				ag.computeSatisfaction();
+				if(ag.isSatisfied()) continue;
+				for(Constraint<?> c : ag.getConstraints())
+					if(!c.isSatisfied(Agent.SATISFACTION_RESOLUTION)) {
+						bw.write(c.getMessage());
+						bw.write("\n");
+					}
+			}
+			bw.close();
+		} catch (Exception e) { e.printStackTrace(); }
+		return this;
+	}
+
+
+
 
 	/*
 	public Stats getSatisfactionStats(boolean refreshSatisfactionValues){
@@ -104,56 +192,5 @@ public class Engine<T extends Agent> {
 		logWriter.close();
 		logWriter = null;
 	}*/
-
-	//get the list of insatisfied constraints of an agent
-	public static ArrayList<Constraint<?>> getUnsatisfiedConstraints(Collection<?> agents, double satisfactionThreshold){
-		ArrayList<Constraint<?>> out = new ArrayList<Constraint<?>>();
-		if(agents == null) return out;
-		for(Object ag_ : agents){
-			Agent ag = (Agent)ag_;
-			ag.computeSatisfaction();
-			if(ag.isSatisfied()) continue;
-			for(Constraint<?> c : ag.getConstraints())
-				if(!c.isSatisfied(satisfactionThreshold)) out.add(c);
-		}
-		Collections.sort(out, Constraint.COMPARATOR_CONSTR_BY_SATISFACTION);
-		Collections.reverse(out);
-		return out;
-	}
-
-	public Engine<T> sort() {
-		if(agents == null) return this;
-		agents.sort(new Comparator<T>() {
-			public int compare(T a0, T a1) { return a0.getId().compareTo(a1.getId()); }
-		});
-		return this;
-	}
-
-
-
-	public Engine<T> runEvaluation(String outFilePath, boolean overrideFile){
-		try {
-			File f = new File(outFilePath);
-			if(overrideFile && f.exists()) f.delete();
-			if(!f.exists()) f.createNewFile();
-			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
-
-			for(Agent ag : agents) {
-				ag.computeSatisfaction();
-				if(ag.isSatisfied()) continue;
-				for(Constraint<?> c : ag.getConstraints())
-					if(!c.isSatisfied(Agent.SATISFACTION_RESOLUTION)) {
-						bw.write(c.getMessage());
-						bw.write("\n");
-					}
-			}
-			bw.close();
-		} catch (Exception e) { e.printStackTrace(); }
-		return this;
-	}
-
-	public void clear() {
-		if(this.agents != null) this.agents.clear();
-	}
 
 }
