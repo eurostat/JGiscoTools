@@ -8,13 +8,15 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
+ * A constraint.
+ * 
  * @author julien Gaffuri
  *
  */
 public abstract class Constraint<T extends Agent> implements Comparable<Constraint<?>>{
 	//private final static Logger LOGGER = Logger.getLogger(Constraint.class.getName());
 
-	//the object the constraint relates to
+	//the agent the constraint relates to
 	private T agent;
 	public T getAgent() { return agent; }
 
@@ -24,7 +26,12 @@ public abstract class Constraint<T extends Agent> implements Comparable<Constrai
 	}
 
 
-	//a constraint whose satisfaction is expected to be 0 or 10, which has to be satisfied. Example: a topological constraint.
+	/**
+	 * A constraint whose satisfaction is expected to be 0 or 10, which has to be satisfied.
+	 * Example: a topological constraint.
+	 * 
+	 * @return
+	 */
 	public boolean isHard() { return false; }
 
 	//importance (used for soft constraints only, to compute agent's overall satisfaction).
@@ -42,7 +49,7 @@ public abstract class Constraint<T extends Agent> implements Comparable<Constrai
 	public void computeGoalValue() {}
 	public abstract void computeSatisfaction();
 
-	//used to determine which constraints' should be satisfied in priority
+	//used to determine which constraints should be satisfied in priority
 	double priority = 1;
 	public double getPriority() { return priority; }
 	public Constraint<T> setPriority(double priority) { this.priority = priority; return this; }
@@ -78,18 +85,24 @@ public abstract class Constraint<T extends Agent> implements Comparable<Constrai
 
 
 
-	public static class ConstraintPriorityComparator<R extends Agent> implements Comparator<Constraint<R>> {
-		public int compare(Constraint<R> c0, Constraint<R> c1) {
+	/**
+	 * Some comparators
+	 */
+
+
+	//comparison by priority
+	public static final Comparator<Constraint<?>> COMPARATOR_CONSTR = new Comparator<>() {
+		@Override
+		public int compare(Constraint<?> c0, Constraint<?> c1) {
 			return c0.compareTo(c1);
 		}
-	}
-	public static final Comparator<? super Constraint<?>> COMPARATOR_CONSTR = new ConstraintPriorityComparator<>();
+	};
 
-	public static class ConstraintSatisfactionComparator<R extends Agent> implements Comparator<Constraint<R>> {
-		public int compare(Constraint<R> c0, Constraint<R> c1) {
+	public static final Comparator<Constraint<?>> COMPARATOR_CONSTR_BY_SATISFACTION = new Comparator<>() {
+		@Override
+		public int compare(Constraint<?> c0, Constraint<?> c1) {
 			return (int)(100000000*(c1.getSatisfaction()-c0.getSatisfaction()));
 		}
-	}
-	public static final Comparator<? super Constraint<?>> COMPARATOR_CONSTR_BY_SATISFACTION = new ConstraintSatisfactionComparator<>();
+	};
 
 }
