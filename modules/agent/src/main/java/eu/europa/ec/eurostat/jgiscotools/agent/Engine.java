@@ -81,6 +81,38 @@ public class Engine<T extends Agent> {
 	}
 
 
+	
+
+	/**
+	 * Run the evaluation of the agents, and store the result in a file.
+	 * 
+	 * @param outFilePath
+	 * @param overrideFile
+	 * @return this
+	 */
+	public Engine<T> runEvaluation(String outFilePath, boolean overrideFile){
+		try {
+			File f = new File(outFilePath);
+			if(overrideFile && f.exists()) f.delete();
+			if(!f.exists()) f.createNewFile();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
+
+			for(Agent ag : agents) {
+				ag.computeSatisfaction();
+				if(ag.isSatisfied()) continue;
+				for(Constraint<?> c : ag.getConstraints())
+					if(!c.isSatisfied(Agent.SATISFACTION_RESOLUTION)) {
+						bw.write(c.getMessage());
+						bw.write("\n");
+					}
+			}
+			bw.close();
+		} catch (Exception e) { e.printStackTrace(); }
+		return this;
+	}
+
+	
+	
 
 	
 	/**
@@ -104,27 +136,6 @@ public class Engine<T extends Agent> {
 		return out;
 	}
 
-
-	public Engine<T> runEvaluation(String outFilePath, boolean overrideFile){
-		try {
-			File f = new File(outFilePath);
-			if(overrideFile && f.exists()) f.delete();
-			if(!f.exists()) f.createNewFile();
-			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
-
-			for(Agent ag : agents) {
-				ag.computeSatisfaction();
-				if(ag.isSatisfied()) continue;
-				for(Constraint<?> c : ag.getConstraints())
-					if(!c.isSatisfied(Agent.SATISFACTION_RESOLUTION)) {
-						bw.write(c.getMessage());
-						bw.write("\n");
-					}
-			}
-			bw.close();
-		} catch (Exception e) { e.printStackTrace(); }
-		return this;
-	}
 
 
 
