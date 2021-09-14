@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ConstraintOneShot<T extends Agent> extends Constraint<T> {
 
-	//the transformation to apply
+	/** The transformation to apply */
 	Transformation<T> transformation = null;
 
 	public ConstraintOneShot(T agent, Transformation<T> transformation) {
@@ -24,7 +24,8 @@ public class ConstraintOneShot<T extends Agent> extends Constraint<T> {
 		this.transformation = transformation;
 	}
 
-	//the flag to show the transformation has been applied
+	//
+	/** The flag to show the transformation has been applied */
 	boolean applied = false;
 
 	@Override
