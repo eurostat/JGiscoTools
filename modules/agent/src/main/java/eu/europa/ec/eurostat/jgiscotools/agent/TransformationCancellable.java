@@ -4,6 +4,8 @@
 package eu.europa.ec.eurostat.jgiscotools.agent;
 
 /**
+ * A transformation, which can be cancelled.
+ * 
  * @author julien Gaffuri
  *
  */
