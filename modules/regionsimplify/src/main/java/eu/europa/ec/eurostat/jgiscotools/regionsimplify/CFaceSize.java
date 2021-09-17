@@ -17,7 +17,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
 
 /**
  * 
- * Ensure faces are large enougth.
+ * Ensure faces are large enough.
  * Too small faces are deleted, aggregated of scaled.
  * 
  * @author julien Gaffuri

@@ -13,6 +13,8 @@ import eu.europa.ec.eurostat.jgiscotools.algo.polygon.MorphologicalAnalysis;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 /**
+ * Ensures a tesselation has no too narrow gaps.
+ * 
  * @author julien Gaffuri
  *
  */

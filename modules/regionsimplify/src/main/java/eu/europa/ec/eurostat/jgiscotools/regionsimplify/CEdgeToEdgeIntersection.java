@@ -14,7 +14,7 @@ import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 
 /**
- * Ensures that an edge does not intersects other ones in an unvalid manner.
+ * Ensures that an edge does not intersects other ones, in an unvalid manner.
  * 
  * @author julien Gaffuri
  *

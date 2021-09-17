@@ -13,6 +13,7 @@ import eu.europa.ec.eurostat.jgiscotools.algo.measure.Granularity.GranularityMea
 
 /**
  * Ensure the granularity of an edge is below a target resolution value.
+ * This is the constraint which ensures the edge geometry is simplified.
  * 
  * @author julien Gaffuri
  *

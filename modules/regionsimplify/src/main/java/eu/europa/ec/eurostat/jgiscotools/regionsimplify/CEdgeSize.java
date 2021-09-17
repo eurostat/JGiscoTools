@@ -12,7 +12,8 @@ import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.agent.Transformation;
 
 /**
- * Ensure too short segment edges are collapsed or lengthened.
+ * Ensure edges are not too short.
+ * If so, they are either lengthened or collapsed.
  * 
  * @author julien Gaffuri
  *
