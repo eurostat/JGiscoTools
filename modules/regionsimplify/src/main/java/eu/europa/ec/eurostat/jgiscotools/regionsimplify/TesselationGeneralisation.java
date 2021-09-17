@@ -20,6 +20,10 @@ import eu.europa.ec.eurostat.jgiscotools.algo.base.NodingUtil.NodingIssueType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.AFace;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge.AEdge;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenttesselation.ATesselation;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentunit.AUnit;
 import eu.europa.ec.eurostat.jgiscotools.util.CRSType;
 
 /**

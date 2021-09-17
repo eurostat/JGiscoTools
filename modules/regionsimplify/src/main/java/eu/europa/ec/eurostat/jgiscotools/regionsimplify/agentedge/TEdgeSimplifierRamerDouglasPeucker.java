@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
+package eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge;
 
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;

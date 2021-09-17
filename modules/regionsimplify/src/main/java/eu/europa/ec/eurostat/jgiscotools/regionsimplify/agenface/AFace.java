@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
+package eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface;
 
 import java.util.Collection;
 
@@ -10,6 +10,8 @@ import org.locationtech.jts.geom.Point;
 import eu.europa.ec.eurostat.jgiscotools.agent.Agent;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenttesselation.ATesselation;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentunit.AUnit;
 
 /**
  * A face, as an agent.

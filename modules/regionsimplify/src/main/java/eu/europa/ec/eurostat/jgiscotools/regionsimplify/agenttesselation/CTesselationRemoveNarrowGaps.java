@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
+package eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenttesselation;
 
 import java.util.ArrayList;
 import java.util.Comparator;

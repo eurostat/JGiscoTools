@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
+package eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface;
 
 import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 

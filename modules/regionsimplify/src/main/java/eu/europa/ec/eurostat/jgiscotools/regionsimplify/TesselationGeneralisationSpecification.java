@@ -3,6 +3,23 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
 
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.AFace;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.CFaceContainPoints;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.CFaceNoTriangle;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.CFaceSize;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.CFaceValidity;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge.AEdge;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge.CEdgeFaceSize;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge.CEdgeGranularity;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge.CEdgeNoTriangle;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge.CEdgeValidity;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge.CEdgesFacesContainPoints;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenttesselation.ATesselation;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentunit.AUnit;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentunit.CUnitContainPoints;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentunit.CUnitNoNarrowGaps;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentunit.CUnitNoNarrowParts;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentunit.CUnitNoTriangle;
 import eu.europa.ec.eurostat.jgiscotools.util.CRSType;
 
 /**

@@ -1,10 +1,11 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
+package eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge;
 
 import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.AFace;
 
 /**
  * Ensures that the faces on both sides of the edge (if any) contain some specified points.

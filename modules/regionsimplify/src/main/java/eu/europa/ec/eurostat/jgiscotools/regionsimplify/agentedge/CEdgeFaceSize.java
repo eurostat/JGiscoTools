@@ -1,13 +1,15 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
+package eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.agent.Constraint;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.AFace;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.CFaceSize;
 
 /**
  * Ensure the edge face constraint (if any) is satisfied

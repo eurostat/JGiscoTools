@@ -1,10 +1,11 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
+package eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge;
 
 import eu.europa.ec.eurostat.jgiscotools.agent.Agent;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenttesselation.ATesselation;
 
 /**
  * An edge, as an agent.

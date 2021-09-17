@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
+package eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentunit;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +20,8 @@ import eu.europa.ec.eurostat.jgiscotools.agent.Agent;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Union;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.AFace;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenttesselation.ATesselation;
 
 /**
  * A tesselation unit, which consists of one or several AFaces.

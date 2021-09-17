@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.regionsimplify;
+package eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenttesselation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +26,9 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.GraphToFeature;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agenface.AFace;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentedge.AEdge;
+import eu.europa.ec.eurostat.jgiscotools.regionsimplify.agentunit.AUnit;
 
 /**
  * A tesselation to be generalised.
