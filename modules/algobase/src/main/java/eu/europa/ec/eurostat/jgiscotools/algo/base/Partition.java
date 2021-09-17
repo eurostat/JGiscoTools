@@ -117,8 +117,14 @@ public class Partition {
 		this.env = env;
 	}
 
-	//determine if the partition is too large: if it has too many vertices, or if it contains a polygonal part with too many vertices
 	private int coordinatesNumber = 0, maxEltCN = 0;
+	/**
+	 * Determine if the partition is too large: if it has too many vertices, or if it contains a geometry with too many vertices.
+	 * 
+	 * @param maxCoordinatesNumber
+	 * @param objMaxCoordinateNumber
+	 * @return
+	 */
 	private boolean isTooLarge(int maxCoordinatesNumber, int objMaxCoordinateNumber) {
 		coordinatesNumber = 0;
 		maxEltCN = 0;
@@ -133,7 +139,14 @@ public class Partition {
 	}
 
 
-	//run process on the partition, decomposing it recursively if it is too large.
+	/**
+	 * Run process on the partition, decomposing it recursively if it is too large.
+	 * 
+	 * @param parallel
+	 * @param maxCoordinatesNumber
+	 * @param objMaxCoordinateNumber
+	 * @param ignoreRecomposition
+	 */
 	private void runRecursively(boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition) {
 		if(! isTooLarge(maxCoordinatesNumber, objMaxCoordinateNumber)) {
 			if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   not too large: Run process...");
@@ -153,7 +166,7 @@ public class Partition {
 			//	sp.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
 
 			//TODO: executed once all thread have resumed? Guess so.
-			
+
 			if(!ignoreRecomposition) {
 				if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Recomposing");
 				recompose(subPartitions);
@@ -161,7 +174,11 @@ public class Partition {
 		}
 	}
 
-	//decompose the partition into four partitions
+	/**
+	 * Decompose the partition into four sub-partitions
+	 * 
+	 * @return
+	 */
 	private Collection<Partition> decompose() {
 		//create four sub-partitions
 
@@ -197,6 +214,9 @@ public class Partition {
 		return subPartitions;
 	}
 
+	/**
+	 * @param inFeatures
+	 */
 	private void cutAndSetFeatures(Collection<Feature> inFeatures) {
 
 		features = new HashSet<Feature>();
@@ -239,7 +259,11 @@ public class Partition {
 	}
 
 
-	//recompose partition
+	/**
+	 * Recompose sub-partitions.
+	 * 
+	 * @param subPartitions
+	 */
 	private void recompose(Collection<Partition> subPartitions) {
 
 		//gather pieces together
@@ -305,7 +329,17 @@ public class Partition {
 
 
 
-	//build a dataset of partition areas, with some information on each partition area
+	/**
+	 * Build a dataset of partition areas, with some information on each partition area
+	 * 
+	 * @param features
+	 * @param parallel
+	 * @param maxCoordinatesNumber
+	 * @param objMaxCoordinateNumber
+	 * @param gt
+	 * @param midRandom
+	 * @return
+	 */
 	public static Collection<Feature> getPartitionDataset(Collection<Feature> features, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
 		final Collection<Feature> fs = new ArrayList<Feature>();
 
