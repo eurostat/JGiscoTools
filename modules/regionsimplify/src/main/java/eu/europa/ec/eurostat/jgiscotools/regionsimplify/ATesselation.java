@@ -37,13 +37,16 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
 public class ATesselation extends Agent {
 	public final static Logger LOGGER = LogManager.getLogger(ATesselation.class.getName());
 
-	//the unit
+	//the agents
 	public Collection<AUnit> aUnits;
+	public Collection<AFace> aFaces;
+	public Collection<AEdge> aEdges;
 
 	//the underlying graph structure
 	public Graph graph;
-	public Collection<AEdge> aEdges;
-	public Collection<AFace> aFaces;
+
+	//an envelope. If specified, edges along this envelope limits will be frozen.
+	//this is usefull when using partitionning.
 	private Envelope env = null;
 
 	public ATesselation(Collection<Feature> units) { this(units, null, null); }
@@ -90,7 +93,7 @@ public class ATesselation extends Agent {
 		aEdges = new HashSet<AEdge>();
 		for(Edge e : graph.getEdges()) {
 			AEdge ae = (AEdge) new AEdge(e,this).setId(e.getId());
-			if(isToBeFreezed(ae)) ae.freeze();
+			if(isToBeFrozen(ae)) ae.freeze();
 			aEdges.add(ae);
 		}
 		aFaces = new HashSet<AFace>();
@@ -125,6 +128,11 @@ public class ATesselation extends Agent {
 		return this;
 	}
 
+	/**
+	 * Destroy the topological map.
+	 * 
+	 * @return this
+	 */
 	public ATesselation destroyTopologicalMap() {
 		if(graph != null) { graph.clear(); graph = null; }
 		if(aEdges != null) { for(AEdge a: aEdges) a.clear(); aEdges.clear(); aEdges = null; }
@@ -153,7 +161,7 @@ public class ATesselation extends Agent {
 
 	public Collection<Feature> getEdges() {
 		Collection<Feature> out = new HashSet<Feature>();
-		if(aEdges ==null) return out;
+		if(aEdges == null) return out;
 		for(AEdge aEdg:aEdges)
 			if(!aEdg.isDeleted())
 				out.add(GraphToFeature.asFeature(aEdg.getObject()));
@@ -207,7 +215,14 @@ public class ATesselation extends Agent {
 		return units;
 	}
 
-	private boolean isToBeFreezed(AEdge ae) {
+	/**
+	 * Check if a edge schould be frozen.
+	 * This happens when the edge lays within the enveloppe. This is usefull when running the partitionning along an envelope.
+	 * 
+	 * @param ae
+	 * @return
+	 */
+	private boolean isToBeFrozen(AEdge ae) {
 		if(this.env == null) return false;
 		Geometry g = ae.getObject().getGeometry();
 		if (JTSGeomUtil.containsSFS(this.env, g.getEnvelopeInternal())) return false;
