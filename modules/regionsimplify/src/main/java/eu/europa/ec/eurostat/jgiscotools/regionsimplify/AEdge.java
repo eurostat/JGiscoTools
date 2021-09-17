@@ -7,6 +7,8 @@ import eu.europa.ec.eurostat.jgiscotools.agent.Agent;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 
 /**
+ * An edge, as an agent.
+ * 
  * @author julien Gaffuri
  *
  */
@@ -18,6 +20,7 @@ public class AEdge extends Agent {
 	public Edge getObject() { return (Edge) super.getObject(); }
 
 	public void clear() {
+		super.clear();
 		aTess = null;
 	}
 

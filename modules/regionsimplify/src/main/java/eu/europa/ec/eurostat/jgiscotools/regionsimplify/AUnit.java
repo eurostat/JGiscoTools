@@ -97,6 +97,7 @@ public class AUnit extends Agent {
 	}
 
 	public void clear() {
+		super.clear();
 		if(aFaces != null) aFaces.clear(); aFaces = null;
 		if(points != null) points.clear(); points = null;
 	}

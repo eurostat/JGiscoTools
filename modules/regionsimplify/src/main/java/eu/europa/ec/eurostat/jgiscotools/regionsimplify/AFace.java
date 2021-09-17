@@ -12,6 +12,8 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Edge;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
 
 /**
+ * A face, as an agent.
+ * 
  * @author julien Gaffuri
  *
  */
@@ -26,6 +28,9 @@ public class AFace extends Agent {
 	public Collection<Point> points = null;
 
 
+	/**
+	 * The unit agent the face may belong to
+	 */
 	public AUnit aUnit = null;
 
 	public boolean lastUnitFace(){
@@ -33,6 +38,9 @@ public class AFace extends Agent {
 		return aUnit.getNumberOfNonDeletedFaces() == 1;
 	}
 
+	/**
+	 * @return True if the face relate to a unit hole.
+	 */
 	public boolean isHole() {
 		return aUnit == null;
 	}
@@ -55,6 +63,7 @@ public class AFace extends Agent {
 	}
 
 	public void clear() {
+		super.clear();
 		aTess = null;
 		aUnit = null;
 		if(points != null) points.clear(); points = null;

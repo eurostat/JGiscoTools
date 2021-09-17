@@ -28,7 +28,8 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Face;
 import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
 
 /**
- * A tesselation to be generalised. It is a macro agent.
+ * A tesselation to be generalised.
+ * It is a macro agent.
  * 
  * @author julien Gaffuri
  *
@@ -36,8 +37,10 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Graph;
 public class ATesselation extends Agent {
 	public final static Logger LOGGER = LogManager.getLogger(ATesselation.class.getName());
 
+	//the unit
 	public Collection<AUnit> aUnits;
 
+	//the underlying graph structure
 	public Graph graph;
 	public Collection<AEdge> aEdges;
 	public Collection<AFace> aFaces;
@@ -67,8 +70,12 @@ public class ATesselation extends Agent {
 	}
 
 
-	//build topological map
-	public ATesselation buildTopologicalMap() throws Exception {
+	/**
+	 * Build the graph structure, the agents and their relations.
+	 * 
+	 * @return this
+	 */
+	public ATesselation buildTopologicalMap() {
 
 		//get unit's boundaries
 		Collection<MultiPolygon> mps = new ArrayList<MultiPolygon>();
