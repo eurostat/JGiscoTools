@@ -39,6 +39,7 @@ public class TesselationGeneralisation {
 	}
 
 	public static Collection<Feature> runGeneralisation(Collection<Feature> units, HashMap<String, Collection<Point>> points, final TesselationGeneralisationSpecification specs, boolean parallel, int roundNb, int maxCoordinatesNumber, int objMaxCoordinateNumber) {
+
 		for(int i=1; i<=roundNb; i++) {
 			if(LOGGER.isInfoEnabled()) LOGGER.info("Round "+i+" - CoordNb="+FeatureUtil.getVerticesNumber(units)+" FeatNb="+units.size());
 			final int i_ = i;
@@ -84,6 +85,7 @@ public class TesselationGeneralisation {
 			}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, false, Partition.GeomType.ONLY_AREAS, 0.02);
 			for(Feature unit : units) unit.setGeometry(JTSGeomUtil.toMulti(unit.getGeometry()));
 		}
+
 		return units;
 	}
 
@@ -98,7 +100,7 @@ public class TesselationGeneralisation {
 			}
 			if("".equals(id)) continue;
 			Collection<Point> data = index.get(id);
-			if(data == null) { data=new ArrayList<Point>(); index.put(id, data); }
+			if(data == null) { data = new ArrayList<Point>(); index.put(id, data); }
 			data.add((Point) f.getGeometry());
 		}
 		return index;
