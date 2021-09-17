@@ -22,37 +22,84 @@ import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 
 /**
+ * Partionning of processes, for large datasets of features, following a quadtree partitioning.
+ * The principle is to:
+ * 1. Analyse the size of the dataset
+ * 2. If it is too large (according to some criteria), then it is decomposed into 4 parts, which are then analysed again (recursive call)
+ * 3. If it is small enough, the process is launched
+ * 4. When the 4 parts are processed, their result is re-united
+ * 
  * @author julien Gaffuri
  *
  */
 public class Partition {
+	private final static Logger LOGGER = LogManager.getLogger(Partition.class.getName());
 
 	//TODO handle operations which do not change the input features but produce outputs - exemple: partition areas creation. Recomposition method should then concern these outputs (when necessary).
 
-	public final static Logger LOGGER = LogManager.getLogger(Partition.class.getName());
 
+	/**
+	 * Run a process with recursive partitionning.
+	 * 
+	 * @param features The features to process
+	 * @param op The operation to apply on the features of one partition
+	 * @param parallel Set to true to allow parallel processing
+	 * @param maxCoordinatesNumber Indicator of the partition size: The number of vertices of the geometries. Above this value, the dataset is considered as too large, and the sub-partionning is launched.
+	 * @param objMaxCoordinateNumber Indicator of the partition size: The number of vertices of the larger geometry. Above this value, the dataset is considered as too large, and the sub-partionning is launched.
+	 * @param ignoreRecomposition Set to true is nothing should be done on the input features at recomposition stage.
+	 * @param gt The geometry type of the features
+	 * @param midRandom Randomness factor on the middle separation used when splitting a partition into sub partitions, within [0,1]
+	 * @return
+	 */
 	public static Collection<Feature> runRecursively(Collection<Feature> features, PartitionedOperation op, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition, GeomType gt, double midRandom) {
 		Partition p = new Partition("0", features, op, gt, midRandom);
 		p.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
 		return p.getFeatures();
 	}
 
+	/**
+	 * The code of the partition.
+	 * It is a character string among [1,2,3,4] indicating the position of the partition in the quadtree.
+	 */
 	private String code;
 	public String getCode() { return code; }
 
+	/**
+	 * The features of the partition, to be processed.
+	 */
 	public Collection<Feature> features = null;
 	public Collection<Feature> getFeatures() { return features; }
 
+	/**
+	 * An operation to be performed on a partition.
+	 * 
+	 * @author julien Gaffuri
+	 *
+	 */
 	public interface PartitionedOperation { void run(Partition p); }
+
+	/**
+	 * The operation to perform on the partition features.
+	 */
 	private PartitionedOperation operation;
 
-	//the partition input geometry type
+	/**
+	 * The partition input geometry type
+	 * 
+	 * @author julien Gaffuri
+	 *
+	 */
 	public enum GeomType { ONLY_AREAS, ONLY_LINES, ONLY_POINTS, MIXED }
 	private GeomType geomType = GeomType.MIXED;
 
-	//some randomness factor on the middle separation used when splitting a partition into sub partitions
+	/**
+	 * Randomness factor on the middle separation used when splitting a partition into sub partitions, within [0,1]
+	 */
 	private double midRandom = 0;
 
+	/**
+	 * The envelope of the partition
+	 */
 	private Envelope env;
 	public Envelope getEnvelope() { return env; }
 	public Polygon getExtend(GeometryFactory gf) { return JTS.toGeometry(this.env, gf); }
