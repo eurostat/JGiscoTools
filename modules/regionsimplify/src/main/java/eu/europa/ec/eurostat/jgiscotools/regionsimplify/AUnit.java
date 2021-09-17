@@ -40,7 +40,9 @@ public class AUnit extends Agent {
 		this.setId(f.getID());
 	}
 
-	//the points that are supposed to be inside the unit, and might be used for a constraint
+	//some points that are supposed to stay inside the unit.
+	//these could be for example other puntual features such as region capital, or a label position.
+	//These points can then be used for a constraint "Unit contains points"
 	public Collection<Point> points = null;
 
 	public Feature getObject() { return (Feature)super.getObject(); }
