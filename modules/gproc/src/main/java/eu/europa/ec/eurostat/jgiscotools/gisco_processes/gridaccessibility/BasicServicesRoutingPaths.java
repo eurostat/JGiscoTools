@@ -31,7 +31,8 @@ import eu.europa.ec.eurostat.jgiscotools.routing.AccessibilityRoutingPaths;
 public class BasicServicesRoutingPaths {
 	private static Logger logger = LogManager.getLogger(BasicServicesRoutingPaths.class.getName());
 
-	private static String basePath = "E:/workspace/basic_services_accessibility/";
+	private static String basePath = "/home/juju/Bureau/basic_services_accessibility/";
+	//private static String basePath = "E:/workspace/basic_services_accessibility/";
 	private static String cnt = "FR";
 	private static boolean computeStats = true;
 	private static int resKM = 1;
