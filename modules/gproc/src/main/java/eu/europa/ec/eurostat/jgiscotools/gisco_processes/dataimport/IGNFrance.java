@@ -2,7 +2,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.dataimport;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Arrays;
 
 public class IGNFrance {
 
@@ -80,7 +79,12 @@ public class IGNFrance {
 			Process pr = rt.exec(cmd);
 			System.out.println(pr);
 
-			//delete shp ?
+			//delete shp
+			new File(f+".shp").delete();
+			new File(f+".cpg").delete();
+			new File(f+".dbf").delete();
+			new File(f+".prj").delete();
+			new File(f+".shx").delete();
 		}
 
 		System.out.println("End");
