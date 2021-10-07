@@ -29,14 +29,14 @@ public class BuildingStatsComputation {
 		logger.info("Start");
 
 		//String basePath = "E:/workspace/building_stats/test/";
-		String basePath = "/home/juju/Bureau/building_stats/";
+		String basePath = "/home/juju/Bureau/gisco/";
 
 		logger.info("Load cells...");
 		Filter fil = null;
 		try {
 			fil = CQL.toFilter("(NUTS_1_ID='FRL')");
 		} catch (CQLException e) { e.printStackTrace(); }
-		ArrayList<Feature> cells = GeoData.getFeatures("E:\\dissemination\\shared-data\\grid\\grid_1km_surf.gpkg", null, fil);
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grid/grid_1km_surf.gpkg", null, fil);
 		logger.info(cells.size() + " cells");
 
 		logger.info("Load buildings...");
