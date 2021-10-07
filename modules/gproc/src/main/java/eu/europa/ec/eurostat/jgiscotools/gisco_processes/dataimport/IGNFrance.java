@@ -24,9 +24,13 @@ public class IGNFrance {
 		System.out.println("Start");
 
 		String path = "/home/juju/Bureau/gisco/fr/bdtopo/";
-		String bdTopoClass = "BATIMENT";
-		//String bdTopoClass = "TRONCON_DE_ROUTE";
+		extractBDTopo("BATIMENT", path);
+		extractBDTopo("TRONCON_DE_ROUTE", path);
 
+		System.out.println("End");
+	}
+
+	static void extractBDTopo(String bdTopoClass, String path) throws IOException {
 
 		//get 7z files
 		List<String> files = getFilesWithExtension(path, "7z");
@@ -76,10 +80,7 @@ public class IGNFrance {
 			new File(f+".prj").delete();
 			new File(f+".shx").delete();
 		}
-
-		System.out.println("End");
 	}
-
 
 
 
