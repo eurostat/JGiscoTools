@@ -1,14 +1,8 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.dataimport;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
-import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import java.io.FilenameFilter;
+import java.util.Arrays;
 
 public class IGNFrance {
 
@@ -22,7 +16,9 @@ public class IGNFrance {
 
 		String path = "/home/juju/Bureau/gisco/fr/bdtopo/";
 
-		//get 7z files
+		String fileClass = "BATIMENT";
+
+		/*/get 7z files
 		List<String> files = Files.walk(Paths.get(path))
 				.filter(p -> !Files.isDirectory(p))
 				.map(p -> p.toString())
@@ -44,7 +40,6 @@ public class IGNFrance {
 			SevenZArchiveEntry entry = sevenZFile.getNextEntry();
 			while(entry!=null){
 				String en = entry.getName();
-				String fileClass = "BATIMENT";
 				if(!en.contains(fileClass)) {
 					entry = sevenZFile.getNextEntry();
 					continue;
@@ -62,9 +57,31 @@ public class IGNFrance {
 			}
 			sevenZFile.close();
 
-		}
+		}*/
 
-		//reproject
+
+		//reproject, geopkg
+
+		//get all folders
+		File file = new File(path);
+		String[] folders = file.list(new FilenameFilter() {
+			@Override
+			public boolean accept(File current, String name) { return new File(current, name).isDirectory(); }
+		});
+
+		for(String folder : folders) {
+			System.out.println(folder);
+
+			//reproject
+			String f = path + folder + "/" + fileClass;
+			String cmd = "ogr2ogr -overwrite -f \"GPKG\" -t_srs EPSG:3035 " + f + ".gpkg " + f + ".shp";
+			//System.out.println(cmd);
+			Runtime rt = Runtime.getRuntime();
+			Process pr = rt.exec(cmd);
+			System.out.println(pr);
+
+			//delete shp ?
+		}
 
 		System.out.println("End");
 	}
