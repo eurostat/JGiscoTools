@@ -36,13 +36,14 @@ public class IGNFrance {
 		List<String> files = getFilesWithExtension(path, "7z");
 
 		for(String file : files) {
-			System.out.println("Decompress " + file);
+			System.out.println(file);
 
 			String outFolder = path + file.toString().split("LAMB93_D")[1].replace(".7z","").split("_")[0] + "/";
 			new File(outFolder).mkdirs();
 			//System.out.println(outFolder);
 
-			//decompress
+
+			System.out.println("Decompress");
 			SevenZFile sevenZFile = new SevenZFile(new File(file));
 			SevenZArchiveEntry entry = sevenZFile.getNextEntry();
 			while(entry!=null){
@@ -65,12 +66,14 @@ public class IGNFrance {
 			sevenZFile.close();
 
 
-			System.out.println("reproject, geopkg");
+
+			System.out.println("Projection to ETRS89-LAEA, format to geopkg");
 			String f = outFolder + bdTopoClass;
 			String cmd = "ogr2ogr -overwrite -f \"GPKG\" -t_srs EPSG:3035 " + f + ".gpkg " + f + ".shp";
 			//System.out.println(cmd);
 			/*int exitValue = */new DefaultExecutor().execute(CommandLine.parse(cmd));
 			//System.out.println(exitValue);
+
 
 
 			System.out.println("Delete SHP");
