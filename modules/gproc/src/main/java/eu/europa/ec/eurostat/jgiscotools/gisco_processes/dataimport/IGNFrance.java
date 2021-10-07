@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
 
 public class IGNFrance {
 
@@ -35,7 +37,7 @@ public class IGNFrance {
 		for(String file : files) {
 			System.out.println("Decompress " + file);
 
-			String outFolder = path + file.toString().split("LAMB93_D")[1].replace(".7z","").split("_")[0];
+			String outFolder = path + file.toString().split("LAMB93_D")[1].replace(".7z","").split("_")[0] + "/";
 			new File(outFolder).mkdirs();
 			//System.out.println(outFolder);
 
@@ -61,16 +63,16 @@ public class IGNFrance {
 			}
 			sevenZFile.close();
 
-			//reproject, geopkg
-			String f = path + outFolder + "/" + fileClass;
+
+			System.out.println("reproject, geopkg");
+			String f = outFolder + fileClass;
 			String cmd = "ogr2ogr -overwrite -f \"GPKG\" -t_srs EPSG:3035 " + f + ".gpkg " + f + ".shp";
 			//System.out.println(cmd);
-			Runtime rt = Runtime.getRuntime();
-			Process pr = rt.exec(cmd);
-			pr.waitFor();
-			System.out.println(pr);
+			int exitValue = new DefaultExecutor().execute(CommandLine.parse(cmd));
+			//System.out.println(exitValue);
 
-			//delete shp
+
+			System.out.println("Delete SHP");
 			new File(f+".shp").delete();
 			new File(f+".cpg").delete();
 			new File(f+".dbf").delete();
