@@ -42,7 +42,7 @@ public class BuildingStatsComputation {
 		logger.info("Load buildings...");
 		fil = null;
 		try {
-			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='RÃ©sidentiel' OR USAGE2='RÃ©sidentiel'))");
+			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
 		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = null;
 		for(String dep : new String[] { "04", "05", "06", "84", "83", "13" }) {
@@ -82,7 +82,7 @@ public class BuildingStatsComputation {
 				//type contributions
 				String u1 = (String) f.getAttribute("USAGE1");
 				String u2 = (String) f.getAttribute("USAGE2");
-				double r0 = getBDTopoTypeRatio("RÃ©sidentiel", u1, u2);
+				double r0 = getBDTopoTypeRatio("Résidentiel", u1, u2);
 				double r1 = getBDTopoTypeRatio("Agricole", u1, u2);
 				double r2 = getBDTopoTypeRatio("Industriel", u1, u2);
 				double r3 = getBDTopoTypeRatio("Commercial et services", u1, u2);
