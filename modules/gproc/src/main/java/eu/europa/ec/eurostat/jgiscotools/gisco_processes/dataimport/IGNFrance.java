@@ -2,6 +2,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.dataimport;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -23,16 +24,12 @@ public class IGNFrance {
 		System.out.println("Start");
 
 		String path = "/home/juju/Bureau/gisco/fr/bdtopo/";
-		String fileClass = "BATIMENT";
+		String bdTopoClass = "BATIMENT";
+		//String bdTopoClass = "TRONCON_DE_ROUTE";
 
 
 		//get 7z files
-		List<String> files = Files.walk(Paths.get(path))
-				.filter(p -> !Files.isDirectory(p))
-				.map(p -> p.toString())
-				.filter(f -> f.endsWith("7z"))
-				.collect(Collectors.toList())
-				;
+		List<String> files = getFilesWithExtension(path, "7z");
 
 		for(String file : files) {
 			System.out.println("Decompress " + file);
@@ -46,14 +43,14 @@ public class IGNFrance {
 			SevenZArchiveEntry entry = sevenZFile.getNextEntry();
 			while(entry!=null){
 				String en = entry.getName();
-				if(!en.contains(fileClass)) {
+				if(!en.contains(bdTopoClass)) {
 					entry = sevenZFile.getNextEntry();
 					continue;
 				}
 				System.out.println(en);
 
 				String ext = en.substring(en.length()-3, en.length());
-				FileOutputStream out = new FileOutputStream(outFolder + fileClass + "." + ext);
+				FileOutputStream out = new FileOutputStream(outFolder + bdTopoClass + "." + ext);
 				byte[] content = new byte[(int) entry.getSize()];
 				sevenZFile.read(content, 0, content.length);
 				out.write(content);
@@ -65,10 +62,10 @@ public class IGNFrance {
 
 
 			System.out.println("reproject, geopkg");
-			String f = outFolder + fileClass;
+			String f = outFolder + bdTopoClass;
 			String cmd = "ogr2ogr -overwrite -f \"GPKG\" -t_srs EPSG:3035 " + f + ".gpkg " + f + ".shp";
 			//System.out.println(cmd);
-			int exitValue = new DefaultExecutor().execute(CommandLine.parse(cmd));
+			/*int exitValue = */new DefaultExecutor().execute(CommandLine.parse(cmd));
 			//System.out.println(exitValue);
 
 
@@ -78,10 +75,30 @@ public class IGNFrance {
 			new File(f+".dbf").delete();
 			new File(f+".prj").delete();
 			new File(f+".shx").delete();
-
 		}
 
 		System.out.println("End");
+	}
+
+
+
+
+	/**
+	 * Return all files in a folder with given extension.
+	 * 
+	 * @param path
+	 * @param extension
+	 * @return
+	 * @throws IOException
+	 */
+	public static List<String> getFilesWithExtension(String path, String extension) throws IOException {
+		return Files.walk(Paths.get(path))
+				.filter(p -> !Files.isDirectory(p))
+				.map(p -> p.toString())
+				.filter(f -> f.endsWith(extension))
+				.collect(Collectors.toList())
+				;
+
 	}
 
 }
