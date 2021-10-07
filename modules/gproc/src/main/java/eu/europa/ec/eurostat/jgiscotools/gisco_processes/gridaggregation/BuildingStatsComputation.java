@@ -28,7 +28,8 @@ public class BuildingStatsComputation {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		String basePath = "E:/workspace/building_stats/test/";
+		//String basePath = "E:/workspace/building_stats/test/";
+		String basePath = "/home/juju/Bureau/building_stats/";
 
 		logger.info("Load cells...");
 		Filter fil = null;

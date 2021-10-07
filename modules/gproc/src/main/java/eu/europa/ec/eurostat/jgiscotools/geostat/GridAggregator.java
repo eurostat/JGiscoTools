@@ -36,11 +36,11 @@ public class GridAggregator<T> {
 	//the geo features from which to compute aggregates
 	private Collection<Feature> features = null;
 
-	//
+	//the map operation
 	private MapOperation<T> mapOp = null;
 	public interface MapOperation<T> { T map(Feature f, Geometry inter); }
 
-	//
+	//the reduce operation
 	private ReduceOperation<T> reduceOp = null;
 	public interface ReduceOperation<T> { Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<T> data); }
 
