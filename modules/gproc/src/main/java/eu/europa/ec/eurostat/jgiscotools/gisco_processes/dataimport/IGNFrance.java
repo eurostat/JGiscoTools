@@ -1,7 +1,15 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.dataimport;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 
 public class IGNFrance {
 
@@ -14,10 +22,10 @@ public class IGNFrance {
 		System.out.println("Start");
 
 		String path = "/home/juju/Bureau/gisco/fr/bdtopo/";
-
 		String fileClass = "BATIMENT";
 
-		/*/get 7z files
+
+		//get 7z files
 		List<String> files = Files.walk(Paths.get(path))
 				.filter(p -> !Files.isDirectory(p))
 				.map(p -> p.toString())
@@ -25,16 +33,14 @@ public class IGNFrance {
 				.collect(Collectors.toList())
 				;
 
-		System.out.println(files.size());
-
-		//decompress
 		for(String file : files) {
 			System.out.println("Decompress " + file);
 
-			String outFolder = path + file.toString().split("LAMB93_D")[1].replace(".7z","").replace("-","_") + "/";
+			String outFolder = path + file.toString().split("LAMB93_D")[1].replace(".7z","").split("_")[0];
 			new File(outFolder).mkdirs();
 			//System.out.println(outFolder);
 
+			//decompress
 			SevenZFile sevenZFile = new SevenZFile(new File(file));
 			SevenZArchiveEntry entry = sevenZFile.getNextEntry();
 			while(entry!=null){
@@ -56,27 +62,13 @@ public class IGNFrance {
 			}
 			sevenZFile.close();
 
-		}*/
-
-
-		//reproject, geopkg
-
-		//get all folders
-		File file = new File(path);
-		String[] folders = file.list(new FilenameFilter() {
-			@Override
-			public boolean accept(File current, String name) { return new File(current, name).isDirectory(); }
-		});
-
-		for(String folder : folders) {
-			System.out.println(folder);
-
-			//reproject
-			String f = path + folder + "/" + fileClass;
+			//reproject, geopkg
+			String f = path + outFolder + "/" + fileClass;
 			String cmd = "ogr2ogr -overwrite -f \"GPKG\" -t_srs EPSG:3035 " + f + ".gpkg " + f + ".shp";
 			//System.out.println(cmd);
 			Runtime rt = Runtime.getRuntime();
 			Process pr = rt.exec(cmd);
+			pr.waitFor();
 			System.out.println(pr);
 
 			//delete shp
@@ -85,6 +77,7 @@ public class IGNFrance {
 			new File(f+".dbf").delete();
 			new File(f+".prj").delete();
 			new File(f+".shx").delete();
+
 		}
 
 		System.out.println("End");
