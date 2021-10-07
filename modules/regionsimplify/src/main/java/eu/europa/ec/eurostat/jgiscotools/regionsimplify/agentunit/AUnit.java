@@ -109,7 +109,7 @@ public class AUnit extends Agent {
 
 
 
-	void linkPointsToFaces() {
+	public void linkPointsToFaces() {
 		if(points == null) return;
 		for(Point pt : points) {
 			AFace af = getAFace(pt);
