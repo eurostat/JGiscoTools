@@ -34,9 +34,9 @@ public class BuildingStatsComputation {
 		logger.info("Load cells...");
 		Filter fil = null;
 		try {
-			fil = CQL.toFilter("(NUTS_1_ID='FRL')");
+			fil = CQL.toFilter("(NUTS_1_ID='FRF')");
 		} catch (CQLException e) { e.printStackTrace(); }
-		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grid/grid_1km_surf.gpkg", null, fil);
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_5km_surf.gpkg", null, fil);
 		logger.info(cells.size() + " cells");
 
 		logger.info("Load buildings...");
@@ -45,10 +45,10 @@ public class BuildingStatsComputation {
 			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
 		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = null;
-		for(String dep : new String[] { "04", "05", "06", "84", "83", "13" }) {
+		for(String dep : new String[] { "008" /*, "010", "051", "052", "054", "055", "057", "088", "067", "068"*/ }) {
 			logger.info("   "+dep);
-			if(fs == null) fs = GeoData.getFeatures(basePath + dep + "/buildings.gpkg", null, fil);
-			else fs.addAll( GeoData.getFeatures(basePath + dep + "/buildings.gpkg", null, fil) );
+			if(fs == null) fs = GeoData.getFeatures(basePath + "fr/bdtopo/" + dep + "/BATIMENT.GPKG", null, fil);
+			else fs.addAll( GeoData.getFeatures(basePath + "fr/bdtopo/" + dep + "/BATIMENT.GPKG", null, fil) );
 			logger.info(fs.size() + " buildings");
 		}
 
@@ -176,7 +176,7 @@ public class BuildingStatsComputation {
 
 		logger.info("Save...");
 		//TODO order columns
-		CSV.saveMultiValues(ga.getStats(), basePath + "/building_area.csv", "bu_stat");
+		CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/building_area.csv", "bu_stat");
 
 		logger.info("End");
 	}
