@@ -13,17 +13,14 @@ import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition;
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition.GeomType;
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition.PartitionedOperation;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.ReduceOperation;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
-public class BuildingStatsComputation {
-	private static Logger logger = LogManager.getLogger(BuildingStatsComputation.class.getName());
+public class BuildingStatsComputationOld {
+	private static Logger logger = LogManager.getLogger(BuildingStatsComputationOld.class.getName());
 
 	//use: -Xms2G -Xmx12G
 	/** @param args 
@@ -42,7 +39,22 @@ public class BuildingStatsComputation {
 		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_2km_surf.gpkg", null, fil);
 		logger.info(cells.size() + " cells");
 
+		logger.info("Load buildings...");
+		fil = null;
+		/*try {
+			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
+		} catch (CQLException e) { e.printStackTrace(); }*/
+		Collection<Feature> fs = null;
+		for(String dep : new String[] { "008" , "010", "051", "052", "054", "055", "057", "088", "067", "068" }) {
+			logger.info("   "+dep);
+			if(fs == null) fs = GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
+			else fs.addAll( GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil) );
+			logger.info(fs.size() + " buildings");
+		}
 
+		logger.info("Remove duplicates");
+		fs = removeDuplicates(fs, "ID");
+		logger.info(fs.size() + " buildings");
 
 		logger.info("Define map operation");
 		MapOperation<double[]> mapOp = new MapOperation<>() {
@@ -154,38 +166,6 @@ public class BuildingStatsComputation {
 		};
 
 
-		//run partionning
-		Partition.runRecursively(cells, 
-				new PartitionedOperation() {
-			@Override
-			public void run(Partition p) {
-				
-				
-				
-			}}
-		, false, 5000, 5000, true, GeomType.ONLY_AREAS, 0);
-
-
-
-
-		logger.info("Load buildings...");
-		fil = null;
-		/*try {
-			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
-		} catch (CQLException e) { e.printStackTrace(); }*/
-		Collection<Feature> fs = null;
-		for(String dep : new String[] { "008" , "010", "051", "052", "054", "055", "057", "088", "067", "068" }) {
-			logger.info("   "+dep);
-			if(fs == null) fs = GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
-			else fs.addAll( GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil) );
-			logger.info(fs.size() + " buildings");
-		}
-
-		logger.info("Remove duplicates");
-		fs = removeDuplicates(fs, "ID");
-		logger.info(fs.size() + " buildings");
-
-
 		//compute aggregation
 		GridAggregator<double[]> ga = new GridAggregator<>(cells, "GRD_ID", fs, mapOp, reduceOp);
 		ga.compute(true);
@@ -193,9 +173,6 @@ public class BuildingStatsComputation {
 		logger.info("Round values...");
 		for(Stat s : ga.getStats().stats)
 			s.value = (int) Math.round(s.value);
-
-
-
 
 		logger.info("Save...");
 		//TODO order columns

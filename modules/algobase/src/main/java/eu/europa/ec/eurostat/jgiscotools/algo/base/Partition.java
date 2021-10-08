@@ -48,7 +48,7 @@ public class Partition {
 	 * @param objMaxCoordinateNumber Indicator of the partition size: The number of vertices of the larger geometry. Above this value, the dataset is considered as too large, and the sub-partionning is launched.
 	 * @param ignoreRecomposition Set to true is nothing should be done on the input features at recomposition stage.
 	 * @param gt The geometry type of the features
-	 * @param midRandom Randomness factor on the middle separation used when splitting a partition into sub partitions, within [0,1]
+	 * @param midRandom Randomness factor on the middle separation used when splitting a partition into sub partitions, within [0,1]. Set to 0 for no randomness.
 	 * @return
 	 */
 	public static Collection<Feature> runRecursively(Collection<Feature> features, PartitionedOperation op, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition, GeomType gt, double midRandom) {
