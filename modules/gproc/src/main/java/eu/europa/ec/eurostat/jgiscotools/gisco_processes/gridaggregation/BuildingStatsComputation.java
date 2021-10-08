@@ -41,11 +41,11 @@ public class BuildingStatsComputation {
 
 		logger.info("Load buildings...");
 		fil = null;
-		try {
+		/*try {
 			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
-		} catch (CQLException e) { e.printStackTrace(); }
+		} catch (CQLException e) { e.printStackTrace(); }*/
 		Collection<Feature> fs = null;
-		for(String dep : new String[] { "008" /*, "010", "051", "052", "054", "055", "057", "088", "067", "068"*/ }) {
+		for(String dep : new String[] { "008" , "010", "051", "052", "054", "055", "057", "088", "067", "068" }) {
 			logger.info("   "+dep);
 			if(fs == null) fs = GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
 			else fs.addAll( GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil) );
@@ -61,7 +61,7 @@ public class BuildingStatsComputation {
 			@Override
 			public double[] map(Feature f, Geometry inter) {
 
-				double[] out = new double[4];
+				double[] out = new double[4]; //TODO
 				for(int i=0; i<4; i++) out[i]=0;
 
 				if(inter == null || inter.isEmpty()) return out;
