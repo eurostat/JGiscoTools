@@ -47,8 +47,8 @@ public class BuildingStatsComputation {
 		Collection<Feature> fs = null;
 		for(String dep : new String[] { "008" /*, "010", "051", "052", "054", "055", "057", "088", "067", "068"*/ }) {
 			logger.info("   "+dep);
-			if(fs == null) fs = GeoData.getFeatures(basePath + "fr/bdtopo/" + dep + "/BATIMENT.GPKG", null, fil);
-			else fs.addAll( GeoData.getFeatures(basePath + "fr/bdtopo/" + dep + "/BATIMENT.GPKG", null, fil) );
+			if(fs == null) fs = GeoData.getFeatures(basePath + "fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
+			else fs.addAll( GeoData.getFeatures(basePath + "fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil) );
 			logger.info(fs.size() + " buildings");
 		}
 
