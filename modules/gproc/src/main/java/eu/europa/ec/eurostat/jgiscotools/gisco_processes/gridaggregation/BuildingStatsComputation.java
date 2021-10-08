@@ -162,19 +162,19 @@ public class BuildingStatsComputation {
 
 				//TODO Improve partitionning method: the cells may be split here.
 				//cells = p.getFeatures();
-				
+
 			}}
 		, false, 5000, 5000, true, GeomType.ONLY_AREAS, 0);
 
 
 
-
+		/*
 		logger.info("Load buildings...");
 		fil = null;
 		/*try {
 			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
 		} catch (CQLException e) { e.printStackTrace(); }*/
-		Collection<Feature> fs = null;
+		/*		Collection<Feature> fs = null;
 		for(String dep : new String[] { "008" , "010", "051", "052", "054", "055", "057", "088", "067", "068" }) {
 			logger.info("   "+dep);
 			if(fs == null) fs = GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
@@ -201,6 +201,8 @@ public class BuildingStatsComputation {
 		logger.info("Save...");
 		//TODO order columns
 		CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/building_area.csv", "bu_stat");
+
+		 */
 
 		logger.info("End");
 	}
