@@ -36,7 +36,7 @@ public class BuildingStatsComputation {
 		try {
 			fil = CQL.toFilter("(NUTS2021_1='FRF')");
 		} catch (CQLException e) { e.printStackTrace(); }
-		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_5km_surf.gpkg", null, fil);
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_2km_surf.gpkg", null, fil);
 		logger.info(cells.size() + " cells");
 
 		logger.info("Load buildings...");
