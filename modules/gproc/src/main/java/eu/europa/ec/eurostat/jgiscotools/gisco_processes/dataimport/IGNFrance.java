@@ -23,7 +23,7 @@ public class IGNFrance {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Start");
 
-		String path = "/home/juju/Bureau/gisco/fr/bdtopo/";
+		String path = "/home/juju/Bureau/gisco/cnt/fr/bdtopo/";
 		extractBDTopo("BATIMENT", path);
 		extractBDTopo("TRONCON_DE_ROUTE", path);
 
