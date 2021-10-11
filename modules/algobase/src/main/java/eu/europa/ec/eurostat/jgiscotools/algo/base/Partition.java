@@ -46,7 +46,7 @@ public class Partition {
 	 * This is a process which is applied on some input features, and the partitionning depends on the size of these input features.
 	 * 
 	 * @param features The features to process
-	 * @param op The operation to apply on the features of one partition
+	 * @param op The operation to apply based on the features of one partition
 	 * @param parallel Set to true to allow parallel processing
 	 * @param maxCoordinatesNumber Indicator of the partition size: The number of vertices of the geometries. Above this value, the dataset is considered as too large, and the sub-partionning is launched.
 	 * @param objMaxCoordinateNumber Indicator of the partition size: The number of vertices of the larger geometry. Above this value, the dataset is considered as too large, and the sub-partionning is launched.
@@ -107,7 +107,7 @@ public class Partition {
 	 */
 	private Envelope env;
 	public Envelope getEnvelope() { return env; }
-	public Polygon getExtend(GeometryFactory gf) { return JTS.toGeometry(this.env, gf); }
+	public Polygon getExtent(GeometryFactory gf) { return JTS.toGeometry(this.env, gf); }
 
 	private Partition(String code, Collection<Feature> features, PartitionedOperation op, GeomType gt, double midRandom){
 		this(code, op, gt, midRandom, FeatureUtil.getEnvelope(features, 1.001));
@@ -206,13 +206,18 @@ public class Partition {
 
 
 		if(withSplit) {
-			//fill it
+
+			//fill sub partitions
 			p1.cutAndSetFeatures(features);
 			p2.cutAndSetFeatures(features);
 			p3.cutAndSetFeatures(features);
 			p4.cutAndSetFeatures(features);
+
+			//clean top partition to avoid heavy duplication of features
+			features.clear();
 		} else {
-			//fill it
+
+			//fill sub partitions
 			p1.addFeatures(features);
 			p2.addFeatures(features);
 			p3.addFeatures(features);
@@ -222,9 +227,6 @@ public class Partition {
 			int nb = p1.features.size() + p2.features.size() + p3.features.size() + p4.features.size();
 			if(nb != features.size()) LOGGER.error("Error when partitionning without split: " + nb + " != " +features.size());
 		}
-
-		//clean top partition to avoid heavy duplication of features
-		features.clear();
 
 		//return list of sub partitions
 		Collection<Partition> subPartitions = new ArrayList<Partition>();
@@ -257,7 +259,7 @@ public class Partition {
 			}
 
 			//check if feature intersects envelope
-			if(extend == null) extend = getExtend(g.getFactory());
+			if(extend == null) extend = getExtent(g.getFactory());
 			Geometry inter = g.intersection(extend);
 			if(inter.isEmpty()) continue;
 			if(geomType.equals(GeomType.ONLY_AREAS) && inter.getArea() == 0) continue;
@@ -404,7 +406,7 @@ public class Partition {
 			LOGGER.info(p.toString());
 			double area = p.env.getArea();
 			Feature f = new Feature();
-			f.setGeometry(p.getExtend(null));
+			f.setGeometry(p.getExtent(null));
 			f.setAttribute("code", p.code);
 			f.setAttribute("f_nb", p.features.size());
 			f.setAttribute("c_nb", p.coordinatesNumber);
