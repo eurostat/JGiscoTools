@@ -27,7 +27,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
  * 1. Analyse the size of the dataset
  * 2. If it is too large (according to some criteria), then it is decomposed into 4 parts, which are then analysed again (recursive call)
  * 3. If it is small enough, the process is launched
- * 4. When the 4 parts are processed, their result is re-united
+ * 4. When the 4 parts are processed, their result is re-united if necessary
  * 
  * @author julien Gaffuri
  *
@@ -224,7 +224,7 @@ public class Partition {
 		}
 
 		//clean top partition to avoid heavy duplication of features
-		features.clear(); features = null;
+		features.clear();
 
 		//return list of sub partitions
 		Collection<Partition> subPartitions = new ArrayList<Partition>();
@@ -336,7 +336,7 @@ public class Partition {
 			}
 
 		//get features with pieces together
-		features = new HashSet<Feature>();
+		features.clear();
 		HashSet<String> fIds = new HashSet<String>();
 		for(Partition p : subPartitions)
 			for(Feature f : p.features) {
