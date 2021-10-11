@@ -39,7 +39,7 @@ public class TesselationQuality {
 
 	//
 	public static void checkQuality(Collection<Feature> units, double nodingResolution, String outFilePath, boolean overrideFile, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean tracePartitionning) {
-		Partition.runRecursively(units, p -> {
+		Partition.runRecursivelyApply(units, p -> {
 			if(tracePartitionning) LOGGER.info(p);
 
 			LOGGER.debug("Build spatial indexes");
@@ -82,7 +82,7 @@ public class TesselationQuality {
 		}
 
 		LOGGER.info("Ensure tesselation and fix noding");
-		units = Partition.runRecursively(units, p -> {
+		Partition.runRecursivelyApply(units, p -> {
 			if(tracePartitionning) LOGGER.info(p);
 			NodingUtil.fixNoding(NodingIssueType.PointPoint, p.getFeatures(), nodingResolution);
 			NodingUtil.fixNoding(NodingIssueType.LinePoint, p.getFeatures(), nodingResolution);

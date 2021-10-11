@@ -50,14 +50,15 @@ public class Partition {
 	 * @param parallel Set to true to allow parallel processing
 	 * @param maxCoordinatesNumber Indicator of the partition size: The number of vertices of the geometries. Above this value, the dataset is considered as too large, and the sub-partionning is launched.
 	 * @param objMaxCoordinateNumber Indicator of the partition size: The number of vertices of the larger geometry. Above this value, the dataset is considered as too large, and the sub-partionning is launched.
-	 * @param withSplitRecompose Set to true if input features should be split/recomposed when partitionning.
+	 * @param withSplit Set to true if input features should be split when partitionning.
+	 * @param withRecompose Set to true if input features should be recomposed after partitionning.
 	 * @param gt The geometry type of the features
 	 * @param midRandom Randomness factor on the middle separation used when splitting a partition into sub partitions, within [0,1]. Set to 0 for no randomness.
 	 * @return
 	 */
-	public static void runRecursivelyApply(Collection<Feature> features, PartitionedOperation op, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean withSplitRecompose, GeomType gt, double midRandom) {
+	public static void runRecursivelyApply(Collection<Feature> features, PartitionedOperation op, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean withSplit, boolean withRecompose, GeomType gt, double midRandom) {
 		Partition p = new Partition("0", features, op, gt, midRandom);
-		p.runRecursivelyApply(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, withSplitRecompose);
+		p.runRecursivelyApply(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, withSplit, withRecompose);
 	}
 
 
@@ -150,9 +151,10 @@ public class Partition {
 	 * @param parallel
 	 * @param maxCoordinatesNumber
 	 * @param objMaxCoordinateNumber
-	 * @param withSplitRecompose
+	 * @param withSplit Set to true if input features should be split when partitionning.
+	 * @param withRecompose Set to true if input features should be recomposed after partitionning.
 	 */
-	private void runRecursivelyApply(boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean withSplitRecompose) {
+	private void runRecursivelyApply(boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean withSplit, boolean withRecompose) {
 
 		if(! isTooLarge(maxCoordinatesNumber, objMaxCoordinateNumber)) {
 			if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   not too large: Run process...");
@@ -162,18 +164,18 @@ public class Partition {
 			if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   too large: Subpartition it...");
 
 			//subpartition
-			Collection<Partition> subPartitions = subpartition(withSplitRecompose);
+			Collection<Partition> subPartitions = subpartitionise(withSplit);
 
 			//run process on sub-partitions
 			Stream<Partition> st = subPartitions.stream();
 			if(parallel) st = st.parallel();
 			st.forEach(sp -> {
-				sp.runRecursivelyApply(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, withSplitRecompose);
+				sp.runRecursivelyApply(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, withSplit, withRecompose);
 			});
 			st.close();
 
 			//recompose
-			if(withSplitRecompose) {
+			if(withRecompose) {
 				if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Recomposing");
 				recompose(subPartitions);
 			}
@@ -182,13 +184,14 @@ public class Partition {
 
 	/**
 	 * Subpartition the partition into four sub-partitions
+	 * 
 	 * @param withSplit Set to true if input features have to be split
 	 * 
 	 * @return
 	 */
-	private Collection<Partition> subpartition(boolean withSplit) {
-		//create four sub-partitions
+	private Collection<Partition> subpartitionise(boolean withSplit) {
 
+		//middle lines, for sub partionning
 		double xMid = env.getMinX() + (0.5 + midRandom*(Math.random()-0.5)) * (env.getMaxX() - env.getMinX());
 		double yMid = env.getMinY() + (0.5 + midRandom*(Math.random()-0.5)) * (env.getMaxY() - env.getMinY());
 
@@ -245,7 +248,7 @@ public class Partition {
 	private void cutAndSetFeatures(Collection<Feature> inFeatures) {
 
 		features = new HashSet<Feature>();
-		Polygon extend = null;
+		Polygon extent = null;
 
 		for(Feature f : inFeatures) {
 			Geometry g = f.getGeometry();
@@ -259,8 +262,8 @@ public class Partition {
 			}
 
 			//check if feature intersects envelope
-			if(extend == null) extend = getExtent(g.getFactory());
-			Geometry inter = g.intersection(extend);
+			if(extent == null) extent = getExtent(g.getFactory());
+			Geometry inter = g.intersection(extent);
 			if(inter.isEmpty()) continue;
 			if(geomType.equals(GeomType.ONLY_AREAS) && inter.getArea() == 0) continue;
 			if(geomType.equals(GeomType.ONLY_LINES) && inter.getLength() == 0) continue;
@@ -291,19 +294,24 @@ public class Partition {
 
 		features = new HashSet<Feature>();
 		for(Feature f : inFeatures) {
+			//get feature envelope
 			Envelope env_ = f.getGeometry().getEnvelopeInternal();
 
+			//fully outside
 			if(! this.env.intersects(env_)) continue;
 
+			//fully inside
 			if(this.env.contains(env_)) {
 				features.add(f);
 				continue;
 			}
 
+			//partially inside X
 			if(env_.getMinX() < this.env.getMinX()) {
 				features.add(f);
 				continue;
 			}
+			//partially inside Y
 			if(env_.getMinY() < this.env.getMinY()) {
 				features.add(f);
 				continue;
@@ -311,6 +319,7 @@ public class Partition {
 		}
 
 		//set reduced envelope
+		//TODO not sure it is good enough
 		if(features.size()>0) this.env = FeatureUtil.getEnvelope(features);
 
 		if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Features: "+features.size()+" kept from "+inFeatures.size()+". "+(int)(100*features.size()/inFeatures.size()) + "%");
@@ -414,10 +423,16 @@ public class Partition {
 			f.setAttribute("maxfcn", p.maxEltCN);
 			f.setAttribute("area", area);
 			fs.add(f);
-		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, false, gt, midRandom);
+		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, false, gt, midRandom);
 
 		return fs;
 	}
+
+
+
+
+
+
 
 	/*
 	public static void main(String[] args) {

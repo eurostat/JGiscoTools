@@ -47,7 +47,7 @@ public class TesselationGeneralisation {
 		for(int i=1; i<=roundNb; i++) {
 			if(LOGGER.isInfoEnabled()) LOGGER.info("Round "+i+" - CoordNb="+FeatureUtil.getVerticesNumber(units)+" FeatNb="+units.size());
 			final int i_ = i;
-			units = Partition.runRecursively(units, p -> {
+			Partition.runRecursivelyApply(units, p -> {
 				try {
 					if(LOGGER.isInfoEnabled() && tracePartitioning) LOGGER.info("R" + i_ + "/" + roundNb + " - " + p.toString());
 
@@ -86,7 +86,7 @@ public class TesselationGeneralisation {
 
 					//if(runGC) System.gc();
 				} catch (Exception e) { e.printStackTrace(); }
-			}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, false, Partition.GeomType.ONLY_AREAS, 0.02);
+			}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, Partition.GeomType.ONLY_AREAS, 0.02);
 			for(Feature unit : units) unit.setGeometry(JTSGeomUtil.toMulti(unit.getGeometry()));
 		}
 
