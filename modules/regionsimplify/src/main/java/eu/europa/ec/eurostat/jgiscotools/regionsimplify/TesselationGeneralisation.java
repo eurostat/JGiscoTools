@@ -86,7 +86,7 @@ public class TesselationGeneralisation {
 
 					//if(runGC) System.gc();
 				} catch (Exception e) { e.printStackTrace(); }
-			}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, Partition.GeomType.ONLY_AREAS, 0.02);
+			}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, true, Partition.GeomType.ONLY_AREAS, 0.02);
 			for(Feature unit : units) unit.setGeometry(JTSGeomUtil.toMulti(unit.getGeometry()));
 		}
 

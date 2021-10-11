@@ -42,7 +42,7 @@ public class Decomposer {
 				out.addAll(FeatureUtil.getGeometriesSimple(p.getFeatures()));
 			}
 		};
-		Partition.runRecursivelyApply(fs, op, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		Partition.runRecursivelyApply(fs, op, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, false, gt, midRandom);
 		return out;
 	}
 
@@ -59,7 +59,7 @@ public class Decomposer {
 		Partition.runRecursivelyApply(fs, p -> {
 			logger.debug(p.getCode());
 			out.addAll(p.getFeatures());
-		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, false, gt, midRandom);
 		int i=1;
 		for(Feature f : out) f.setID( f.getID()+"_"+(i++) );
 		return out;

@@ -91,7 +91,7 @@ public class RailwayServiceAreasBufferDetection {
 				serviceAreas.addAll(rsad.getServiceAreas());
 				doubleTrackAreas.addAll(rsad.getDoubleTrackAreas());
 
-			}, false, maxCoordinatesNumber, objMaxCoordinateNumber, true, Partition.GeomType.ONLY_LINES, 0);
+			}, false, maxCoordinatesNumber, objMaxCoordinateNumber, true, false, Partition.GeomType.ONLY_LINES, 0);
 	}
 
 }
