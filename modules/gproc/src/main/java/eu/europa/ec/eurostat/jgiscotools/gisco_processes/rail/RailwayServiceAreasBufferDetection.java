@@ -82,7 +82,7 @@ public class RailwayServiceAreasBufferDetection {
 		serviceAreas = new ArrayList<Polygon>();
 		doubleTrackAreas = new ArrayList<Polygon>();
 
-		Partition.runRecursively(secs, p -> {
+		Partition.runRecursivelyApply(secs, p -> {
 				LOGGER.info(p.toString());
 
 				RailwayServiceAreasBufferDetection rsad = new RailwayServiceAreasBufferDetection(p.getFeatures());
