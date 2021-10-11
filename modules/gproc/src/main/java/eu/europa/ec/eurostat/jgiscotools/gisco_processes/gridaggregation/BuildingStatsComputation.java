@@ -151,8 +151,12 @@ public class BuildingStatsComputation {
 			}
 		};
 
+		
+		//TODO test partitionning - cut, do not cut.
+		//decomposer
+		//partition dataset
 
-		//run partionning
+		/*/run partionning
 		Partition.runRecursively(cells, 
 				new PartitionedOperation() {
 			@Override
@@ -163,7 +167,7 @@ public class BuildingStatsComputation {
 				//cells = p.getFeatures();
 
 			}}
-		, false, 5000, 5000, true, GeomType.ONLY_AREAS, 0);
+		, false, 5000, 5000, true, GeomType.ONLY_AREAS, 0);*/
 
 
 
