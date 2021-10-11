@@ -35,27 +35,32 @@ import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 public class Partition {
 	private final static Logger LOGGER = LogManager.getLogger(Partition.class.getName());
 
-	//TODO handle operations which do not change the input features but produce outputs - exemple: partition areas creation. Recomposition method should then concern these outputs (when necessary).
+	//TODO handle more generic case:
+	//partitionning which change inputs - parition wich porduces output
+	//partitionning where input is split - or not
+	//partitionning where ouput is joined - or not
 
 
 	/**
 	 * Run a process with recursive partitionning.
+	 * This is a process which is applied on some input features, and the partitionning depends on the size of these input features.
 	 * 
 	 * @param features The features to process
 	 * @param op The operation to apply on the features of one partition
 	 * @param parallel Set to true to allow parallel processing
 	 * @param maxCoordinatesNumber Indicator of the partition size: The number of vertices of the geometries. Above this value, the dataset is considered as too large, and the sub-partionning is launched.
 	 * @param objMaxCoordinateNumber Indicator of the partition size: The number of vertices of the larger geometry. Above this value, the dataset is considered as too large, and the sub-partionning is launched.
-	 * @param ignoreRecomposition Set to true is nothing should be done on the input features at recomposition stage.
+	 * @param withSplitRecompose Set to true if input features should be split/recomposed when partitionning.
 	 * @param gt The geometry type of the features
 	 * @param midRandom Randomness factor on the middle separation used when splitting a partition into sub partitions, within [0,1]. Set to 0 for no randomness.
 	 * @return
 	 */
-	public static Collection<Feature> runRecursively(Collection<Feature> features, PartitionedOperation op, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition, GeomType gt, double midRandom) {
+	public static void runRecursivelyApply(Collection<Feature> features, PartitionedOperation op, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean withSplitRecompose, GeomType gt, double midRandom) {
 		Partition p = new Partition("0", features, op, gt, midRandom);
-		p.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
-		return p.getFeatures();
+		p.runRecursivelyApply(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, withSplitRecompose);
 	}
+
+
 
 	/**
 	 * The code of the partition.
@@ -145,29 +150,30 @@ public class Partition {
 	 * @param parallel
 	 * @param maxCoordinatesNumber
 	 * @param objMaxCoordinateNumber
-	 * @param ignoreRecomposition
+	 * @param withSplitRecompose
 	 */
-	private void runRecursively(boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean ignoreRecomposition) {
+	private void runRecursivelyApply(boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean withSplitRecompose) {
+
 		if(! isTooLarge(maxCoordinatesNumber, objMaxCoordinateNumber)) {
 			if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   not too large: Run process...");
 			operation.run(this);
+
 		} else {
-			if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   too large: Decompose it...");
-			Collection<Partition> subPartitions = decompose();
+			if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   too large: Subpartition it...");
+
+			//subpartition
+			Collection<Partition> subPartitions = subpartition(withSplitRecompose);
 
 			//run process on sub-partitions
-			Stream<Partition> st = subPartitions.stream(); if(parallel) st = st.parallel();
+			Stream<Partition> st = subPartitions.stream();
+			if(parallel) st = st.parallel();
 			st.forEach(sp -> {
-				sp.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
+				sp.runRecursivelyApply(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, withSplitRecompose);
 			});
 			st.close();
 
-			//for(Partition sp : subPartitions)
-			//	sp.runRecursively(parallel, maxCoordinatesNumber, objMaxCoordinateNumber, ignoreRecomposition);
-
-			//TODO: executed once all thread have resumed? Guess so.
-
-			if(!ignoreRecomposition) {
+			//recompose
+			if(withSplitRecompose) {
 				if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Recomposing");
 				recompose(subPartitions);
 			}
@@ -175,11 +181,12 @@ public class Partition {
 	}
 
 	/**
-	 * Decompose the partition into four sub-partitions
+	 * Subpartition the partition into four sub-partitions
+	 * @param withSplit Set to true if input features have to be split
 	 * 
 	 * @return
 	 */
-	private Collection<Partition> decompose() {
+	private Collection<Partition> subpartition(boolean withSplit) {
 		//create four sub-partitions
 
 		double xMid = env.getMinX() + (0.5 + midRandom*(Math.random()-0.5)) * (env.getMaxX() - env.getMinX());
@@ -189,6 +196,7 @@ public class Partition {
 		double xMid = c.x;
 		double yMid = c.y;*/
 
+		//prepare sub partitions
 		Partition
 		p1 = new Partition(this.code+"1", operation, geomType, midRandom, env.getMinX(), xMid, yMid, env.getMaxY()),
 		p2 = new Partition(this.code+"2", operation, geomType, midRandom, xMid, env.getMaxX(), yMid, env.getMaxY()),
@@ -196,23 +204,38 @@ public class Partition {
 		p4 = new Partition(this.code+"4", operation, geomType, midRandom, xMid, env.getMaxX(), env.getMinY(), yMid)
 		;
 
-		//fill it
-		p1.cutAndSetFeatures(features);
-		p2.cutAndSetFeatures(features);
-		p3.cutAndSetFeatures(features);
-		p4.cutAndSetFeatures(features);
 
+		if(withSplit) {
+			//fill it
+			p1.cutAndSetFeatures(features);
+			p2.cutAndSetFeatures(features);
+			p3.cutAndSetFeatures(features);
+			p4.cutAndSetFeatures(features);
+		} else {
+			//fill it
+			p1.addFeatures(features);
+			p2.addFeatures(features);
+			p3.addFeatures(features);
+			p4.addFeatures(features);
+
+			//check number
+			int nb = p1.features.size() + p2.features.size() + p3.features.size() + p4.features.size();
+			if(nb != features.size()) LOGGER.error("Error when partitionning without split: " + nb + " != " +features.size());
+		}
+
+		//clean top partition to avoid heavy duplication of features
+		features.clear(); features = null;
+
+		//return list of sub partitions
 		Collection<Partition> subPartitions = new ArrayList<Partition>();
 		if(p1.features.size()>0) subPartitions.add(p1);
 		if(p2.features.size()>0) subPartitions.add(p2);
 		if(p3.features.size()>0) subPartitions.add(p3);
 		if(p4.features.size()>0) subPartitions.add(p4);
 
-		//clean top partition to avoid heavy duplication of features
-		features.clear(); features = null;
-
 		return subPartitions;
 	}
+
 
 	/**
 	 * @param inFeatures
@@ -257,6 +280,40 @@ public class Partition {
 
 		if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Features: "+features.size()+" kept from "+inFeatures.size()+". "+(int)(100*features.size()/inFeatures.size()) + "%");
 	}
+
+
+	/**
+	 * @param inFeatures
+	 */
+	private void addFeatures(Collection<Feature> inFeatures) {
+
+		features = new HashSet<Feature>();
+		for(Feature f : inFeatures) {
+			Envelope env_ = f.getGeometry().getEnvelopeInternal();
+
+			if(! this.env.intersects(env_)) continue;
+
+			if(this.env.contains(env_)) {
+				features.add(f);
+				continue;
+			}
+
+			if(env_.getMinX() < this.env.getMinX()) {
+				features.add(f);
+				continue;
+			}
+			if(env_.getMinY() < this.env.getMinY()) {
+				features.add(f);
+				continue;
+			}
+		}
+
+		//set reduced envelope
+		if(features.size()>0) this.env = FeatureUtil.getEnvelope(features);
+
+		if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Features: "+features.size()+" kept from "+inFeatures.size()+". "+(int)(100*features.size()/inFeatures.size()) + "%");
+	}
+
 
 
 	/**
@@ -343,7 +400,7 @@ public class Partition {
 	public static Collection<Feature> getPartitionDataset(Collection<Feature> features, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
 		final Collection<Feature> fs = new ArrayList<Feature>();
 
-		Partition.runRecursively(features, p -> {
+		Partition.runRecursivelyApply(features, p -> {
 			LOGGER.info(p.toString());
 			double area = p.env.getArea();
 			Feature f = new Feature();
@@ -355,7 +412,7 @@ public class Partition {
 			f.setAttribute("maxfcn", p.maxEltCN);
 			f.setAttribute("area", area);
 			fs.add(f);
-		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, false, gt, midRandom);
 
 		return fs;
 	}

@@ -157,9 +157,11 @@ public class BuildingStatsComputation {
 				new PartitionedOperation() {
 			@Override
 			public void run(Partition p) {
+				
 				//TODO Improve partitionning method: the cells may be split here.
 				//make partitionning that do not split items
 				//cells = p.getFeatures();
+
 			}}
 		, false, 5000, 5000, true, GeomType.ONLY_AREAS, 0);
 

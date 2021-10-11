@@ -42,7 +42,7 @@ public class Decomposer {
 				out.addAll(FeatureUtil.getGeometriesSimple(p.getFeatures()));
 			}
 		};
-		Partition.runRecursively(fs, op, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
+		Partition.runRecursivelyApply(fs, op, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
 		return out;
 	}
 
@@ -56,7 +56,7 @@ public class Decomposer {
 	 */
 	public static Collection<Feature> decomposeFeature(Collection<Feature> fs, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
 		final Collection<Feature> out = new ArrayList<>();
-		Partition.runRecursively(fs, p -> {
+		Partition.runRecursivelyApply(fs, p -> {
 			logger.debug(p.getCode());
 			out.addAll(p.getFeatures());
 		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, gt, midRandom);
