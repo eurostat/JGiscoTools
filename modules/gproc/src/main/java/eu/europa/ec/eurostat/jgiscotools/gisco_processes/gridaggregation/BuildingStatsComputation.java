@@ -12,9 +12,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition;
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition.GeomType;
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition.PartitionedOperation;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.ReduceOperation;
