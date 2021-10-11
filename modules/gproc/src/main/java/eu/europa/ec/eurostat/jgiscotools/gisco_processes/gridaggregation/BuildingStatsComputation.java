@@ -37,7 +37,7 @@ public class BuildingStatsComputation {
 		try {
 			fil = CQL.toFilter("(NUTS2021_1='FRF')");
 		} catch (CQLException e) { e.printStackTrace(); }
-		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_2km_surf.gpkg", null, fil);
+		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg", null, fil);
 		logger.info(cells.size() + " cells");
 
 
@@ -157,10 +157,9 @@ public class BuildingStatsComputation {
 				new PartitionedOperation() {
 			@Override
 			public void run(Partition p) {
-
 				//TODO Improve partitionning method: the cells may be split here.
+				//make partitionning that do not split items
 				//cells = p.getFeatures();
-
 			}}
 		, false, 5000, 5000, true, GeomType.ONLY_AREAS, 0);
 
