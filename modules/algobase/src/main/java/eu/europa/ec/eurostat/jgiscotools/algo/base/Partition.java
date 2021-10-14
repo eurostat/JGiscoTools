@@ -237,6 +237,12 @@ public class Partition {
 					p4.features.add(f);
 			}
 
+			//set reduced envelope
+			if(p1.features.size()>0) p1.env = FeatureUtil.getEnvelope(p1.features);
+			if(p2.features.size()>0) p2.env = FeatureUtil.getEnvelope(p2.features);
+			if(p3.features.size()>0) p3.env = FeatureUtil.getEnvelope(p3.features);
+			if(p4.features.size()>0) p4.env = FeatureUtil.getEnvelope(p4.features);
+
 			//check number
 			int nb = p1.features.size() + p2.features.size() + p3.features.size() + p4.features.size();
 			if(nb != features.size()) LOGGER.error("Error when partitionning without split: " + nb + " != " +features.size());
