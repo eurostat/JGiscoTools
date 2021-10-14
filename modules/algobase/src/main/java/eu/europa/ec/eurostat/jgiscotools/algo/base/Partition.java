@@ -307,7 +307,7 @@ public class Partition {
 			}
 
 			//partially inside X
-			if(env_.getMinX() < this.env.getMinX()) {
+			if(env_.getMinX() < this.env.getMinX() && env_.getMinY() >= this.env.getMinY()) {
 				features.add(f);
 				continue;
 			}
