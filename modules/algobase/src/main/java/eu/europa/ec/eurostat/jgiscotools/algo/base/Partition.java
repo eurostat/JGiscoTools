@@ -220,11 +220,18 @@ public class Partition {
 			features.clear();
 		} else {
 
-			//fill sub partitions
-			p1.addFeatures(features);
-			p2.addFeatures(features);
-			p3.addFeatures(features);
-			p4.addFeatures(features);
+			//assigne features to the right partition
+			for(Feature f : features) {
+				Envelope envF = f.getGeometry().getEnvelopeInternal();
+				if(envF.getMaxX() < xMid && envF.getMaxY() > yMid)
+					p1.features.add(f);
+				else if(envF.getMaxY()>yMid)
+					p2.features.add(f);
+				else if(envF.getMaxX() < xMid)
+					p3.features.add(f);
+				else
+					p4.features.add(f);
+			}
 
 			//check number
 			int nb = p1.features.size() + p2.features.size() + p3.features.size() + p4.features.size();
@@ -286,44 +293,6 @@ public class Partition {
 		if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Features: "+features.size()+" kept from "+inFeatures.size()+". "+(int)(100*features.size()/inFeatures.size()) + "%");
 	}
 
-
-	/**
-	 * @param inFeatures
-	 */
-	private void addFeatures(Collection<Feature> inFeatures) {
-
-		features = new HashSet<Feature>();
-		for(Feature f : inFeatures) {
-			//get feature envelope
-			Envelope env_ = f.getGeometry().getEnvelopeInternal();
-
-			//fully outside
-			if(! this.env.intersects(env_)) continue;
-
-			//fully inside
-			if(this.env.contains(env_)) {
-				features.add(f);
-				continue;
-			}
-
-			//partially inside X
-			if(env_.getMinX() < this.env.getMinX() && env_.getMinY() >= this.env.getMinY()) {
-				features.add(f);
-				continue;
-			}
-			//partially inside Y
-			if(env_.getMinY() < this.env.getMinY()) {
-				features.add(f);
-				continue;
-			}
-		}
-
-		//set reduced envelope
-		//TODO not sure it is good enough
-		if(features.size()>0) this.env = FeatureUtil.getEnvelope(features);
-
-		if(LOGGER.isTraceEnabled()) LOGGER.trace(this.code+"   Features: "+features.size()+" kept from "+inFeatures.size()+". "+(int)(100*features.size()/inFeatures.size()) + "%");
-	}
 
 
 
