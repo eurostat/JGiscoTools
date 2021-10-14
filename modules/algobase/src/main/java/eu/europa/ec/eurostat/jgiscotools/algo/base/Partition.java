@@ -206,6 +206,10 @@ public class Partition {
 		p3 = new Partition(this.code+"3", operation, geomType, midRandom, env.getMinX(), xMid, env.getMinY(), yMid),
 		p4 = new Partition(this.code+"4", operation, geomType, midRandom, xMid, env.getMaxX(), env.getMinY(), yMid)
 		;
+		p1.features = new HashSet<Feature>();
+		p2.features = new HashSet<Feature>();
+		p3.features = new HashSet<Feature>();
+		p4.features = new HashSet<Feature>();
 
 
 		if(withSplit) {
@@ -254,7 +258,6 @@ public class Partition {
 	 */
 	private void cutAndSetFeatures(Collection<Feature> inFeatures) {
 
-		features = new HashSet<Feature>();
 		Polygon extent = null;
 
 		for(Feature f : inFeatures) {
