@@ -30,28 +30,26 @@ public class Test {
 		System.out.println(out.size());
 		GeoData.save(out, "/home/juju/Bureau/gisco/tmp/partitionning_test.gpkg", CRS.decode("EPSG:4258"));*/
 
-		//partitionning BU
+		/*/partitionning BU
 		ArrayList<Feature> fs = GeoData.getFeatures("/home/juju/Bureau/gisco/cnt/fr/bdtopo/067/BATIMENT.gpkg");
 		System.out.println(fs.size());
-		Collection<Feature> outSplit = Partition.getPartitionDataset(fs, true, 1000, 100000, true, Partition.GeomType.ONLY_AREAS, 0);
+		//Collection<Feature> outSplit = Partition.getPartitionDataset(fs, true, 1000, 100000, true, Partition.GeomType.ONLY_AREAS, 0);
 		Collection<Feature> outNoSplit = Partition.getPartitionDataset(fs, true, 1000, 100000, false, Partition.GeomType.ONLY_AREAS, 0);
 		System.out.println(fs.size());
-		System.out.println("split: "+outSplit.size());
+		//System.out.println("split: "+outSplit.size());
 		System.out.println("no split: "+outNoSplit.size());
-		GeoData.save(outSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_split.gpkg", CRS.decode("EPSG:3035"));
+		//GeoData.save(outSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_split.gpkg", CRS.decode("EPSG:3035"));
 		GeoData.save(outNoSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_no_split.gpkg", CRS.decode("EPSG:3035"));
+*/
 
 
-		//TODO
-		/*/partitionning BU without splitting
+		//partitionning BU without splitting
 		ArrayList<Feature> fs = GeoData.getFeatures("/home/juju/Bureau/gisco/cnt/fr/bdtopo/067/BATIMENT.gpkg");
 		System.out.println(fs.size());
-		Collection<Feature> out = Partition.getPartitionNoSplit(fs, false, 1000, 100000, Partition.GeomType.ONLY_AREAS, 0);
+		Collection<Feature> out = Partition.getFeaturesTaggedByPartition(fs, true, 1000, 100000, false, Partition.GeomType.ONLY_AREAS, 0, "PARTITION");
 		System.out.println(fs.size());
 		System.out.println(out.size());
 		GeoData.save(out, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test.gpkg", CRS.decode("EPSG:3035"));
-		 */
-
 
 		System.out.println("End");
 	}

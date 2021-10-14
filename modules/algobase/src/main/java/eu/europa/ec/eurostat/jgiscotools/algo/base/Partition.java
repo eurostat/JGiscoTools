@@ -375,6 +375,12 @@ public class Partition {
 
 
 
+
+
+
+
+
+
 	/**
 	 * Build a dataset of partition areas, with some information on each partition area
 	 * 
@@ -402,6 +408,34 @@ public class Partition {
 			f.setAttribute("maxfcn", p.maxEltCN);
 			f.setAttribute("area", area);
 			fs.add(f);
+		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, withSplit, false, gt, midRandom);
+
+		return fs;
+	}
+
+	/**
+	 * Build a dataset with the features with a new attribute saying to which partition they belong.
+	 * 
+	 * @param features
+	 * @param parallel
+	 * @param maxCoordinatesNumber
+	 * @param objMaxCoordinateNumber
+	 * @param withSplit
+	 * @param gt
+	 * @param midRandom
+	 * @param newAttribute
+	 * @return
+	 */
+	public static Collection<Feature> getFeaturesTaggedByPartition(Collection<Feature> features, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean withSplit, GeomType gt, double midRandom, String newAttribute) {
+		final Collection<Feature> fs = new ArrayList<Feature>();
+
+		Partition.runRecursivelyApply(features, p -> {
+			String pCode = p.toString();
+			LOGGER.info(pCode);
+			for(Feature f : p.getFeatures()) {
+				f.setAttribute(newAttribute, pCode);
+				fs.add(f);
+			}
 		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, withSplit, false, gt, midRandom);
 
 		return fs;
