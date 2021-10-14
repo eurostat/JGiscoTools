@@ -30,15 +30,25 @@ public class Test {
 		System.out.println(out.size());
 		GeoData.save(out, "/home/juju/Bureau/gisco/tmp/partitionning_test.gpkg", CRS.decode("EPSG:4258"));*/
 
-		/*/partitionning BU
+		//partitionning BU
 		ArrayList<Feature> fs = GeoData.getFeatures("/home/juju/Bureau/gisco/cnt/fr/bdtopo/067/BATIMENT.gpkg");
 		System.out.println(fs.size());
 		Collection<Feature> out = Partition.getPartitionDataset(fs, true, 1000, 100000, Partition.GeomType.ONLY_AREAS, 0);
 		System.out.println(fs.size());
 		System.out.println(out.size());
-		GeoData.save(out, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test.gpkg", CRS.decode("EPSG:3035"));*/
+		GeoData.save(out, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test.gpkg", CRS.decode("EPSG:3035"));
 
-		//TODO test BU without splitting
+
+		//TODO
+		/*/partitionning BU without splitting
+		ArrayList<Feature> fs = GeoData.getFeatures("/home/juju/Bureau/gisco/cnt/fr/bdtopo/067/BATIMENT.gpkg");
+		System.out.println(fs.size());
+		Collection<Feature> out = Partition.getPartitionNoSplit(fs, false, 1000, 100000, Partition.GeomType.ONLY_AREAS, 0);
+		System.out.println(fs.size());
+		System.out.println(out.size());
+		GeoData.save(out, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test.gpkg", CRS.decode("EPSG:3035"));
+		 */
+
 
 		System.out.println("End");
 	}
