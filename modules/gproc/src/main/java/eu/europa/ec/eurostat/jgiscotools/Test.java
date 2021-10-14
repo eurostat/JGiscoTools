@@ -1,17 +1,5 @@
 package eu.europa.ec.eurostat.jgiscotools;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.geotools.referencing.CRS;
-
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition;
-import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
-
 public class Test {
 
 	public static void main(String[] args) throws Throwable {
