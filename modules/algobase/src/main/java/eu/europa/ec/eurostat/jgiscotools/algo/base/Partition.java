@@ -222,6 +222,7 @@ public class Partition {
 
 			//clean top partition to avoid heavy duplication of features
 			features.clear();
+
 		} else {
 
 			//assigne features to the right partition
@@ -238,10 +239,10 @@ public class Partition {
 			}
 
 			//set reduced envelope
-			if(p1.features.size()>0) p1.env = FeatureUtil.getEnvelope(p1.features);
-			if(p2.features.size()>0) p2.env = FeatureUtil.getEnvelope(p2.features);
-			if(p3.features.size()>0) p3.env = FeatureUtil.getEnvelope(p3.features);
-			if(p4.features.size()>0) p4.env = FeatureUtil.getEnvelope(p4.features);
+			if(p1.features.size()>0) p1.env = new Envelope(env.getMinX(), xMid, yMid, env.getMaxY()) .intersection(FeatureUtil.getEnvelope(p1.features));
+			if(p2.features.size()>0) p2.env = new Envelope(xMid, env.getMaxX(), yMid, env.getMaxY()) .intersection(FeatureUtil.getEnvelope(p2.features));
+			if(p3.features.size()>0) p3.env = new Envelope(env.getMinX(), xMid, env.getMinY(), yMid) .intersection(FeatureUtil.getEnvelope(p3.features));
+			if(p4.features.size()>0) p4.env = new Envelope(xMid, env.getMaxX(), env.getMinY(), yMid) .intersection(FeatureUtil.getEnvelope(p4.features));
 
 			//check number
 			int nb = p1.features.size() + p2.features.size() + p3.features.size() + p4.features.size();

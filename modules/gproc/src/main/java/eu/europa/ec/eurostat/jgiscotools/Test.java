@@ -31,7 +31,7 @@ public class Test {
 		System.out.println(out.size());
 		GeoData.save(out, "/home/juju/Bureau/gisco/tmp/partitionning_test.gpkg", CRS.decode("EPSG:4258"));*/
 
-		//partitionning BU
+		/*/partitionning BU
 		ArrayList<Feature> fs = GeoData.getFeatures("/home/juju/Bureau/gisco/cnt/fr/bdtopo/067/BATIMENT.gpkg");
 		System.out.println(fs.size());
 		Collection<Feature> outSplit = Partition.getPartitionDataset(fs, true, 1000, 100000, true, Partition.GeomType.ONLY_AREAS, 0);
@@ -41,7 +41,7 @@ public class Test {
 		//System.out.println("no split: "+outNoSplit.size());
 		GeoData.save(outSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_split.gpkg", CRS.decode("EPSG:3035"));
 		//GeoData.save(outNoSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_no_split.gpkg", CRS.decode("EPSG:3035"));
-
+*/
 
 /*
 		//partitionning BU without splitting
