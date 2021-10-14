@@ -404,11 +404,12 @@ public class Partition {
 	 * @param parallel
 	 * @param maxCoordinatesNumber
 	 * @param objMaxCoordinateNumber
+	 * @param withSplit
 	 * @param gt
 	 * @param midRandom
 	 * @return
 	 */
-	public static Collection<Feature> getPartitionDataset(Collection<Feature> features, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, GeomType gt, double midRandom) {
+	public static Collection<Feature> getPartitionDataset(Collection<Feature> features, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean withSplit, GeomType gt, double midRandom) {
 		final Collection<Feature> fs = new ArrayList<Feature>();
 
 		Partition.runRecursivelyApply(features, p -> {
@@ -423,10 +424,9 @@ public class Partition {
 			f.setAttribute("maxfcn", p.maxEltCN);
 			f.setAttribute("area", area);
 			fs.add(f);
-		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, true, false, gt, midRandom);
+		}, parallel, maxCoordinatesNumber, objMaxCoordinateNumber, withSplit, false, gt, midRandom);
 
 		return fs;
 	}
-
 
 }
