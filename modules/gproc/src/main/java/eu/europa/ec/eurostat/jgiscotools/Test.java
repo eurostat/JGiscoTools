@@ -3,9 +3,11 @@ package eu.europa.ec.eurostat.jgiscotools;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.geotools.referencing.CRS;
 
-import eu.europa.ec.eurostat.jgiscotools.algo.base.Decomposer;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
@@ -34,28 +36,28 @@ public class Test {
 		/*/partitionning BU
 		ArrayList<Feature> fs = GeoData.getFeatures("/home/juju/Bureau/gisco/cnt/fr/bdtopo/067/BATIMENT.gpkg");
 		System.out.println(fs.size());
-		Collection<Feature> outSplit = Partition.getPartitionDataset(fs, true, 1000, 100000, true, Partition.GeomType.ONLY_AREAS, 0);
-		//Collection<Feature> outNoSplit = Partition.getPartitionDataset(fs, true, 1000, 100000, false, Partition.GeomType.ONLY_AREAS, 0);
-		//System.out.println(fs.size());
-		System.out.println("split: "+outSplit.size());
-		//System.out.println("no split: "+outNoSplit.size());
-		GeoData.save(outSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_split.gpkg", CRS.decode("EPSG:3035"));
-		//GeoData.save(outNoSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_no_split.gpkg", CRS.decode("EPSG:3035"));
-*/
-
-/*
-		//partitionning BU without splitting
-		Configurator.setLevel(LogManager.getLogger(Partition.class).getName(), Level.WARN);
-		ArrayList<Feature> fs = GeoData.getFeatures("/home/juju/Bureau/gisco/cnt/fr/bdtopo/067/BATIMENT.gpkg");
+		//Collection<Feature> outSplit = Partition.getPartitionDataset(fs, true, 1000, 100000, true, Partition.GeomType.ONLY_AREAS, 0);
+		Collection<Feature> outNoSplit = Partition.getPartitionDataset(fs, true, 1000, 100000, false, Partition.GeomType.ONLY_AREAS, 0);
 		System.out.println(fs.size());
-		//Collection<Feature> outSplit = Partition.getFeaturesTaggedByPartition(fs, true, 10000, 100000, true, Partition.GeomType.ONLY_AREAS, 0, "PARTITION");
-		Collection<Feature> outNoSplit = Partition.getFeaturesTaggedByPartition(fs, true, 10000, 100000, false, Partition.GeomType.ONLY_AREAS, 0, "PARTITION");
-		//System.out.println(fs.size());
 		//System.out.println("split: "+outSplit.size());
 		System.out.println("no split: "+outNoSplit.size());
-		//GeoData.save(outSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_split_BU.gpkg", CRS.decode("EPSG:3035"));
-		GeoData.save(outNoSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_no_split_BU.gpkg", CRS.decode("EPSG:3035"));
+		//GeoData.save(outSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_split.gpkg", CRS.decode("EPSG:3035"));
+		GeoData.save(outNoSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_no_split.gpkg", CRS.decode("EPSG:3035"));
 */
+
+
+		/*/partitionning BU without splitting
+		Configurator.setLevel(LogManager.getLogger(Partition.class).getName(), Level.WARN);
+		ArrayList<Feature> fs = GeoData.getFeatures("/home/juju/Bureau/gisco/cnt/fr/bdtopo/067/BATIMENT.gpkg");
+		//System.out.println(fs.size());
+		Collection<Feature> outSplit = Partition.getFeaturesTaggedByPartition(fs, true, 10000, 100000, true, Partition.GeomType.ONLY_AREAS, 0, "PARTITION");
+		//Collection<Feature> outNoSplit = Partition.getFeaturesTaggedByPartition(fs, true, 10000, 100000, false, Partition.GeomType.ONLY_AREAS, 0, "PARTITION");
+		System.out.println(fs.size());
+		System.out.println("split: "+outSplit.size());
+		//System.out.println("no split: "+outNoSplit.size());
+		GeoData.save(outSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_split_BU.gpkg", CRS.decode("EPSG:3035"));
+		//GeoData.save(outNoSplit, "/home/juju/Bureau/gisco/tmp/partitionning_buildings_test_no_split_BU.gpkg", CRS.decode("EPSG:3035"));
+		 */
 
 		System.out.println("End");
 	}
