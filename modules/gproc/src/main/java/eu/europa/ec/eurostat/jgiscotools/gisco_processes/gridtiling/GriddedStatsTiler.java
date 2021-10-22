@@ -93,11 +93,13 @@ public class GriddedStatsTiler {
 	 * Build the tiles for several tile sizes.
 	 */
 	public void createTiles(boolean createEmptyTiles) {
+
 		//create tile dictionnary tileId -> tile
 		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
 
 		//go through cell stats and assign it to a tile
 		for(Stat s : sh.stats) {
+
 			//get cell information
 			String gridId = s.dims.get(gridIdAtt);
 			GridCell cell = new GridCell(gridId);
