@@ -15,6 +15,7 @@ public class PopGridTiling {
 
 		String basePath = "E:/workspace/gridstat/data/";
 
+
 		for(int resKM : GridsProduction.resKMs) {
 			for(int year : new int[] {2011, 2006}) {
 				logger.info("*** year="+year+" resKM="+resKM);
