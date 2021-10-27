@@ -107,7 +107,6 @@ public class GriddedStatsTiler {
 			double y = cell.getLowerLeftCornerPositionY();
 			int resolution = cell.getResolution();
 
-
 			//compute tile size, in geo unit
 			int tileSizeM = resolution * this.tileResolutionPix;
 
