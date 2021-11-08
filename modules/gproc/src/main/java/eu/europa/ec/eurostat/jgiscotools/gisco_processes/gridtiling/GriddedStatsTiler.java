@@ -94,7 +94,7 @@ public class GriddedStatsTiler {
 	 */
 	public void createTiles(boolean createEmptyTiles) {
 
-		//create tile dictionnary tileId -> tile
+		//create tile dictionary tileId -> tile
 		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
 
 		//go through cell stats and assign it to a tile
