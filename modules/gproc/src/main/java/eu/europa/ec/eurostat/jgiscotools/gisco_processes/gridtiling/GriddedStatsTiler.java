@@ -262,6 +262,12 @@ public class GriddedStatsTiler {
 		return tilesInfo;
 	}
 
+	/**
+	 * Save the tiling info.json file
+	 * 
+	 * @param outpath
+	 * @param description
+	 */
 	public void saveTilingInfoJSON(String outpath, String description) {
 		TilingInfo ti = getTilesInfo();
 
