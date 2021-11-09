@@ -67,16 +67,21 @@ public class GriddedStatsTiler {
 		public int x,y;
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
 		GridStatTile(int x, int y) { this.x=x; this.y=y; }
-		public Stat getMaxValue() {
-			//TODO by dimension value
+		public Stat getMaxValue(String dimLabel, String dimValue) {
 			Stat s_ = null;
-			for(Stat s : stats) if (s_==null || s.value > s_.value) s_=s;
+			for(Stat s : stats) {
+				if( dimLabel != null && !s.dims.get(dimLabel).equals(dimValue) ) continue;
+				if (s_==null || s.value > s_.value) s_=s;
+			}
 			return s_;
 		}
-		public Stat getMinValue() {
+		public Stat getMinValue(String dimLabel, String dimValue) {
 			//TODO by dimension value
 			Stat s_ = null;
-			for(Stat s : stats) if (s_==null || s.value < s_.value) s_=s;
+			for(Stat s : stats) {
+				if( dimLabel != null && !s.dims.get(dimLabel).equals(dimValue) ) continue;
+				if (s_==null || s.value < s_.value) s_=s;
+			}
 			return s_;
 		}
 	}
