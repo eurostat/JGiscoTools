@@ -297,6 +297,9 @@ public class GriddedStatsTiler {
 		//JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
 		//json.put("percentiles", p);
 
+		//TODO add corner position
+		//TODO add columns - and stat data for each of them
+
 		//save
 		try {
 			File f = FileUtil.getFile(outpath+"/info.json", true, true);
