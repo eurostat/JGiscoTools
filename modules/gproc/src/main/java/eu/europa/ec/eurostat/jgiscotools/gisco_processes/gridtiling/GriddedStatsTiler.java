@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -38,8 +39,7 @@ public class GriddedStatsTiler {
 	/** In case several values are provided, the dimension label where to find them. */
 	private String dimLabel = null;
 
-	/** In case several values are provided, the dimension values where to find them. */
-	private String[] dimValues = null;
+	private String noValue = "";
 
 	/** The name of the attribute with the grid id */
 	private String gridIdAtt = "GRD_ID";
@@ -82,14 +82,14 @@ public class GriddedStatsTiler {
 	}
 
 	public GriddedStatsTiler(int tileResolutionPix, String csvFilePath, String statAttr) {
-		this( tileResolutionPix, CSV.load(csvFilePath, statAttr), null);
+		this( tileResolutionPix, CSV.load(csvFilePath, statAttr), null, "");
 	}
 
-	public GriddedStatsTiler(int tileResolutionPix, StatsHypercube sh, String dimLabel, String... dimValues) {
+	public GriddedStatsTiler(int tileResolutionPix, StatsHypercube sh, String dimLabel, String noValue) {
 		this.tileResolutionPix = tileResolutionPix;
 		this.sh = sh;
 		this.dimLabel = dimLabel;
-		this.dimValues = dimValues;
+		this.noValue = noValue;
 	}
 
 
@@ -159,6 +159,7 @@ public class GriddedStatsTiler {
 	public void saveCSV(String folderPath) {
 
 		for(GridStatTile t : tiles) {
+
 			//build sh for the tile
 			StatsHypercube sht = new StatsHypercube(sh.getDimLabels());
 			sht.dimLabels.add("x");
@@ -190,13 +191,12 @@ public class GriddedStatsTiler {
 
 				//store value
 				Stat s_ = new Stat(s.value, "x", ""+(int)x, "y", ""+(int)y);
+				if(this.dimLabel != null) s_.dims.put(this.dimLabel, s.dims.get(this.dimLabel));
 				sht.stats.add(s_);
 			}
 
 			//save as csv file
-			CSV.saveMultiValues(sht, folderPath + "/" +t.x+ "/" +t.y+ ".csv", "time");
-
-			/*CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", new Comparator<String>() {
+			Comparator<String> cp = new Comparator<>() {
 				@Override
 				public int compare(String s1, String s2) {
 					if(s1.equals(s2)) return 0;
@@ -204,11 +204,12 @@ public class GriddedStatsTiler {
 					if(s2.equals("x")) return 1;
 					if(s1.equals("y")) return -1;
 					if(s2.equals("y")) return 1;
-					if(s1.equals("val")) return -1;
-					if(s2.equals("val")) return 1;
-					return 0;
+					System.out.println(s1+" "+s2+" "+s2.compareTo(s1));
+					return s2.compareTo(s1);
 				}
-			});*/
+			};
+			CSV.saveMultiValues(sht, folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", this.noValue, cp, "time");
+
 		}
 	}
 
@@ -282,9 +283,9 @@ public class GriddedStatsTiler {
 		json.put("resolutionGeo", ti.resolution);
 		json.put("tileSizeCell", this.tileResolutionPix);
 		json.put("crs", ti.ePSGCode);
-		json.put("minValue", ti.minValue);
-		json.put("maxValue", ti.maxValue);
-		json.put("averageValue", ti.averageValue);
+		//json.put("minValue", ti.minValue);
+		//json.put("maxValue", ti.maxValue);
+		//json.put("averageValue", ti.averageValue);
 
 		JSONObject bn = new JSONObject();
 		bn.put("minX", (int)ti.tilingBounds.getMinX());
@@ -293,8 +294,8 @@ public class GriddedStatsTiler {
 		bn.put("maxY", (int)ti.tilingBounds.getMaxY());
 		json.put("tilingBounds", bn);
 
-		JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
-		json.put("percentiles", p);
+		//JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
+		//json.put("percentiles", p);
 
 		//save
 		try {
