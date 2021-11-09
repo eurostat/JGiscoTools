@@ -290,19 +290,6 @@ public class GriddedStatsTiler {
 		json.put("resolutionGeo", ti.resolution);
 		json.put("tileSizeCell", this.tileResolutionPix);
 		json.put("crs", ti.ePSGCode);
-		//json.put("minValue", ti.minValue);
-		//json.put("maxValue", ti.maxValue);
-		//json.put("averageValue", ti.averageValue);
-
-		JSONObject bn = new JSONObject();
-		bn.put("minX", (int)ti.tilingBounds.getMinX());
-		bn.put("maxX", (int)ti.tilingBounds.getMaxX());
-		bn.put("minY", (int)ti.tilingBounds.getMinY());
-		bn.put("maxY", (int)ti.tilingBounds.getMaxY());
-		json.put("tilingBounds", bn);
-
-		//JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
-		//json.put("percentiles", p);
 
 		//origin point
 		JSONObject op = new JSONObject();
@@ -310,7 +297,21 @@ public class GriddedStatsTiler {
 		op.put("y", this.originPoint.y);
 		json.put("originPoint", op);
 
+		//tiling bounding
+		JSONObject bn = new JSONObject();
+		bn.put("minX", (int)ti.tilingBounds.getMinX());
+		bn.put("maxX", (int)ti.tilingBounds.getMaxX());
+		bn.put("minY", (int)ti.tilingBounds.getMinY());
+		bn.put("maxY", (int)ti.tilingBounds.getMaxY());
+		json.put("tilingBounds", bn);
+
 		//TODO add columns - and stat data for each of them
+
+		//json.put("minValue", ti.minValue);
+		//json.put("maxValue", ti.maxValue);
+		//json.put("averageValue", ti.averageValue);
+		//JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
+		//json.put("percentiles", p);
 
 		//save
 		//TODO indent
