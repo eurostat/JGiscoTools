@@ -13,14 +13,14 @@ public class PopGridTiling {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		String basePath = "E:/workspace/gridstat/data/";
+		String basePath = "/home/juju/Bureau/gisco/";
 
 		for(int resKM : GridsProduction.resKMs) {
-			for(int year : new int[] {2011, 2006}) {
+			for(int year : new int[] {2011, 2006, 2018}) {
 				logger.info("*** year="+year+" resKM="+resKM);
 
 				logger.info("Load data...");
-				StatsHypercube sh = CSV.load(basePath+"pop_grid/pop_grid_"+year+"_"+resKM+"km.csv", "TOT_P");
+				StatsHypercube sh = CSV.load(basePath+"grid_pop/pop_grid_"+year+"_"+resKM+"km.csv", "TOT_P");
 				logger.info(sh.stats.size() + " values loaded");
 
 				logger.info("Build tiles...");
@@ -29,7 +29,7 @@ public class PopGridTiling {
 				logger.info(gst.getTiles().size() + " tiles created");
 
 				logger.info("Save...");
-				String outpath = basePath+"pop_grid_tiled/pop_grid_"+year+"_"+resKM+"km/";
+				String outpath = basePath+"grid_pop_tiled/pop_grid_"+year+"_"+resKM+"km/";
 				gst.saveCSV(outpath );
 				gst.saveTilingInfoJSON(outpath, "Population in "+year);
 			}
