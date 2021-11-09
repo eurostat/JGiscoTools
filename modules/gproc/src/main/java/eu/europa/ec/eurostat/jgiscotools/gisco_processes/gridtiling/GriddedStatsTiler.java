@@ -188,6 +188,7 @@ public class GriddedStatsTiler {
 
 			//save as csv file
 			//TODO sort cells by x and y ?
+			//TODO comparator does not work? To be fixed in java4eurostat ?
 			Comparator<String> cp = new Comparator<>() {
 				@Override
 				public int compare(String s1, String s2) {

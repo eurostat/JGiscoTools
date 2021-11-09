@@ -14,13 +14,6 @@ public class PopGridTiling {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		//TODO java4eurostat:
-		//CSV export: fix comparator?
-		//CSV export: if integer, remove ".0"
-		//add dimension + default value
-
-		//TODO round when value is an integer
-
 		String basePath = "/home/juju/Bureau/gisco/";
 
 		for(int resKM : GridsProduction.resKMs) {
@@ -36,8 +29,7 @@ public class PopGridTiling {
 				logger.info(sh_.stats.size() + " values loaded for "  + year);
 
 				//add time dimension
-				sh_.dimLabels.add("time");
-				for(Stat s : sh_.stats) s.dims.put("time", ""+year);
+				sh_.add("time", ""+year);
 
 				if(sh == null) sh = sh_;
 				else sh.stats.addAll(sh_.stats);
@@ -54,7 +46,6 @@ public class PopGridTiling {
 			String outpath = basePath+"grid_pop_tiled/"+resKM+"km";
 			gst.saveCSV(outpath );
 			gst.saveTilingInfoJSON(outpath, "Population " + resKM + "km");
-
 		}
 		logger.info("End");
 	}
