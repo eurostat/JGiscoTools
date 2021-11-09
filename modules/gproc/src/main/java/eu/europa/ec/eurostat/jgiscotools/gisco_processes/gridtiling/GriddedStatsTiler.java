@@ -313,11 +313,10 @@ public class GriddedStatsTiler {
 		//json.put("percentiles", p);
 
 		//save
-		//TODO indent
 		try {
 			File f = FileUtil.getFile(outpath+"/info.json", true, true);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
-			bw.write(json.toString());
+			bw.write(json.toString(3));
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
