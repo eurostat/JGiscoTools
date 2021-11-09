@@ -9,7 +9,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -33,14 +32,16 @@ import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
  */
 public class GriddedStatsTiler {
 
-	/**
-	 * The statistical figures to tile
-	 */
+	/** The statistical figures to tile */
 	private StatsHypercube sh;
 
-	/**
-	 * The name of the attribute with the grid id
-	 */
+	/** In case several values are provided, the dimension label where to find them. */
+	private String dimLabel = null;
+
+	/** In case several values are provided, the dimension values where to find them. */
+	private String[] dimValues = null;
+
+	/** The name of the attribute with the grid id */
 	private String gridIdAtt = "GRD_ID";
 
 	/**
@@ -61,6 +62,7 @@ public class GriddedStatsTiler {
 	 * The computed tiles.
 	 */
 	private Collection<GridStatTile> tiles;
+
 	public Collection<GridStatTile> getTiles() { return tiles; }
 
 	private class GridStatTile {
@@ -79,13 +81,15 @@ public class GriddedStatsTiler {
 		}
 	}
 
-	public GriddedStatsTiler(String csvFilePath, String statAttr, int tileResolutionPix) {
-		this( CSV.load(csvFilePath, statAttr), tileResolutionPix );
+	public GriddedStatsTiler(int tileResolutionPix, String csvFilePath, String statAttr) {
+		this( tileResolutionPix, CSV.load(csvFilePath, statAttr), null);
 	}
 
-	public GriddedStatsTiler(StatsHypercube sh, int tileResolutionPix) {
-		this.sh = sh;
+	public GriddedStatsTiler(int tileResolutionPix, StatsHypercube sh, String dimLabel, String... dimValues) {
 		this.tileResolutionPix = tileResolutionPix;
+		this.sh = sh;
+		this.dimLabel = dimLabel;
+		this.dimValues = dimValues;
 	}
 
 
@@ -148,7 +152,7 @@ public class GriddedStatsTiler {
 
 
 	/**
-	 * Save the tile pyramid as CSV.
+	 * Save the tile as CSV.
 	 * 
 	 * @param folderPath
 	 */
@@ -190,8 +194,9 @@ public class GriddedStatsTiler {
 			}
 
 			//save as csv file
-			//TODO handle case of more columns, when using multidimensional stats
-			CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", new Comparator<String>() {
+			CSV.saveMultiValues(sht, folderPath + "/" +t.x+ "/" +t.y+ ".csv", "time");
+
+			/*CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", new Comparator<String>() {
 				@Override
 				public int compare(String s1, String s2) {
 					if(s1.equals(s2)) return 0;
@@ -203,7 +208,7 @@ public class GriddedStatsTiler {
 					if(s2.equals("val")) return 1;
 					return 0;
 				}
-			});
+			});*/
 		}
 	}
 
@@ -253,7 +258,7 @@ public class GriddedStatsTiler {
 		}
 
 		tilesInfo.percentiles = StatsUtil.getQuantiles(vals, 99);
-		
+
 		//get average
 		double sum = 0;
 		for(double v : vals) sum += v;
