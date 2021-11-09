@@ -68,11 +68,13 @@ public class GriddedStatsTiler {
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
 		GridStatTile(int x, int y) { this.x=x; this.y=y; }
 		public Stat getMaxValue() {
+			//TODO by dimension value
 			Stat s_ = null;
 			for(Stat s : stats) if (s_==null || s.value > s_.value) s_=s;
 			return s_;
 		}
 		public Stat getMinValue() {
+			//TODO by dimension value
 			Stat s_ = null;
 			for(Stat s : stats) if (s_==null || s.value < s_.value) s_=s;
 			return s_;
