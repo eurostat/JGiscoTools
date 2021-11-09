@@ -3,7 +3,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction.GridsProduction;
