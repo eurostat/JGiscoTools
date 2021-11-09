@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -303,7 +304,12 @@ public class GriddedStatsTiler {
 		//JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
 		//json.put("percentiles", p);
 
-		//TODO add corner position
+		//origin point
+		JSONObject op = new JSONObject();
+		op.put("x", this.originPoint.x);
+		op.put("y", this.originPoint.y);
+		json.put("originPoint", op);
+
 		//TODO add columns - and stat data for each of them
 
 		//save
