@@ -14,6 +14,8 @@ public class PopGridTiling {
 	public static void main(String[] args) {
 		logger.info("Start");
 
+		//TODO round when value is an integer
+
 		String basePath = "/home/juju/Bureau/gisco/";
 
 		for(int resKM : GridsProduction.resKMs) {
