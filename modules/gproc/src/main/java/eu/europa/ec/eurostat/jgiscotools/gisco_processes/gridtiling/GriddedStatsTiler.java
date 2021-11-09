@@ -19,7 +19,6 @@ import org.locationtech.jts.geom.Envelope;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 
@@ -227,9 +226,9 @@ public class GriddedStatsTiler {
 		Envelope tilingBounds = null;
 		public int resolution = -1;
 		public String ePSGCode;
-		public double minValue = Double.MAX_VALUE, maxValue = -Double.MAX_VALUE;
-		public double[] percentiles;
-		public double averageValue;
+		//public double minValue = Double.MAX_VALUE, maxValue = -Double.MAX_VALUE;
+		//public double[] percentiles;
+		//public double averageValue;
 	}
 
 	private TilingInfo computeTilesInfo() {
@@ -248,22 +247,22 @@ public class GriddedStatsTiler {
 				tilesInfo.ePSGCode = cell.getEpsgCode();
 			}
 
-			//set min/max stat values
+			/*/set min/max stat values
 			if(t.stats.size()>0) {
 				tilesInfo.maxValue = Math.max(t.getMaxValue().value, tilesInfo.maxValue);
 				tilesInfo.minValue = Math.min(t.getMinValue().value, tilesInfo.minValue);
-			}
+			}*/
 
 			//store values
 			for(Stat s : t.stats) vals.add(s.value);
 		}
 
-		tilesInfo.percentiles = StatsUtil.getQuantiles(vals, 99);
+		//tilesInfo.percentiles = StatsUtil.getQuantiles(vals, 99);
 
-		//get average
+		/*/get average
 		double sum = 0;
 		for(double v : vals) sum += v;
-		tilesInfo.averageValue = sum/vals.size();
+		tilesInfo.averageValue = sum/vals.size();*/
 
 		return tilesInfo;
 	}
@@ -301,6 +300,7 @@ public class GriddedStatsTiler {
 		//TODO add columns - and stat data for each of them
 
 		//save
+		//TODO indent
 		try {
 			File f = FileUtil.getFile(outpath+"/info.json", true, true);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
