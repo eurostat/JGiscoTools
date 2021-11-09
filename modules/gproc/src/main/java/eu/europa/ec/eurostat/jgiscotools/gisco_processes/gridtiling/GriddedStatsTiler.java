@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -69,23 +70,6 @@ public class GriddedStatsTiler {
 		public int x,y;
 		public ArrayList<Stat> stats = new ArrayList<Stat>();
 		GridStatTile(int x, int y) { this.x=x; this.y=y; }
-		public Stat getMaxValue(String dimLabel, String dimValue) {
-			Stat s_ = null;
-			for(Stat s : stats) {
-				if( dimLabel != null && !s.dims.get(dimLabel).equals(dimValue) ) continue;
-				if (s_==null || s.value > s_.value) s_=s;
-			}
-			return s_;
-		}
-		public Stat getMinValue(String dimLabel, String dimValue) {
-			//TODO by dimension value
-			Stat s_ = null;
-			for(Stat s : stats) {
-				if( dimLabel != null && !s.dims.get(dimLabel).equals(dimValue) ) continue;
-				if (s_==null || s.value < s_.value) s_=s;
-			}
-			return s_;
-		}
 	}
 
 	public GriddedStatsTiler(int tileResolutionPix, String csvFilePath, String statAttr) {
@@ -345,19 +329,19 @@ public class GriddedStatsTiler {
 		bn.put("maxY", (int)ti.tilingBounds.getMaxY());
 		json.put("tilingBounds", bn);
 
+		//data on dimensions
+		JSONObject dims = new JSONObject();
+		for(DimStat ds : ti.dSt) {
+			JSONObject ds_ = new JSONObject();
 
-
-
-		/*if(this.dimLabel != null) {
-		//TODO add columns - and stat data for each of them
-
-		} else {
-			json.put("minValue", ti.minValue);
-			json.put("maxValue", ti.maxValue);
-			json.put("averageValue", ti.averageValue);
-			JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
-			json.put("percentiles", p);
-		}*/
+			ds_.put("minValue", ds.minValue);
+			ds_.put("maxValue", ds.maxValue);
+			ds_.put("averageValue", ds.averageValue);
+			JSONArray p = new JSONArray(); for(double v:ds.percentiles) p.put(v);
+			ds_.put("percentiles", p);
+			dims.put(ds.dimValue, ds_);
+		}
+		json.put("dims", dims);
 
 		//save
 		try {
