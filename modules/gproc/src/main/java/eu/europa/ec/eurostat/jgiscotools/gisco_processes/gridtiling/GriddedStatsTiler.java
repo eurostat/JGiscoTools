@@ -19,6 +19,8 @@ import org.locationtech.jts.geom.Envelope;
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling.GriddedStatsTiler.TilingInfo.DimStat;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 
@@ -230,13 +232,13 @@ public class GriddedStatsTiler {
 	}
 
 
-	public class TilingInfo {
+	public static class TilingInfo {
 		Envelope tilingBounds = null;
 		public int resolution = -1;
 		public String ePSGCode;
 		public ArrayList<DimStat> dSt = new ArrayList<>();
 
-		public class DimStat {
+		public static class DimStat {
 			public String dimValue;
 			public double minValue = Double.MAX_VALUE, maxValue = -Double.MAX_VALUE;
 			public double[] percentiles;
@@ -267,38 +269,51 @@ public class GriddedStatsTiler {
 
 			//get all values, indexed by dimValue
 			HashMap<String,Collection<Double>> vals = new HashMap<>();
-			for(String dimValue : this.sh.getDimValues(dimLabel)) {
-				Collection<Double> vals_ = new ArrayList<>();
-				vals.put(dimValue, vals_);
-			}
+			for(String dimValue : this.sh.getDimValues(dimLabel))
+				vals.put(dimValue, new ArrayList<>());
 			for(Stat s : this.sh.stats)
 				vals.get(s.dims.get(this.dimLabel)).add(s.value);
 
-			//TODO XXX
-
+			//compute stats
+			for(String dimValue : this.sh.getDimValues(dimLabel))
+				tilesInfo.dSt.add( getStats(dimValue, vals.get(dimValue)) );
 
 		} else {
-			//TODO
+			//get all values
+			Collection<Double> vals = new ArrayList<>();
+			for(Stat s : this.sh.stats)
+				vals.add(s.value);
+
+			//compute stats
+			tilesInfo.dSt.add( getStats("val", vals) );
 		}
-
-		/*/set min/max stat values
-		if(t.stats.size()>0) {
-			tilesInfo.maxValue = Math.max(t.getMaxValue().value, tilesInfo.maxValue);
-			tilesInfo.minValue = Math.min(t.getMinValue().value, tilesInfo.minValue);
-		}*/
-
-		/*/store values
-		Collection<Double> vals = new ArrayList<>();
-		for(Stat s : t.stats) vals.add(s.value);
-		tilesInfo.percentiles = StatsUtil.getQuantiles(vals, 99);*/
-
-		/*/get average
-		double sum = 0;
-		for(double v : vals) sum += v;
-		tilesInfo.averageValue = sum/vals.size();*/
 
 		return tilesInfo;
 	}
+
+
+	private DimStat getStats(String dimValue, Collection<Double> vals) {
+		DimStat ds = new DimStat();
+		ds.dimValue = dimValue;
+
+		//percentiles
+		ds.percentiles = StatsUtil.getQuantiles(vals, 99);
+
+		//average
+		ds.averageValue = 0;
+		for(double v : vals) ds.averageValue += v;
+		ds.averageValue /= vals.size();
+
+		//max and min
+		ds.maxValue = Double.NEGATIVE_INFINITY;
+		ds.minValue = Double.POSITIVE_INFINITY;
+		for(double v : vals) {
+			if(v>ds.maxValue) ds.maxValue=v;
+			if(v<ds.minValue) ds.minValue=v;
+		}
+		return ds;
+	}
+
 
 	/**
 	 * Save the tiling info.json file
