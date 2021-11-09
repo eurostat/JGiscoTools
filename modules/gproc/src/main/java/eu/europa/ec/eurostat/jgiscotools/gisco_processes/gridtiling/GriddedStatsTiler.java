@@ -229,18 +229,24 @@ public class GriddedStatsTiler {
 		return tilesInfo;
 	}
 
+
 	public class TilingInfo {
 		Envelope tilingBounds = null;
 		public int resolution = -1;
 		public String ePSGCode;
-		//public double minValue = Double.MAX_VALUE, maxValue = -Double.MAX_VALUE;
-		//public double[] percentiles;
-		//public double averageValue;
+		public ArrayList<DimStat> dSt = new ArrayList<>();
+
+		public class DimStat {
+			public String dimValue;
+			public double minValue = Double.MAX_VALUE, maxValue = -Double.MAX_VALUE;
+			public double[] percentiles;
+			public double averageValue;
+		}
 	}
+
 
 	private TilingInfo computeTilesInfo() {
 		tilesInfo = new TilingInfo();
-		Collection<Double> vals = new ArrayList<>();
 
 		for(GridStatTile t : getTiles()) {
 			//set x/y envelope
@@ -254,17 +260,37 @@ public class GriddedStatsTiler {
 				tilesInfo.ePSGCode = cell.getEpsgCode();
 			}
 
-			/*/set min/max stat values
-			if(t.stats.size()>0) {
-				tilesInfo.maxValue = Math.max(t.getMaxValue().value, tilesInfo.maxValue);
-				tilesInfo.minValue = Math.min(t.getMinValue().value, tilesInfo.minValue);
-			}*/
-
-			//store values
-			for(Stat s : t.stats) vals.add(s.value);
 		}
 
-		//tilesInfo.percentiles = StatsUtil.getQuantiles(vals, 99);
+		//get stats on values
+		if(this.dimLabel != null) {
+
+			//get all values, indexed by dimValue
+			HashMap<String,Collection<Double>> vals = new HashMap<>();
+			for(String dimValue : this.sh.getDimValues(dimLabel)) {
+				Collection<Double> vals_ = new ArrayList<>();
+				vals.put(dimValue, vals_);
+			}
+			for(Stat s : this.sh.stats)
+				vals.get(s.dims.get(this.dimLabel)).add(s.value);
+
+			//TODO XXX
+
+
+		} else {
+			//TODO
+		}
+
+		/*/set min/max stat values
+		if(t.stats.size()>0) {
+			tilesInfo.maxValue = Math.max(t.getMaxValue().value, tilesInfo.maxValue);
+			tilesInfo.minValue = Math.min(t.getMinValue().value, tilesInfo.minValue);
+		}*/
+
+		/*/store values
+		Collection<Double> vals = new ArrayList<>();
+		for(Stat s : t.stats) vals.add(s.value);
+		tilesInfo.percentiles = StatsUtil.getQuantiles(vals, 99);*/
 
 		/*/get average
 		double sum = 0;
@@ -304,13 +330,19 @@ public class GriddedStatsTiler {
 		bn.put("maxY", (int)ti.tilingBounds.getMaxY());
 		json.put("tilingBounds", bn);
 
+
+
+
+		/*if(this.dimLabel != null) {
 		//TODO add columns - and stat data for each of them
 
-		//json.put("minValue", ti.minValue);
-		//json.put("maxValue", ti.maxValue);
-		//json.put("averageValue", ti.averageValue);
-		//JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
-		//json.put("percentiles", p);
+		} else {
+			json.put("minValue", ti.minValue);
+			json.put("maxValue", ti.maxValue);
+			json.put("averageValue", ti.averageValue);
+			JSONArray p = new JSONArray(); for(double v:ti.percentiles) p.put(v);
+			json.put("percentiles", p);
+		}*/
 
 		//save
 		try {
