@@ -9,9 +9,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
@@ -33,6 +36,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
  *
  */
 public class GriddedStatsTiler {
+	private static Logger logger = LogManager.getLogger(GriddedStatsTiler.class.getName());
 
 	/** The statistical figures to tile */
 	private StatsHypercube sh;
@@ -169,15 +173,11 @@ public class GriddedStatsTiler {
 				x = x/r - t.x*tileResolutionPix;
 				y = y/r - t.y*tileResolutionPix;
 
-				/*/check x,y values. Should be within [0,tileSizeCellNb-1]
-				if(x==0) System.out.println("x=0 found");
-				if(y==0) System.out.println("y=0 found");
-				if(x<0) System.err.println("Too low value: "+x);
-				if(y<0) System.err.println("Too low value: "+y);
-				if(x==tileSizeCellNb-1) System.out.println("x=tileSizeCellNb-1 found");
-				if(y==tileSizeCellNb-1) System.out.println("y=tileSizeCellNb-1 found");
-				if(x>tileSizeCellNb-1) System.err.println("Too high value: "+x);
-				if(y>tileSizeCellNb-1) System.err.println("Too high value: "+y);*/
+				//check x,y values. Should be within [0,tileResolutionPix-1]
+				if(x<0) logger.error("Too low value: "+x);
+				if(y<0) logger.error("Too low value: "+y);
+				if(x>this.tileResolutionPix-1) logger.error("Too high value: "+x);
+				if(y>this.tileResolutionPix-1) logger.error("Too high value: "+y);
 
 				//store value
 				Stat s_ = new Stat(s.value, "x", ""+(int)x, "y", ""+(int)y);
@@ -196,14 +196,25 @@ public class GriddedStatsTiler {
 					if(s2.equals("x")) return 1;
 					if(s1.equals("y")) return -1;
 					if(s2.equals("y")) return 1;
-					System.out.println(s1+" "+s2+" "+s2.compareTo(s1));
 					return s2.compareTo(s1);
 				}
 			};
-			CSV.saveMultiValues(sht, folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", this.noValue, cp, "time");
 
+			if(this.dimLabel == null) {
+				//TODO test that
+				CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", cp);
+			}
+			else {
+				ArrayList<String> valueColumns = new ArrayList<>(sh.getDimValues(this.dimLabel));
+				Collections.sort(valueColumns);
+				String[] dv = valueColumns.toArray(new String[valueColumns.size()]);
+				CSV.saveMultiValues(sht, folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", this.noValue, cp, this.dimLabel, dv);
+			}
 		}
 	}
+
+
+
 
 
 
