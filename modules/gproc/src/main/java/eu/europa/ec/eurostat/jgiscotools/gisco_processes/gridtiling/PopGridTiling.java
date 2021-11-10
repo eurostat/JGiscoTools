@@ -43,7 +43,7 @@ public class PopGridTiling {
 
 			logger.info("Save...");
 			String outpath = basePath+"grid_pop_tiled/"+resKM+"km";
-			gst.saveCSV(outpath );
+			gst.saveCSV(outpath);
 			gst.saveTilingInfoJSON(outpath, "Population " + resKM + "km");
 		}
 		logger.info("End");
