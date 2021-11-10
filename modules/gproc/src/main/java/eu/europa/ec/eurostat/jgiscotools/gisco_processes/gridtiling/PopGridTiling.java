@@ -38,7 +38,7 @@ public class PopGridTiling {
 
 			logger.info("Build tiles...");
 			GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "time", "0");
-			gst.createTiles(true);
+			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save...");

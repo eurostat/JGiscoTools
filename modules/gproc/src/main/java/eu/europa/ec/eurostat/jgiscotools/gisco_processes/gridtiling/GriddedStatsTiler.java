@@ -87,7 +87,7 @@ public class GriddedStatsTiler {
 	/**
 	 * Build the tiles for several tile sizes.
 	 */
-	public void createTiles(boolean createEmptyTiles) {
+	public void createTiles() {
 
 		//create tile dictionary tileId -> tile
 		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
@@ -121,10 +121,8 @@ public class GriddedStatsTiler {
 			tile.stats.add(s);
 		}
 
-		tiles = tiles_.values();
 
-		tilesInfo = null;
-		if(createEmptyTiles) {
+		/*if(createEmptyTiles) {
 			Envelope bn = getTilesInfo().tilingBounds;
 			for(int xt=(int)bn.getMinX(); xt<=bn.getMaxX(); xt++) {
 				for(int yt=(int)bn.getMinY(); yt<=bn.getMaxY(); yt++) {
@@ -136,9 +134,10 @@ public class GriddedStatsTiler {
 					}
 				}
 			}
-		}
+		}*/
 
 		tiles = tiles_.values();
+		tilesInfo = null;
 	}
 
 
