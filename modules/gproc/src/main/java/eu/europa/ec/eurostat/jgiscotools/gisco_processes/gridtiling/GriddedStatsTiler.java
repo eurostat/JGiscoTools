@@ -350,10 +350,10 @@ public class GriddedStatsTiler {
 
 		//tiling bounding
 		JSONObject bn = new JSONObject();
-		bn.put("minX", (int)ti.tilingBounds.getMinX());
-		bn.put("maxX", (int)ti.tilingBounds.getMaxX());
-		bn.put("minY", (int)ti.tilingBounds.getMinY());
-		bn.put("maxY", (int)ti.tilingBounds.getMaxY());
+		bn.put("xMin", (int)ti.tilingBounds.getMinX());
+		bn.put("xMax", (int)ti.tilingBounds.getMaxX());
+		bn.put("yMin", (int)ti.tilingBounds.getMinY());
+		bn.put("yMax", (int)ti.tilingBounds.getMaxY());
 		json.put("tilingBounds", bn);
 
 		//data on dimensions
