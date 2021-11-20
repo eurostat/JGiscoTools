@@ -185,31 +185,47 @@ public class GriddedStatsTiler {
 				sht.stats.add(s_);
 			}
 
-			//save as csv file
-			//TODO sort cells by x and y ?
-			//TODO comparator does not work? To be fixed in java4eurostat ?
-			Comparator<String> cp = new Comparator<>() {
-				@Override
-				public int compare(String s1, String s2) {
-					if(s1.equals(s2)) return 0;
-					if(s1.equals("x")) return -1;
-					if(s2.equals("x")) return 1;
-					if(s1.equals("y")) return -1;
-					if(s2.equals("y")) return 1;
-					return s2.compareTo(s1);
-				}
-			};
 
-			if(this.dimLabel == null) {
-				//TODO test that
-				CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", cp);
+			/*/TODO sort stats by x and y
+			sht.stats = new ArrayList<>(sht.stats);
+			Collections.sort((ArrayList<Stat>)sht.stats, new Comparator<Stat>() {
+				@Override
+				public int compare(Stat s1, Stat s2) {
+					if(Integer.parseInt(s1.dims.get("x")) < Integer.parseInt(s2.dims.get("x"))) return 1;
+					if(Integer.parseInt(s1.dims.get("x")) > Integer.parseInt(s2.dims.get("x"))) return -1;
+					if(Integer.parseInt(s1.dims.get("y")) < Integer.parseInt(s2.dims.get("y"))) return 1;
+					if(Integer.parseInt(s1.dims.get("y")) > Integer.parseInt(s2.dims.get("y"))) return -1;
+					return 0;
+				}
+			});*/
+
+
+			//save as csv file
+			{
+				Comparator<String> cp = new Comparator<>() {
+					@Override
+					public int compare(String s1, String s2) {
+						if(s1.equals(s2)) return 0;
+						if(s1.equals("x")) return -1;
+						if(s2.equals("x")) return 1;
+						if(s1.equals("y")) return -1;
+						if(s2.equals("y")) return 1;
+						return s2.compareTo(s1);
+					}
+				};
+
+				if(this.dimLabel == null) {
+					//TODO test that
+					CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", cp);
+				}
+				else {
+					ArrayList<String> valueColumns = new ArrayList<>(sh.getDimValues(this.dimLabel));
+					Collections.sort(valueColumns);
+					String[] dv = valueColumns.toArray(new String[valueColumns.size()]);
+					CSV.saveMultiValues(sht, folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", this.noValue, cp, this.dimLabel, dv);
+				}
 			}
-			else {
-				ArrayList<String> valueColumns = new ArrayList<>(sh.getDimValues(this.dimLabel));
-				Collections.sort(valueColumns);
-				String[] dv = valueColumns.toArray(new String[valueColumns.size()]);
-				CSV.saveMultiValues(sht, folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", this.noValue, cp, this.dimLabel, dv);
-			}
+
 		}
 	}
 
