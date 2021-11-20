@@ -261,6 +261,7 @@ public class GriddedStatsTiler {
 	private TilingInfo computeTilesInfo() {
 		tilesInfo = new TilingInfo();
 
+		//TODO bug in tilingBounds: seems to miss a "max+1".
 		for(GridStatTile t : getTiles()) {
 			//set x/y envelope
 			if(tilesInfo.tilingBounds==null) tilesInfo.tilingBounds = new Envelope(new Coordinate(t.x, t.y));
