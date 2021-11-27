@@ -100,36 +100,50 @@ public class INSEEGrid200m {
 
 
 
-	public ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> data, String xCol, String yCol, int res) {	
-
-		HashMap<String,Double> out = new HashMap<>();
+	/**
+	 * Aggregate cell data (from CSV file usually) into a target resolution.
+	 * Sum of attributes.
+	 * 
+	 * @param cells
+	 * @param xCol
+	 * @param yCol
+	 * @param res
+	 * @return
+	 */
+	public ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String xCol, String yCol, int res) {	
 
 		//index input data by upper grid cell
-		for(Map<String, String> s : data) {
+		HashMap<String, Map<String, String>> index = new HashMap<>();
+		for(Map<String, String> cell : cells) {
 
-			//get higher resolution grid cell it belongs to
-			String newId = new GridCell( s.get(idCol) ).getUpperCell(res).getId();
+			//get coordinates of upper cell
+			int[] pos = GridCell.getUpperCell(Integer.parseInt(cell.get(xCol)), Integer.parseInt(cell.get(yCol)), res);
 
-			//set or update value
-			Double val = out.get(newId);
-			if(val == null) {
-				//TODO collection
-				out.put(newId, s.value);
+			//get upper cell
+			String key = pos[0]+"_"+pos[1];
+			Map<String, String> cellAgg = index.get(key);
+
+			if(cellAgg == null) {
+				//create
+				cellAgg = new HashMap<String, String> ();
+				cellAgg.putAll(cell);
+				index.put(key, cellAgg);
 			}
 			else {
-				//TODO collection
-				out.put(newId, val + s.value);
+				//add
+				add(cellAgg, cell);
 			}
+
+			//override x,y of upper cell with correct values
+			cellAgg.put(xCol, pos[0]+"");
+			cellAgg.put(yCol, pos[1]+"");
 		}
 
-		//output data, as stat hypercube
-		ArrayList<Map<String, String>> sh = new ArrayList<Map<String, String>>();
-		for(Entry<String,Double> e : out.entrySet()) {
-			//TODO summ
-			sh.add( new Stat(e.getValue(), idCol, e.getKey()) );
-		}
+		//make output
+		ArrayList<Map<String, String>> out = new ArrayList<Map<String,String>>();
+		out.addAll(index.values());
 
-		return sh;
+		return out;
 	}
 
 
