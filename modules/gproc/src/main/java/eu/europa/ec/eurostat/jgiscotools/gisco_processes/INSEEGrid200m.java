@@ -50,7 +50,7 @@ public class INSEEGrid200m {
 		ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
 
 		System.out.println("Save");
-		CSVUtil.save(data, path + "Filosofi2015_"+res+".csv");
+		CSVUtil.save(out, path + "Filosofi2015_"+res+".csv");
 	}
 
 
