@@ -45,7 +45,12 @@ public class INSEEGrid200m {
 		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_prepared.csv");
 		System.out.println(data.size());
 
+		System.out.println("Aggregate");
+		int res = 1000;
+		ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
 
+		System.out.println("Save");
+		CSVUtil.save(data, path + "Filosofi2015_"+res+".csv");
 	}
 
 
@@ -94,9 +99,20 @@ public class INSEEGrid200m {
 
 
 
+
+
+
+
+
+
+
+
+
+	//TODO move to grid module
+
 	/**
 	 * Aggregate cell data (from CSV file usually) into a target resolution.
-	 * Sum of attributes.
+	 * Sum of attributes. Attributes are counts, as integer values.
 	 * 
 	 * @param cells
 	 * @param xCol
@@ -104,7 +120,7 @@ public class INSEEGrid200m {
 	 * @param res
 	 * @return
 	 */
-	public ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String xCol, String yCol, int res) {	
+	public static ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String xCol, String yCol, int res) {	
 
 		//index input data by upper grid cell
 		HashMap<String, Map<String, String>> index = new HashMap<>();
