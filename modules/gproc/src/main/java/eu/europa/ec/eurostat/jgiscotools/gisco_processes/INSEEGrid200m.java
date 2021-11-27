@@ -30,11 +30,11 @@ public class INSEEGrid200m {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		System.out.println("Start");
-		
+
 		String path = "/home/juju/Bureau/gisco/cnt/fr/fr_200m/";
 
 		//prepare(path);
-		
+
 		//aggregate
 		aggregate(path);
 
@@ -44,24 +44,24 @@ public class INSEEGrid200m {
 		System.out.println("End");
 	}
 
-	
+
 	static void aggregate(String path) {
-		
+
 		System.out.println("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_prepared.csv");
 		System.out.println(data.size());
 
-		
+
 	}
 
-	
+
 	/**
 	 * Remove attributes, set x and y.
 	 * 
 	 * @param path
 	 */
 	static void prepare(String path) {
-		
+
 		System.out.println("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_carreaux_200m_metropole.csv");
 		System.out.println(data.size());
@@ -96,9 +96,9 @@ public class INSEEGrid200m {
 		System.out.println("save");
 		CSVUtil.save(data, path + "Filosofi2015_prepared.csv");
 	}
-	
-	
-	
+
+
+
 
 	public ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> data, String xCol, String yCol, int res) {	
 
