@@ -20,6 +20,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 
+import eu.europa.ec.eurostat.java4eurostat.util.Util;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 
 /**
@@ -85,7 +86,14 @@ public class CSVUtil {
 			CSVPrinter printer = new CSVPrinter(out, cf);
 			for(Map<String, String> raw : data) {
 				String[] values = new String[nb];
-				for(int i=0; i<nb; i++) values[i]=raw.get(header[i]);
+				for(int i=0; i<nb; i++) {
+					String val = raw.get(header[i]);
+					//for numerical values, check if it is a int to avoid writing the ".0" in the end.
+					if (Util.isNumeric(val) && (Double.parseDouble(val) % 1) == 0)
+						values[i] = Integer.parseInt(val) + "";
+					else
+						values[i] = val;
+				}
 				printer.printRecord(values);
 			}
 			printer.close();
