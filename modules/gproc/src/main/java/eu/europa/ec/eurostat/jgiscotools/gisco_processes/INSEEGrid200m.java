@@ -19,6 +19,21 @@ public class INSEEGrid200m {
 		System.out.println("Start");
 		
 		String path = "/home/juju/Bureau/gisco/cnt/fr/fr_200m/";
+
+		//prepare(path);
+
+		System.out.println("End");
+	}
+
+	
+
+	
+	/**
+	 * Remove attributes, set x and y.
+	 * 
+	 * @param path
+	 */
+	static void prepare(String path) {
 		
 		System.out.println("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_carreaux_200m_metropole.csv");
@@ -42,7 +57,7 @@ public class INSEEGrid200m {
 			//CRS3035RES200mN2940600E3844600
 			s = s.split("mN")[1];
 			c.put("x", Integer.parseInt(s.split("E")[0])+"" );
-			c.put("x", Integer.parseInt(s.split("E")[1])+"" );
+			c.put("y", Integer.parseInt(s.split("E")[1])+"" );
 		}
 
 		System.out.println("Remove colums");
@@ -53,8 +68,6 @@ public class INSEEGrid200m {
 
 		System.out.println("save");
 		CSVUtil.save(data, path + "Filosofi2015_prepared.csv");
-		
-		System.out.println("End");
 	}
-
+	
 }
