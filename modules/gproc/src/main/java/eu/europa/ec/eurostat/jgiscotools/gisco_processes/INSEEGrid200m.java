@@ -21,6 +21,10 @@ public class INSEEGrid200m {
 	static Logger logger = LogManager.getLogger(INSEEGrid200m.class.getName());
 
 
+	//the target resolutions
+	private static int[] resolutions = new int[] {200, 400, 1000, 2000, 5000, 10000, 20000, 50000};
+
+
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
@@ -40,13 +44,14 @@ public class INSEEGrid200m {
 	}
 
 
+	//derive resolutions above 200m
 	static void aggregate(String path) {
 
 		logger.info("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_prepared.csv");
 		logger.info(data.size());
 
-		for(int res : new int[] {200, 400, 1000, 2000, 5000, 10000, 20000, 50000}) {
+		for(int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
 			ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
 			logger.info(out.size());
