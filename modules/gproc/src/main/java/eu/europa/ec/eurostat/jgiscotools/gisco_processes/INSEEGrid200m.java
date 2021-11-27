@@ -33,7 +33,7 @@ public class INSEEGrid200m {
 	public static void main(String[] args) {
 		logger.info("Start");
 		//prepare();
-		aggregate();
+		//aggregate();
 		tiling();
 		logger.info("End");
 	}
