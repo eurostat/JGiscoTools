@@ -32,8 +32,8 @@ public class INSEEGrid200m {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		//prepare();
-		//aggregate();
+		prepare();
+		aggregate();
 		tiling();
 		logger.info("End");
 	}
@@ -70,7 +70,7 @@ public class INSEEGrid200m {
 		}*/
 
 		//logger.info("Remove colums");
-		//CSVUtil.renameColumn(data, "IdINSPIRE", "GRD_ID");
+		CSVUtil.renameColumn(data, "IdINSPIRE", "GRD_ID");
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
@@ -108,10 +108,9 @@ public class INSEEGrid200m {
 
 			logger.info("Load header");
 			ArrayList<String> header = CSVUtil.getHeader(f);
+			header.remove("GRD_ID");
 			logger.info(header);
-			logger.info(header.size());
 			String[] hs = header.toArray(new String[header.size()]);
-			logger.info(hs.length);
 
 			logger.info("Load");
 			StatsHypercube sh = CSV.loadMultiValues(f, "indic", hs );
