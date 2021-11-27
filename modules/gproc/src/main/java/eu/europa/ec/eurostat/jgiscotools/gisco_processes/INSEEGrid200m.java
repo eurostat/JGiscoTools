@@ -20,7 +20,7 @@ public class INSEEGrid200m {
 		
 		String path = "/home/juju/Bureau/gisco/cnt/fr/fr_200m/";
 		
-		System.out.println("Format");
+		System.out.println("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_carreaux_200m_metropole.csv");
 		System.out.println(data.size());
 		System.out.println(data.get(0).keySet());
