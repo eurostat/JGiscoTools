@@ -185,7 +185,7 @@ public class INSEEGrid200m {
 			double vToAdd = Double.parseDouble(cellToAdd.get(k));
 			v += vToAdd;
 			//get value as int if it is an integer
-			cell.put(k, String.valueOf( (v % 1) == 0 ? ((int)v) : v ) );
+			cell.put(k, (v % 1) == 0 ? Integer.toString((int)v) : Double.toString(v) );
 		}
 	}
 
