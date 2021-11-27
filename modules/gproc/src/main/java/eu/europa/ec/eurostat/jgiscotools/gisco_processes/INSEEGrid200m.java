@@ -23,7 +23,7 @@ public class INSEEGrid200m {
 
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
-		System.out.println("Start");
+		logger.info("Start");
 
 		String path = "/home/juju/Bureau/gisco/cnt/fr/fr_200m/";
 
@@ -35,21 +35,22 @@ public class INSEEGrid200m {
 		//tiling
 
 
-		System.out.println("End");
+		logger.info("End");
 	}
 
 
 	static void aggregate(String path) {
 
-		System.out.println("Load");
+		logger.info("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_prepared.csv");
-		System.out.println(data.size());
+		logger.info(data.size());
 
-		System.out.println("Aggregate");
+		logger.info("Aggregate");
 		int res = 1000;
 		ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
+		logger.info(out.size());
 
-		System.out.println("Save");
+		logger.info("Save");
 		CSVUtil.save(out, path + "Filosofi2015_"+res+".csv");
 	}
 
@@ -61,12 +62,12 @@ public class INSEEGrid200m {
 	 */
 	static void prepare(String path) {
 
-		System.out.println("Load");
+		logger.info("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_carreaux_200m_metropole.csv");
-		System.out.println(data.size());
-		System.out.println(data.get(0).keySet());
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
 
-		System.out.println("Remove colums");
+		logger.info("Remove colums");
 		CSVUtil.removeColumn(data,
 				"Id_carr1km",
 				"I_est_cr",
@@ -77,7 +78,7 @@ public class INSEEGrid200m {
 				"Id_car2010",
 				"I_est_1km");
 
-		System.out.println("Set x,y");
+		logger.info("Set x,y");
 		for(Map<String, String> c : data) {
 			String s = c.get("IdINSPIRE");
 			//CRS3035RES200mN2940600E3844600
@@ -86,13 +87,13 @@ public class INSEEGrid200m {
 			c.put("y", Integer.parseInt(s.split("E")[1])+"" );
 		}
 
-		System.out.println("Remove colums");
+		logger.info("Remove colums");
 		CSVUtil.removeColumn(data, "IdINSPIRE");
 
-		System.out.println(data.size());
-		System.out.println(data.get(0).keySet());
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
 
-		System.out.println("save");
+		logger.info("save");
 		CSVUtil.save(data, path + "Filosofi2015_prepared.csv");
 	}
 
@@ -112,7 +113,7 @@ public class INSEEGrid200m {
 
 	/**
 	 * Aggregate cell data (from CSV file usually) into a target resolution.
-	 * Sum of attributes. Attributes are counts, as integer values.
+	 * Sum of attributes. Attributes are numerical values.
 	 * 
 	 * @param cells
 	 * @param xCol
@@ -158,7 +159,15 @@ public class INSEEGrid200m {
 
 	private static void add(Map<String, String> cell, Map<String, String> cellToAdd) {
 		for(String k : cell.keySet()) {
-			int v = Integer.parseInt(cell.get(k));
+			int v = 0;
+			try {
+				v = Integer.parseInt(cell.get(k));
+			} catch (NumberFormatException e) {
+				double v_ = Double.parseDouble(cell.get(k));
+				double vToAdd = Double.parseDouble(cellToAdd.get(k));
+				cell.put(k, (v+vToAdd)+"");
+				continue;
+			}
 			int vToAdd = Integer.parseInt(cellToAdd.get(k));
 			cell.put(k, (v+vToAdd)+"");
 		}
