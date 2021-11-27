@@ -22,8 +22,8 @@ public class INSEEGrid200m {
 		System.out.println(data.size());
 		System.out.println(data.get(0).keySet());
 		System.out.println(data.get(0).keySet().size());
-		
-		
+
+
 		System.out.println("End");
 	}
 	
