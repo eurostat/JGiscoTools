@@ -6,16 +6,10 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import eu.europa.ec.eurostat.java4eurostat.base.Stat;
-import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
-import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction.DataPreparation;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction.GridsProduction;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
@@ -146,10 +140,12 @@ public class INSEEGrid200m {
 		return out;
 	}
 
-	private static void add(Map<String, String> cell, Map<String, String> toAdd) {
-		//TODO
-		
+	private static void add(Map<String, String> cell, Map<String, String> cellToAdd) {
+		for(String k : cell.keySet()) {
+			int v = Integer.parseInt(cell.get(k));
+			int vToAdd = Integer.parseInt(cellToAdd.get(k));
+			cell.put(k, (v+vToAdd)+"");
+		}
 	}
-
 
 }
