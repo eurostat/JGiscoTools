@@ -21,11 +21,25 @@ public class INSEEGrid200m {
 		String path = "/home/juju/Bureau/gisco/cnt/fr/fr_200m/";
 
 		//prepare(path);
+		
+		//aggregate
+		aggregate(path);
+
+		//tiling
+
 
 		System.out.println("End");
 	}
 
 	
+	static void aggregate(String path) {
+		
+		System.out.println("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_prepared.csv");
+		System.out.println(data.size());
+
+		
+	}
 
 	
 	/**
