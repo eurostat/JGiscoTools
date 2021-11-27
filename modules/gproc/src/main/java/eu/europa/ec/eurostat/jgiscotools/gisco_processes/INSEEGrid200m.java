@@ -4,7 +4,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling.GriddedStatsTiler;
-import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
+import eu.europa.ec.eurostat.jgiscotools.grid.GridMultiResolution;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 /**
@@ -79,7 +78,7 @@ public class INSEEGrid200m {
 
 		for(int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "GRD_ID", res);
+			ArrayList<Map<String, String>> out = GridMultiResolution.gridAggregation(data, "GRD_ID", res);
 			logger.info(out.size());
 
 			logger.info("Save");
@@ -116,76 +115,6 @@ public class INSEEGrid200m {
 			gst.saveCSV(outpath);
 			gst.saveTilingInfoJSON(outpath, "Filosofi 2015 resolution " + res + "m");
 
-		}
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-	//TODO generic: move that to grid module
-
-	/**
-	 * Aggregate cell data (from CSV file usually) into a target resolution.
-	 * Sum of attributes. Attributes are numerical values.
-	 * 
-	 * @param cells
-	 * @param xCol
-	 * @param yCol
-	 * @param res
-	 * @return
-	 */
-	public static ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String gridIdCol, int res) {	
-
-		//index input data by upper grid cell
-		HashMap<String, Map<String, String>> index = new HashMap<>();
-		for(Map<String, String> cell : cells) {
-
-			//get upper cell
-			GridCell up = new GridCell(cell.get(gridIdCol)).getUpperCell(res);
-			String id = up.getId();
-
-			//get upper cell
-			Map<String, String> cellAgg = index.get(id);
-
-			if(cellAgg == null) {
-				//create
-				cellAgg = new HashMap<String, String> ();
-				cellAgg.putAll(cell);
-				index.put(id, cellAgg);
-			}
-			else {
-				//add
-				add(cellAgg, cell, gridIdCol);
-			}
-
-			//set grid id
-			cellAgg.put(gridIdCol, id);
-
-		}
-
-		//make output
-		ArrayList<Map<String, String>> out = new ArrayList<Map<String,String>>();
-		out.addAll(index.values());
-
-		return out;
-	}
-
-	private static void add(Map<String, String> cell, Map<String, String> cellToAdd, String gridIdCol) {
-		for(String k : cell.keySet()) {
-			if(k.equals(gridIdCol)) continue;
-			double v = Double.parseDouble(cell.get(k));
-			double vToAdd = Double.parseDouble(cellToAdd.get(k));
-			v += vToAdd;
-			//get value as int if it is an integer
-			cell.put(k, (v % 1) == 0 ? Integer.toString((int)v) : Double.toString(v) );
 		}
 	}
 
