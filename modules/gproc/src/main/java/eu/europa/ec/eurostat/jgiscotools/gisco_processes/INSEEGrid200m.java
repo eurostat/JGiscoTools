@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling.GriddedStatsTiler;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
@@ -32,62 +33,14 @@ public class INSEEGrid200m {
 	public static void main(String[] args) {
 		logger.info("Start");
 		//prepare();
-		aggregate();
-		//tiling();
+		//aggregate();
+		tiling();
 		logger.info("End");
 	}
 
 
 
-	private static void tiling() {
-
-		for(int res : resolutions) {
-			logger.info("Tiling " + res + "m");
-			
-			logger.info("Load");
-			//TODO
-			StatsHypercube sh = null;
-			//StatsHypercube sh_ = CSV.loadMultiValues(basePath+"grid_pop/pop_grid_"+year+"_"+resKM+"km.csv", "TOT_P");
-			//public static StatsHypercube loadMultiValues(String csvFilePath, String newDimLabel, String... valueColumns) {
-
-			logger.info("Build tiles...");
-			GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "time", "0");
-			gst.createTiles();
-			logger.info(gst.getTiles().size() + " tiles created");
-
-			logger.info("Save...");
-			String outpath = basePath+"tiled/"+res+"m";
-			gst.saveCSV(outpath);
-			gst.saveTilingInfoJSON(outpath, "Filosofi 2015 resolution " + res + "m");
-
-		}
-	}
-
-
-
-	//derive resolutions above 200m
-	private static void aggregate() {
-
-		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "Filosofi2015_prepared.csv");
-		logger.info(data.size());
-
-		for(int res : resolutions) {
-			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
-			logger.info(out.size());
-
-			logger.info("Save");
-			CSVUtil.save(out, basePath + "Filosofi2015_"+res+".csv");
-		}
-	}
-
-
-	/**
-	 * Remove attributes, set x and y.
-	 * 
-	 * @param path
-	 */
+	//remove attributes, set x and y.
 	private static void prepare() {
 
 		logger.info("Load");
@@ -125,6 +78,47 @@ public class INSEEGrid200m {
 		CSVUtil.save(data, basePath + "Filosofi2015_prepared.csv");
 	}
 
+
+	//derive resolutions
+	private static void aggregate() {
+
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "Filosofi2015_prepared.csv");
+		logger.info(data.size());
+
+		for(int res : resolutions) {
+			logger.info("Aggregate " + res + "m");
+			ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
+			logger.info(out.size());
+
+			logger.info("Save");
+			CSVUtil.save(out, basePath + "Filosofi2015_"+res+".csv");
+		}
+	}
+
+
+	//tile all resolutions
+	private static void tiling() {
+
+		for(int res : resolutions) {
+			logger.info("Tiling " + res + "m");
+
+			logger.info("Load");
+			StatsHypercube sh = CSV.loadMultiValues(basePath + "Filosofi2015_"+res+".csv", "indic");
+			logger.info(sh.stats.size());
+
+			logger.info("Build tiles...");
+			GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "indic", "0");
+			gst.createTiles();
+			logger.info(gst.getTiles().size() + " tiles created");
+
+			logger.info("Save...");
+			String outpath = basePath+"tiled/"+res+"m";
+			gst.saveCSV(outpath);
+			gst.saveTilingInfoJSON(outpath, "Filosofi 2015 resolution " + res + "m");
+
+		}
+	}
 
 
 
@@ -187,16 +181,8 @@ public class INSEEGrid200m {
 
 	private static void add(Map<String, String> cell, Map<String, String> cellToAdd) {
 		for(String k : cell.keySet()) {
-			int v = 0;
-			try {
-				v = Integer.parseInt(cell.get(k));
-			} catch (NumberFormatException e) {
-				double v_ = Double.parseDouble(cell.get(k));
-				double vToAdd = Double.parseDouble(cellToAdd.get(k));
-				cell.put(k, (v+vToAdd)+"");
-				continue;
-			}
-			int vToAdd = Integer.parseInt(cellToAdd.get(k));
+			double v = Double.parseDouble(cell.get(k));
+			double vToAdd = Double.parseDouble(cellToAdd.get(k));
 			cell.put(k, (v+vToAdd)+"");
 		}
 	}
