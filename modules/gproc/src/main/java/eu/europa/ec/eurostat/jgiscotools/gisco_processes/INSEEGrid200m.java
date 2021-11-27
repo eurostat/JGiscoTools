@@ -4,8 +4,19 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import eu.europa.ec.eurostat.java4eurostat.base.Stat;
+import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction.DataPreparation;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction.GridsProduction;
+import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 /**
@@ -13,6 +24,8 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
  *
  */
 public class INSEEGrid200m {
+	static Logger logger = LogManager.getLogger(INSEEGrid200m.class.getName());
+
 
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
@@ -84,4 +97,41 @@ public class INSEEGrid200m {
 		CSVUtil.save(data, path + "Filosofi2015_prepared.csv");
 	}
 	
+	
+	
+
+	public ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> data, String xCol, String yCol, int res) {	
+
+		HashMap<String,Double> out = new HashMap<>();
+
+		//index input data by upper grid cell
+		for(Map<String, String> s : data) {
+
+			//get higher resolution grid cell it belongs to
+			String newId = new GridCell( s.get(idCol) ).getUpperCell(res).getId();
+
+			//set or update value
+			Double val = out.get(newId);
+			if(val == null) {
+				//TODO collection
+				out.put(newId, s.value);
+			}
+			else {
+				//TODO collection
+				out.put(newId, val + s.value);
+			}
+		}
+
+		//output data, as stat hypercube
+		ArrayList<Map<String, String>> sh = new ArrayList<Map<String, String>>();
+		for(Entry<String,Double> e : out.entrySet()) {
+			//TODO summ
+			sh.add( new Stat(e.getValue(), idCol, e.getKey()) );
+		}
+
+		return sh;
+	}
+
+
+
 }

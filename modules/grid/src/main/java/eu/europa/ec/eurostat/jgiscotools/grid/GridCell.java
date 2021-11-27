@@ -199,9 +199,22 @@ public class GridCell {
 	 * @return
 	 */
 	public GridCell getUpperCell(int resolution) {
-		int x = ((int)(getLowerLeftCornerPositionX() / resolution)) * resolution;
-		int y = ((int)(getLowerLeftCornerPositionY() / resolution)) * resolution;
-		return new GridCell(getEpsgCode(), resolution, x, y);
+		int[] out = getUpperCell(getLowerLeftCornerPositionX(), getLowerLeftCornerPositionY(), resolution);		
+		return new GridCell(getEpsgCode(), resolution, out[0], out[1]);
+	}
+
+	/**
+	 * Get the cell of the upper grid, whose resolution is the specified one.
+	 * This target resolution is expected to be a multiple of the grid cell resolution.
+	 * 
+	 * @param x x coordinate of the lower left corner of the cell
+	 * @param y y coordinate of the lower left corner of the cell
+	 * @return
+	 */
+	public static int[] getUpperCell(int x, int y, int resolution) {
+		int x_ = ((int)(x / resolution)) * resolution;
+		int y_ = ((int)(y / resolution)) * resolution;
+		return new int[] {x_, y_};
 	}
 
 }
