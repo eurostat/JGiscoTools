@@ -47,6 +47,7 @@ public class INSEEGrid200m {
 		logger.info(data.size());
 
 		logger.info("Aggregate");
+		for(int res : )
 		int res = 1000;
 		ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
 		logger.info(out.size());
