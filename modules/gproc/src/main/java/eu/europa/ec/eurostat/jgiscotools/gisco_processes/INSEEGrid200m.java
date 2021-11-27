@@ -59,17 +59,7 @@ public class INSEEGrid200m {
 				"Id_car2010",
 				"I_est_1km");
 
-		/*
-		logger.info("Set x,y");
-		for(Map<String, String> c : data) {
-			String s = c.get("IdINSPIRE");
-			//CRS3035RES200mN2940600E3844600
-			s = s.split("mN")[1];
-			c.put("y", Integer.parseInt(s.split("E")[0])+"" );
-			c.put("x", Integer.parseInt(s.split("E")[1])+"" );
-		}*/
-
-		//logger.info("Remove colums");
+		logger.info("Rename colums");
 		CSVUtil.renameColumn(data, "IdINSPIRE", "GRD_ID");
 
 		logger.info(data.size());
@@ -89,7 +79,7 @@ public class INSEEGrid200m {
 
 		for(int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "IdINSPIRE", res);
+			ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "GRD_ID", res);
 			logger.info(out.size());
 
 			logger.info("Save");
@@ -116,12 +106,12 @@ public class INSEEGrid200m {
 			StatsHypercube sh = CSV.loadMultiValues(f, "indic", hs );
 			logger.info(sh.stats.size());
 
-			logger.info("Build tiles...");
+			logger.info("Build tiles");
 			GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "indic", "0");
 			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
 
-			logger.info("Save...");
+			logger.info("Save");
 			String outpath = basePath+"tiled/"+res+"m";
 			gst.saveCSV(outpath);
 			gst.saveTilingInfoJSON(outpath, "Filosofi 2015 resolution " + res + "m");
@@ -158,29 +148,26 @@ public class INSEEGrid200m {
 		HashMap<String, Map<String, String>> index = new HashMap<>();
 		for(Map<String, String> cell : cells) {
 
-			//get coordinates of upper cell
-			//int[] pos = GridCell.getUpperCell(Integer.parseInt(cell.get(xCol)), Integer.parseInt(cell.get(yCol)), res);
+			//get upper cell
 			GridCell up = new GridCell(cell.get(gridIdCol)).getUpperCell(res);
+			String id = up.getId();
 
 			//get upper cell
-			//String key = pos[0]+"_"+pos[1];
-			Map<String, String> cellAgg = index.get(up.getId());
+			Map<String, String> cellAgg = index.get(id);
 
 			if(cellAgg == null) {
 				//create
 				cellAgg = new HashMap<String, String> ();
 				cellAgg.putAll(cell);
-				index.put(up.getId(), cellAgg);
+				index.put(id, cellAgg);
 			}
 			else {
 				//add
 				add(cellAgg, cell, gridIdCol);
 			}
 
-			//override x,y of upper cell with correct values
-			//cellAgg.put(xCol, pos[0]+"");
-			//cellAgg.put(yCol, pos[1]+"");
-			cellAgg.put(gridIdCol, up.getId());
+			//set grid id
+			cellAgg.put(gridIdCol, id);
 
 		}
 
