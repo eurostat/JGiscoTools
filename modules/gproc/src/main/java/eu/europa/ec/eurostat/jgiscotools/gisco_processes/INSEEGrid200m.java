@@ -46,14 +46,14 @@ public class INSEEGrid200m {
 		ArrayList<Map<String, String>> data = CSVUtil.load(path + "Filosofi2015_prepared.csv");
 		logger.info(data.size());
 
-		logger.info("Aggregate");
-		for(int res : )
-		int res = 1000;
-		ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
-		logger.info(out.size());
+		for(int res : new int[] {200, 400, 1000, 2000, 5000, 10000, 20000, 50000}) {
+			logger.info("Aggregate " + res + "m");
+			ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
+			logger.info(out.size());
 
-		logger.info("Save");
-		CSVUtil.save(out, path + "Filosofi2015_"+res+".csv");
+			logger.info("Save");
+			CSVUtil.save(out, path + "Filosofi2015_"+res+".csv");
+		}
 	}
 
 
