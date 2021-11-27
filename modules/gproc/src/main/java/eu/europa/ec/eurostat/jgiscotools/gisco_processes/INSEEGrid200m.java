@@ -32,7 +32,7 @@ public class INSEEGrid200m {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		//prepare();
+		prepare();
 		aggregate();
 		//tiling();
 		logger.info("End");
@@ -59,6 +59,7 @@ public class INSEEGrid200m {
 				"Id_car2010",
 				"I_est_1km");
 
+		/*
 		logger.info("Set x,y");
 		for(Map<String, String> c : data) {
 			String s = c.get("IdINSPIRE");
@@ -66,10 +67,10 @@ public class INSEEGrid200m {
 			s = s.split("mN")[1];
 			c.put("y", Integer.parseInt(s.split("E")[0])+"" );
 			c.put("x", Integer.parseInt(s.split("E")[1])+"" );
-		}
+		}*/
 
-		logger.info("Remove colums");
-		CSVUtil.removeColumn(data, "IdINSPIRE");
+		//logger.info("Remove colums");
+		//CSVUtil.renameColumn(data, "IdINSPIRE", "GRD_ID");
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
@@ -88,7 +89,7 @@ public class INSEEGrid200m {
 
 		for(int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "x", "y", res);
+			ArrayList<Map<String, String>> out = INSEEGrid200m.gridAggregation(data, "IdINSPIRE", res);
 			logger.info(out.size());
 
 			logger.info("Save");
@@ -100,11 +101,20 @@ public class INSEEGrid200m {
 	//tile all resolutions
 	private static void tiling() {
 
+		//Ind_65_79, Ind_40_54, Ind_18_24, Ind_25_39, Men_surf,Men_pauv,Men_fmp,Ind_6_10,Men_mais,Ind_inc,Log_inc,Log_ap90,Log_45_70,Men_1ind,Ind_4_5,Log_av45,Ind_55_64,Men_5ind,Log_70_90,Ind_0_3,Ind_snv,Ind_80p,Men,Log_soc,Men_prop,x,y,Men_coll,Ind,Ind_11_17
+		
+
 		for(int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
+			String f = basePath + "Filosofi2015_"+res+".csv";
+
+			logger.info("Load header");
+			ArrayList<String> header = CSVUtil.getHeader(f);
+			logger.info(header);
+
 			logger.info("Load");
-			StatsHypercube sh = CSV.loadMultiValues(basePath + "Filosofi2015_"+res+".csv", "indic");
+			StatsHypercube sh = null;//CSV.loadMultiValues(f, "indic", header );
 			logger.info(sh.stats.size());
 
 			logger.info("Build tiles...");
@@ -143,24 +153,25 @@ public class INSEEGrid200m {
 	 * @param res
 	 * @return
 	 */
-	public static ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String xCol, String yCol, int res) {	
+	public static ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String gridIdCol, int res) {	
 
 		//index input data by upper grid cell
 		HashMap<String, Map<String, String>> index = new HashMap<>();
 		for(Map<String, String> cell : cells) {
 
 			//get coordinates of upper cell
-			int[] pos = GridCell.getUpperCell(Integer.parseInt(cell.get(xCol)), Integer.parseInt(cell.get(yCol)), res);
+			//int[] pos = GridCell.getUpperCell(Integer.parseInt(cell.get(xCol)), Integer.parseInt(cell.get(yCol)), res);
+			GridCell up = new GridCell(cell.get(gridIdCol)).getUpperCell(res);
 
 			//get upper cell
-			String key = pos[0]+"_"+pos[1];
-			Map<String, String> cellAgg = index.get(key);
+			//String key = pos[0]+"_"+pos[1];
+			Map<String, String> cellAgg = index.get(up.getId());
 
 			if(cellAgg == null) {
 				//create
 				cellAgg = new HashMap<String, String> ();
 				cellAgg.putAll(cell);
-				index.put(key, cellAgg);
+				index.put(up.getId(), cellAgg);
 			}
 			else {
 				//add
@@ -168,8 +179,10 @@ public class INSEEGrid200m {
 			}
 
 			//override x,y of upper cell with correct values
-			cellAgg.put(xCol, pos[0]+"");
-			cellAgg.put(yCol, pos[1]+"");
+			//cellAgg.put(xCol, pos[0]+"");
+			//cellAgg.put(yCol, pos[1]+"");
+			cellAgg.put(gridIdCol, up.getId());
+
 		}
 
 		//make output

@@ -3,6 +3,7 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.io;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
@@ -13,6 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -35,6 +38,33 @@ public class CSVUtil {
 		System.out.println(a);
 		save(a, "target/out.csv");
 	}*/
+
+	
+	/**
+	 * @param filePath
+	 * @return
+	 */
+	public static ArrayList<String> getHeader(String filePath) {
+		BufferedReader br = null;
+		ArrayList<String> keys = null;
+		try {
+			br = new BufferedReader(new FileReader(filePath));
+			Pattern pattern = Pattern.compile("\\s*(\"[^\"]*\"|[^,]*)\\s*");
+
+			//read header
+			String line = br.readLine();
+			Matcher m = pattern.matcher(line);
+			keys = new ArrayList<String>();
+			while(m.find()){
+				keys.add(m.group(1));
+				m.find();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return keys;
+	}
 
 
 	/**
