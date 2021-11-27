@@ -26,15 +26,15 @@ public class INSEEGrid200m {
 
 	//the target resolutions
 	private static int[] resolutions = new int[] {200, 400, 1000, 2000, 5000, 10000, 20000, 50000};
-	private static String basePath = "/home/juju/Bureau/gisco/cnt/fr/fr_200m/";
+	private static String basePath = "/home/juju/Bureau/gisco/cnt/fr/Filosofi_2015_200m/";
 
 
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		prepare();
+		//prepare();
 		aggregate();
-		//tiling();
+		tiling();
 		logger.info("End");
 	}
 
@@ -101,9 +101,6 @@ public class INSEEGrid200m {
 	//tile all resolutions
 	private static void tiling() {
 
-		//Ind_65_79, Ind_40_54, Ind_18_24, Ind_25_39, Men_surf,Men_pauv,Men_fmp,Ind_6_10,Men_mais,Ind_inc,Log_inc,Log_ap90,Log_45_70,Men_1ind,Ind_4_5,Log_av45,Ind_55_64,Men_5ind,Log_70_90,Ind_0_3,Ind_snv,Ind_80p,Men,Log_soc,Men_prop,x,y,Men_coll,Ind,Ind_11_17
-		
-
 		for(int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
@@ -112,9 +109,12 @@ public class INSEEGrid200m {
 			logger.info("Load header");
 			ArrayList<String> header = CSVUtil.getHeader(f);
 			logger.info(header);
+			logger.info(header.size());
+			String[] hs = header.toArray(new String[header.size()]);
+			logger.info(hs.length);
 
 			logger.info("Load");
-			StatsHypercube sh = null;//CSV.loadMultiValues(f, "indic", header );
+			StatsHypercube sh = CSV.loadMultiValues(f, "indic", hs );
 			logger.info(sh.stats.size());
 
 			logger.info("Build tiles...");
