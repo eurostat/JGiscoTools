@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
-import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling.GriddedStatsTiler;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
@@ -34,13 +33,8 @@ public class INSEEGrid200m {
 		logger.info("Start");
 
 		//prepare();
-
-		//aggregate
-		//aggregate();
-
-		//tiling
-		tiling();
-
+		aggregate();
+		//tiling();
 
 		logger.info("End");
 	}
@@ -119,8 +113,8 @@ public class INSEEGrid200m {
 			String s = c.get("IdINSPIRE");
 			//CRS3035RES200mN2940600E3844600
 			s = s.split("mN")[1];
-			c.put("x", Integer.parseInt(s.split("E")[0])+"" );
-			c.put("y", Integer.parseInt(s.split("E")[1])+"" );
+			c.put("y", Integer.parseInt(s.split("E")[0])+"" );
+			c.put("x", Integer.parseInt(s.split("E")[1])+"" );
 		}
 
 		logger.info("Remove colums");
