@@ -24,6 +24,10 @@ import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 public class PopulationGridMultiResolution {
 	static Logger logger = LogManager.getLogger(PopulationGridMultiResolution.class.getName());
 
+	
+	//TODO use GridMultiResolution instead.
+	
+	
 	public static void main(String[] args) {
 		logger.info("Start");
 
@@ -57,6 +61,8 @@ public class PopulationGridMultiResolution {
 
 			for(int resKM : GridsProduction.resKMs) {
 				logger.info(resKM);
+
+				//TODO use GridMultiResolution instead.
 
 				//output data, as dictionnary
 				HashMap<String,Double> out = new HashMap<>();
