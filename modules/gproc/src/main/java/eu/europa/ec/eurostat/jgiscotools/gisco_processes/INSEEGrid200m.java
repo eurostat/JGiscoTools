@@ -33,8 +33,8 @@ public class INSEEGrid200m {
 	public static void main(String[] args) {
 		logger.info("Start");
 		//prepare();
-		//aggregate();
-		tiling();
+		aggregate();
+		//tiling();
 		logger.info("End");
 	}
 
@@ -131,7 +131,7 @@ public class INSEEGrid200m {
 
 
 
-	//TODO move to grid module
+	//TODO generic: move that to grid module
 
 	/**
 	 * Aggregate cell data (from CSV file usually) into a target resolution.
@@ -183,7 +183,8 @@ public class INSEEGrid200m {
 		for(String k : cell.keySet()) {
 			double v = Double.parseDouble(cell.get(k));
 			double vToAdd = Double.parseDouble(cellToAdd.get(k));
-			cell.put(k, (v+vToAdd)+"");
+			v += vToAdd;
+			cell.put(k, String.valueOf( (v % 1) == 0 ? ((int)v) : v ) );
 		}
 	}
 
