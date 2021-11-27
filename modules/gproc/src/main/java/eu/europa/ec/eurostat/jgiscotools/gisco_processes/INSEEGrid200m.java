@@ -33,11 +33,14 @@ public class INSEEGrid200m {
 				"I_pauv",
 				"Id_car2010");
 
+		//set x,y
+		for(Map<String, String> c : data) {
+			String id = c.get("IdINSPIRE");
+			System.out.println(id);
+		}
 
-		//get geom
-		//"IdINSPIRE"
-
-		CSVUtil.removeColumn(data"IdINSPIRE")
+		//
+		CSVUtil.removeColumn(data, "IdINSPIRE");
 
 		System.out.println("End");
 	}
