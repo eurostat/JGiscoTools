@@ -175,7 +175,7 @@ public class INSEEGrid200m {
 			}
 			else {
 				//add
-				add(cellAgg, cell);
+				add(cellAgg, cell, gridIdCol);
 			}
 
 			//override x,y of upper cell with correct values
@@ -192,8 +192,9 @@ public class INSEEGrid200m {
 		return out;
 	}
 
-	private static void add(Map<String, String> cell, Map<String, String> cellToAdd) {
+	private static void add(Map<String, String> cell, Map<String, String> cellToAdd, String gridIdCol) {
 		for(String k : cell.keySet()) {
+			if(k.equals(gridIdCol)) continue;
 			double v = Double.parseDouble(cell.get(k));
 			double vToAdd = Double.parseDouble(cellToAdd.get(k));
 			v += vToAdd;
