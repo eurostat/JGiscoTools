@@ -31,11 +31,9 @@ public class INSEEGrid200m {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-
 		//prepare();
 		aggregate();
 		//tiling();
-
 		logger.info("End");
 	}
 
