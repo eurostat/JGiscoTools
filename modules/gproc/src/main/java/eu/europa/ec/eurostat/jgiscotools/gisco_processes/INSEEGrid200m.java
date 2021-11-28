@@ -31,8 +31,8 @@ public class INSEEGrid200m {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		prepare();
-		aggregate();
+		//prepare();
+		//aggregate();
 		tiling();
 		logger.info("End");
 	}
@@ -140,7 +140,7 @@ public class INSEEGrid200m {
 			logger.info(sh.stats.size());
 
 			logger.info("Build tiles");
-			GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "indic", "0");
+			GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "GRD_ID", "indic", "0");
 			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
 
