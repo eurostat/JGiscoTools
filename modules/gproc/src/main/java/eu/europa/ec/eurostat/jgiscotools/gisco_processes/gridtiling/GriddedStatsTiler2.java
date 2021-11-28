@@ -9,10 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -282,29 +281,24 @@ public class GriddedStatsTiler2 {
 
 		}
 
-		//get stats on values
-		//if(this.dimLabel != null) {
 
-		//get all values, indexed by dimValue
+		//get value columns
+		Set<String> keys = this.cells.get(0).keySet();
+		keys.remove(this.gridIdAtt);
+
+		//get all values, indexed by column
 		HashMap<String,Collection<Double>> vals = new HashMap<>();
-		for(String dimValue : this.sh.getDimValues(dimLabel))
-			vals.put(dimValue, new ArrayList<>());
-		for(Stat s : this.sh.stats)
-			vals.get(s.dims.get(this.dimLabel)).add(s.value);
+		for(String key : keys) {
+			if(key.equals(this.gridIdAtt)) continue;
+			vals.put(key, new ArrayList<>());
+		}
+		for(Map<String, String> c : this.cells)
+			for(String key : keys)
+				vals.get(key).add(Double.parseDouble(c.get(key)));
 
 		//compute stats
-		for(String dimValue : this.sh.getDimValues(dimLabel))
-			tilesInfo.dSt.add( getStats(dimValue, vals.get(dimValue)) );
-
-		/*} else {
-			//get all values
-			Collection<Double> vals = new ArrayList<>();
-			for(Stat s : this.sh.stats)
-				vals.add(s.value);
-
-			//compute stats
-			tilesInfo.dSt.add( getStats("val", vals) );
-		}*/
+		for(String key : keys)
+			tilesInfo.dSt.add( getStats(key, vals.get(key)) );
 
 		return tilesInfo;
 	}
