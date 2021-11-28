@@ -29,11 +29,9 @@ import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 
 /**
- * 
  * Utility to create tiles of gridded statistics.
  * 
  * @author Julien Gaffuri
- *
  */
 public class GriddedStatsTiler {
 	private static Logger logger = LogManager.getLogger(GriddedStatsTiler.class.getName());
@@ -41,13 +39,13 @@ public class GriddedStatsTiler {
 	/** The statistical figures to tile */
 	private StatsHypercube sh;
 
+	/** The name of the attribute with the grid id */
+	private String gridIdAtt = "GRD_ID";
+
 	/** In case several values are provided, the dimension label where to find them. */
 	private String dimLabel = null;
 
 	private String noValue = "";
-
-	/** The name of the attribute with the grid id */
-	private String gridIdAtt = "GRD_ID";
 
 	/**
 	 * The position of origin of the grid to take into account to defining the tiling frame.
@@ -76,11 +74,11 @@ public class GriddedStatsTiler {
 		GridStatTile(int x, int y) { this.x=x; this.y=y; }
 	}
 
-	public GriddedStatsTiler(int tileResolutionPix, String csvFilePath, String statAttr) {
-		this( tileResolutionPix, CSV.load(csvFilePath, statAttr), null, "");
+	public GriddedStatsTiler(int tileResolutionPix, String csvFilePath, String gridIdAtt, String statAttr) {
+		this( tileResolutionPix, CSV.load(csvFilePath, statAttr), gridIdAtt, null, "");
 	}
 
-	public GriddedStatsTiler(int tileResolutionPix, StatsHypercube sh, String dimLabel, String noValue) {
+	public GriddedStatsTiler(int tileResolutionPix, StatsHypercube sh, String gridIdAtt, String dimLabel, String noValue) {
 		this.tileResolutionPix = tileResolutionPix;
 		this.sh = sh;
 		this.dimLabel = dimLabel;
