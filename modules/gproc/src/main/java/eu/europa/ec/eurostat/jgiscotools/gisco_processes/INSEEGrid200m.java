@@ -31,19 +31,19 @@ public class INSEEGrid200m {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		//prepare();
-		//aggregate();
+		prepare();
+		aggregate();
 		tiling();
 		logger.info("End");
 	}
 
 
 
-	//remove attributes, set x and y.
+	//remove attributes
 	private static void prepare() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "Filosofi2015_carreaux_200m_metropole.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "Filosofi2015_carreaux_200m_metropole_small.csv");
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 
