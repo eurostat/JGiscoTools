@@ -30,8 +30,8 @@ public class INSEEGrid200m {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		//prepare();
-		//aggregate();
+		prepare();
+		aggregate();
 		tiling();
 		logger.info("End");
 	}
@@ -42,7 +42,7 @@ public class INSEEGrid200m {
 	private static void prepare() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "Filosofi2015_carreaux_200m_metropole_small.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "Filosofi2015_carreaux_200m_metropole.csv");
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 
@@ -131,21 +131,9 @@ public class INSEEGrid200m {
 
 			logger.info("Load");
 			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
-			System.out.println(cells.size());
-
-			/*
-			logger.info("Load header");
-			ArrayList<String> header = CSVUtil.getHeader(f);
-			header.remove("GRD_ID");
-			logger.info(header);
-			String[] hs = header.toArray(new String[header.size()]);
-
-			logger.info("Load");
-			StatsHypercube sh = CSV.loadMultiValues(f, "indic", hs );
-			logger.info(sh.stats.size());*/
+			logger.info(cells.size());
 
 			logger.info("Build tiles");
-			//GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "GRD_ID", "indic", "0");
 			GriddedStatsTiler gst = new GriddedStatsTiler(cells, "GRD_ID", new Coordinate(0,0), 128, "0");
 			
 			gst.createTiles();
