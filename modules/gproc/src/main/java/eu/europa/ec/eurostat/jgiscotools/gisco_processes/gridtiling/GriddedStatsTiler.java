@@ -52,8 +52,6 @@ public class GriddedStatsTiler {
 	 */
 	private int tileResolutionPix = 256;
 
-	private String noValue = "";
-
 	/**
 	 * The computed tiles.
 	 */
@@ -68,15 +66,14 @@ public class GriddedStatsTiler {
 	}
 
 	public GriddedStatsTiler(String csvFilePath, String gridIdAtt, Coordinate originPoint, int tileResolutionPix, String noValue) {
-		this( CSVUtil.load(csvFilePath), gridIdAtt, originPoint, tileResolutionPix, noValue);
+		this( CSVUtil.load(csvFilePath), gridIdAtt, originPoint, tileResolutionPix);
 	}
 
-	public GriddedStatsTiler(ArrayList<Map<String, String>> cells, String gridIdAtt, Coordinate originPoint, int tileResolutionPix, String noValue) {
+	public GriddedStatsTiler(ArrayList<Map<String, String>> cells, String gridIdAtt, Coordinate originPoint, int tileResolutionPix) {
 		this.cells = cells;
 		this.gridIdAtt = gridIdAtt;
 		this.originPoint = originPoint;
 		this.tileResolutionPix = tileResolutionPix;
-		this.noValue = noValue;
 	}
 
 
@@ -266,7 +263,6 @@ public class GriddedStatsTiler {
 	private TilingInfo computeTilesInfo() {
 		tilesInfo = new TilingInfo();
 
-		//TODO bug in tilingBounds: seems to miss a "max+1".
 		for(GridStatTile t : getTiles()) {
 			//set x/y envelope
 			if(tilesInfo.tilingBounds==null) tilesInfo.tilingBounds = new Envelope(new Coordinate(t.x, t.y));

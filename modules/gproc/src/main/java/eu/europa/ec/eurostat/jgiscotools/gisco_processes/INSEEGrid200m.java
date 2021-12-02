@@ -88,9 +88,9 @@ public class INSEEGrid200m {
 		Ind_65_79 : Nombre d’individus de 65 à 79 ans
 		Ind_80p : Nombre d’individus de 80 ans ou plus
 		Ind_inc : Nombre d’individus dont l’âge est inconnu
-*/
-		
-		
+		 */
+
+
 		logger.info("Rename colums");
 		CSVUtil.renameColumn(data, "IdINSPIRE", "GRD_ID");
 
@@ -134,8 +134,8 @@ public class INSEEGrid200m {
 			logger.info(cells.size());
 
 			logger.info("Build tiles");
-			GriddedStatsTiler gst = new GriddedStatsTiler(cells, "GRD_ID", new Coordinate(0,0), 128, "0");
-			
+			GriddedStatsTiler gst = new GriddedStatsTiler(cells, "GRD_ID", new Coordinate(0,0), 128);
+
 			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
 
