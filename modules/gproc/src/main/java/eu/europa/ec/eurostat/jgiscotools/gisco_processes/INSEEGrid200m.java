@@ -8,10 +8,12 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling.GriddedStatsTiler;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling.GriddedStatsTiler2;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridMultiResolution;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
@@ -31,8 +33,8 @@ public class INSEEGrid200m {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		prepare();
-		aggregate();
+		//prepare();
+		//aggregate();
 		tiling();
 		logger.info("End");
 	}
@@ -112,7 +114,8 @@ public class INSEEGrid200m {
 
 		for(int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolution.gridAggregation(data, "GRD_ID", res);
+			//TODO fix decimals issue
+			ArrayList<Map<String, String>> out = GridMultiResolution.gridAggregation(data, "GRD_ID", res, 10000);
 			logger.info(out.size());
 
 			logger.info("Save");
@@ -129,6 +132,11 @@ public class INSEEGrid200m {
 
 			String f = basePath + "Filosofi2015_"+res+".csv";
 
+			logger.info("Load");
+			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
+			System.out.println(cells.size());
+
+			/*
 			logger.info("Load header");
 			ArrayList<String> header = CSVUtil.getHeader(f);
 			header.remove("GRD_ID");
@@ -137,10 +145,12 @@ public class INSEEGrid200m {
 
 			logger.info("Load");
 			StatsHypercube sh = CSV.loadMultiValues(f, "indic", hs );
-			logger.info(sh.stats.size());
+			logger.info(sh.stats.size());*/
 
 			logger.info("Build tiles");
-			GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "GRD_ID", "indic", "0");
+			//GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "GRD_ID", "indic", "0");
+			GriddedStatsTiler2 gst = new GriddedStatsTiler2(cells, "GRD_ID", new Coordinate(0,0), 128, "0");
+			
 			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
 
