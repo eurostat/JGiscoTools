@@ -156,7 +156,7 @@ public class GriddedStatsTiler2 {
 				HashMap<String, String> c_ = new HashMap<String,String>();
 				//copy without grid id
 				c_.putAll(c);
-				c_.remove(gridIdAtt);
+				c_.remove(this.gridIdAtt);
 
 				//get cell position
 				GridCell cell = new GridCell( c.get(gridIdAtt) );
