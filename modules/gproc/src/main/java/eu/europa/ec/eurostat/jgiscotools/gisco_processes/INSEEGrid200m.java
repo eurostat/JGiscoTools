@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling.GriddedStatsTiler2;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling.GriddedStatsTiler;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridMultiResolution;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
@@ -146,7 +146,7 @@ public class INSEEGrid200m {
 
 			logger.info("Build tiles");
 			//GriddedStatsTiler gst = new GriddedStatsTiler(128, sh, "GRD_ID", "indic", "0");
-			GriddedStatsTiler2 gst = new GriddedStatsTiler2(cells, "GRD_ID", new Coordinate(0,0), 128, "0");
+			GriddedStatsTiler gst = new GriddedStatsTiler(cells, "GRD_ID", new Coordinate(0,0), 128, "0");
 			
 			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
