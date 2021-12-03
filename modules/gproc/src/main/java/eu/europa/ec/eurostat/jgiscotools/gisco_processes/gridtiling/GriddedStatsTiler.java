@@ -9,7 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,6 +54,7 @@ public class GriddedStatsTiler {
 	 */
 	private int tileResolutionPix = 256;
 
+
 	/**
 	 * The computed tiles.
 	 */
@@ -65,7 +68,7 @@ public class GriddedStatsTiler {
 		GridStatTile(int x, int y) { this.x=x; this.y=y; }
 	}
 
-	public GriddedStatsTiler(String csvFilePath, String gridIdAtt, Coordinate originPoint, int tileResolutionPix, String noValue) {
+	public GriddedStatsTiler(String csvFilePath, String gridIdAtt, Coordinate originPoint, int tileResolutionPix) {
 		this( CSVUtil.load(csvFilePath), gridIdAtt, originPoint, tileResolutionPix);
 	}
 
@@ -138,9 +141,27 @@ public class GriddedStatsTiler {
 	 * Save the tile as CSV.
 	 * 
 	 * @param folderPath
+	 * @param header 
 	 */
 	public void saveCSV(String folderPath) {
 
+		//prepare list of columns, ordered
+		List<String> cols = new ArrayList<>(this.cells.get(0).keySet());
+		Comparator<String> cp = new Comparator<String>() {
+			@Override
+			public int compare(String s1, String s2) {
+				if(s1.equals(s2)) return 0;
+				if(s1.equals("x")) return -1;
+				if(s2.equals("x")) return 1;
+				if(s1.equals("y")) return -1;
+				if(s2.equals("y")) return 1;
+				return s2.compareTo(s1);
+			}
+		};
+		cols.sort(cp);
+
+
+		//save tiles
 		for(GridStatTile t : tiles) {
 
 			//the output cells
@@ -196,26 +217,12 @@ public class GriddedStatsTiler {
 
 			//save as csv file
 			//TODO check header order
-			//TODO check noValue
 			//TODO check cells order
 			new File(folderPath + "/" +t.x+ "/").mkdirs();
-			CSVUtil.save(cells_, folderPath + "/" +t.x+ "/" +t.y+ ".csv");
+			CSVUtil.save(cells_, folderPath + "/" +t.x+ "/" +t.y+ ".csv", cols);
 
 
-
-			/*			{
-				Comparator<String> cp = new Comparator<String>() {
-					@Override
-					public int compare(String s1, String s2) {
-						if(s1.equals(s2)) return 0;
-						if(s1.equals("x")) return -1;
-						if(s2.equals("x")) return 1;
-						if(s1.equals("y")) return -1;
-						if(s2.equals("y")) return 1;
-						return s2.compareTo(s1);
-					}
-				};
-
+			/*
 
 				if(this.dimLabel == null) {
 					//TODO test that
