@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling;
+package eu.europa.ec.eurostat.jgiscotools.gridProc;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +12,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,12 +23,10 @@ import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 
-import eu.europa.ec.eurostat.java4eurostat.base.Stat;
-import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
-import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridtiling.GriddedStatsTilerOld.TilingInfo.DimStat;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.TilingInfo.DimStat;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 
 /**
@@ -33,19 +34,13 @@ import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
  * 
  * @author Julien Gaffuri
  */
-public class GriddedStatsTilerOld {
-	private static Logger logger = LogManager.getLogger(GriddedStatsTilerOld.class.getName());
+public class GridTiler {
+	private static Logger logger = LogManager.getLogger(GridTiler.class.getName());
 
-	/** The statistical figures to tile */
-	private StatsHypercube sh;
-
+	/** The cells to tile */
+	private ArrayList<Map<String, String>> cells;
 	/** The name of the attribute with the grid id */
 	private String gridIdAtt = "GRD_ID";
-
-	/** In case several values are provided, the dimension label where to find them. */
-	private String dimLabel = null;
-
-	private String noValue = "";
 
 	/**
 	 * The position of origin of the grid to take into account to defining the tiling frame.
@@ -55,11 +50,11 @@ public class GriddedStatsTilerOld {
 	 */
 	private Coordinate originPoint = new Coordinate(0,0);
 
-
 	/**
 	 * The tile resolution, in number of grid cells.
 	 */
 	private int tileResolutionPix = 256;
+
 
 	/**
 	 * The computed tiles.
@@ -70,19 +65,19 @@ public class GriddedStatsTilerOld {
 
 	private class GridStatTile {
 		public int x,y;
-		public ArrayList<Stat> stats = new ArrayList<Stat>();
+		public ArrayList<Map<String, String>> cells = new ArrayList<Map<String, String>>();
 		GridStatTile(int x, int y) { this.x=x; this.y=y; }
 	}
 
-	public GriddedStatsTilerOld(int tileResolutionPix, String csvFilePath, String gridIdAtt, String statAttr) {
-		this( tileResolutionPix, CSV.load(csvFilePath, statAttr), gridIdAtt, null, "");
+	public GridTiler(String csvFilePath, String gridIdAtt, Coordinate originPoint, int tileResolutionPix) {
+		this( CSVUtil.load(csvFilePath), gridIdAtt, originPoint, tileResolutionPix);
 	}
 
-	public GriddedStatsTilerOld(int tileResolutionPix, StatsHypercube sh, String gridIdAtt, String dimLabel, String noValue) {
+	public GridTiler(ArrayList<Map<String, String>> cells, String gridIdAtt, Coordinate originPoint, int tileResolutionPix) {
+		this.cells = cells;
+		this.gridIdAtt = gridIdAtt;
+		this.originPoint = originPoint;
 		this.tileResolutionPix = tileResolutionPix;
-		this.sh = sh;
-		this.dimLabel = dimLabel;
-		this.noValue = noValue;
 	}
 
 
@@ -95,10 +90,10 @@ public class GriddedStatsTilerOld {
 		HashMap<String,GridStatTile> tiles_ = new HashMap<String,GridStatTile>();
 
 		//go through cell stats and assign it to a tile
-		for(Stat s : sh.stats) {
+		for(Map<String, String> c : this.cells) {
 
 			//get cell information
-			String gridId = s.dims.get(gridIdAtt);
+			String gridId = c.get(gridIdAtt);
 			GridCell cell = new GridCell(gridId);
 			double x = cell.getLowerLeftCornerPositionX();
 			double y = cell.getLowerLeftCornerPositionY();
@@ -120,7 +115,7 @@ public class GriddedStatsTilerOld {
 			}
 
 			//add cell to tile
-			tile.stats.add(s);
+			tile.cells.add(c);
 		}
 
 
@@ -147,22 +142,45 @@ public class GriddedStatsTilerOld {
 	 * Save the tile as CSV.
 	 * 
 	 * @param folderPath
+	 * @param header 
 	 */
 	public void saveCSV(String folderPath) {
 
+		//prepare list of columns, ordered
+		List<String> cols = new ArrayList<>(this.getTiles().iterator().next().cells.get(0).keySet());
+		cols.add("x");
+		cols.add("y");
+		cols.remove(this.gridIdAtt);
+		Comparator<String> cp = new Comparator<String>() {
+			@Override
+			public int compare(String s1, String s2) {
+				if(s1.equals(s2)) return 0;
+				if(s1.equals("x")) return -1;
+				if(s2.equals("x")) return 1;
+				if(s1.equals("y")) return -1;
+				if(s2.equals("y")) return 1;
+				return s1.compareTo(s2);
+			}
+		};
+		cols.sort(cp);
+
+		//save tiles
 		for(GridStatTile t : tiles) {
 
-			//build sh for the tile
-			StatsHypercube sht = new StatsHypercube(sh.getDimLabels());
-			sht.dimLabels.add("x");
-			sht.dimLabels.add("y");
-			sht.dimLabels.remove(gridIdAtt);
+			//the output cells
+			ArrayList<Map<String, String>> cells_ = new ArrayList<Map<String, String>>();
 
-			//prepare tile stats for export
-			for(Stat s : t.stats) {
+			//prepare tile cells for export
+			for(Map<String, String> c : t.cells) {
+
+				//new cell
+				HashMap<String, String> c_ = new HashMap<String,String>();
+				//copy without grid id
+				c_.putAll(c);
+				c_.remove(this.gridIdAtt);
 
 				//get cell position
-				GridCell cell = new GridCell( s.dims.get(gridIdAtt) );
+				GridCell cell = new GridCell( c.get(gridIdAtt) );
 				double x = cell.getLowerLeftCornerPositionX() - originPoint.x;
 				double y = cell.getLowerLeftCornerPositionY() - originPoint.y;
 				double r = cell.getResolution();
@@ -177,52 +195,29 @@ public class GriddedStatsTilerOld {
 				if(x>this.tileResolutionPix-1) logger.error("Too high value: "+x);
 				if(y>this.tileResolutionPix-1) logger.error("Too high value: "+y);
 
-				//store value
-				Stat s_ = new Stat(s.value, "x", ""+(int)x, "y", ""+(int)y);
-				if(this.dimLabel != null) s_.dims.put(this.dimLabel, s.dims.get(this.dimLabel));
-				sht.stats.add(s_);
+				//store x,y values
+				c_.put("x", ""+(int)x);
+				c_.put("y", ""+(int)y);
+
+				//keep
+				cells_.add(c_);
 			}
 
-
-			/*/TODO sort stats by x and y
-			sht.stats = new ArrayList<>(sht.stats);
-			Collections.sort((ArrayList<Stat>)sht.stats, new Comparator<Stat>() {
+			//sort stats by x and y
+			Collections.sort(cells_, new Comparator<Map<String, String>>() {
 				@Override
-				public int compare(Stat s1, Stat s2) {
-					if(Integer.parseInt(s1.dims.get("x")) < Integer.parseInt(s2.dims.get("x"))) return 1;
-					if(Integer.parseInt(s1.dims.get("x")) > Integer.parseInt(s2.dims.get("x"))) return -1;
-					if(Integer.parseInt(s1.dims.get("y")) < Integer.parseInt(s2.dims.get("y"))) return 1;
-					if(Integer.parseInt(s1.dims.get("y")) > Integer.parseInt(s2.dims.get("y"))) return -1;
+				public int compare(Map<String, String> s1, Map<String, String> s2) {
+					if(Integer.parseInt(s1.get("x")) < Integer.parseInt(s2.get("x"))) return -1;
+					if(Integer.parseInt(s1.get("x")) > Integer.parseInt(s2.get("x"))) return 1;
+					if(Integer.parseInt(s1.get("y")) < Integer.parseInt(s2.get("y"))) return -1;
+					if(Integer.parseInt(s1.get("y")) > Integer.parseInt(s2.get("y"))) return 1;
 					return 0;
 				}
-			});*/
-
+			});
 
 			//save as csv file
-			{
-				Comparator<String> cp = new Comparator<>() {
-					@Override
-					public int compare(String s1, String s2) {
-						if(s1.equals(s2)) return 0;
-						if(s1.equals("x")) return -1;
-						if(s2.equals("x")) return 1;
-						if(s1.equals("y")) return -1;
-						if(s2.equals("y")) return 1;
-						return s2.compareTo(s1);
-					}
-				};
-
-				if(this.dimLabel == null) {
-					//TODO test that
-					CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", cp);
-				}
-				else {
-					ArrayList<String> valueColumns = new ArrayList<>(sh.getDimValues(this.dimLabel));
-					Collections.sort(valueColumns);
-					String[] dv = valueColumns.toArray(new String[valueColumns.size()]);
-					CSV.saveMultiValues(sht, folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", this.noValue, cp, this.dimLabel, dv);
-				}
-			}
+			new File(folderPath + "/" +t.x+ "/").mkdirs();
+			CSVUtil.save(cells_, folderPath + "/" +t.x+ "/" +t.y+ ".csv", cols);
 
 		}
 	}
@@ -259,44 +254,38 @@ public class GriddedStatsTilerOld {
 	private TilingInfo computeTilesInfo() {
 		tilesInfo = new TilingInfo();
 
-		//TODO bug in tilingBounds: seems to miss a "max+1".
 		for(GridStatTile t : getTiles()) {
 			//set x/y envelope
 			if(tilesInfo.tilingBounds==null) tilesInfo.tilingBounds = new Envelope(new Coordinate(t.x, t.y));
 			else tilesInfo.tilingBounds.expandToInclude(t.x, t.y);
 
 			//set resolution and CRS
-			if(tilesInfo.resolution == -1 && t.stats.size()>0) {
-				GridCell cell = new GridCell( t.stats.get(0).dims.get(gridIdAtt) );
+			if(tilesInfo.resolution == -1 && t.cells.size()>0) {
+				GridCell cell = new GridCell( t.cells.get(0).get(gridIdAtt) );
 				tilesInfo.resolution = cell.getResolution();
 				tilesInfo.ePSGCode = cell.getEpsgCode();
 			}
 
 		}
 
-		//get stats on values
-		if(this.dimLabel != null) {
 
-			//get all values, indexed by dimValue
-			HashMap<String,Collection<Double>> vals = new HashMap<>();
-			for(String dimValue : this.sh.getDimValues(dimLabel))
-				vals.put(dimValue, new ArrayList<>());
-			for(Stat s : this.sh.stats)
-				vals.get(s.dims.get(this.dimLabel)).add(s.value);
+		//get value columns
+		Set<String> keys = this.cells.get(0).keySet();
+		keys.remove(this.gridIdAtt);
 
-			//compute stats
-			for(String dimValue : this.sh.getDimValues(dimLabel))
-				tilesInfo.dSt.add( getStats(dimValue, vals.get(dimValue)) );
-
-		} else {
-			//get all values
-			Collection<Double> vals = new ArrayList<>();
-			for(Stat s : this.sh.stats)
-				vals.add(s.value);
-
-			//compute stats
-			tilesInfo.dSt.add( getStats("val", vals) );
+		//get all values, indexed by column
+		HashMap<String,Collection<Double>> vals = new HashMap<>();
+		for(String key : keys) {
+			if(key.equals(this.gridIdAtt)) continue;
+			vals.put(key, new ArrayList<>());
 		}
+		for(Map<String, String> c : this.cells)
+			for(String key : keys)
+				vals.get(key).add(Double.parseDouble(c.get(key)));
+
+		//compute stats
+		for(String key : keys)
+			tilesInfo.dSt.add( getStats(key, vals.get(key)) );
 
 		return tilesInfo;
 	}

@@ -36,8 +36,11 @@ public class PopGridTiling {
 
 			logger.info(sh.stats.size() + " values loaded");
 
+			/**
+			 * TODO upgrade with new GridTilerOld
+			
 			logger.info("Build tiles...");
-			GriddedStatsTilerOld gst = new GriddedStatsTilerOld(128, sh, "GRD_ID", "time", "0");
+			GridTilerOld gst = new GridTiler(128, sh, "GRD_ID", "time", "0");
 			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
 
@@ -45,6 +48,8 @@ public class PopGridTiling {
 			String outpath = basePath+"grid_pop_tiled/"+resKM+"km";
 			gst.saveCSV(outpath);
 			gst.saveTilingInfoJSON(outpath, "Population " + resKM + "km");
+			
+			*/
 		}
 		logger.info("End");
 	}

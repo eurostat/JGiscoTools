@@ -25,7 +25,7 @@ import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
-import eu.europa.ec.eurostat.jgiscotools.grid.GridUtil;
+import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 

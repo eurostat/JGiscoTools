@@ -1,13 +1,16 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.grid;
+package eu.europa.ec.eurostat.jgiscotools.grid.processing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
+
 import java.util.Set;
 
 /**
@@ -16,7 +19,7 @@ import java.util.Set;
  * @author julien Gaffuri
  *
  */
-public class GridMultiResolution {
+public class GridMultiResolutionProduction {
 
 	/**
 	 * Aggregate cell data (from CSV file usually) into a target resolution lower.
