@@ -75,27 +75,4 @@ public class GridMultiResolution {
 		return out;
 	}
 
-
-	/**
-	 * @param cell1
-	 * @param cell2
-	 * @param gridIdCol
-	 */
-	/*private static Map<String, String> add(Map<String, String> cell1, Map<String, String> cell2, String gridIdCol) {
-		Map<String, String> out = new HashMap<String, String>();
-		for(String k : cell1.keySet()) {
-			if(k.equals(gridIdCol)) continue;
-			double v1 = Double.parseDouble(cell1.get(k));
-			double v2 = Double.parseDouble(cell2.get(k));
-			double v = v1 + v2;
-
-			System.out.println(v2);
-			System.out.println(cell2.get(k));
-
-			//get value as int if it is an integer
-			out.put(k, (v % 1) == 0 ? Integer.toString((int)v) : Double.toString(v) );
-		}
-		return out;
-	}*/
-
 }

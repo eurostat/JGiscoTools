@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -162,7 +163,6 @@ public class GriddedStatsTiler {
 			}
 		};
 		cols.sort(cp);
-System.out.println(cols);
 
 		//save tiles
 		for(GridStatTile t : tiles) {
@@ -203,42 +203,22 @@ System.out.println(cols);
 				cells_.add(c_);
 			}
 
-
-			/*/TODO sort stats by x and y
-			sht.stats = new ArrayList<>(sht.stats);
-			Collections.sort((ArrayList<Stat>)sht.stats, new Comparator<Stat>() {
+			//sort stats by x and y
+			Collections.sort(cells_, new Comparator<Map<String, String>>() {
 				@Override
-				public int compare(Stat s1, Stat s2) {
-					if(Integer.parseInt(s1.dims.get("x")) < Integer.parseInt(s2.dims.get("x"))) return 1;
-					if(Integer.parseInt(s1.dims.get("x")) > Integer.parseInt(s2.dims.get("x"))) return -1;
-					if(Integer.parseInt(s1.dims.get("y")) < Integer.parseInt(s2.dims.get("y"))) return 1;
-					if(Integer.parseInt(s1.dims.get("y")) > Integer.parseInt(s2.dims.get("y"))) return -1;
+				public int compare(Map<String, String> s1, Map<String, String> s2) {
+					if(Integer.parseInt(s1.get("x")) < Integer.parseInt(s2.get("x"))) return -1;
+					if(Integer.parseInt(s1.get("x")) > Integer.parseInt(s2.get("x"))) return 1;
+					if(Integer.parseInt(s1.get("y")) < Integer.parseInt(s2.get("y"))) return -1;
+					if(Integer.parseInt(s1.get("y")) > Integer.parseInt(s2.get("y"))) return 1;
 					return 0;
 				}
-			});*/
-
+			});
 
 			//save as csv file
-			//TODO check header order
-			//TODO check cells order
 			new File(folderPath + "/" +t.x+ "/").mkdirs();
 			CSVUtil.save(cells_, folderPath + "/" +t.x+ "/" +t.y+ ".csv", cols);
 
-
-			/*
-
-				if(this.dimLabel == null) {
-					//TODO test that
-					CSV.save(sht, "val", folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", cp);
-				}
-				else {
-					ArrayList<String> valueColumns = new ArrayList<>(sh.getDimValues(this.dimLabel));
-					Collections.sort(valueColumns);
-					String[] dv = valueColumns.toArray(new String[valueColumns.size()]);
-					CSV.saveMultiValues(sht, folderPath + "/" +t.x+ "/" +t.y+ ".csv", ",", this.noValue, cp, this.dimLabel, dv);
-				}
-			}
-			 */
 		}
 	}
 

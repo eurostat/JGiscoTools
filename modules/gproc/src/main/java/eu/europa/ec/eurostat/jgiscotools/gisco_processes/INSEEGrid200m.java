@@ -111,7 +111,6 @@ public class INSEEGrid200m {
 
 		for(int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			//TODO fix decimals issue
 			ArrayList<Map<String, String>> out = GridMultiResolution.gridAggregation(data, "GRD_ID", res, 10000);
 			logger.info(out.size());
 
