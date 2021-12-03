@@ -158,11 +158,11 @@ public class GriddedStatsTiler {
 				if(s2.equals("x")) return 1;
 				if(s1.equals("y")) return -1;
 				if(s2.equals("y")) return 1;
-				return s2.compareTo(s1);
+				return s1.compareTo(s2);
 			}
 		};
 		cols.sort(cp);
-
+System.out.println(cols);
 
 		//save tiles
 		for(GridStatTile t : tiles) {
