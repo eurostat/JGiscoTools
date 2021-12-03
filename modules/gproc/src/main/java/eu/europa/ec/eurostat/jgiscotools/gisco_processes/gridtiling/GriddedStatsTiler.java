@@ -198,6 +198,7 @@ public class GriddedStatsTiler {
 			//TODO check header order
 			//TODO check noValue
 			//TODO check cells order
+			new File(folderPath + "/" +t.x+ "/").mkdirs();
 			CSVUtil.save(cells_, folderPath + "/" +t.x+ "/" +t.y+ ".csv");
 
 
