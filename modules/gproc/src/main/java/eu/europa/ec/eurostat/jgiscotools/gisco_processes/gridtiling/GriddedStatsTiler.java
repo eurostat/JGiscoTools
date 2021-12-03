@@ -146,7 +146,10 @@ public class GriddedStatsTiler {
 	public void saveCSV(String folderPath) {
 
 		//prepare list of columns, ordered
-		List<String> cols = new ArrayList<>(this.cells.get(0).keySet());
+		List<String> cols = new ArrayList<>(this.getTiles().iterator().next().cells.get(0).keySet());
+		cols.add("x");
+		cols.add("y");
+		cols.remove(this.gridIdAtt);
 		Comparator<String> cp = new Comparator<String>() {
 			@Override
 			public int compare(String s1, String s2) {
