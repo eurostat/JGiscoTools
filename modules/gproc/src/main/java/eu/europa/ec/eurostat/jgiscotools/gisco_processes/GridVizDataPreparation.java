@@ -18,8 +18,8 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
  * @author julien Gaffuri
  *
  */
-public class StatSwedenGrid1km {
-	static Logger logger = LogManager.getLogger(StatSwedenGrid1km.class.getName());
+public class GridVizDataPreparation {
+	static Logger logger = LogManager.getLogger(GridVizDataPreparation.class.getName());
 
 
 	//the target resolutions
