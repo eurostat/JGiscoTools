@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>eu.europa.ec.eurostat</groupId>
 		<artifactId>jgiscotools-modules</artifactId>
-		<version>0.9.15-SNAPSHOT</version>
+		<version>0.9.15</version>
 	</parent>
 	<artifactId>jgiscotools-gproc</artifactId>
 	<name>JGiscoTools-gproc</name>
