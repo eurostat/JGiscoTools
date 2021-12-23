@@ -7,6 +7,7 @@ import org.locationtech.jts.index.SpatialIndex;
 
 /**
  * @author julien Gaffuri
+ * @param <T> 
  *
  */
 public abstract class AggregationWithSpatialIndex<T> implements Aggregation<T> {

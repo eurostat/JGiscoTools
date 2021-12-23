@@ -167,6 +167,7 @@ public class GraphBuilder {
 	 * Build planar graph from sections.
 	 * 
 	 * @param sections
+	 * @param buildFaces 
 	 * @return
 	 */
 	public static Graph buildFromLinearFeaturesPlanar(Collection<Feature> sections, boolean buildFaces) {
@@ -284,8 +285,8 @@ public class GraphBuilder {
 
 	/**
 	 * Run JTS line merger (see JTS doc)
-	 * 
-	 * @param lines
+	 * @param line 
+	 * @param <T> 
 	 * @return
 	 */
 	public static <T extends Geometry> Collection<LineString> lineMerge(T line) {

@@ -58,6 +58,7 @@ public class ShapeFile {
 	 * Open a shapefile
 	 * 
 	 * @param path
+	 * @param withMemoryMappedBuffer 
 	 * @param fil
 	 */
 	public ShapeFile(String path, boolean withMemoryMappedBuffer, Filter fil){ this.fil=fil; open(path, withMemoryMappedBuffer); }
@@ -71,6 +72,8 @@ public class ShapeFile {
 	 * @param ft
 	 * @param folderPath
 	 * @param fileName
+	 * @param withSpatialIndex 
+	 * @param withMemoryMappedBuffer 
 	 * @param recreateOnExists
 	 */
 	public ShapeFile(SimpleFeatureType ft, String folderPath, String fileName, boolean withSpatialIndex, boolean withMemoryMappedBuffer, boolean recreateOnExists){
@@ -100,6 +103,8 @@ public class ShapeFile {
 	 * @param attributes Ex: name:String,age:Integer,description:String,qtity:Double,start:Date,exist:Boolean
 	 * @param folderPath
 	 * @param fileName
+	 * @param withSpatialIndex 
+	 * @param withMemoryMappedBuffer 
 	 * @param recreateOnExists
 	 */
 	public ShapeFile(String geomType, int epsgCode, String attributes, String folderPath, String fileName, boolean withSpatialIndex, boolean withMemoryMappedBuffer, boolean recreateOnExists){

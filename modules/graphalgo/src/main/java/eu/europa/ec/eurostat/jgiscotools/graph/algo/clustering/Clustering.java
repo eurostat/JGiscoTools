@@ -20,6 +20,7 @@ import eu.europa.ec.eurostat.jgiscotools.graph.base.structure.Node;
  * Detect spatial clusters
  * 
  * @author julien Gaffuri
+ * @param <T> 
  *
  */
 public class Clustering<T> {
@@ -31,6 +32,8 @@ public class Clustering<T> {
 	 * @param d The distance measure
 	 * @param dMax The distance maximum value
 	 * @param agg The aggregation method to use to define the cluster representations
+	 * @param closest 
+	 * @param index 
 	 */
 	public void perform(ArrayList<T> objs, Distance<T> d, double dMax, Aggregation<T> agg, boolean closest, ClusteringIndex<T> index) {
 		//while it is possible to find a couple of object to close, aggregate them

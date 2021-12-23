@@ -110,6 +110,7 @@ public class Routing {
 
 
 	/**
+	 * @param fs 
 	 * @param networkFileURL
 	 * @param edgeWeighter
 	 * @throws IOException
@@ -225,6 +226,7 @@ public class Routing {
 
 	/**
 	 * Get the shortest path from a origin to a destination position using A* algorithm.
+	 * @param oN 
 	 * 
 	 * @param oC
 	 * @param dC
