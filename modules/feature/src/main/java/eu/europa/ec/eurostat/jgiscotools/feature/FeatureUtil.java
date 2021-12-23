@@ -143,6 +143,7 @@ public class FeatureUtil {
 	 * 
 	 * @param fs
 	 * @param idAtt
+	 * @return 
 	 */
 	public static ArrayList<Feature> removeDuplicates(Collection<Feature> fs, String idAtt) {
 
