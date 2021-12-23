@@ -56,6 +56,8 @@ public class StatisticalUnitsIntersectionMatrix {
 	 * Value of the intersection area is also computed.
 	 * 
 	 * NB: this operation commutes.
+	 * @return 
+	 * @throws IOException 
 	 */
 	public StatisticalUnitsIntersectionMatrix compute() throws IOException{
 		interSectionMatrix = new StatsHypercube(this.idField1, this.idField2, "type");
