@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>eu.europa.ec.eurostat</groupId>
 		<artifactId>jgiscotools-modules</artifactId>
-		<version>0.9.19</version>
+		<version>0.9.20-SNAPSHOT</version>
 	</parent>
 	<artifactId>jgiscotools-graph-algo</artifactId>
 	<name>JGiscoTools-graph-algo</name>
