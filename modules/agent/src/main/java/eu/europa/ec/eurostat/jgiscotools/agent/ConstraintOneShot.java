@@ -12,6 +12,7 @@ import java.util.List;
  * The moment when the transformation is to be applied can be adjusted with the constraint priority.
  * 
  * @author Julien Gaffuri
+ * @param <T> 
  *
  */
 public class ConstraintOneShot<T extends Agent> extends Constraint<T> {

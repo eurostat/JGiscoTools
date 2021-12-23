@@ -209,6 +209,7 @@ public class GridCell {
 	 * 
 	 * @param x x coordinate of the lower left corner of the cell
 	 * @param y y coordinate of the lower left corner of the cell
+	 * @param resolution 
 	 * @return
 	 */
 	public static int[] getUpperCell(int x, int y, int resolution) {

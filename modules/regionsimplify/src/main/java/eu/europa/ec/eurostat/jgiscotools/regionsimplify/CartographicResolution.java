@@ -36,6 +36,7 @@ public class CartographicResolution {
 
 	/**
 	 * @param scaleDenominator The scale denominator. Ex: 1e6 for 1:1M scale.
+	 * @param type 
 	 */
 	public CartographicResolution(double scaleDenominator, CRSType type) {
 

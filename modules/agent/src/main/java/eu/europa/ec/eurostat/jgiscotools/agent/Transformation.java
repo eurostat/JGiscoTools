@@ -7,6 +7,7 @@ package eu.europa.ec.eurostat.jgiscotools.agent;
  * A transformation to be applied by an agent, which should result on the improvement of at least one of its constraints.
  * 
  * @author julien Gaffuri
+ * @param <T> 
  *
  */
 public abstract class Transformation<T extends Agent> {
