@@ -7,6 +7,7 @@ package eu.europa.ec.eurostat.jgiscotools.agent;
  * A transformation, which can be cancelled.
  * 
  * @author julien Gaffuri
+ * @param <T> 
  *
  */
 public abstract class TransformationCancellable<T extends Agent> extends Transformation<T> {

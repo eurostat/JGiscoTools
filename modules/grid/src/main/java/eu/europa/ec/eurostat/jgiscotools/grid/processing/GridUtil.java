@@ -38,6 +38,7 @@ public class GridUtil {
 	 * @param regions
 	 * @param toleranceDistance
 	 * @param regionCodeAttribute
+	 * @param parallel 
 	 */
 	public static void assignRegionCode(Collection<Feature> cells, String cellRegionAttribute, Collection<Feature> regions, double toleranceDistance, String regionCodeAttribute, boolean parallel) {
 
@@ -109,6 +110,7 @@ public class GridUtil {
 	 * @param landGeometries
 	 * @param inlandWaterGeometriesIndex
 	 * @param decimalNB The number of decimal places to keep for the percentage
+	 * @param parallel 
 	 */
 	public static void assignLandProportion(Collection<Feature> cells, String cellLandPropAttribute, SpatialIndex landGeometries, SpatialIndex inlandWaterGeometriesIndex, int decimalNB, boolean parallel) {
 
@@ -136,6 +138,7 @@ public class GridUtil {
 	 * 
 	 * @param cell
 	 * @param landGeometries
+	 * @param inlandWaterGeometriesIndex 
 	 * @return
 	 */
 	public static Geometry getLandCellGeometry(Feature cell, SpatialIndex landGeometries, SpatialIndex inlandWaterGeometriesIndex) {
@@ -198,6 +201,7 @@ public class GridUtil {
 	 * @param distanceAttribute
 	 * @param linesInd
 	 * @param decimalNB
+	 * @param parallel 
 	 */
 	public static void assignDistanceToLines(Collection<Feature> cells, String distanceAttribute, STRtree linesInd, int decimalNB, boolean parallel) {
 

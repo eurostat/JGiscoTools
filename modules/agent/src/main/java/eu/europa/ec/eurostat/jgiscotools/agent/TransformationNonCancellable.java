@@ -8,6 +8,7 @@ package eu.europa.ec.eurostat.jgiscotools.agent;
  * In theory, all transformations could be cancellable, as soon as the initial state can be stored. In practice, it is not always easy and implemented.
  * 
  * @author julien Gaffuri
+ * @param <T> 
  *
  */public abstract class TransformationNonCancellable<T extends Agent> extends Transformation<T> {
 

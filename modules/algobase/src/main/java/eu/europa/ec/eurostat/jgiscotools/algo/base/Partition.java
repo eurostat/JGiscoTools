@@ -54,7 +54,6 @@ public class Partition {
 	 * @param withRecompose Set to true if input features should be recomposed after partitionning.
 	 * @param gt The geometry type of the features
 	 * @param midRandom Randomness factor on the middle separation used when splitting a partition into sub partitions, within [0,1]. Set to 0 for no randomness.
-	 * @return
 	 */
 	public static void runRecursivelyApply(Collection<Feature> features, PartitionedOperation op, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean withSplit, boolean withRecompose, GeomType gt, double midRandom) {
 		Partition p = new Partition("0", features, op, gt, midRandom);

@@ -177,6 +177,7 @@ public class SimpleFeatureUtil {
 	 * 
 	 * @param <T>
 	 * @param fs
+	 * @param geomColName 
 	 * @return
 	 */
 	public static <T extends Feature> HashMap<String, Class<?>> getAttributeGeomTypes(Collection<T> fs, String geomColName) {

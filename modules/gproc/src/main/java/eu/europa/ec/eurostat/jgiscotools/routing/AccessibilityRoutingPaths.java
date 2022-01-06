@@ -64,6 +64,7 @@ public class AccessibilityRoutingPaths {
 	private HashMap<String,ArrayList<Feature>> paths = null;
 	/**
 	 * The fastest path to the nearest POIs, for each grid cell.
+	 * @param poiType 
 	 * @return
 	 */
 	public Collection<Feature> getRoutes(String poiType) { return paths.get(poiType); }

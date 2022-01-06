@@ -27,6 +27,7 @@ public class Decomposer {
 
 	/**
 	 * @param fs the input features
+	 * @param parallel 
 	 * @param maxCoordinatesNumber
 	 * @param objMaxCoordinateNumber
 	 * @param gt
@@ -48,6 +49,7 @@ public class Decomposer {
 
 	/**
 	 * @param fs
+	 * @param parallel 
 	 * @param maxCoordinatesNumber
 	 * @param objMaxCoordinateNumber
 	 * @param gt

@@ -35,6 +35,7 @@ public class GifSequenceWriter {
 	 * @param timeBetweenFramesMS the time between frames in miliseconds
 	 * @param loopContinuously wether the gif should loop repeatedly
 	 * @throws IIOException if no gif ImageWriters are found
+	 * @throws IOException 
 	 */
 	public GifSequenceWriter(
 			ImageOutputStream outputStream,
@@ -109,6 +110,7 @@ public class GifSequenceWriter {
 	/**
 	 * Close this GifSequenceWriter object. This does not close the underlying
 	 * stream, just finishes off the GIF.
+	 * @throws IOException 
 	 */
 	public void close() throws IOException {
 		gifWriter.endWriteSequence();    

@@ -331,8 +331,11 @@ public class JTSGeomUtil {
 	/**
 	 * Check some features have a geometry (non null and non empty).
 	 * Possibly check the geometry validity and its type.
+	 * @param <T> 
 	 * 
 	 * @param fs The input features
+	 * @param checkValidity 
+	 * @param cl 
 	 * @return true if OK, false else
 	 */
 	public static <T extends Geometry> boolean checkGeometry(Collection<Feature> fs, boolean checkValidity, Class<T> cl) {

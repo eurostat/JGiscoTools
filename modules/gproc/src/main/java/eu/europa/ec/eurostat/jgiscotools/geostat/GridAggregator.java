@@ -23,6 +23,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
  * Compute statistics at grid level from vector geo data.
  * 
  * @author Julien Gaffuri
+ * @param <T> 
  *
  */
 public class GridAggregator<T> {

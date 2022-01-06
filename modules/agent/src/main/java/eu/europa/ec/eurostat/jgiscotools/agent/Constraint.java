@@ -11,6 +11,7 @@ import java.util.List;
  * A constraint.
  * 
  * @author julien Gaffuri
+ * @param <T> 
  *
  */
 public abstract class Constraint<T extends Agent> implements Comparable<Constraint<?>>{

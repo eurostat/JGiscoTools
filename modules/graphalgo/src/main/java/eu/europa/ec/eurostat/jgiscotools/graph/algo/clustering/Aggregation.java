@@ -8,6 +8,7 @@ import java.util.Collection;
 
 /**
  * @author julien Gaffuri
+ * @param <T> 
  *
  */
 public interface Aggregation<T> {
