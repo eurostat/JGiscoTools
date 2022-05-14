@@ -21,29 +21,32 @@ public class EuroNymeProduction {
 	//font size
 	//weight
 	//zoom range
-	
+
 
 	public static void main(String[] args) {
-		
+		System.out.println("Start");
+
 		//load input data
 		String erm = "/home/juju/Bureau/gisco/geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg";
 		ArrayList<Feature> fs = GeoData.getFeatures(erm, "id");
 		//BuiltupA BuiltupP EBM_NAM
-		
-		
-		
+
+		System.out.println(fs.size() + " features loaded");
+
+
 		//structure
-		
+
 		//make output (large)
-		
-		
-		
+
+
+
+		System.out.println("End");
 	}
-	
+
 	private static void simplify() {
 		//TODO
 	}
 
-	
-	
+
+
 }
