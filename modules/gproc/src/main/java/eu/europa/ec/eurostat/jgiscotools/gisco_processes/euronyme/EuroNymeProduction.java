@@ -32,7 +32,7 @@ public class EuroNymeProduction {
 
 		//output structure:
 		//name
-		//lat/lon
+		//lat/lon (3 decimals)
 		//font size
 		//weight
 		//zoom range
