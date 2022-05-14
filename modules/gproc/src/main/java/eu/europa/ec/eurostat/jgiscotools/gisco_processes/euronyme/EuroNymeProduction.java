@@ -14,27 +14,28 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
  */
 public class EuroNymeProduction {
 
-	//output structure:
-	//name
-	//lat/lon
-	//font size
-	//weight
-	//zoom range
-
-
 	public static void main(String[] args) {
 		System.out.println("Start");
 
 		//load input data
 		String erm = "/home/juju/Bureau/gisco/geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg";
 		ArrayList<Feature> buP = GeoData.getFeatures(erm, "BuiltupP", "id");
-		ArrayList<Feature> buA = GeoData.getFeatures(erm, "BuiltupA", "id");
-
 		System.out.println(buP.size() + " features loaded");
+		ArrayList<Feature> buA = GeoData.getFeatures(erm, "BuiltupA", "id");
 		System.out.println(buA.size() + " features loaded");
+		ArrayList<Feature> name = GeoData.getFeatures(erm, "EBM_NAM", "id");
+		System.out.println(name.size() + " features loaded");
 
+		//set names
 
 		//structure
+
+		//output structure:
+		//name
+		//lat/lon
+		//font size
+		//weight
+		//zoom range
 
 		//make output (large)
 
