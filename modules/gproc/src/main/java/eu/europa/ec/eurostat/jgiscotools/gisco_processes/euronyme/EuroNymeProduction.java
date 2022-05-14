@@ -5,7 +5,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.euronyme;
 
 import java.util.ArrayList;
 
-import eu.europa.ec.eurostat.jgiscotools.deprecated.GeoUtils;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
