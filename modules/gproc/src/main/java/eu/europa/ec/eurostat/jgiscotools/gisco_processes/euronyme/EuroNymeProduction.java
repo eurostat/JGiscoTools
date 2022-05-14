@@ -27,10 +27,11 @@ public class EuroNymeProduction {
 
 		//load input data
 		String erm = "/home/juju/Bureau/gisco/geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg";
-		ArrayList<Feature> fs = GeoData.getFeatures(erm, "id");
-		//BuiltupA BuiltupP EBM_NAM
+		ArrayList<Feature> buP = GeoData.getFeatures(erm, "BuiltupP", "id");
+		ArrayList<Feature> buA = GeoData.getFeatures(erm, "BuiltupA", "id");
 
-		System.out.println(fs.size() + " features loaded");
+		System.out.println(buP.size() + " features loaded");
+		System.out.println(buA.size() + " features loaded");
 
 
 		//structure

@@ -35,7 +35,7 @@ public class TestAStar {
 		logger.info("Start");
 
 		logger.info("Loading");
-		Collection<Feature> networkSections = GeoData.getFeatures("E:/workspace/basic_services_accessibility/input_data/test_tomtom_LU/luxlux_nw.gpkg", null, null);
+		Collection<Feature> networkSections = GeoData.getFeatures("E:/workspace/basic_services_accessibility/input_data/test_tomtom_LU/luxlux_nw.gpkg", null);
 		for(Feature f : networkSections) f.setAttribute("cost", f.getGeometry().getLength());
 		logger.info("Loaded: " + networkSections.size());
 

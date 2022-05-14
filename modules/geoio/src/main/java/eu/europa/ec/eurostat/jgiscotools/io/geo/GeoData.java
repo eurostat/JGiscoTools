@@ -47,6 +47,7 @@ public class GeoData {
 	private final static Logger LOGGER = LogManager.getLogger(GeoData.class);
 
 	private File file = null;
+	private String typeName;
 	private String idAtt;
 	private Filter filter;
 	private String format;
@@ -56,7 +57,7 @@ public class GeoData {
 	 * 
 	 * @param filePath
 	 */
-	public GeoData(String filePath) { this(filePath, null, null); }
+	public GeoData(String filePath) { this(filePath, null, null, null); }
 
 	/**
 	 * Build a GeoData from a file.
@@ -64,19 +65,21 @@ public class GeoData {
 	 * @param filePath
 	 * @param idAtt 
 	 */
-	public GeoData(String filePath, String idAtt) { this(filePath, idAtt, null); }
+	public GeoData(String filePath, String idAtt) { this(filePath, null, idAtt, null); }
 
 	/**
 	 * Build a GeoData from a file.
 	 * 
 	 * @param filePath
+	 * @param typeName
 	 * @param idAtt 
 	 * @param filter
 	 */
-	public GeoData(String filePath, String idAtt, Filter filter) {
+	public GeoData(String filePath, String typeName, String idAtt, Filter filter) {
+		this.file = new File(filePath);
+		this.typeName = typeName;
 		this.idAtt = idAtt;
 		this.filter = filter;
-		this.file = new File(filePath);
 		if(!this.file.exists()) {
 			LOGGER.error("Data source: " + filePath + " not found.");
 			return;
@@ -91,13 +94,13 @@ public class GeoData {
 	private ArrayList<Feature> features = null;
 
 	/**
-	 * @return The feature
+	 * @return The features
 	 */
 	public ArrayList<Feature> getFeatures() {
 		if(features == null) {
 			GeoDataFormatHandler dfh = HANDLERS.get(format);
 			if(dfh != null)
-				this.features = dfh.getFeatures(file, filter, idAtt);
+				this.features = dfh.getFeatures(file, typeName, filter, idAtt);
 			else
 				LOGGER.error("Could not retrieve features from data source: " + this.file.getAbsolutePath());
 		}
@@ -141,25 +144,27 @@ public class GeoData {
 
 	private abstract interface GeoDataFormatHandler {
 		SimpleFeatureType getSchema(File file);
-		ArrayList<Feature> getFeatures(File file, Filter filter, String idAtt);
+		ArrayList<Feature> getFeatures(File file, String typeName, Filter filter, String idAtt);
 		void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex);
 		String getGeomColName();
 	}
 
 	private static class GPKGHandler implements GeoDataFormatHandler {
 		@Override
-		public ArrayList<Feature> getFeatures(File file, Filter filter, String idAtt) {
+		public ArrayList<Feature> getFeatures(File file, String typeName, Filter filter, String idAtt) {
 			try {
 				HashMap<String, Object> params = new HashMap<>();
 				params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
 				params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
 				DataStore store = DataStoreFinder.getDataStore(params);
 				String[] names = store.getTypeNames();
-				if(names.length >1 )
-					LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + names[0] + " will be considered.");
-				String name = names[0];
-				LOGGER.debug(name);
-				SimpleFeatureCollection sfc = filter==null? store.getFeatureSource(name).getFeatures() : store.getFeatureSource(name).getFeatures(filter);
+				if(typeName == null && names.length > 1) {
+					typeName = names[0];
+					LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + typeName + " will be considered.");
+				}
+				LOGGER.debug(typeName);
+
+				SimpleFeatureCollection sfc = filter==null? store.getFeatureSource(typeName).getFeatures() : store.getFeatureSource(typeName).getFeatures(filter);
 				ArrayList<Feature> fs = SimpleFeatureUtil.get(sfc, idAtt);
 				//remove 'geometry' attribute
 				for(Feature f : fs) {
@@ -227,7 +232,7 @@ public class GeoData {
 
 	private static class GeoJSONHandler implements GeoDataFormatHandler {
 		@Override
-		public ArrayList<Feature> getFeatures(File file, Filter filter, String idAtt) {
+		public ArrayList<Feature> getFeatures(File file, String typeName, Filter filter, String idAtt) {
 			try {
 				InputStream input = new FileInputStream(file);
 				SimpleFeatureCollection fc = (SimpleFeatureCollection) new FeatureJSON().readFeatureCollection(input);
@@ -276,7 +281,7 @@ public class GeoData {
 
 	private static class SHPHandler implements GeoDataFormatHandler {
 		@Override
-		public ArrayList<Feature> getFeatures(File file, Filter filter, String idAtt) {
+		public ArrayList<Feature> getFeatures(File file, String typeName, Filter filter, String idAtt) {
 			try {
 				FileDataStore store = FileDataStoreFinder.getDataStore(file);
 				SimpleFeatureCollection features = filter==null? store.getFeatureSource().getFeatures() : store.getFeatureSource().getFeatures(filter);
@@ -365,13 +370,39 @@ public class GeoData {
 	 * Get features
 	 * 
 	 * @param filePath
+	 * @param typeName
+	 * @param idAtt
+	 * @return
+	 */
+	public static ArrayList<Feature> getFeatures(String filePath, String typeName, String idAtt)  {
+		return new GeoData(filePath, typeName, idAtt, null).getFeatures();
+	}
+
+	/**
+	 * Get features
+	 * 
+	 * @param filePath
 	 * @param idAtt 
 	 * @param filter 
 	 * @return
 	 * @throws Exception
 	 */
 	public static ArrayList<Feature> getFeatures(String filePath, String idAtt, Filter filter)  {
-		return new GeoData(filePath, idAtt, filter).getFeatures();
+		return new GeoData(filePath, null, idAtt, filter).getFeatures();
+	}
+
+	/**
+	 * Get features
+	 * 
+	 * @param filePath
+	 * @param typeName
+	 * @param idAtt 
+	 * @param filter 
+	 * @return
+	 * @throws Exception
+	 */
+	public static ArrayList<Feature> getFeatures(String filePath, String typeName, String idAtt, Filter filter)  {
+		return new GeoData(filePath, typeName, idAtt, filter).getFeatures();
 	}
 
 	/**
