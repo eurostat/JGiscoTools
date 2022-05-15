@@ -25,19 +25,21 @@ public class EuroNymeProduction {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
+		structure();
 
+		/*
 		//12pt = 16px
 
 		for(double res = 100; res<100000; res *= 1.5) {
 			System.out.println(res);
 		}
-
+		 */
 
 		System.out.println("End");
 	}
 
 
-	private static void structureERM() {
+	private static void structure() {
 		//load input data
 		String erm = "/home/juju/Bureau/gisco/geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg";
 
