@@ -23,10 +23,31 @@ public class EuroNymeProduction {
 		System.out.println(buP.size() + " features loaded");
 		ArrayList<Feature> buA = GeoData.getFeatures(erm, "BuiltupA", "id");
 		System.out.println(buA.size() + " features loaded");
-		ArrayList<Feature> name = GeoData.getFeatures(erm, "EBM_NAM", "id");
-		System.out.println(name.size() + " features loaded");
+		
+		ArrayList<Feature> areas = new ArrayList<Feature>();
+		for(Feature fa : buA) {
+			String id = fa.getAttribute("PopulatedPlaceId").toString();
+			System.out.println(id);
+			
+
+		}
+		
+		
+		//BuiltupP
+		//NAMN1 PPL/PP1-PP2 population
+
+		
+		//ArrayList<Feature> name = GeoData.getFeatures(erm, "EBM_NAM", "id");
+		//System.out.println(name.size() + " features loaded");
+		//index EBM
+		//id: SHN attribute
+		//NAMN
+		//PPL - population
+		//ARA - area
+				
 
 		//set names
+		
 
 		//structure
 
@@ -34,7 +55,7 @@ public class EuroNymeProduction {
 		//name
 		//lat/lon (3 decimals)
 		//font size
-		//weight
+		//font weight
 		//zoom range
 
 		//make output (large)
