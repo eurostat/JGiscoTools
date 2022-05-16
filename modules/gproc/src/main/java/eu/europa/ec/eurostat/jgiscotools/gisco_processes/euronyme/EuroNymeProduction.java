@@ -44,7 +44,7 @@ public class EuroNymeProduction {
 		//the buffer distance around the label, in pixels
 		double pixX = 20, pixY = 20;
 
-		for(double res = 50; res<51; res *= 1.5) {
+		for(double res = 50; res<=50; res *= 1.5) {
 
 			//extract only the labels that are visible for this resolution
 			final double res_ = res;
@@ -58,14 +58,17 @@ public class EuroNymeProduction {
 			//make spatial index, with only the ones remaining as visible for res
 			Quadtree index = new Quadtree();
 			for(Feature f : fs_)
-				index.insert((Envelope) f.getAttribute("gl"), f);
+				index.insert((Envelope)f.getAttribute("gl"), f);
 
 			for(Feature f : fs_) {
 
 				//TODO get the other ones overlapping/nearby
-				Envelope searchEnv = (Envelope) f.getAttribute("gl");
+				Envelope env = (Envelope) f.getAttribute("gl");
+				Envelope searchEnv = new Envelope(env);
 				searchEnv.expandBy(pixX * res, pixY * res);
 				List<?> neigh = index.query(searchEnv);
+
+				//TODO further filter
 
 				System.out.println(neigh.size());
 
