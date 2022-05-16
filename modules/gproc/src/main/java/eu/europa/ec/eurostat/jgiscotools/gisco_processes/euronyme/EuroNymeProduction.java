@@ -35,9 +35,11 @@ public class EuroNymeProduction {
 			System.out.println(res);
 		}*/
 
+
+		GeoData.save(getNameExtend(10), "/home/juju/Bureau/namesStruct_10.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		GeoData.save(getNameExtend(50), "/home/juju/Bureau/namesStruct_50.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 		GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 		GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		GeoData.save(getNameExtend(10000), "/home/juju/Bureau/namesStruct_10000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 
 		System.out.println("End");
 	}
