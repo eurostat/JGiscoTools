@@ -50,7 +50,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			bw.newLine();
 
 			//index geo
-			STRtree indGeo = FeatureUtil.getSTRtree(geos);
+			STRtree indGeo = FeatureUtil.getIndexSTRtree(geos);
 
 			int nbStats = statUnits.size();
 			int statCounter = 1;
@@ -133,7 +133,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			statUnitGeoStatValues_ = null;
 
 			//index stat units
-			STRtree indStat = FeatureUtil.getSTRtree(statUnits);
+			STRtree indStat = FeatureUtil.getIndexSTRtree(statUnits);
 
 			//go through geo - purpose is to compute geo pop/density
 			double geoCounter = 1;
@@ -205,7 +205,7 @@ public class StatisticalUnitIntersectionWithGeoLayer {
 			HashMap<String, String> geoValues = DicUtil.load(geoValuesPath, ",");
 
 			//index geo
-			STRtree indGeo = FeatureUtil.getSTRtree(geos);
+			STRtree indGeo = FeatureUtil.getIndexSTRtree(geos);
 
 			//go through stat units - purpose is to compute value from geos intersecting
 			int statCounter = 1;

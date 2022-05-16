@@ -71,7 +71,7 @@ public class NodingUtil {
 
 	//get noding issues for multi-polygonal features
 	public static Collection<NodingIssue> getNodingIssues(NodingIssueType type, Collection<Feature> mpfs, double nodingResolution) {
-		STRtree index = type==NodingIssueType.LinePoint? FeatureUtil.getSTRtreeCoordinates(mpfs) : getSTRtreeCoordinatesForPP(mpfs, nodingResolution);
+		STRtree index = type==NodingIssueType.LinePoint? FeatureUtil.getIndexSTRtreeCoordinates(mpfs) : getSTRtreeCoordinatesForPP(mpfs, nodingResolution);
 		Collection<NodingIssue> nis = new HashSet<NodingIssue>();
 		for(Feature mpf : mpfs)
 			nis.addAll(getNodingIssues(type, mpf, index, nodingResolution));
@@ -158,7 +158,7 @@ public class NodingUtil {
 
 
 	public static void fixNoding(NodingIssueType type, Collection<Feature> mpfs, double nodingResolution) {
-		STRtree index = type==NodingIssueType.LinePoint? FeatureUtil.getSTRtreeCoordinates(mpfs) : getSTRtreeCoordinatesForPP(mpfs, nodingResolution);
+		STRtree index = type==NodingIssueType.LinePoint? FeatureUtil.getIndexSTRtreeCoordinates(mpfs) : getSTRtreeCoordinatesForPP(mpfs, nodingResolution);
 		for(Feature mpf : mpfs)
 			fixNoding(type, mpf, index, nodingResolution);
 	}
@@ -359,7 +359,7 @@ public class NodingUtil {
 	//node features with linear geoemtries intersecting
 	public static void fixLineStringsIntersectionNoding(Collection<Feature> fs) {
 		//make spatial index
-		Quadtree si = FeatureUtil.getQuadtree(fs);
+		Quadtree si = FeatureUtil.getIndexQuadtree(fs);
 		boolean b;
 
 		//go through pairs of features to check their intersection

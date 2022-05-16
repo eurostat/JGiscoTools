@@ -73,7 +73,7 @@ public class GridAggregator<T> {
 	private synchronized STRtree getFeaturesInd() {
 		if(featuresInd == null) {
 			logger.info("Index features");
-			featuresInd = FeatureUtil.getSTRtree(features);
+			featuresInd = FeatureUtil.getIndexSTRtree(features);
 		}
 		return featuresInd;
 	}

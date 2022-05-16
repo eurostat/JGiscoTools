@@ -36,18 +36,18 @@ public class FeatureUtil {
 	private final static Logger LOGGER = LogManager.getLogger(FeatureUtil.class.getName());
 
 	//spatial indexing
-	public static <T extends Feature> STRtree getSTRtree(Collection<T> fs) {
+	public static <T extends Feature> STRtree getIndexSTRtree(Collection<T> fs) {
 		STRtree index = new STRtree();
 		for(Feature f : fs) index.insert(f.getGeometry().getEnvelopeInternal(), f);
 		return index;
 	}
-	public static <T extends Feature> Quadtree getQuadtree(Collection<T> fs) {
+	public static <T extends Feature> Quadtree getIndexQuadtree(Collection<T> fs) {
 		Quadtree index = new Quadtree();
 		for(Feature f : fs) index.insert(f.getGeometry().getEnvelopeInternal(), f);
 		return index;
 	}
 
-	public static <T extends Feature> STRtree getSTRtreeCoordinates(Collection<T> fs) {
+	public static <T extends Feature> STRtree getIndexSTRtreeCoordinates(Collection<T> fs) {
 		STRtree index = new STRtree();
 		for(Feature f : fs) {
 			for(Coordinate c : f.getGeometry().getCoordinates())

@@ -43,8 +43,8 @@ public class TesselationQuality {
 			if(tracePartitionning) LOGGER.info(p);
 
 			LOGGER.debug("Build spatial indexes");
-			SpatialIndex index = FeatureUtil.getSTRtree(p.features);
-			SpatialIndex indexLP = FeatureUtil.getSTRtreeCoordinates(p.features);
+			SpatialIndex index = FeatureUtil.getIndexSTRtree(p.features);
+			SpatialIndex indexLP = FeatureUtil.getIndexSTRtreeCoordinates(p.features);
 			SpatialIndex indexPP = NodingUtil.getSTRtreeCoordinatesForPP(p.features, nodingResolution);
 
 			ATesselation t = new ATesselation(p.getFeatures());

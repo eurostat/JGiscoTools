@@ -141,7 +141,7 @@ public class NetworkEdgeMatching {
 	private void makeEdgeMatchingBufferClipping() {
 
 		//build spatial index
-		Quadtree si = FeatureUtil.getQuadtree(secs);
+		Quadtree si = FeatureUtil.getIndexQuadtree(secs);
 
 		//get maximum resolution
 		double resMax = resolutions==null? 1.0 : Collections.max(resolutions.values());

@@ -364,7 +364,7 @@ public class GeoDiff {
 		}
 
 		//build spatial index of the selected differences
-		Quadtree ind = FeatureUtil.getQuadtree(chs);
+		Quadtree ind = FeatureUtil.getIndexQuadtree(chs);
 
 		Collection<Feature> out = new ArrayList<>();
 		while(chs.size()>0) {

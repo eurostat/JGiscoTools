@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
@@ -30,16 +31,32 @@ public class EuroNymeProduction {
 
 		//structure();
 
-		//ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
-		/*for(double res = 100; res<100000; res *= 1.5) {
-			System.out.println(res);
-		}*/
+		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
+		System.out.println(fs.size());
+
+		//initialise rmax
+		for(Feature f : fs)
+			f.setAttribute("rmax", "");
+
+		for(double res = 50; res<51; res *= 1.5) {
+
+			//make spatial index, with only the ones remaining as visible for res
+			FeatureUtil.
+
+			//for each toponym
+
+			//if rmax smaller, continue
+
+			//get the other ones overlapping/nearby
+			//if none, continue
+			//among all, find the one to keep, set rmax of the others, remove them from spatial index
+		}
 
 
-		GeoData.save(getNameExtend(10), "/home/juju/Bureau/namesStruct_10.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		GeoData.save(getNameExtend(50), "/home/juju/Bureau/namesStruct_50.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		//GeoData.save(getNameExtend(10), "/home/juju/Bureau/namesStruct_10.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		//GeoData.save(getNameExtend(50), "/home/juju/Bureau/namesStruct_50.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		//GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		//GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 
 		System.out.println("End");
 	}
@@ -108,7 +125,6 @@ public class EuroNymeProduction {
 
 			f_.setAttribute("font_size", "12");
 			f_.setAttribute("font_weight", "");
-			f_.setAttribute("rmin", "");
 			f_.setAttribute("rmax", "");
 
 			out.add(f_);
@@ -187,9 +203,21 @@ public class EuroNymeProduction {
 
 	private static void csvExport() {
 		//private static String namesCSV = "/home/juju/Bureau/names2.csv";
-		//List<String> header = List.of("name", "lon", "lat", "font_size", "font_weight", "rmin", "rmax", "pop");
+		//List<String> header = List.of("name", "lon", "lat", "font_size", "font_weight", "rmax", "pop");
 		//CSVUtil.save(out, namesCSV, header);
 		//ArrayList<Map<String, String>> names = CSVUtil.load(namesCSV);
 	}
+
+
+
+
+	/*/make agent toponymes
+	ArrayList<AgentToponyme> agents = new ArrayList<>();
+	for(Feature f :fs)
+		agents.add(new AgentToponyme(f));
+	//make engine
+	Engine<AgentToponyme> e = new Engine<>(agents);
+	//start
+	e.activateQueue();*/
 
 }

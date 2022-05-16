@@ -133,7 +133,7 @@ public class BasicServicesRoutingPaths {
 		lm = null;
 
 		//index feature
-		STRtree index = FeatureUtil.getSTRtree(sections);
+		STRtree index = FeatureUtil.getIndexSTRtree(sections);
 
 		//build output features
 		Collection<Feature> out = new ArrayList<>();

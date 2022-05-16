@@ -74,7 +74,7 @@ public class GraphQuality {
 	public static void checkSectionsIntersection(Collection<Feature> secs) {
 
 		//build spatial index for features
-		STRtree si = FeatureUtil.getSTRtree(secs);
+		STRtree si = FeatureUtil.getIndexSTRtree(secs);
 
 		//go through pairs of sections
 		for(Feature sec1 : secs) {
@@ -113,7 +113,7 @@ public class GraphQuality {
 		out.addAll(secs);
 
 		//build spatial index for features
-		Quadtree si = FeatureUtil.getQuadtree(secs);
+		Quadtree si = FeatureUtil.getIndexQuadtree(secs);
 
 		//go through pairs of sections
 		for(Feature sec1 : secs) {
