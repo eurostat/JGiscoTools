@@ -70,6 +70,7 @@ public class EuroNymeProduction {
 
 				//TODO further filter
 
+				//TODO check here
 				System.out.println(neigh.size());
 
 				//if none, continue
