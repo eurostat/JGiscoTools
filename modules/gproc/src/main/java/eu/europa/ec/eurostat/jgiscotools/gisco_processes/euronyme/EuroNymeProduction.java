@@ -6,6 +6,8 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.euronyme;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -39,23 +41,29 @@ public class EuroNymeProduction {
 		for(Feature f : fs)
 			f.setAttribute("rmax", -1);
 
+		//the buffer distance around the label, in pixels
 		double pixX = 20, pixY = 20;
+
 		for(double res = 50; res<51; res *= 1.5) {
+
+			//extract only the labels that are visible for this resolution
+			final double res_ = res;
+			Predicate<Feature> pr = f -> { Integer rmax = (Integer) f.getAttribute("rmax"); return rmax == -1 || rmax>res_; };
+			List<Feature> fs_ = fs.stream().filter(pr).collect(Collectors.toList());
+
+			//compute label envelopes
+			for(Feature f : fs_)
+				f.setAttribute("gl", getLabelEnvelope(f, res));
 
 			//make spatial index, with only the ones remaining as visible for res
 			Quadtree index = new Quadtree();
-			for(Feature f : fs) {
-				Integer rmax = (Integer) f.getAttribute("rmax");
-				if(rmax>0 && rmax<res) continue;
-				index.insert(f.getGeometry().getEnvelopeInternal(), f);
-			}
+			for(Feature f : fs_)
+				index.insert((Envelope) f.getAttribute("gl"), f);
 
-			for(Feature f : fs) {
-				Integer rmax = (Integer) f.getAttribute("rmax");
-				if(rmax>0 && rmax<res) continue;
+			for(Feature f : fs_) {
 
 				//TODO get the other ones overlapping/nearby
-				Envelope searchEnv = getNameRectangle(f, res);
+				Envelope searchEnv = (Envelope) f.getAttribute("gl");
 				searchEnv.expandBy(pixX * res, pixY * res);
 				List<?> neigh = index.query(searchEnv);
 
@@ -194,14 +202,14 @@ public class EuroNymeProduction {
 	private static ArrayList<Feature> getNameExtend(double pixSize) {
 		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
 		for(Feature f : fs) {
-			Envelope env = getNameRectangle(f, pixSize);
+			Envelope env = getLabelEnvelope(f, pixSize);
 			f.setGeometry(JTSGeomUtil.getGeometry(env));
 		}
 		return fs;
 	}
 
 
-	private static Envelope getNameRectangle(Feature f, double pixSize) {
+	private static Envelope getLabelEnvelope(Feature f, double pixSize) {
 		Coordinate c = f.getGeometry().getCoordinate();
 		double x1 = c.x;
 		double y1 = c.y;
