@@ -6,9 +6,12 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.euronyme;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
@@ -21,19 +24,19 @@ public class EuroNymeProduction {
 
 	private static String namesStruct = "/home/juju/Bureau/namesStruct.gpkg";
 
-
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		structure();
+		//structure();
 
-		/*
-		//12pt = 16px
-
-		for(double res = 100; res<100000; res *= 1.5) {
+		//ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
+		/*for(double res = 100; res<100000; res *= 1.5) {
 			System.out.println(res);
-		}
-		 */
+		}*/
+
+		GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getWGS_84_CRS());
+		GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getWGS_84_CRS());
+		GeoData.save(getNameExtend(10000), "/home/juju/Bureau/namesStruct_10000.gpkg", CRSUtil.getWGS_84_CRS());
 
 		System.out.println("End");
 	}
@@ -145,6 +148,31 @@ public class EuroNymeProduction {
 		//ARA - area
 
 	}
+
+
+	private static ArrayList<Feature> getNameExtend(double pixSize) {
+		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
+		for(Feature f : fs) {
+			Envelope env = getNameRectangle(f, pixSize);
+			f.setGeometry(JTSGeomUtil.getGeometry(env));
+		}
+		return fs;
+	}
+
+
+	private static Envelope getNameRectangle(Feature f, double pixSize) {
+		Coordinate c = f.getGeometry().getCoordinate();
+		double x1 = c.x;
+		double y1 = c.y;
+
+		//12pt = 16px
+		double fs = (int) f.getAttribute("font_size");
+		double h = pixSize * fs * 16/12;
+		double w = h * ((String)f.getAttribute("name")).length();
+
+		return new Envelope(x1, x1+w, y1, y1+h);
+	}
+
 
 	private static void csvExport() {
 		//private static String namesCSV = "/home/juju/Bureau/names2.csv";

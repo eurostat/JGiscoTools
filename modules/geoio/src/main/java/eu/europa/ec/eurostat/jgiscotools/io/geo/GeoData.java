@@ -158,9 +158,10 @@ public class GeoData {
 				params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
 				DataStore store = DataStoreFinder.getDataStore(params);
 				String[] names = store.getTypeNames();
-				if(typeName == null && names.length > 1) {
+				if(typeName == null && names.length >= 1) {
 					typeName = names[0];
-					LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + typeName + " will be considered.");
+					if (names.length > 1)
+						LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + typeName + " will be considered.");
 				}
 				LOGGER.debug(typeName);
 
