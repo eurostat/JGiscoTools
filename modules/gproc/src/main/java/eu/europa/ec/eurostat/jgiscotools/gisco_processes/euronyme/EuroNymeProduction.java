@@ -28,16 +28,16 @@ public class EuroNymeProduction {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		structure();
+		//structure();
 
 		//ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
 		/*for(double res = 100; res<100000; res *= 1.5) {
 			System.out.println(res);
 		}*/
 
-		//GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getWGS_84_CRS());
-		//GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getWGS_84_CRS());
-		//GeoData.save(getNameExtend(10000), "/home/juju/Bureau/namesStruct_10000.gpkg", CRSUtil.getWGS_84_CRS());
+		GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		GeoData.save(getNameExtend(10000), "/home/juju/Bureau/namesStruct_10000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 
 		System.out.println("End");
 	}
@@ -80,6 +80,7 @@ public class EuroNymeProduction {
 			//geometry
 			//project
 			f_.setGeometry(CRSUtil.toLAEA(f.getGeometry(), crsERM));
+			for(Coordinate c : f_.getGeometry().getCoordinates()) { double z = c.x; c.x=c.y;c.y = z; }
 
 			//population
 			//PPL PP1 PP2
