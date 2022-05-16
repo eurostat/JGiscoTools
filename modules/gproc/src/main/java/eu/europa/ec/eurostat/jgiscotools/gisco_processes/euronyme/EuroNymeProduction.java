@@ -9,6 +9,7 @@ import java.util.Collection;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
@@ -34,9 +35,9 @@ public class EuroNymeProduction {
 			System.out.println(res);
 		}*/
 
-		GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getWGS_84_CRS());
-		GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getWGS_84_CRS());
-		GeoData.save(getNameExtend(10000), "/home/juju/Bureau/namesStruct_10000.gpkg", CRSUtil.getWGS_84_CRS());
+		//GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getWGS_84_CRS());
+		//GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getWGS_84_CRS());
+		//GeoData.save(getNameExtend(10000), "/home/juju/Bureau/namesStruct_10000.gpkg", CRSUtil.getWGS_84_CRS());
 
 		System.out.println("End");
 	}
@@ -50,6 +51,7 @@ public class EuroNymeProduction {
 		//NAMN1/NAMN2 PPL/PP1-PP2 population
 		ArrayList<Feature> buP = GeoData.getFeatures(erm, "BuiltupP", "id");
 		System.out.println(buP.size() + " features loaded");
+		CoordinateReferenceSystem crsERM = GeoData.getCRS(erm);
 		//ArrayList<Feature> buA = GeoData.getFeatures(erm, "BuiltupA", "id");
 		//System.out.println(buA.size() + " features loaded");
 
@@ -77,7 +79,7 @@ public class EuroNymeProduction {
 
 			//geometry
 			//project
-			f_.setGeometry(CRSUtil.toLAEA(f.getGeometry(), CRSUtil.getWGS_84_CRS()));
+			f_.setGeometry(CRSUtil.toLAEA(f.getGeometry(), crsERM));
 
 			//population
 			//PPL PP1 PP2
