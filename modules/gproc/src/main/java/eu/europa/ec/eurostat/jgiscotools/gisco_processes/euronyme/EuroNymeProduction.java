@@ -5,14 +5,15 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.euronyme;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
-import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
@@ -36,20 +37,36 @@ public class EuroNymeProduction {
 
 		//initialise rmax
 		for(Feature f : fs)
-			f.setAttribute("rmax", "");
+			f.setAttribute("rmax", -1);
 
+		double pixX = 20, pixY = 20;
 		for(double res = 50; res<51; res *= 1.5) {
 
 			//make spatial index, with only the ones remaining as visible for res
-			FeatureUtil.
+			Quadtree index = new Quadtree();
+			for(Feature f : fs) {
+				Integer rmax = (Integer) f.getAttribute("rmax");
+				if(rmax>0 && rmax<res) continue;
+				index.insert(f.getGeometry().getEnvelopeInternal(), f);
+			}
 
-			//for each toponym
+			for(Feature f : fs) {
+				Integer rmax = (Integer) f.getAttribute("rmax");
+				if(rmax>0 && rmax<res) continue;
 
-			//if rmax smaller, continue
+				//TODO get the other ones overlapping/nearby
+				Envelope searchEnv = getNameRectangle(f, res);
+				searchEnv.expandBy(pixX * res, pixY * res);
+				List<?> neigh = index.query(searchEnv);
 
-			//get the other ones overlapping/nearby
-			//if none, continue
-			//among all, find the one to keep, set rmax of the others, remove them from spatial index
+				System.out.println(neigh.size());
+
+				//if none, continue
+				if(neigh.size() == 1) continue;
+
+				//TODO among all, find the one to keep, set rmax of the others, remove them from spatial index
+			}
+
 		}
 
 
