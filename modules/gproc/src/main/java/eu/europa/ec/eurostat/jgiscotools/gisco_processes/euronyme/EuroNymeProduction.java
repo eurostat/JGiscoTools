@@ -27,7 +27,7 @@ public class EuroNymeProduction {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		//structure();
+		structure();
 
 		//ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
 		/*for(double res = 100; res<100000; res *= 1.5) {
@@ -70,11 +70,14 @@ public class EuroNymeProduction {
 			}
 			f_.setAttribute("name", name);
 
-			//geometry
-			f_.setGeometry(f.getGeometry());
+			//lon / lat
 			Point g = (Point) f.getGeometry();
 			f_.setAttribute("lon", Double.toString(Util.round(g.getCoordinate().x, 3)));
 			f_.setAttribute("lat", Double.toString(Util.round(g.getCoordinate().y, 3)));
+
+			//geometry
+			//project
+			f_.setGeometry(CRSUtil.toLAEA(f.getGeometry(), CRSUtil.getWGS_84_CRS()));
 
 			//population
 			//PPL PP1 PP2
@@ -107,7 +110,7 @@ public class EuroNymeProduction {
 		}
 
 		//save output
-		GeoData.save(out, namesStruct, CRSUtil.getWGS_84_CRS());
+		GeoData.save(out, namesStruct, CRSUtil.getETRS89_LAEA_CRS());
 
 
 		/*
@@ -166,7 +169,10 @@ public class EuroNymeProduction {
 		double y1 = c.y;
 
 		//12pt = 16px
-		double fs = (int) f.getAttribute("font_size");
+		String fs_ = (String) f.getAttribute("font_size");
+		//12 as a default
+		if(fs_ == null || fs_.length()==0) fs_ = "12";
+		double fs = Integer.parseInt(fs_);
 		double h = pixSize * fs * 16/12;
 		double w = h * ((String)f.getAttribute("name")).length();
 
