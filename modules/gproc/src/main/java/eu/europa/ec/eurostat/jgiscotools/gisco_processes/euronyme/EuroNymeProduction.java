@@ -36,8 +36,8 @@ public class EuroNymeProduction {
 
 		//structure();
 
+		//get input lables
 		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
-		System.out.println(fs.size());
 
 		//initialise rmax
 		for(Feature f : fs)
@@ -50,7 +50,7 @@ public class EuroNymeProduction {
 
 			//extract only the labels that are visible for this resolution
 			final double res_ = res;
-			Predicate<Feature> pr = f -> { Integer rmax = (Integer) f.getAttribute("rmax"); return rmax == -1 || rmax>res_; };
+			Predicate<Feature> pr = f -> { Integer rmax = (Integer) f.getAttribute("rmax"); return rmax == -1 || rmax > res_; };
 			List<Feature> fs_ = fs.stream().filter(pr).collect(Collectors.toList());
 
 			//compute label envelopes
@@ -62,26 +62,42 @@ public class EuroNymeProduction {
 			for(Feature f : fs_)
 				index.insert((Envelope)f.getAttribute("gl"), f);
 
+			//analyse labels one by one
 			for(Feature f : fs_) {
+				System.out.println("----");
 
-				//TODO get the other ones overlapping/nearby
+				//get envelope, enlarged
 				Envelope env = (Envelope) f.getAttribute("gl");
 				Envelope searchEnv = new Envelope(env);
 				searchEnv.expandBy(pixX * res, pixY * res);
-				List<?> neigh = index.query(searchEnv);
 
-				//TODO further filter
+				//get other labels overlapping/nearby with index
+				List<Feature> neigh = index.query(searchEnv);
+				//refine list of neighboors
+				Predicate<Feature> pr2 = f2 -> { return searchEnv.intersects((Envelope) f2.getAttribute("gl")); };
+				neigh = neigh.stream().filter(pr2).collect(Collectors.toList());
 
-				//TODO check here
-				System.out.println(neigh.size());
+				//in case no neighboor...
+				if(neigh.size() == 1)
+					continue;
 
-				//if none, continue
-				if(neigh.size() == 1) continue;
+				//get best label to keep
+				Feature toKeep = getBestLabelToKeep(neigh);
 
-				//TODO among all, find the one to keep, set rmax of the others, remove them from spatial index
+				//set rmax of others, and remove them
+				neigh.remove(toKeep);
+				for(Feature f_ : neigh) {
+					f_.setAttribute("rmax", res);
+					index.remove((Envelope) f_.getAttribute("gl"), f_);
+					fs_.remove(f_); //not sure if possible...
+				}
+
 			}
 
 		}
+
+		//TODO clean "gl" ?
+		GeoData.save(fs, "/home/juju/Bureau/out.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 
 
 		//GeoData.save(getNameExtend(10), "/home/juju/Bureau/namesStruct_10.gpkg", CRSUtil.getETRS89_LAEA_CRS());
@@ -90,6 +106,13 @@ public class EuroNymeProduction {
 		//GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 
 		System.out.println("End");
+	}
+
+
+	private static Feature getBestLabelToKeep(List<Feature> fs) {
+		//TODO do better
+		Feature fBest = fs.get(0);
+		return fBest;
 	}
 
 
