@@ -116,8 +116,20 @@ public class EuroNymeProduction {
 
 
 	private static Feature getBestLabelToKeep(List<Feature> fs) {
-		//TODO do better
-		Feature fBest = fs.get(0);
+		//get the one with:
+		// 1. the largest population
+		Feature fBest = null;
+		int popMax = -1;
+		for(Feature f : fs) {
+			int pop = Integer.parseInt( f.getAttribute("pop").toString() );
+			if(pop < popMax) continue;
+			if(pop == popMax) { System.out.println("Equal: "+pop); continue; }
+			popMax = pop;
+			fBest = f;
+		}
+		// 2. the shorter
+		// TODO
+
 		return fBest;
 	}
 
