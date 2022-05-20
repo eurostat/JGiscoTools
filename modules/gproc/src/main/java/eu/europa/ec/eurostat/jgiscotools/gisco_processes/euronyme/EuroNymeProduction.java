@@ -36,23 +36,25 @@ public class EuroNymeProduction {
 
 		//structure();
 
+		//the buffer distance around the label, in pixels
+		double pixX = 20, pixY = 20;
+		int resMin = 10, resMax = 100000;
+
 		//get input lables
 		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
 
 		//initialise rmax
 		for(Feature f : fs)
-			f.setAttribute("rmax", Integer.MAX_VALUE);
+			f.setAttribute("rmax", resMax);
 
-		//the buffer distance around the label, in pixels
-		double pixX = 20, pixY = 20;
-
-		for(int res = 50; res<=1000; res *= 1.5) {
-			System.out.println(res);
+		for(int res = resMin; res<=resMax; res *= 1.2) {
+			System.out.println("Resolution: " + res);
 
 			//extract only the labels that are visible for this resolution
 			final int res_ = res;
 			Predicate<Feature> pr = f -> { Integer rmax = (Integer) f.getAttribute("rmax"); return rmax > res_; };
 			List<Feature> fs_ = fs.stream().filter(pr).collect(Collectors.toList());
+			System.out.println("   nb = " + fs_.size());
 
 			//compute label envelopes
 			for(Feature f : fs_)
@@ -101,6 +103,7 @@ public class EuroNymeProduction {
 
 		//remove "gl" attribute
 		for(Feature f : fs) f.getAttributes().remove("gl");
+		for(Feature f : fs) f.getAttributes().remove("gl");
 
 		//save
 		GeoData.save(fs, "/home/juju/Bureau/out.gpkg", CRSUtil.getETRS89_LAEA_CRS());
@@ -122,8 +125,7 @@ public class EuroNymeProduction {
 		int popMax = -1;
 		for(Feature f : fs) {
 			int pop = Integer.parseInt( f.getAttribute("pop").toString() );
-			if(pop < popMax) continue;
-			if(pop == popMax) { System.out.println("Equal: "+pop); continue; }
+			if(pop <= popMax) continue;
 			popMax = pop;
 			fBest = f;
 		}
