@@ -35,25 +35,28 @@ public class EuroNymeProduction {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		structure();
+		//structure();
 
-		//generate();
-
-
-
-		//GeoData.save(getNameExtend(10), "/home/juju/Bureau/namesStruct_10.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		//GeoData.save(getNameExtend(50), "/home/juju/Bureau/namesStruct_50.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		//GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		//GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		int fontSize = 15;
+		int pixX = 2, pixY = 2;
+		double zf = 1.2;
+		int resMin = 40, resMax = 100000;
+		generate(fontSize, resMin, resMax, zf, pixX, pixY);
 
 		System.out.println("End");
 	}
 
 
-	private static void generate() {
-		//the buffer distance around the label, in pixels
-		double pixX = 25, pixY = 25;
-		int resMin = 40, resMax = 100000;
+
+	/**
+	 * @param fontSize The label font size
+	 * @param resMin The minimum resolution (in m/pixel). The unnecessary labels below will be removed.
+	 * @param resMax The maximum resolution (in m/pixel)
+	 * @param zf The zoom factor, between resolutions. For example: 1.2
+	 * @param pixX The buffer zone without labels around - X direction
+	 * @param pixY The buffer zone without labels around - Y direction
+	 */
+	private static void generate(int fontSize, int resMin, int resMax, double zf, int pixX, int pixY) {
 
 		//get input lables
 		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
@@ -62,7 +65,7 @@ public class EuroNymeProduction {
 		for(Feature f : fs)
 			f.setAttribute("rmax", resMax);
 
-		for(int res = resMin; res<=resMax; res *= 1.2) {
+		for(int res = resMin; res<=resMax; res *= zf) {
 			System.out.println("Resolution: " + res);
 
 			//extract only the labels that are visible for this resolution
@@ -73,7 +76,7 @@ public class EuroNymeProduction {
 
 			//compute label envelopes
 			for(Feature f : fs_)
-				f.setAttribute("gl", getLabelEnvelope(f, res));
+				f.setAttribute("gl", getLabelEnvelope(f, fontSize, res));
 
 			//make spatial index, with only the ones remaining as visible for res
 			Quadtree index = new Quadtree();
@@ -154,7 +157,7 @@ public class EuroNymeProduction {
 
 
 
-	
+
 	private static void structure() {
 
 		//the output
@@ -262,27 +265,29 @@ public class EuroNymeProduction {
 	}
 
 
-	private static ArrayList<Feature> getNameExtend(double pixSize) {
+	private static ArrayList<Feature> getNameExtend(double pixSize, int fontSize) {
 		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
 		for(Feature f : fs) {
-			Envelope env = getLabelEnvelope(f, pixSize);
+			Envelope env = getLabelEnvelope(f, fontSize, pixSize);
 			f.setGeometry(JTSGeomUtil.getGeometry(env));
 		}
 		return fs;
 	}
 
 
-	private static Envelope getLabelEnvelope(Feature f, double pixSize) {
+	/**
+	 * @param f The label object.
+	 * @param fontSize The font size to apply.
+	 * @param pixSize The zoom level: size of a pixel in m.
+	 * @return
+	 */
+	private static Envelope getLabelEnvelope(Feature f, int fontSize, double pixSize) {
 		Coordinate c = f.getGeometry().getCoordinate();
 		double x1 = c.x;
 		double y1 = c.y;
 
 		//12pt = 16px
-		String fs_ = (String) f.getAttribute("font_size");
-		//12 as a default
-		if(fs_ == null || fs_.length()==0) fs_ = "12";
-		double fs = Integer.parseInt(fs_);
-		double h = pixSize * fs * 16/12;
+		double h = pixSize * fontSize * 1.333333;
 		double w = h * ((String)f.getAttribute("name")).length();
 
 		return new Envelope(x1, x1+w, y1, y1+h);
