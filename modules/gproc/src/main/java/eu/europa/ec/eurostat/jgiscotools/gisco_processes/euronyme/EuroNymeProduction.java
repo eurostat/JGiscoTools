@@ -46,7 +46,8 @@ public class EuroNymeProduction {
 		//the buffer distance around the label, in pixels
 		double pixX = 20, pixY = 20;
 
-		for(int res = 50; res<=50; res *= 1.5) {
+		for(int res = 50; res<=1000; res *= 1.5) {
+			System.out.println(res);
 
 			//extract only the labels that are visible for this resolution
 			final int res_ = res;
