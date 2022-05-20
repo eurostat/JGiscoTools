@@ -17,6 +17,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 import eu.europa.ec.eurostat.jgiscotools.util.Util;
@@ -106,8 +107,10 @@ public class EuroNymeProduction {
 		for(Feature f : fs) f.getAttributes().remove("gl");
 
 		//save
+		System.out.println("save as GPKG");
 		GeoData.save(fs, "/home/juju/Bureau/out.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-
+		System.out.println("save as CSV");
+		CSVUtil.save(CSVUtil.featuresToCSV(fs), "/home/juju/Bureau/out.csv");
 
 		//GeoData.save(getNameExtend(10), "/home/juju/Bureau/namesStruct_10.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 		//GeoData.save(getNameExtend(50), "/home/juju/Bureau/namesStruct_50.gpkg", CRSUtil.getETRS89_LAEA_CRS());

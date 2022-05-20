@@ -39,7 +39,7 @@ public class CSVUtil {
 		save(a, "target/out.csv");
 	}*/
 
-	
+
 	/**
 	 * @param filePath
 	 * @return
@@ -62,7 +62,7 @@ public class CSVUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return keys;
 	}
 
@@ -187,6 +187,24 @@ public class CSVUtil {
 			}
 			f.setGeometry(gf.createPoint(c));
 			out.add(f);
+		}
+		return out;
+	}
+
+
+	/**
+	 * Transform a feature collection into CSV data.
+	 * 
+	 * @param fs
+	 * @return
+	 */
+	public static Collection<Map<String, String>> featuresToCSV(Collection<Feature> fs) {
+		ArrayList<Map<String, String>> out = new ArrayList<>();
+		for (Feature f : fs) {
+			Map<String, String> o = new HashMap<>();
+			for(Entry<String,Object> e : f.getAttributes().entrySet())
+				o.put(e.getKey(), e.getValue().toString());
+			out.add(o);
 		}
 		return out;
 	}
