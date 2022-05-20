@@ -31,12 +31,14 @@ public class EuroNymeProduction {
 	private static String namesStruct = "/home/juju/Bureau/namesStruct.gpkg";
 
 	//TODO check gazeeter aswell ? check geo coverage.
+	//TODO elaborate: different font size and weight depending on population
 
 	public static void main(String[] args) {
 		System.out.println("Start");
 
 		//structure();
 
+		//generate
 		int fontSize = 15;
 		int pixX = 2, pixY = 2;
 		double zf = 1.2;
