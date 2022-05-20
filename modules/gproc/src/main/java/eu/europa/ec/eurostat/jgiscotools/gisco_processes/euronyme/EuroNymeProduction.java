@@ -41,16 +41,16 @@ public class EuroNymeProduction {
 
 		//initialise rmax
 		for(Feature f : fs)
-			f.setAttribute("rmax", -1);
+			f.setAttribute("rmax", Integer.MAX_VALUE);
 
 		//the buffer distance around the label, in pixels
 		double pixX = 20, pixY = 20;
 
-		for(double res = 50; res<=50; res *= 1.5) {
+		for(int res = 50; res<=50; res *= 1.5) {
 
 			//extract only the labels that are visible for this resolution
-			final double res_ = res;
-			Predicate<Feature> pr = f -> { Integer rmax = (Integer) f.getAttribute("rmax"); return rmax == -1 || rmax > res_; };
+			final int res_ = res;
+			Predicate<Feature> pr = f -> { Integer rmax = (Integer) f.getAttribute("rmax"); return rmax > res_; };
 			List<Feature> fs_ = fs.stream().filter(pr).collect(Collectors.toList());
 
 			//compute label envelopes
@@ -64,7 +64,10 @@ public class EuroNymeProduction {
 
 			//analyse labels one by one
 			for(Feature f : fs_) {
-				System.out.println("----");
+				//System.out.println("----");
+
+				Integer rmax = (Integer) f.getAttribute("rmax");
+				if(rmax <= res) continue;
 
 				//get envelope, enlarged
 				Envelope env = (Envelope) f.getAttribute("gl");
@@ -89,14 +92,16 @@ public class EuroNymeProduction {
 				for(Feature f_ : neigh) {
 					f_.setAttribute("rmax", res);
 					index.remove((Envelope) f_.getAttribute("gl"), f_);
-					fs_.remove(f_); //not sure if possible...
 				}
 
 			}
 
 		}
 
-		//TODO clean "gl" ?
+		//remove "gl" attribute
+		for(Feature f : fs) f.getAttributes().remove("gl");
+
+		//save
 		GeoData.save(fs, "/home/juju/Bureau/out.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 
 
