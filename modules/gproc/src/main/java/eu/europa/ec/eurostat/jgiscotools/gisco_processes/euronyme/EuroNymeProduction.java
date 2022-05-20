@@ -29,8 +29,8 @@ public class EuroNymeProduction {
 
 	private static String namesStruct = "/home/juju/Bureau/namesStruct.gpkg";
 
-	//TODO check gazeeter aswell
-	
+	//TODO check gazeeter aswell ?
+
 	public static void main(String[] args) {
 		System.out.println("Start");
 
