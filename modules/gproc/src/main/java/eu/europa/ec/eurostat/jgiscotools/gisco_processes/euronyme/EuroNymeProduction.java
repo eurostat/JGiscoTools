@@ -39,12 +39,21 @@ public class EuroNymeProduction {
 
 		//structure();
 
+
 		//generate
-		int fontSize = 15;
-		int pixX = 20, pixY = 20;
-		double zf = 1.2;
-		int resMin = 40, resMax = 100000;
-		generate(fontSize, resMin, resMax, zf, pixX, pixY);
+
+		//get input labels
+		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
+		System.out.println(fs.size() + " labels loaded");
+
+		//
+		fs = generate(fs, 15, 40, 100000, 1.2, 20, 20);
+
+		//save
+		System.out.println("save as GPKG");
+		GeoData.save(fs, "/home/juju/Bureau/out.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		System.out.println("save as CSV");
+		CSVUtil.save(CSVUtil.featuresToCSV(fs), "/home/juju/Bureau/out.csv");
 
 		System.out.println("End");
 	}
@@ -52,6 +61,7 @@ public class EuroNymeProduction {
 
 
 	/**
+	 * @param fs The labels
 	 * @param fontSize The label font size
 	 * @param resMin The minimum resolution (in m/pixel). The unnecessary labels below will be removed.
 	 * @param resMax The maximum resolution (in m/pixel)
@@ -59,10 +69,7 @@ public class EuroNymeProduction {
 	 * @param pixX The buffer zone without labels around - X direction
 	 * @param pixY The buffer zone without labels around - Y direction
 	 */
-	private static void generate(int fontSize, int resMin, int resMax, double zf, int pixX, int pixY) {
-
-		//get input lables
-		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
+	private static ArrayList<Feature> generate(ArrayList<Feature> fs, int fontSize, int resMin, int resMax, double zf, int pixX, int pixY) {
 
 		//initialise rmax
 		for(Feature f : fs)
@@ -122,22 +129,12 @@ public class EuroNymeProduction {
 
 		}
 
-		//remove "gl" attribute
+		//remove attribute
 		for(Feature f : fs) f.getAttributes().remove("gl");
 		for(Feature f : fs) f.getAttributes().remove("pop");
-		for(Feature f : fs) f.getAttributes().remove("font_weight");
-		for(Feature f : fs) f.getAttributes().remove("font_size");
 
 		//filter - keep only few
-		System.out.println("   filter... " + fs.size());
-		fs = (ArrayList<Feature>) fs.stream().filter(f -> (Integer) f.getAttribute("rmax") > 40 ).collect(Collectors.toList());
-		System.out.println("   nb = " + fs.size());
-
-		//save
-		System.out.println("save as GPKG");
-		GeoData.save(fs, "/home/juju/Bureau/out.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		System.out.println("save as CSV");
-		CSVUtil.save(CSVUtil.featuresToCSV(fs), "/home/juju/Bureau/out.csv");
+		return (ArrayList<Feature>) fs.stream().filter(f -> (Integer) f.getAttribute("rmax") > resMin ).collect(Collectors.toList());
 	}
 
 
