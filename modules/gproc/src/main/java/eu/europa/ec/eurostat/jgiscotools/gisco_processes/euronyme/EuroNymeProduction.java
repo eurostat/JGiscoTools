@@ -30,7 +30,7 @@ public class EuroNymeProduction {
 
 	private static String namesStruct = "/home/juju/Bureau/namesStruct.gpkg";
 
-	//TODO check gazeeter aswell ?
+	//TODO check gazeeter aswell ? check geo coverage.
 
 	public static void main(String[] args) {
 		System.out.println("Start");
@@ -38,8 +38,8 @@ public class EuroNymeProduction {
 		//structure();
 
 		//the buffer distance around the label, in pixels
-		double pixX = 20, pixY = 20;
-		int resMin = 10, resMax = 100000;
+		double pixX = 25, pixY = 25;
+		int resMin = 40, resMax = 100000;
 
 		//get input lables
 		ArrayList<Feature> fs = GeoData.getFeatures(namesStruct);
@@ -104,7 +104,15 @@ public class EuroNymeProduction {
 
 		//remove "gl" attribute
 		for(Feature f : fs) f.getAttributes().remove("gl");
-		for(Feature f : fs) f.getAttributes().remove("gl");
+		for(Feature f : fs) f.getAttributes().remove("pop");
+		for(Feature f : fs) f.getAttributes().remove("font_weight");
+		for(Feature f : fs) f.getAttributes().remove("font_size");
+
+		//filter - keep only few
+		System.out.println("   filter... " + fs.size());
+		fs = (ArrayList<Feature>) fs.stream().filter(f -> (Integer) f.getAttribute("rmax") > 40 ).collect(Collectors.toList());
+		System.out.println("   nb = " + fs.size());
+
 
 		//save
 		System.out.println("save as GPKG");
@@ -194,7 +202,7 @@ public class EuroNymeProduction {
 					pop = pop1*2;
 				} else if(pop1 < 0 && pop2 < 0 ) {
 					//System.out.println(pop1+"   "+pop2);
-					//TODO
+					//do something here
 					pop = 0;
 				}
 			}
@@ -225,7 +233,7 @@ public class EuroNymeProduction {
 				continue;
 			}
 			buPI.put(id,fp);
-			//TODO check they are inside ?
+			// check they are inside ?
 		}
 
 		//make areas from points
