@@ -35,8 +35,22 @@ public class EuroNymeProduction {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
-		//structure();
+		structure();
 
+		//generate();
+
+
+
+		//GeoData.save(getNameExtend(10), "/home/juju/Bureau/namesStruct_10.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		//GeoData.save(getNameExtend(50), "/home/juju/Bureau/namesStruct_50.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		//GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		//GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+
+		System.out.println("End");
+	}
+
+
+	private static void generate() {
 		//the buffer distance around the label, in pixels
 		double pixX = 25, pixY = 25;
 		int resMin = 40, resMax = 100000;
@@ -113,19 +127,11 @@ public class EuroNymeProduction {
 		fs = (ArrayList<Feature>) fs.stream().filter(f -> (Integer) f.getAttribute("rmax") > 40 ).collect(Collectors.toList());
 		System.out.println("   nb = " + fs.size());
 
-
 		//save
 		System.out.println("save as GPKG");
 		GeoData.save(fs, "/home/juju/Bureau/out.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 		System.out.println("save as CSV");
 		CSVUtil.save(CSVUtil.featuresToCSV(fs), "/home/juju/Bureau/out.csv");
-
-		//GeoData.save(getNameExtend(10), "/home/juju/Bureau/namesStruct_10.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		//GeoData.save(getNameExtend(50), "/home/juju/Bureau/namesStruct_50.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		//GeoData.save(getNameExtend(100), "/home/juju/Bureau/namesStruct_100.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-		//GeoData.save(getNameExtend(1000), "/home/juju/Bureau/namesStruct_1000.gpkg", CRSUtil.getETRS89_LAEA_CRS());
-
-		System.out.println("End");
 	}
 
 
@@ -147,19 +153,22 @@ public class EuroNymeProduction {
 	}
 
 
-	private static void structure() {
-		//load input data
-		String erm = "/home/juju/Bureau/gisco/geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg";
 
-		//BuiltupP
-		//NAMN1/NAMN2 PPL/PP1-PP2 population
+	
+	private static void structure() {
+
+		//the output
+		Collection<Feature> out = new ArrayList<>();
+
+
+		//Add ERM BuiltupP
+
+		System.out.println("ERM - BuiltupP");
+		String erm = "/home/juju/Bureau/gisco/geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg";
 		ArrayList<Feature> buP = GeoData.getFeatures(erm, "BuiltupP", "id");
 		System.out.println(buP.size() + " features loaded");
 		CoordinateReferenceSystem crsERM = GeoData.getCRS(erm);
-		//ArrayList<Feature> buA = GeoData.getFeatures(erm, "BuiltupA", "id");
-		//System.out.println(buA.size() + " features loaded");
 
-		Collection<Feature> out = new ArrayList<>();
 		for(Feature f : buP) {
 			Feature f_ = new Feature();
 
@@ -208,54 +217,48 @@ public class EuroNymeProduction {
 			}
 			f_.setAttribute("pop", pop.toString());
 
-			f_.setAttribute("font_size", "12");
-			f_.setAttribute("font_weight", "");
-			f_.setAttribute("rmax", "");
+			out.add(f_);
+		}
+
+
+
+		//REGIO town names
+
+		System.out.println("REGIO - town names");
+		String nt_ = "/home/juju/Bureau/gisco/geodata/regio_town_names/nt.gpkg";
+		ArrayList<Feature> nt = GeoData.getFeatures(nt_, "STTL_ID");
+		System.out.println(nt.size() + " features loaded");
+		CoordinateReferenceSystem crsNT = GeoData.getCRS(nt_);
+
+		for(Feature f : nt) {
+			Feature f_ = new Feature();
+
+			//name
+			String name = (String) f.getAttribute("STTL_NAME");
+			if(name.length() == 0) continue;
+			f_.setAttribute("name", name);
+
+			//lon / lat
+			Point g = f.getGeometry().getCentroid();
+			f_.setAttribute("lon", Double.toString(Util.round(g.getCoordinate().x, 3)));
+			f_.setAttribute("lat", Double.toString(Util.round(g.getCoordinate().y, 3)));
+
+			//geometry
+			//project
+			f_.setGeometry(CRSUtil.toLAEA(g, crsNT));
+			for(Coordinate c : f_.getGeometry().getCoordinates()) { double z = c.x; c.x=c.y;c.y = z; }
+
+			//population
+			Integer pop = (int) Double.parseDouble(f.getAttribute("POPL_2011").toString());
+			f_.setAttribute("pop", pop.toString());
 
 			out.add(f_);
 		}
 
+
 		//save output
+		System.out.println("Save " + out.size());
 		GeoData.save(out, namesStruct, CRSUtil.getETRS89_LAEA_CRS());
-
-
-		/*
-		//index buP by "PopulatedPlaceID"
-		HashMap<String,Feature> buPI = new HashMap<>();
-		for(Feature fp : buP) {
-			String id = (String)fp.getAttribute("PopulatedPlaceID");
-			if(id == null) {System.err.println("No PopulatedPlaceID found"); continue; }
-			Feature f = buPI.get(id);
-			if(f!=null) {
-				System.err.println("Already a buP with PopulatedPlaceID = "+id);
-				System.out.println(f.getAttribute("NAMA1"));
-				System.out.println(fp.getAttribute("NAMA1"));
-				continue;
-			}
-			buPI.put(id,fp);
-			// check they are inside ?
-		}
-
-		//make areas from points
-		ArrayList<Feature> areas = new ArrayList<Feature>();
-		for(Feature fa : buA) {
-			String id = (String)fa.getAttribute("PopulatedPlaceID");
-			//if(id==null) { System.err.println("No PopulatedPlaceID for buA"); continue; }
-			//System.out.println(id);
-
-		}*/
-
-
-
-
-		//ArrayList<Feature> name = GeoData.getFeatures(erm, "EBM_NAM", "id");
-		//System.out.println(name.size() + " features loaded");
-		//index EBM
-		//id: SHN attribute
-		//NAMN
-		//PPL - population
-		//ARA - area
-
 	}
 
 

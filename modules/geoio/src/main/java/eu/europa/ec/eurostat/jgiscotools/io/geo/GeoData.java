@@ -158,11 +158,11 @@ public class GeoData {
 				params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
 				DataStore store = DataStoreFinder.getDataStore(params);
 				String[] names = store.getTypeNames();
-				if(typeName == null && names.length >= 1) {
+				if(typeName == null && names.length > 1) {
 					typeName = names[0];
-					if (names.length > 1)
-						LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + typeName + " will be considered.");
-				}
+					LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + typeName + " will be considered.");
+				} else if(typeName == null && names.length == 1)
+					typeName = names[0];
 				LOGGER.debug(typeName);
 
 				SimpleFeatureCollection sfc = filter==null? store.getFeatureSource(typeName).getFeatures() : store.getFeatureSource(typeName).getFeatures(filter);
@@ -186,8 +186,8 @@ public class GeoData {
 				params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
 				DataStore store = DataStoreFinder.getDataStore(params);
 				String[] names = store.getTypeNames();
-				if(names.length >1 )
-					LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + names[0] + " will be considered.");
+				//if(names.length >1 )
+				//	LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + names[0] + " will be considered.");
 				String name = names[0];
 				LOGGER.debug(name);
 				SimpleFeatureType schema = store.getSchema(name);
