@@ -37,6 +37,7 @@ public class EuroNymeProduction {
 	public static void main(String[] args) {
 		System.out.println("Start");
 
+
 		//structure();
 
 
@@ -47,13 +48,14 @@ public class EuroNymeProduction {
 		System.out.println(fs.size() + " labels loaded");
 
 		//
-		fs = generate(fs, 15, 40, 100000, 1.2, 20, 20);
+		fs = generate(fs, 15, 30, 100000, 1.2, 25, 25);
+		System.out.println(fs.size());
 
 		//save
 		System.out.println("save as GPKG");
-		GeoData.save(fs, "/home/juju/Bureau/out.gpkg", CRSUtil.getETRS89_LAEA_CRS());
+		GeoData.save(fs, "/home/juju/Bureau/euronyme.gpkg", CRSUtil.getETRS89_LAEA_CRS());
 		System.out.println("save as CSV");
-		CSVUtil.save(CSVUtil.featuresToCSV(fs), "/home/juju/Bureau/out.csv");
+		CSVUtil.save(CSVUtil.featuresToCSV(fs), "/home/juju/Bureau/euronyme.csv");
 
 		System.out.println("End");
 	}
