@@ -32,6 +32,7 @@ public class EuroNymeProduction {
 
 	//TODO check gazeeter aswell ? check geo coverage.
 	//TODO elaborate: different font size and weight depending on population
+	//TODO publish as euronyme repository - split by country
 
 	public static void main(String[] args) {
 		System.out.println("Start");
@@ -40,7 +41,7 @@ public class EuroNymeProduction {
 
 		//generate
 		int fontSize = 15;
-		int pixX = 2, pixY = 2;
+		int pixX = 20, pixY = 20;
 		double zf = 1.2;
 		int resMin = 40, resMax = 100000;
 		generate(fontSize, resMin, resMax, zf, pixX, pixY);
