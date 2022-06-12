@@ -131,6 +131,7 @@ public class EuroNymeProduction {
 
 		}
 
+		
 		//remove attribute
 		for(Feature f : fs) f.getAttributes().remove("gl");
 		for(Feature f : fs) f.getAttributes().remove("pop");
