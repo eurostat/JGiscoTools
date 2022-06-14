@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -39,6 +38,7 @@ public class GWebServices {
 	 */
 	public static String getURL(String searchQuery) {
 		try {
+			//TODO use https://docs.oracle.com/javase/8/docs/api/java/net/URLEncoder.html instead ?
 			URLConnection conn = new URL("https://www.googleapis.com/customsearch/v1?key="+gKey+"&cx="+cs+"&q="+URIUtil.encodeQuery(searchQuery)).openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			JSONObject jsonObject = new JSONObject(in);
@@ -80,7 +80,10 @@ public class GWebServices {
 	 */
 	public static GGeocodingResult getLocation(String searchQuery) {
 		try {
-			URLConnection conn = new URL( "https://maps.googleapis.com/maps/api/place/textsearch/json?sensor=false&key="+gKey+"&query="+URIUtil.encodeQuery(searchQuery)).openConnection();
+			//TODO use https://docs.oracle.com/javase/8/docs/api/java/net/URLEncoder.html instead ?
+			URLConnection conn = new URL( "https://maps.googleapis.com/maps/api/place/textsearch/json?sensor=false&key="+gKey+"&query="
+			+ URIUtil.encodeQuery(searchQuery)
+			).openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			JSONObject jsonObject = new JSONObject(in);
 
@@ -113,6 +116,7 @@ public class GWebServices {
 	 */
 	public static GGeocodingResult getLocationFromAddress(String addressQuery) {
 		try {
+			//TODO use https://docs.oracle.com/javase/8/docs/api/java/net/URLEncoder.html instead ?
 			URLConnection conn = new URL("https://maps.googleapis.com/maps/api/geocode/json?sensor=true&address="+URIUtil.encodeQuery(addressQuery)).openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			JSONObject jsonObject = new JSONObject(in);
