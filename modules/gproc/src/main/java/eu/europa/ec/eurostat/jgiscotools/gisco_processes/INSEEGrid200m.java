@@ -21,12 +21,6 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 public class INSEEGrid200m {
 	static Logger logger = LogManager.getLogger(INSEEGrid200m.class.getName());
 
-	
-	//show fewer.
-	//Check too long names from REGIO and filter. the ones with "/" ?
-	//GISCO WS ?
-	//Add r/imp parameter on the local importance of the toponym
-
 
 	//the target resolutions
 	private static int[] resolutions = new int[] {200, 400, 1000, 2000, 5000, 10000, 20000, 50000};
