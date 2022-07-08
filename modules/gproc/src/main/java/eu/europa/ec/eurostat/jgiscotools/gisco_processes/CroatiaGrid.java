@@ -23,7 +23,7 @@ public class CroatiaGrid {
 
 
 	//the target resolutions
-	private static int[] resolutions = new int[] {1000, 2000, 3000, 4000, 5000, 7000, 10000};
+	private static int[] resolutions = new int[] {1000, 2000, 3000, 5000, 7000, 10000, 15000, 25000, 40000, 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/cnt/hr/grid/";
 	private static String[] files = new String[] {"Population_2011_Grid_1000m","Active_business_entities_2016_Grid_1000m","Tourism_2017_Grid_1000m"};
 
