@@ -23,7 +23,7 @@ public class CroatiaGrid {
 	//the target resolutions
 	private static int[] resolutions = new int[] {1000, 2000, 3000, 4000, 5000, 7000, 10000};
 	private static String basePath = "/home/juju/Bureau/gisco/cnt/hr/grid/";
-	private static String[] files = new String[] {"Population_2011_Grid_1000m.csv","Active_business_entities_2016_Grid_1000m.csv","Tourism_2017_Grid_1000m.csv"};
+	private static String[] files = new String[] {"Population_2011_Grid_1000m","Active_business_entities_2016_Grid_1000m","Tourism_2017_Grid_1000m"};
 
 
 	//-Xms4g -Xmx16g
@@ -41,7 +41,7 @@ public class CroatiaGrid {
 
 		for(String file : files) {
 			logger.info("Load " + file);
-			ArrayList<Map<String, String>> data = CSVUtil.load(basePath + file);
+			ArrayList<Map<String, String>> data = CSVUtil.load(basePath + file + ".csv");
 			logger.info(data.size());
 
 			//restructure
@@ -66,7 +66,7 @@ public class CroatiaGrid {
 				logger.info(out.size());
 
 				logger.info("Save");
-				CSVUtil.save(out, basePath + file +"_"+res+".csv");
+				CSVUtil.save(out, basePath + (file.replace("_1000m", "")) +"_agg_"+res+".csv");
 			}
 		}
 	}
