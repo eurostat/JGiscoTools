@@ -34,6 +34,8 @@ public class CroatiaGrid {
 	}
 
 
+
+
 	//derive resolutions
 	private static void aggregate() {
 
@@ -41,6 +43,22 @@ public class CroatiaGrid {
 			logger.info("Load " + file);
 			ArrayList<Map<String, String>> data = CSVUtil.load(basePath + file);
 			logger.info(data.size());
+
+			//restructure
+			CSVUtil.renameColumn(data, "IDENTIFIER", "GRD_ID");
+			for(Map<String, String> d : data) {
+				String id = d.get("GRD_ID");
+				//1kmN2186E5020
+				//CRS3035RES200mN2893400E3763200
+				id = id.replace("1kmN", "");
+				String[] s = id.split("E");
+				id = "CRS3035RES1000mN"+ (1000*Integer.parseInt(s[0])) +"E" + (1000*Integer.parseInt(s[1]));
+				d.put("GRD_ID",id);				
+			}
+
+			//replace D and Z
+			CSVUtil.replaceValue(data, "D", "0");
+			CSVUtil.replaceValue(data, "Z", "0");
 
 			for(int res : resolutions) {
 				logger.info("Aggregate " + res + "m");
