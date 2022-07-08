@@ -8,8 +8,10 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 /**
@@ -62,12 +64,25 @@ public class CroatiaGrid {
 
 			for(int res : resolutions) {
 				logger.info("Aggregate " + res + "m");
-				ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000);
-				logger.info(out.size());
+				ArrayList<Map<String, String>> cells = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000);
+				logger.info(cells.size());
+
+				//logger.info("Save");
+				//CSVUtil.save(cells, basePath + (file.replace("_1000m", "")) +"_agg_"+res+".csv");
+
+				logger.info("Build tiles");
+				GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0,0), 128);
+
+				gst.createTiles();
+				logger.info(gst.getTiles().size() + " tiles created");
 
 				logger.info("Save");
-				CSVUtil.save(out, basePath + (file.replace("_1000m", "")) +"_agg_"+res+".csv");
+				String tag = (file.replace("_Grid_1000m", ""));
+				String outpath = basePath+ tag + "/" + res + "m";
+				gst.saveCSV(outpath);
+				gst.saveTilingInfoJSON(outpath, tag+" resolution " + res + "m");
 			}
+
 		}
 	}
 
