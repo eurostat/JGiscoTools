@@ -16,7 +16,7 @@ public class GridVizTransfo {
 	static Logger logger = LogManager.getLogger(GridVizTransfo.class.getName());
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 1, 2, 5, 10, 20, 50, 100 };
+	private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/health/";
 
 	// -Xms4g -Xmx16g
@@ -68,7 +68,7 @@ public class GridVizTransfo {
 
 	}
 
-	// derive resolutions
+	/*/ derive resolutions
 	private static void aggregate() {
 
 		logger.info("Load");
@@ -85,7 +85,8 @@ public class GridVizTransfo {
 			CSVUtil.save(out, basePath + "out_" + res + ".csv");
 		}
 	}
-
+*/
+	
 	// tile all resolutions
 	private static void tiling() {
 
