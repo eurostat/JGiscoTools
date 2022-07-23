@@ -38,6 +38,7 @@ public class GridVizTransfo {
 		logger.info(data.get(0).keySet());
 		// [GRD_ID;Total_Trav]
 
+		logger.info("Structure");
 		for (Map<String, String> d : data) {
 			String gid = d.get("GRD_ID");
 			gid = gid.replace("CRS3035RES1000mN", "");
@@ -49,6 +50,11 @@ public class GridVizTransfo {
 			d.put("x", x + "");
 			d.put("y", y + "");
 			d.remove("GRD_ID");
+
+			String ts = d.get("Total_Trav");
+			double t = Double.parseDouble(ts);
+			d.put("Total_Trav", Math.ceil(t) + "");
+
 		}
 
 		logger.info("Rename colums");
