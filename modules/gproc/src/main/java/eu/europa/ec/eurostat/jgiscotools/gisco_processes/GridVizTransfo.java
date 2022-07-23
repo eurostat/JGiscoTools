@@ -40,7 +40,7 @@ public class GridVizTransfo {
 
 		logger.info("Structure");
 		for (Map<String, String> d : data) {
-			String gid = d.get("GRD_ID");
+/*			String gid = d.get("GRD_ID");
 			gid = gid.replace("CRS3035RES1000mN", "");
 			String[] s = gid.split("E");
 			int y = Integer.parseInt(s[0]);
@@ -50,7 +50,7 @@ public class GridVizTransfo {
 			d.put("x", x + "");
 			d.put("y", y + "");
 			d.remove("GRD_ID");
-
+*/
 			String ts = d.get("Total_Trav").replace(",", ".");
 			double t = Double.parseDouble(ts);
 			d.put("Total_Trav", Math.ceil(t) + "");
@@ -72,7 +72,7 @@ public class GridVizTransfo {
 	private static void aggregate() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "Filosofi2015_prepared.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "prepared.csv");
 		logger.info(data.size());
 
 		for (int res : resolutions) {
@@ -82,7 +82,7 @@ public class GridVizTransfo {
 			logger.info(out.size());
 
 			logger.info("Save");
-			CSVUtil.save(out, basePath + "Filosofi2015_" + res + ".csv");
+			CSVUtil.save(out, basePath + "out_" + res + ".csv");
 		}
 	}
 
