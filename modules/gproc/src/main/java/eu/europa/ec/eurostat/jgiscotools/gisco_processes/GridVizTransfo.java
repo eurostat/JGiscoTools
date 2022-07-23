@@ -51,7 +51,7 @@ public class GridVizTransfo {
 			d.put("y", y + "");
 			d.remove("GRD_ID");
 
-			String ts = d.get("Total_Trav");
+			String ts = d.get("Total_Trav").replace(",", ".");
 			double t = Double.parseDouble(ts);
 			d.put("Total_Trav", Math.ceil(t) + "");
 
