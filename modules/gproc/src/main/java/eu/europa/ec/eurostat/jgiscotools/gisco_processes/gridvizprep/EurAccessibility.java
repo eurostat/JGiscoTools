@@ -33,7 +33,7 @@ public class EurAccessibility {
 		// check(2006);check(2011);check(2018);
 		//join(2018);
 		aggregate();
-		tiling();
+		//tiling();
 		logger.info("End");
 	}
 
@@ -127,18 +127,20 @@ public class EurAccessibility {
 
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res,
-					10000, Set.of("avg_time_nearest"), "NA");
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(
+					data, "GRD_ID", res,
+					10000, Set.of("avg_time_nearest_h"), "NA");
 			logger.info(out.size());
 
 			// round
 			for (Map<String, String> d : out) {
-				String ts = d.get("avg_time_nearest");
+				String ts = d.get("avg_time_nearest_h");
+				if(ts.equals("NA")) continue;
 				double t = Double.parseDouble(ts);
-				d.put("avg_time_nearest", ((int) Math.ceil(t)) + "");
+				d.put("avg_time_nearest_h", ((int) Math.ceil(t)) + "");
 			}
 
-			logger.info("Save");
+			logger.info("Save " + out.size());
 			CSVUtil.save(out, basePath + "agg_" + res + ".csv");
 		}
 	}

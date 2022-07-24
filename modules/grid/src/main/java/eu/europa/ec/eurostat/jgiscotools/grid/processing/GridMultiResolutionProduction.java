@@ -73,6 +73,10 @@ public class GridMultiResolutionProduction {
 					sum += factor * v;
 					nb++;
 				}
+				if(nb==0 && ignoreValue != null) {
+					aggCell.put(key, ignoreValue);
+					continue;
+				}
 				sum /= factor;
 				if(average!=null && average.contains(key)) sum /= nb;
 				String sumS = (sum % 1) == 0 ? Integer.toString((int)sum) : Double.toString(sum);
