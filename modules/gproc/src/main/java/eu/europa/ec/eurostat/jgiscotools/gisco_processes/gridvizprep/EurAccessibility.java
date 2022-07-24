@@ -17,16 +17,16 @@ public class EurAccessibility {
 
 	// the target resolutions
 	private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
-	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/health/";
+	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		//prepareHealth();
+		prepareHealth();
 		//prepareEduc();
 		//join
 		//aggregate();
-		tiling();
+		//tiling();
 		logger.info("End");
 	}
 
@@ -34,7 +34,7 @@ public class EurAccessibility {
 	private static void prepareHealth() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "input/avg_time_nearest_healthcare_1205.csv",
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "health/input/avg_time_nearest_healthcare_1205.csv",
 				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(";".charAt(0)));
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
@@ -55,7 +55,7 @@ public class EurAccessibility {
 		logger.info(data.get(0).keySet());
 
 		logger.info("save");
-		CSVUtil.save(data, basePath + "prepared.csv");
+		CSVUtil.save(data, basePath + "prepared_health.csv");
 
 	}
 
@@ -63,7 +63,7 @@ public class EurAccessibility {
 	private static void aggregate() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "prepared.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "prepared_health.csv");
 		logger.info(data.size());
 
 		for (int res : resolutions) {
@@ -79,7 +79,7 @@ public class EurAccessibility {
 			}
 
 			logger.info("Save");
-			CSVUtil.save(out, basePath + "out_" + res + ".csv");
+			CSVUtil.save(out, basePath + "agg_" + res + ".csv");
 		}
 	}
 
@@ -92,7 +92,7 @@ public class EurAccessibility {
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
-			String f = basePath + "out_" + res + ".csv";
+			String f = basePath + "agg_" + res + ".csv";
 
 			logger.info("Load");
 			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
