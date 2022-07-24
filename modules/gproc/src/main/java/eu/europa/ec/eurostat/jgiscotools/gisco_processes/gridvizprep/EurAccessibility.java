@@ -22,15 +22,22 @@ public class EurAccessibility {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
+		preparePop2018();
 		//prepareHealth();
 		//prepareEduc();
 		//join
 		//aggregate();
-		tiling();
+		//tiling();
 		logger.info("End");
 	}
 
-	// remove attributes
+
+	private static void preparePop2018() {
+		
+	}
+
+
+	
 	private static void prepareHealth() {
 
 		logger.info("Load");
