@@ -23,25 +23,23 @@ public class EurAccessibility {
 	public static void main(String[] args) {
 		logger.info("Start");
 		preparePop2018();
-		//prepareHealth();
-		//prepareEduc();
-		//join
-		//aggregate();
-		//tiling();
+		// prepareHealth();
+		// prepareEduc();
+		// join
+		// aggregate();
+		// tiling();
 		logger.info("End");
 	}
 
-
 	private static void preparePop2018() {
-		
+
 	}
 
-
-	
 	private static void prepareHealth() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "health/input/avg_time_nearest_healthcare_1205.csv",
+		ArrayList<Map<String, String>> data = CSVUtil.load(
+				basePath + "health/input/avg_time_nearest_healthcare_1205.csv",
 				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(";".charAt(0)));
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
@@ -75,14 +73,15 @@ public class EurAccessibility {
 
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, true);
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res,
+					10000, true);
 			logger.info(out.size());
 
-			//round
+			// round
 			for (Map<String, String> d : out) {
 				String ts = d.get("avg_time_nearest");
 				double t = Double.parseDouble(ts);
-				d.put("avg_time_nearest", ((int)Math.ceil(t)) + "");
+				d.put("avg_time_nearest", ((int) Math.ceil(t)) + "");
 			}
 
 			logger.info("Save");
@@ -90,9 +89,6 @@ public class EurAccessibility {
 		}
 	}
 
-	
-
-	
 	// tile all resolutions
 	private static void tiling() {
 
