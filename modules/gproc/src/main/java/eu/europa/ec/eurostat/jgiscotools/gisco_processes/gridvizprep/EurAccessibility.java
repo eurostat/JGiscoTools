@@ -81,10 +81,10 @@ public class EurAccessibility {
 			logger.info(out.size());
 
 			//round
-			for (Map<String, String> d : data) {
+			for (Map<String, String> d : out) {
 				String ts = d.get("avg_time_nearest");
 				double t = Double.parseDouble(ts);
-				d.put("avg_time_nearest", Math.ceil(t) + "");
+				d.put("avg_time_nearest", ((int)Math.ceil(t)) + "");
 			}
 
 			logger.info("Save");
