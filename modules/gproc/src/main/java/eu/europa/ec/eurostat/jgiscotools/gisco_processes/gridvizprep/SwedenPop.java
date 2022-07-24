@@ -50,7 +50,7 @@ public class SwedenPop {
 
 		for(int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, false);
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, null);
 			logger.info(out.size());
 
 			logger.info("Save");
