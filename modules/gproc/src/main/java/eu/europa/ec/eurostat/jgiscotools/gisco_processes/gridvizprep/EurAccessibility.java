@@ -38,7 +38,7 @@ public class EurAccessibility {
 		logger.info("pop: " + dataPop.size());
 		ArrayList<Map<String, String>> dataAcc = CSVUtil.load(basePath + "prepared_health.csv");
 		logger.info("acc: " + dataAcc.size());
-		
+
 		//index values
 		
 		//get all ids
