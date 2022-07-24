@@ -1,7 +1,9 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,12 +27,12 @@ public class EurAccessibility {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		preparePop(2018);
-		prepareHealth();
+		// preparePop(2018);
+		// prepareHealth();
 		// prepareEduc();
-		//check(2006);check(2011);check(2018);
+		// check(2006);check(2011);check(2018);
 		join(2018);
-		aggregate();
+		// aggregate();
 		// tiling();
 		logger.info("End");
 	}
@@ -38,8 +40,8 @@ public class EurAccessibility {
 	private static void join(int year) {
 
 		ArrayList<Map<String, String>> data;
-		
-		data = CSVUtil.load(basePath + "pop"+year+".csv");
+
+		data = CSVUtil.load(basePath + "pop" + year + ".csv");
 		logger.info("pop: " + data.size());
 		HashMap<String, Map<String, String>> iPop = Util.index(data, "GRD_ID");
 		logger.info("popI: " + iPop.keySet().size());
@@ -51,26 +53,42 @@ public class EurAccessibility {
 
 		data = null;
 
-		//get all ids
-		Set<String> ids = Set.of();
+		// get all ids
+		Set<String> ids = new HashSet<String>();
 		ids.addAll(iPop.keySet());
 		ids.addAll(iHealth.keySet());
-	
-		//go through ids
-		//addall
-		
-	}
-	
+		logger.info("Ids: " + ids.size());
 
+		// go through ids
+		ArrayList<Map<String, String>> out = new ArrayList<Map<String, String>>();
+		for (String id : ids) {
+			Map<String, String> d = new HashMap<String, String>();
+			d.put("GRD_ID", id);
+
+			String pop = iPop.get(id) == null ? "NA" : iPop.get(id).get("TOT_P");
+			d.put("TOT_P", pop);
+
+			String atnh = iHealth.get(id) == null ? "NA" : iHealth.get(id).get("avg_time_nearest");
+			d.put("avg_time_nearest_h", atnh);
+
+			//System.out.println(d);
+			
+			out.add(d);
+		}
+
+		logger.info("save " + out.size());
+		CSVUtil.save(out, basePath + "prepared.csv");
+	}
 
 	private static void preparePop(int year) {
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_grid_"+year+"_1km.csv");
+		ArrayList<Map<String, String>> data = CSVUtil
+				.load("/home/juju/Bureau/gisco/grid_pop/pop_grid_" + year + "_1km.csv");
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 
 		logger.info("save");
-		CSVUtil.save(data, basePath + "pop"+year+".csv");
+		CSVUtil.save(data, basePath + "pop" + year + ".csv");
 	}
 
 	private static void prepareHealth() {
@@ -106,15 +124,13 @@ public class EurAccessibility {
 	private static void aggregate() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "prepared_health.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "prepared.csv");
 		logger.info(data.size());
 
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out =
-					GridMultiResolutionProduction.gridAggregation(
-							data, "GRD_ID", res, 10000,
-							Set.of("avg_time_nearest"));
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res,
+					10000, Set.of("avg_time_nearest"));
 			logger.info(out.size());
 
 			// round
@@ -155,33 +171,19 @@ public class EurAccessibility {
 		}
 	}
 
-	
-	
 	/*
-	private static void check(int year) {
-		ArrayList<Map<String, String>> dataPop = CSVUtil.load(basePath + "pop"+year+".csv");
-		logger.info("pop: " + dataPop.size());
-		ArrayList<Map<String, String>> dataAcc = CSVUtil.load(basePath + "prepared_health.csv");
-		logger.info("acc: " + dataAcc.size());
+	 * private static void check(int year) { ArrayList<Map<String, String>> dataPop
+	 * = CSVUtil.load(basePath + "pop"+year+".csv"); logger.info("pop: " +
+	 * dataPop.size()); ArrayList<Map<String, String>> dataAcc =
+	 * CSVUtil.load(basePath + "prepared_health.csv"); logger.info("acc: " +
+	 * dataAcc.size());
+	 * 
+	 * int nb = 0; for (Map<String, String> d : dataAcc) { String id =
+	 * d.get("GRD_ID"); boolean found = false; for (Map<String, String> d2 :
+	 * dataPop) { String id2 = d2.get("GRD_ID"); if(!id.equals(id2)) continue; found
+	 * = true; break; } if(!found) nb++; } System.out.println(year + " " + nb); }
+	 */
 
-		int nb = 0;
-		for (Map<String, String> d : dataAcc) {
-			String id = d.get("GRD_ID");
-			boolean found = false;
-			for (Map<String, String> d2 : dataPop) {
-				String id2 = d2.get("GRD_ID");
-				if(!id.equals(id2)) continue;
-				found = true;
-				break;
-			}
-			if(!found)
-				nb++;
-		}
-		System.out.println(year + " " + nb);
-	}*/
-
-	
-	
 	/*
 	 * public static void main(String[] args) {
 	 * 
