@@ -22,14 +22,16 @@ public class EurAccessibility {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		//prepare();
+		//prepareHealth();
+		//prepareEduc();
+		//join
 		//aggregate();
 		tiling();
 		logger.info("End");
 	}
 
 	// remove attributes
-	private static void prepare() {
+	private static void prepareHealth() {
 
 		logger.info("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "input/avg_time_nearest_healthcare_1205.csv",
@@ -40,17 +42,6 @@ public class EurAccessibility {
 
 		logger.info("Structure");
 		for (Map<String, String> d : data) {
-/*			String gid = d.get("GRD_ID");
-			gid = gid.replace("CRS3035RES1000mN", "");
-			String[] s = gid.split("E");
-			int y = Integer.parseInt(s[0]);
-			int x = Integer.parseInt(s[1]);
-			y /= 1000;
-			x /= 1000;
-			d.put("x", x + "");
-			d.put("y", y + "");
-			d.remove("GRD_ID");
-*/
 			String ts = d.get("Total_Trav").replace(",", ".");
 			double t = Double.parseDouble(ts);
 			d.put("Total_Trav", Math.ceil(t) + "");
