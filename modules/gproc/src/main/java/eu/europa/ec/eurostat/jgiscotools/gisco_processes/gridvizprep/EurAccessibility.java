@@ -23,8 +23,8 @@ public class EurAccessibility {
 	public static void main(String[] args) {
 		logger.info("Start");
 		//prepare();
-		aggregate();
-		//tiling();
+		//aggregate();
+		tiling();
 		logger.info("End");
 	}
 
@@ -95,13 +95,13 @@ public class EurAccessibility {
 	
 
 	
-	/*/ tile all resolutions
+	// tile all resolutions
 	private static void tiling() {
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
-			String f = basePath + "Filosofi2015_" + res + ".csv";
+			String f = basePath + "out_" + res + ".csv";
 
 			logger.info("Load");
 			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
@@ -116,10 +116,10 @@ public class EurAccessibility {
 			logger.info("Save");
 			String outpath = basePath + "tiled/" + res + "m";
 			gst.saveCSV(outpath);
-			gst.saveTilingInfoJSON(outpath, "Filosofi 2015 resolution " + res + "m");
+			gst.saveTilingInfoJSON(outpath, "Euraccess resolution " + res + "m");
 
 		}
-	}*/
+	}
 
 	/*
 	 * public static void main(String[] args) {
