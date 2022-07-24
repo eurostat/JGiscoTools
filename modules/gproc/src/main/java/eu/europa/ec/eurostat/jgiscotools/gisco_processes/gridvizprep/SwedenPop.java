@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -18,8 +18,8 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
  * @author julien Gaffuri
  *
  */
-public class GridVizDataPreparation {
-	static Logger logger = LogManager.getLogger(GridVizDataPreparation.class.getName());
+public class SwedenPop {
+	static Logger logger = LogManager.getLogger(SwedenPop.class.getName());
 
 
 	//the target resolutions
