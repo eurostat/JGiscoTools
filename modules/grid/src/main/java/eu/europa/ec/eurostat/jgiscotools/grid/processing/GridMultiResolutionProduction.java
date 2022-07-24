@@ -30,9 +30,10 @@ public class GridMultiResolutionProduction {
 	 * @param gridIdCol The column with the cell id
 	 * @param res The target resolution
 	 * @param factor A factor to avoid floating precision errors, such as "245.0000000034". Set to 10000
+	 * @param average
 	 * @return
 	 */
-	public static ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String gridIdCol, int res, int factor) {	
+	public static ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String gridIdCol, int res, int factor, boolean average) {	
 
 		//index input data by upper grid cell
 		HashMap<String, List<Map<String, String>>> index = new HashMap<>();
