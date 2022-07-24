@@ -77,7 +77,7 @@ public class EurAccessibility {
 
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000);
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, true);
 			logger.info(out.size());
 
 			logger.info("Save");
