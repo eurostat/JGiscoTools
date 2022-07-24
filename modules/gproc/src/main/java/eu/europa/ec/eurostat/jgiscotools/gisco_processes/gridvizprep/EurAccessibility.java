@@ -128,7 +128,7 @@ public class EurAccessibility {
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
 			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res,
-					10000, Set.of("avg_time_nearest"));
+					10000, Set.of("avg_time_nearest"), "NA");
 			logger.info(out.size());
 
 			// round

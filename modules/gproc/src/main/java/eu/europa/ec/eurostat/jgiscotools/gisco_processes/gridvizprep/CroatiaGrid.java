@@ -64,7 +64,7 @@ public class CroatiaGrid {
 
 			for(int res : resolutions) {
 				logger.info("Aggregate " + res + "m");
-				ArrayList<Map<String, String>> cells = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, null);
+				ArrayList<Map<String, String>> cells = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, null, null);
 				logger.info(cells.size());
 
 				//logger.info("Save");
