@@ -68,7 +68,7 @@ public class GridVizTransfo {
 
 	}
 
-	/*/ derive resolutions
+	// derive resolutions
 	private static void aggregate() {
 
 		logger.info("Load");
@@ -85,9 +85,11 @@ public class GridVizTransfo {
 			CSVUtil.save(out, basePath + "out_" + res + ".csv");
 		}
 	}
-*/
+
 	
-	// tile all resolutions
+
+	
+	/*/ tile all resolutions
 	private static void tiling() {
 
 		for (int res : resolutions) {
@@ -111,7 +113,7 @@ public class GridVizTransfo {
 			gst.saveTilingInfoJSON(outpath, "Filosofi 2015 resolution " + res + "m");
 
 		}
-	}
+	}*/
 
 	/*
 	 * public static void main(String[] args) {
