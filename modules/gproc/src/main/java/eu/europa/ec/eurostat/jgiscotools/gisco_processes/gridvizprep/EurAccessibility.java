@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import org.locationtech.jts.geom.Coordinate;
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
+import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class EurAccessibility {
 	static Logger logger = LogManager.getLogger(EurAccessibility.class.getName());
@@ -34,15 +36,26 @@ public class EurAccessibility {
 	}
 
 	private static void join(int year) {
-		ArrayList<Map<String, String>> dataPop = CSVUtil.load(basePath + "pop"+year+".csv");
-		logger.info("pop: " + dataPop.size());
-		ArrayList<Map<String, String>> dataAcc = CSVUtil.load(basePath + "prepared_health.csv");
-		logger.info("acc: " + dataAcc.size());
 
-		//index values
+		ArrayList<Map<String, String>> data;
 		
-		//get all ids
+		data = CSVUtil.load(basePath + "pop"+year+".csv");
+		logger.info("pop: " + data.size());
+		HashMap<String, Map<String, String>> iPop = Util.index(data, "GRD_ID");
+		logger.info("popI: " + iPop.keySet().size());
 
+		data = CSVUtil.load(basePath + "prepared_health.csv");
+		logger.info("acc: " + data.size());
+		HashMap<String, Map<String, String>> iHealth = Util.index(data, "GRD_ID");
+		logger.info("accI: " + iHealth.keySet().size());
+
+		data = null;
+
+		//get all ids
+		Set<String> ids = Set.of();
+		ids.addAll(iPop.keySet());
+		ids.addAll(iHealth.keySet());
+	
 		//go through ids
 		//addall
 		
