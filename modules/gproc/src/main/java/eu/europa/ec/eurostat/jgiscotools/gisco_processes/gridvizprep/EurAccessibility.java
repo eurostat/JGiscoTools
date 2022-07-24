@@ -82,11 +82,11 @@ public class EurAccessibility {
 
 			//round
 			for (Map<String, String> d : data) {
-				String ts = d.get("Total_Trav").replace(",", ".");
+				String ts = d.get("avg_time_nearest");
 				double t = Double.parseDouble(ts);
-				d.put("Total_Trav", Math.ceil(t) + "");
+				d.put("avg_time_nearest", Math.ceil(t) + "");
 			}
-			
+
 			logger.info("Save");
 			CSVUtil.save(out, basePath + "out_" + res + ".csv");
 		}
