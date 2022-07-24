@@ -64,12 +64,15 @@ public class GridMultiResolutionProduction {
 			for(String key : keys) {
 				if(key.equals(gridIdCol)) continue;
 				double sum = 0;
+				int nb = 0;
 				for(Map<String, String> cell : e.getValue()) {
 					String s = cell.get(key);
 					double v = Double.parseDouble(s);
 					sum += factor * v;
+					nb++;
 				}
 				sum /= factor;
+				if(average) sum /= nb;
 				String sumS = (sum % 1) == 0 ? Integer.toString((int)sum) : Double.toString(sum);
 				aggCell.put(key, sumS);
 			}
