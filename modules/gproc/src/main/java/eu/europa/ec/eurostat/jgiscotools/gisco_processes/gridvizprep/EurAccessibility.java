@@ -32,8 +32,8 @@ public class EurAccessibility {
 		// prepareEduc();
 		// check(2006);check(2011);check(2018);
 		//join(2018);
-		aggregate();
-		//tiling();
+		//aggregate();
+		tiling();
 		logger.info("End");
 	}
 
