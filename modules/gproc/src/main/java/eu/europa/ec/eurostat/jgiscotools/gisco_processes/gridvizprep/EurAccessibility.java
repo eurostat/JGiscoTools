@@ -80,6 +80,13 @@ public class EurAccessibility {
 			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, true);
 			logger.info(out.size());
 
+			//round
+			for (Map<String, String> d : data) {
+				String ts = d.get("Total_Trav").replace(",", ".");
+				double t = Double.parseDouble(ts);
+				d.put("Total_Trav", Math.ceil(t) + "");
+			}
+			
 			logger.info("Save");
 			CSVUtil.save(out, basePath + "out_" + res + ".csv");
 		}
