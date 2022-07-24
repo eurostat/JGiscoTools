@@ -22,17 +22,51 @@ public class EurAccessibility {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		preparePop2018();
+		//preparePop(2006);
 		// prepareHealth();
 		// prepareEduc();
+		check(2006);
+		check(2011);
+		check(2018);
 		// join
 		// aggregate();
 		// tiling();
 		logger.info("End");
 	}
 
-	private static void preparePop2018() {
 
+	private static void check(int year) {
+		ArrayList<Map<String, String>> dataPop = CSVUtil.load(basePath + "pop"+year+".csv");
+		logger.info("pop: " + dataPop.size());
+		ArrayList<Map<String, String>> dataAcc = CSVUtil.load(basePath + "prepared_health.csv");
+		logger.info("acc: " + dataAcc.size());
+
+		int nb = 0;
+		for (Map<String, String> d : dataAcc) {
+			String id = d.get("GRD_ID");
+			boolean found = false;
+			for (Map<String, String> d2 : dataPop) {
+				String id2 = d2.get("GRD_ID");
+				if(!id.equals(id2)) continue;
+				found = true;
+				break;
+			}
+			if(!found)
+				nb++;
+		}
+		System.out.println(year + " " + nb);
+	}
+
+
+
+	private static void preparePop(int year) {
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_grid_"+year+"_1km.csv");
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+		logger.info("save");
+		CSVUtil.save(data, basePath + "pop"+year+".csv");
 	}
 
 	private static void prepareHealth() {
