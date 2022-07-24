@@ -12,8 +12,8 @@ import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProd
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
-public class GridVizTransfo {
-	static Logger logger = LogManager.getLogger(GridVizTransfo.class.getName());
+public class EurAccessibility {
+	static Logger logger = LogManager.getLogger(EurAccessibility.class.getName());
 
 	// the target resolutions
 	private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
