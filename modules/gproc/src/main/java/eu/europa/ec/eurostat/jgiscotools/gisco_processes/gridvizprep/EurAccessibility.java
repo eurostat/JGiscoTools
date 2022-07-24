@@ -71,8 +71,6 @@ public class EurAccessibility {
 			String atnh = iHealth.get(id) == null ? "NA" : iHealth.get(id).get("avg_time_nearest");
 			d.put("avg_time_nearest_h", atnh);
 
-			//System.out.println(d);
-			
 			out.add(d);
 		}
 
