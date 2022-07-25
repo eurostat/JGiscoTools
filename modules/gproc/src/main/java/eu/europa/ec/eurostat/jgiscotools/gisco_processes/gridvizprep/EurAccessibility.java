@@ -28,15 +28,59 @@ public class EurAccessibility {
 	public static void main(String[] args) {
 		logger.info("Start");
 		// preparePop(2018);
-		// prepareHealth();
+		//prepareHealth();
+		prepareEduc();
 		// prepareEduc();
 		// check(2006);check(2011);check(2018);
 		//join(2018);
 		//aggregate();
-		tiling();
+		//tiling();
 		logger.info("End");
 	}
 
+	private static void prepareHealth() {
+
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load(
+				basePath + "health/input/avg_time_nearest_healthcare_1205.csv",
+				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(";".charAt(0)));
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+		// [GRD_ID;Total_Trav]
+
+		logger.info("Structure");
+		for (Map<String, String> d : data) {
+			String ts = d.get("Total_Trav").replace(",", ".");
+			double t = Double.parseDouble(ts);
+			d.put("Total_Trav", Math.ceil(t) + "");
+
+		}
+
+		logger.info("Rename colums");
+		CSVUtil.renameColumn(data, "Total_Trav", "avg_time_nearest");
+
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+		logger.info("save");
+		CSVUtil.save(data, basePath + "prepared_health.csv");
+
+	}
+
+	
+
+	private static void preparePop(int year) {
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil
+				.load("/home/juju/Bureau/gisco/grid_pop/pop_grid_" + year + "_1km.csv");
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+		logger.info("save");
+		CSVUtil.save(data, basePath + "pop" + year + ".csv");
+	}
+
+	
 	private static void join(int year) {
 
 		ArrayList<Map<String, String>> data;
@@ -78,46 +122,9 @@ public class EurAccessibility {
 		CSVUtil.save(out, basePath + "prepared.csv");
 	}
 
-	private static void preparePop(int year) {
-		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil
-				.load("/home/juju/Bureau/gisco/grid_pop/pop_grid_" + year + "_1km.csv");
-		logger.info(data.size());
-		logger.info(data.get(0).keySet());
-
-		logger.info("save");
-		CSVUtil.save(data, basePath + "pop" + year + ".csv");
-	}
-
-	private static void prepareHealth() {
-
-		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(
-				basePath + "health/input/avg_time_nearest_healthcare_1205.csv",
-				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(";".charAt(0)));
-		logger.info(data.size());
-		logger.info(data.get(0).keySet());
-		// [GRD_ID;Total_Trav]
-
-		logger.info("Structure");
-		for (Map<String, String> d : data) {
-			String ts = d.get("Total_Trav").replace(",", ".");
-			double t = Double.parseDouble(ts);
-			d.put("Total_Trav", Math.ceil(t) + "");
-
-		}
-
-		logger.info("Rename colums");
-		CSVUtil.renameColumn(data, "Total_Trav", "avg_time_nearest");
-
-		logger.info(data.size());
-		logger.info(data.get(0).keySet());
-
-		logger.info("save");
-		CSVUtil.save(data, basePath + "prepared_health.csv");
-
-	}
-
+	
+	
+	
 	// derive resolutions
 	private static void aggregate() {
 
