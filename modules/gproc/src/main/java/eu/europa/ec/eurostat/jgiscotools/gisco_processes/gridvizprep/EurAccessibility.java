@@ -179,14 +179,16 @@ public class EurAccessibility {
 			// round
 			for (Map<String, String> d : out) {
 				String ts = d.get("avg_time_nearest_h");
-				if(ts.equals("NA")) continue;
-				double t = Double.parseDouble(ts);
-				d.put("avg_time_nearest_h", ((int) Math.ceil(t)) + "");
+				if(!ts.equals("NA")) {
+					double t = Double.parseDouble(ts);
+					d.put("avg_time_nearest_h", ((int) Math.ceil(t)) + "");
+				}
 
 				ts = d.get("avg_time_nearest_ep");
-				if(ts.equals("NA")) continue;
-				t = Double.parseDouble(ts);
-				d.put("avg_time_nearest_ep", ((int) Math.ceil(t*10))/10 + "");
+				if(!ts.equals("NA")) {
+					double t = Double.parseDouble(ts);
+					d.put("avg_time_nearest_ep", (Math.ceil(t*10)/10) + "");
+				}
 			}
 
 			logger.info("Save " + out.size());
