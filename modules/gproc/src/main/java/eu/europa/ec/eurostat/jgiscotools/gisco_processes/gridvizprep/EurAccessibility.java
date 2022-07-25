@@ -29,16 +29,16 @@ public class EurAccessibility {
 		logger.info("Start");
 		// preparePop(2018);
 		//prepareHealth();
-		prepareEduc();
+		//prepareEducPrim();
 		// prepareEduc();
 		// check(2006);check(2011);check(2018);
 		//join(2018);
-		//aggregate();
+		aggregate();
 		//tiling();
 		logger.info("End");
 	}
 
-	private static void prepareEduc() {
+	private static void prepareEducPrim() {
 
 		logger.info("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(
@@ -57,6 +57,7 @@ public class EurAccessibility {
 
 		logger.info("Rename colums");
 		CSVUtil.renameColumn(data, "Total_Trav", "avg_time_nearest");
+		CSVUtil.renameColumn(data, "ID", "GRD_ID");
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
@@ -123,6 +124,11 @@ public class EurAccessibility {
 		HashMap<String, Map<String, String>> iHealth = Util.index(data, "GRD_ID");
 		logger.info("accI: " + iHealth.keySet().size());
 
+		data = CSVUtil.load(basePath + "prepared_educ_prim.csv");
+		logger.info("acc: " + data.size());
+		HashMap<String, Map<String, String>> iEducPrim = Util.index(data, "GRD_ID");
+		logger.info("accI: " + iHealth.keySet().size());
+
 		data = null;
 
 		// get all ids
@@ -142,6 +148,9 @@ public class EurAccessibility {
 
 			String atnh = iHealth.get(id) == null ? "NA" : iHealth.get(id).get("avg_time_nearest");
 			d.put("avg_time_nearest_h", atnh);
+
+			atnh = iEducPrim.get(id) == null ? "NA" : iEducPrim.get(id).get("avg_time_nearest");
+			d.put("avg_time_nearest_ep", atnh);
 
 			out.add(d);
 		}
@@ -164,7 +173,7 @@ public class EurAccessibility {
 			logger.info("Aggregate " + res + "m");
 			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(
 					data, "GRD_ID", res,
-					10000, Set.of("avg_time_nearest_h"), "NA");
+					10000, Set.of("avg_time_nearest_h", "avg_time_nearest_ep"), "NA");
 			logger.info(out.size());
 
 			// round
@@ -173,6 +182,11 @@ public class EurAccessibility {
 				if(ts.equals("NA")) continue;
 				double t = Double.parseDouble(ts);
 				d.put("avg_time_nearest_h", ((int) Math.ceil(t)) + "");
+
+				ts = d.get("avg_time_nearest_ep");
+				if(ts.equals("NA")) continue;
+				t = Double.parseDouble(ts);
+				d.put("avg_time_nearest_ep", ((int) Math.ceil(t*10))/10 + "");
 			}
 
 			logger.info("Save " + out.size());
