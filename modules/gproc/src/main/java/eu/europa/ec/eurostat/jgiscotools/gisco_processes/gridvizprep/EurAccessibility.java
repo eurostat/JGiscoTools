@@ -38,6 +38,19 @@ public class EurAccessibility {
 		logger.info("End");
 	}
 
+	private static void prepareEduc() {
+
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load(
+				basePath + "education/input/GRID_PRIMARY_NEAREST_01005.csv",
+				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(";".charAt(0)));
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+
+	
+	}
+
 	private static void prepareHealth() {
 
 		logger.info("Load");
