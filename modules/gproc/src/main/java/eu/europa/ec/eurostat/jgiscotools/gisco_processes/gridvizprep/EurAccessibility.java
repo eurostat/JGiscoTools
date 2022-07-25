@@ -46,9 +46,24 @@ public class EurAccessibility {
 				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(";".charAt(0)));
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
+		//[Total_Trav, ID]
 
+		logger.info("Structure");
+		for (Map<String, String> d : data) {
+			String ts = d.get("Total_Trav").replace(",", ".");
+			double t = Double.parseDouble(ts);
+			d.put("Total_Trav", (Math.ceil(t*10)/10) + "");
+		}
 
-	
+		logger.info("Rename colums");
+		CSVUtil.renameColumn(data, "Total_Trav", "avg_time_nearest");
+
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+		logger.info("save");
+		CSVUtil.save(data, basePath + "prepared_educ_prim.csv");
+
 	}
 
 	private static void prepareHealth() {
