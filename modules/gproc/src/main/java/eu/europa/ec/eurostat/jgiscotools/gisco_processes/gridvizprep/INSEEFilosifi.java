@@ -21,6 +21,81 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 public class INSEEFilosifi {
 	static Logger logger = LogManager.getLogger(INSEEFilosifi.class.getName());
 
+	//2015
+	//IdINSPIRE
+	//Id_carr1km
+	//I_est_cr
+	//Id_carr_n
+	//Groupe,Depcom
+	//I_pauv
+	//Id_car2010
+	//Ind
+	//Men
+	//Men_pauv
+	//Men_1ind
+	//Men_5ind
+	//Men_prop
+	//Men_fmp
+	//Ind_snv
+	//Men_surf
+	//Men_coll
+	//Men_mais
+	//Log_av45
+	//Log_45_70
+	//Log_70_90
+	//Log_ap90
+	//Log_inc
+	//Log_soc
+	//Ind_0_3
+	//Ind_4_5
+	//Ind_6_10
+	//Ind_11_17
+	//Ind_18_24
+	//Ind_25_39
+	//Ind_40_54
+	//Ind_55_64
+	//Ind_65_79
+	//Ind_80p
+	//Ind_inc
+	//I_est_1km
+
+	//2017
+	//Idcar_200m
+	//I_est_200
+	//Idcar_1km
+	//I_est_1km
+	//Idcar_nat
+	//Groupe
+	//Ind
+	//Men_1ind
+	//Men_5ind
+	//Men_prop
+	//Men_fmp
+	//Ind_snv
+	//Men_surf
+	//Men_coll
+	//Men_mais
+	//Log_av45
+	//Log_45_70
+	//Log_70_90
+	//Log_ap90
+	//Log_inc
+	//Log_soc
+	//Ind_0_3
+	//Ind_4_5
+	//Ind_6_10
+	//Ind_11_17
+	//Ind_18_24
+	//Ind_25_39
+	//Ind_40_54
+	//Ind_55_64
+	//Ind_65_79
+	//Ind_80p
+	//Ind_inc
+	//Men_pauv
+	//Men
+	//lcog_geo
+
 
 	//the target resolutions
 	private static int[] resolutions = new int[] {200, 400, 1000, 2000, 5000, 10000, 20000, 50000};
