@@ -21,6 +21,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 public class INSEEFilosifi {
 	static Logger logger = LogManager.getLogger(INSEEFilosifi.class.getName());
 
+
 	//2015
 	//IdINSPIRE
 	//Id_carr1km
