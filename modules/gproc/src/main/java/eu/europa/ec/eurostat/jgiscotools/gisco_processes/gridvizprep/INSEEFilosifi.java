@@ -22,6 +22,9 @@ public class INSEEFilosifi {
 	static Logger logger = LogManager.getLogger(INSEEFilosifi.class.getName());
 
 	//2015
+	//IdINSPIRE,Id_carr1km,I_est_cr,Id_carr_n,Groupe,Depcom,I_pauv,Id_car2010,Ind,Men,Men_pauv,Men_1ind,Men_5ind,Men_prop,Men_fmp,Ind_snv,Men_surf,Men_coll,Men_mais,Log_av45,Log_45_70,Log_70_90,Log_ap90,Log_inc,Log_soc,Ind_0_3,Ind_4_5,Ind_6_10,Ind_11_17,Ind_18_24,Ind_25_39,Ind_40_54,Ind_55_64,Ind_65_79,Ind_80p,Ind_inc,I_est_1km
+	//CRS3035RES200mN2893400E3763200,CRS3035RES1000mN2893000E3763000,"0",CRS3035RES1000mN2893000E3763000,"866132","75119","0",CRS3035RES200mN2893400E3763200,2818.5,990.0,280.0,340.0,164.0,21.0,159.0,44265483.1,57579.0,988.0,2.0,426.0,0.0,237.0,327.0,0.0,937.0,147.0,77.0,162.5,308.0,208.0,517.0,524.0,362.0,351.0,93.0,69.0,"0"
+
 	//Ind - Nombre d’individus
 	//Ind_0_3
 	//Ind_4_5
@@ -60,7 +63,11 @@ public class INSEEFilosifi {
 	//Depcom - code commune - out
 	//I_pauv - Vaut 1 si le carreau a été traité pour respecter la confidentialité sur le nombre de ménages pauvres (valeur ramenée à 80 % du nombre de ménages).
 
+
 	//2017
+	//Idcar_200m,I_est_200,Idcar_1km,I_est_1km,Idcar_nat,Groupe,Ind,Men_1ind,Men_5ind,Men_prop,Men_fmp,Ind_snv,Men_surf,Men_coll,Men_mais,Log_av45,Log_45_70,Log_70_90,Log_ap90,Log_inc,Log_soc,Ind_0_3,Ind_4_5,Ind_6_10,Ind_11_17,Ind_18_24,Ind_25_39,Ind_40_54,Ind_55_64,Ind_65_79,Ind_80p,Ind_inc,Men_pauv,Men,lcog_geo
+	//CRS3035RES200mN2029800E4254200,1,CRS3035RES1000mN2029000E4254000,1,CRS3035RES8000mN2024000E4248000,14863,2,0.3,0,0.6,0,59349.4,145.1,0.1,0.8,0,0,0.4,0.5,0,0,0,0,0,0.3,0.2,0,0.4,0.3,0.7,0.1,0,0.2,0.9,2A041
+	
 	//Ind - Nombre d’individus
 	//Ind_0_3
 	//Ind_4_5
