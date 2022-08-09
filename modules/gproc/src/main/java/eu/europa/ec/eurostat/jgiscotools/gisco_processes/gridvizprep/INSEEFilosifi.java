@@ -116,6 +116,8 @@ public class INSEEFilosifi {
 		//prepare2015();
 		//prepare2017();
 		//prepareInd()
+		//prepareIndCh()
+		//prepareSNV()
 		//prepareMen()
 		//prepareLog()
 		//aggregate();
