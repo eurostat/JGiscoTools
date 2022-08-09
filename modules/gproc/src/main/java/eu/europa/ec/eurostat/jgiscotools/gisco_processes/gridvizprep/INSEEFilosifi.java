@@ -173,7 +173,6 @@ public class INSEEFilosifi {
 			logger.info("Ind " + year);
 			ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/" + year + "_prepared.csv");
 
-			logger.info("Remove colums");
 			CSVUtil.removeColumn(data, "Men_1ind", "Men_5ind", "Men_prop", "Men_fmp", "Men_surf", "Men_coll",
 					"Men_mais", "Log_av45", "Log_45_70", "Log_70_90", "Log_ap90", "Log_inc", "Log_soc", "Men_pauv",
 					"Men");
@@ -194,10 +193,9 @@ public class INSEEFilosifi {
 	private static void prepareMen() {
 
 		for (int year : new int[] { 2015, 2017 }) {
-			logger.info("Ind " + year);
+			logger.info("Men " + year);
 			ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/" + year + "_prepared.csv");
 
-			logger.info("Remove colums");
 			CSVUtil.removeColumn(data, "Ind_snv", "Log_av45", "Log_45_70", "Log_70_90", "Log_ap90", "Log_inc",
 					"Log_soc", "Ind_0_3", "Ind_4_5", "Ind_6_10", "Ind_11_17", "Ind_18_24", "Ind_25_39", "Ind_40_54",
 					"Ind_55_64", "Ind_65_79", "Ind_80p", "Ind_inc");
@@ -212,10 +210,9 @@ public class INSEEFilosifi {
 	private static void prepareLog() {
 
 		for (int year : new int[] { 2015, 2017 }) {
-			logger.info("Ind " + year);
+			logger.info("Log " + year);
 			ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/" + year + "_prepared.csv");
 
-			logger.info("Remove colums");
 			CSVUtil.removeColumn(data, "Men_1ind", "Men_5ind", "Men_prop", "Men_fmp", "Ind_snv", "Men_surf", "Men_coll",
 					"Men_mais", "Ind_0_3", "Ind_4_5", "Ind_6_10", "Ind_11_17", "Ind_18_24", "Ind_25_39", "Ind_40_54",
 					"Ind_55_64", "Ind_65_79", "Ind_80p", "Ind_inc", "Men_pauv", "Men");
