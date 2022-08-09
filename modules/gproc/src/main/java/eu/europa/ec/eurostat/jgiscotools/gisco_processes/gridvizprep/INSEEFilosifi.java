@@ -113,13 +113,15 @@ public class INSEEFilosifi {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		// prepare2015();
-		// prepare2017();
+		//prepare2015();
+		//prepare2017();
+
 		//prepareInd();
 		//prepareIndCh();
-		// prepareSNV();
+		//prepareSNV();
 		//prepareMen();
 		//prepareLog();
+
 		aggregate();
 		// tiling();
 		logger.info("End");
