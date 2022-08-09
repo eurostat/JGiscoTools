@@ -21,33 +21,47 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 public class INSEEFilosifi {
 	static Logger logger = LogManager.getLogger(INSEEFilosifi.class.getName());
 
-
 	//2015
 	//Ind - Nombre d’individus
+	//Ind_0_3
+	//Ind_4_5
+	//Ind_6_10
+	//Ind_11_17
+	//Ind_18_24
+	//Ind_25_39
+	//Ind_40_54
+	//Ind_55_64
+	//Ind_65_79
+	//Ind_80p
+	//Ind_inc
 	//Men - Nombre de ménages
 	//Men_pauv - Nombre de ménages pauvres
 	//Men_1ind - Nombre de ménages d’un seul individu
 	//Men_5ind - Nombre de ménages de 5 individus ou plus
 	//Men_prop - Nombre de ménages propriétaires
 	//Men_fmp - Nombre de ménages monoparentaux
-	//IdINSPIRE
-	//Id_carr1km
-	//I_est_cr
-	//Id_carr_n
+	//Ind_snv - Somme des niveaux de vie winsorisés des individus
+	//Men_surf - Somme de la surface des logements* du carreau
+	//Men_coll - Nombre de ménages en logement collectif
+	//Men_mais - Nombre de ménages en maison
+	//Log_av45 - Nombre de logements* construits avant 1945
+	//Log_45_70 - Nombre de logements*construits entre 1945 et 1969
+	//Log_70_90 - Nombre de logements* construits entre 1970 et 1989
+	//Log_ap90 - Nombre de logements* construits depuis 1990
+	//Log_inc - Nombre de logements* dont la date de construction est inconnue
+	//Log_soc - Nombre de logements* sociaux
+	//IdINSPIRE - id inspire
+	//Id_carr_n - out
+	//Id_carr1km - out
+	//Id_car2010 - out
+	//I_est_cr - Vaut 1 si le carreau est imputé par une valeur approchée, 0 sinon.
+	//I_est_1km - out
 	//Groupe
-	//Depcom
-	//I_pauv
-	//Id_car2010
-	//Ind_snv
-	//Men_surf
-	//Men_coll
-	//Men_mais
-	//Log_av45
-	//Log_45_70
-	//Log_70_90
-	//Log_ap90
-	//Log_inc
-	//Log_soc
+	//Depcom - code commune - out
+	//I_pauv - Vaut 1 si le carreau a été traité pour respecter la confidentialité sur le nombre de ménages pauvres (valeur ramenée à 80 % du nombre de ménages).
+
+	//2017
+	//Ind - Nombre d’individus
 	//Ind_0_3
 	//Ind_4_5
 	//Ind_6_10
@@ -59,43 +73,28 @@ public class INSEEFilosifi {
 	//Ind_65_79
 	//Ind_80p
 	//Ind_inc
-	//I_est_1km
-
-	//2017
-	//Ind - Nombre d’individus
 	//Men - Nombre de ménages
 	//Men_pauv - Nombre de ménages pauvres
 	//Men_1ind - Nombre de ménages d’un seul individu
 	//Men_5ind - Nombre de ménages de 5 individus ou plus
 	//Men_prop - Nombre de ménages propriétaires
 	//Men_fmp - Nombre de ménages monoparentaux	
-	//Idcar_200m
-	//I_est_200
-	//Idcar_1km
-	//I_est_1km
-	//Idcar_nat
+	//Ind_snv - Somme des niveaux de vie winsorisés des individus
+	//Men_surf - Somme de la surface des logements* du carreau
+	//Men_coll - Nombre de ménages en logement collectif
+	//Men_mais - Nombre de ménages en maison
+	//Log_av45 - Nombre de logements* construits avant 1945
+	//Log_45_70 - Nombre de logements*construits entre 1945 et 1969
+	//Log_70_90 - Nombre de logements* construits entre 1970 et 1989
+	//Log_ap90 - Nombre de logements* construits depuis 1990
+	//Log_inc - Nombre de logements* dont la date de construction est inconnue
+	//Log_soc - Nombre de logements* sociaux
+	//Idcar_200m - id inspire
+	//Idcar_1km - id inspire
+	//Idcar_nat - out
+	//I_est_200 - Vaut 1 si le carreau est imputé par une valeur approchée, 0 sinon.
+	//I_est_1km - out
 	//Groupe
-	//Ind_snv
-	//Men_surf
-	//Men_coll
-	//Men_mais
-	//Log_av45
-	//Log_45_70
-	//Log_70_90
-	//Log_ap90
-	//Log_inc
-	//Log_soc
-	//Ind_0_3
-	//Ind_4_5
-	//Ind_6_10
-	//Ind_11_17
-	//Ind_18_24
-	//Ind_25_39
-	//Ind_40_54
-	//Ind_55_64
-	//Ind_65_79
-	//Ind_80p
-	//Ind_inc
 	//lcog_geo
 
 
