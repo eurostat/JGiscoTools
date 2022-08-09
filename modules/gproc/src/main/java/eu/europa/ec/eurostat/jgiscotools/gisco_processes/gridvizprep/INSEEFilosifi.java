@@ -113,8 +113,8 @@ public class INSEEFilosifi {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		prepare2015();
-		//prepare2017();
+		//prepare2015();
+		prepare2017();
 		//prepareInd()
 		//prepareIndCh()
 		//prepareSNV()
@@ -127,10 +127,9 @@ public class INSEEFilosifi {
 
 
 
-	//remove attributes
 	private static void prepare2015() {
 
-		logger.info("Load");
+		logger.info("Load 2015");
 		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "2015/Filosofi2015_carreaux_200m_metropole.csv");
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
@@ -138,7 +137,6 @@ public class INSEEFilosifi {
 		logger.info("Remove colums");
 		CSVUtil.removeColumn(data,
 				"Id_carr1km",
-				//"I_est_cr",
 				"Id_carr_n",
 				"Groupe",
 				"Depcom",
@@ -154,8 +152,35 @@ public class INSEEFilosifi {
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 
-		logger.info("save");
+		logger.info("save 2015");
 		CSVUtil.save(data, basePath + "out/2015_prepared.csv");
+	}
+
+	private static void prepare2017() {
+
+		logger.info("Load 2017");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "2017/Filosofi2017_carreaux_200m_met.csv");
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+		logger.info("Remove colums");
+		CSVUtil.removeColumn(data,
+				"Idcar_1km",
+				"Idcar_nat",
+				"I_est_1km",
+				"Groupe",
+				"lcog_geo"
+				);
+
+		logger.info("Rename colums");
+		CSVUtil.renameColumn(data, "Idcar_200m", "GRD_ID");
+		CSVUtil.renameColumn(data, "I_est_200", "imputed");
+
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+		logger.info("save 2017");
+		CSVUtil.save(data, basePath + "out/2017_prepared.csv");
 	}
 
 
