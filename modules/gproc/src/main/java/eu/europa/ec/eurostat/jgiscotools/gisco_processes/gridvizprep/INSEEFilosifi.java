@@ -113,6 +113,7 @@ public class INSEEFilosifi {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
+
 		//prepare2015();
 		//prepare2017();
 
@@ -122,8 +123,9 @@ public class INSEEFilosifi {
 		//prepareMen();
 		//prepareLog();
 
-		aggregate();
-		// tiling();
+		//aggregate();
+		tiling();
+
 		logger.info("End");
 	}
 
@@ -231,7 +233,7 @@ public class INSEEFilosifi {
 
 		for (String ds : new String[] { "ind", "men", "log" }) {
 			for (int year : new int[] { 2015, 2017 }) {
-				logger.info("Load");
+				logger.info("Load "+ds+" "+year);
 				ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/" + year + "_"+ds+".csv");
 				logger.info(data.size());
 
@@ -251,27 +253,29 @@ public class INSEEFilosifi {
 
 	// tile all resolutions
 	private static void tiling() {
+		for (String ds : new String[] { "ind", "men", "log" }) {
+			for (int year : new int[] { 2015, 2017 }) {
 
-		for (int res : resolutions) {
-			logger.info("Tiling " + res + "m");
+				for (int res : resolutions) {
+					logger.info("Tiling " +ds+" "+year+" " + res + "m");
 
-			String f = basePath + "Filosofi2015_" + res + ".csv";
+					logger.info("Load");
+					ArrayList<Map<String, String>> cells = CSVUtil.load(basePath + "out/" + year + "_"+ds+"_"+res+".csv");
+					logger.info(cells.size());
 
-			logger.info("Load");
-			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
-			logger.info(cells.size());
+					logger.info("Build tiles");
+					GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
 
-			logger.info("Build tiles");
-			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
+					gst.createTiles();
+					logger.info(gst.getTiles().size() + " tiles created");
 
-			gst.createTiles();
-			logger.info(gst.getTiles().size() + " tiles created");
+					logger.info("Save");
+					String outpath = basePath + "tiled/" + ds +"/"+ year +"/" + res + "m";
+					gst.saveCSV(outpath);
+					gst.saveTilingInfoJSON(outpath, "Filosofi "+year+" resolution " + res + "m");
 
-			logger.info("Save");
-			String outpath = basePath + "tiled/" + res + "m";
-			gst.saveCSV(outpath);
-			gst.saveTilingInfoJSON(outpath, "Filosofi 2015 resolution " + res + "m");
-
+				}
+			}
 		}
 	}
 
