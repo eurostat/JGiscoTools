@@ -115,12 +115,12 @@ public class INSEEFilosifi {
 		logger.info("Start");
 		// prepare2015();
 		// prepare2017();
-		prepareInd();
+		//prepareInd();
 		//prepareIndCh();
 		// prepareSNV();
-		prepareMen();
-		prepareLog();
-		// aggregate();
+		//prepareMen();
+		//prepareLog();
+		aggregate();
 		// tiling();
 		logger.info("End");
 	}
@@ -227,19 +227,24 @@ public class INSEEFilosifi {
 	// derive resolutions
 	private static void aggregate() {
 
-		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/2015_prepared.csv");
-		logger.info(data.size());
+		for (String ds : new String[] { "ind", "men", "log" }) {
+			for (int year : new int[] { 2015, 2017 }) {
+				logger.info("Load");
+				ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/" + year + "_"+ds+".csv");
+				logger.info(data.size());
 
-		for (int res : resolutions) {
-			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res,
-					10000, null, null);
-			logger.info(out.size());
+				for (int res : resolutions) {
+					logger.info("Aggregate " + res + "m");
+					ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res,
+							10000, null, null);
+					logger.info(out.size());
 
-			logger.info("Save");
-			CSVUtil.save(out, basePath + "Filosofi2015_" + res + ".csv");
+					logger.info("Save");
+					CSVUtil.save(out, basePath + "out/" + year + "_"+ds+"_"+res+".csv");
+				}
+			}
 		}
+
 	}
 
 	// tile all resolutions
