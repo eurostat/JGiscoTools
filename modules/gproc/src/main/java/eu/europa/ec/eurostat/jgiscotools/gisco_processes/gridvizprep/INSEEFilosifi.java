@@ -23,20 +23,21 @@ public class INSEEFilosifi {
 
 
 	//2015
+	//Ind - Nombre d’individus
+	//Men - Nombre de ménages
+	//Men_pauv - Nombre de ménages pauvres
+	//Men_1ind - Nombre de ménages d’un seul individu
+	//Men_5ind - Nombre de ménages de 5 individus ou plus
+	//Men_prop - Nombre de ménages propriétaires
+	//Men_fmp - Nombre de ménages monoparentaux
 	//IdINSPIRE
 	//Id_carr1km
 	//I_est_cr
 	//Id_carr_n
-	//Groupe,Depcom
+	//Groupe
+	//Depcom
 	//I_pauv
 	//Id_car2010
-	//Ind
-	//Men
-	//Men_pauv
-	//Men_1ind
-	//Men_5ind
-	//Men_prop
-	//Men_fmp
 	//Ind_snv
 	//Men_surf
 	//Men_coll
@@ -61,17 +62,19 @@ public class INSEEFilosifi {
 	//I_est_1km
 
 	//2017
+	//Ind - Nombre d’individus
+	//Men - Nombre de ménages
+	//Men_pauv - Nombre de ménages pauvres
+	//Men_1ind - Nombre de ménages d’un seul individu
+	//Men_5ind - Nombre de ménages de 5 individus ou plus
+	//Men_prop - Nombre de ménages propriétaires
+	//Men_fmp - Nombre de ménages monoparentaux	
 	//Idcar_200m
 	//I_est_200
 	//Idcar_1km
 	//I_est_1km
 	//Idcar_nat
 	//Groupe
-	//Ind
-	//Men_1ind
-	//Men_5ind
-	//Men_prop
-	//Men_fmp
 	//Ind_snv
 	//Men_surf
 	//Men_coll
@@ -93,8 +96,6 @@ public class INSEEFilosifi {
 	//Ind_65_79
 	//Ind_80p
 	//Ind_inc
-	//Men_pauv
-	//Men
 	//lcog_geo
 
 
