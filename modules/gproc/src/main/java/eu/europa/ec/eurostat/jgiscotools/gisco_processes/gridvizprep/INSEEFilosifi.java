@@ -37,13 +37,13 @@ public class INSEEFilosifi {
 	//Ind_65_79
 	//Ind_80p
 	//Ind_inc
+	//Ind_snv - Somme des niveaux de vie winsorisés des individus
 	//Men - Nombre de ménages
 	//Men_pauv - Nombre de ménages pauvres
 	//Men_1ind - Nombre de ménages d’un seul individu
 	//Men_5ind - Nombre de ménages de 5 individus ou plus
 	//Men_prop - Nombre de ménages propriétaires
 	//Men_fmp - Nombre de ménages monoparentaux
-	//Ind_snv - Somme des niveaux de vie winsorisés des individus
 	//Men_surf - Somme de la surface des logements* du carreau
 	//Men_coll - Nombre de ménages en logement collectif
 	//Men_mais - Nombre de ménages en maison
@@ -80,13 +80,13 @@ public class INSEEFilosifi {
 	//Ind_65_79
 	//Ind_80p
 	//Ind_inc
+	//Ind_snv - Somme des niveaux de vie winsorisés des individus
 	//Men - Nombre de ménages
 	//Men_pauv - Nombre de ménages pauvres
 	//Men_1ind - Nombre de ménages d’un seul individu
 	//Men_5ind - Nombre de ménages de 5 individus ou plus
 	//Men_prop - Nombre de ménages propriétaires
 	//Men_fmp - Nombre de ménages monoparentaux	
-	//Ind_snv - Somme des niveaux de vie winsorisés des individus
 	//Men_surf - Somme de la surface des logements* du carreau
 	//Men_coll - Nombre de ménages en logement collectif
 	//Men_mais - Nombre de ménages en maison
@@ -113,9 +113,13 @@ public class INSEEFilosifi {
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		//prepare();
+		//prepare2015();
+		//prepare2017();
+		//prepareInd()
+		//prepareMen()
+		//prepareLog()
 		//aggregate();
-		tiling();
+		//tiling();
 		logger.info("End");
 	}
 
