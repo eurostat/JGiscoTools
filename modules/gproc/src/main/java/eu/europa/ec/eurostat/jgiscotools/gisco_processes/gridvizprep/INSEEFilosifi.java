@@ -205,7 +205,7 @@ public class INSEEFilosifi {
 			logger.info(data.get(0).keySet());
 
 			logger.info("save men " + year);
-			CSVUtil.save(data, basePath + "out/" + year + "_Men.csv");
+			CSVUtil.save(data, basePath + "out/" + year + "_men.csv");
 		}
 	}
 
