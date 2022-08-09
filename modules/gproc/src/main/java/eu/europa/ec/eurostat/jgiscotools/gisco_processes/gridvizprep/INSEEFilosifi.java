@@ -107,13 +107,13 @@ public class INSEEFilosifi {
 
 	//the target resolutions
 	private static int[] resolutions = new int[] {200, 400, 1000, 2000, 5000, 10000, 20000, 50000};
-	private static String basePath = "/home/juju/Bureau/gisco/cnt/fr/Filosofi_2015_200m/";
+	private static String basePath = "/home/juju/Bureau/gisco/cnt/fr/Filosofi_200m/";
 
 
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		//prepare2015();
+		prepare2015();
 		//prepare2017();
 		//prepareInd()
 		//prepareIndCh()
@@ -128,66 +128,34 @@ public class INSEEFilosifi {
 
 
 	//remove attributes
-	private static void prepare() {
+	private static void prepare2015() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "Filosofi2015_carreaux_200m_metropole.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "2015/Filosofi2015_carreaux_200m_metropole.csv");
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 
 		logger.info("Remove colums");
 		CSVUtil.removeColumn(data,
 				"Id_carr1km",
-				"I_est_cr",
+				//"I_est_cr",
 				"Id_carr_n",
 				"Groupe",
 				"Depcom",
 				"I_pauv",
 				"Id_car2010",
-				"I_est_1km",
-
-				"Men_1ind", //: Nombre de ménages d’un seul individu
-				"Men_5ind", //: Nombre de ménages de 5 individus ou plus
-				"Men_prop", //: Nombre de ménages propriétaires
-				"Men_fmp", //: Nombre de ménages monoparentaux
-				"Men_surf", //: Somme de la surface des logements du carreau
-				"Men_coll", //: Nombre de ménages en logements collectifs
-				"Men_mais", //: Nombre de ménages en maison
-				"Log_av45", //: Nombre de logements construits avant 1945
-				"Log_45_70", //: Nombre de logements construits entre 1945 et 1969
-				"Log_70_90", //: Nombre de logements construits entre 1970 et 1989
-				"Log_ap90", //: Nombre de logements construits depuis 1990
-				"Log_inc", //: Nombre de logements dont la date de construction est inconnue
-				"Log_soc" //: Nombre de logements sociaux
+				"I_est_1km"
 				);
-
-		/*
-		Ind : Nombre d’individus
-		Men : Nombre de ménages
-		Men_pauv : Nombre de ménages pauvres
-		Ind_snv : Somme des niveaux de vie winsorisés des individus
-		Ind_0_3 : Nombre d’individus de 0 à 3 ans
-		Ind_4_5 : Nombre d’individus de 4 à 5 ans
-		Ind_6_10 : Nombre d’individus de 6 à 10 ans
-		Ind_11_17 : Nombre d’individus de 11 à 17 ans
-		Ind_18_24 : Nombre d’individus de 18 à 24 ans
-		Ind_25_39 : Nombre d’individus de 25 à 39 ans
-		Ind_40_54 : Nombre d’individus de 40 à 54 ans
-		Ind_55_64 : Nombre d’individus de 55 à 64 ans
-		Ind_65_79 : Nombre d’individus de 65 à 79 ans
-		Ind_80p : Nombre d’individus de 80 ans ou plus
-		Ind_inc : Nombre d’individus dont l’âge est inconnu
-		 */
-
 
 		logger.info("Rename colums");
 		CSVUtil.renameColumn(data, "IdINSPIRE", "GRD_ID");
+		CSVUtil.renameColumn(data, "I_est_cr", "imputed");
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 
 		logger.info("save");
-		CSVUtil.save(data, basePath + "Filosofi2015_prepared.csv");
+		CSVUtil.save(data, basePath + "out/2015_prepared.csv");
 	}
 
 
@@ -195,7 +163,7 @@ public class INSEEFilosifi {
 	private static void aggregate() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "Filosofi2015_prepared.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/2015_prepared.csv");
 		logger.info(data.size());
 
 		for(int res : resolutions) {
