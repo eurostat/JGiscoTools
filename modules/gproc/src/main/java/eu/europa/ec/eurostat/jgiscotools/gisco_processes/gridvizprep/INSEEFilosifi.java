@@ -253,6 +253,7 @@ public class INSEEFilosifi {
 
 	// tile all resolutions
 	private static void tiling() {
+
 		for (String ds : new String[] { "ind", "men", "log" }) {
 			for (int year : new int[] { 2015, 2017 }) {
 
@@ -270,9 +271,9 @@ public class INSEEFilosifi {
 					logger.info(gst.getTiles().size() + " tiles created");
 
 					logger.info("Save");
-					String outpath = basePath + "tiled/" + ds +"/"+ year +"/" + res + "m";
+					String outpath = basePath + "out/tiled/" + ds +"/"+ year +"/" + res + "m";
 					gst.saveCSV(outpath);
-					gst.saveTilingInfoJSON(outpath, "Filosofi "+year+" resolution " + res + "m");
+					gst.saveTilingInfoJSON(outpath, "Filosofi "+year+ " " + ds +" resolution " + res + "m");
 
 				}
 			}
