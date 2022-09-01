@@ -265,7 +265,7 @@ public class INSEEFilosifi {
 					logger.info(cells.size());
 
 					logger.info("Build tiles");
-					GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
+					GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 256);
 
 					gst.createTiles();
 					logger.info(gst.getTiles().size() + " tiles created");
