@@ -8,10 +8,8 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.locationtech.jts.geom.Coordinate;
 
-import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
+import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 /**
@@ -23,17 +21,39 @@ public class EurPop {
 
 
 	//the target resolutions
-	private static int[] resolutions = new int[] {1000, 2000, 3000, 5000, 7000, 10000, 15000, 25000, 40000, 100000 };
-	private static String basePath = "/home/juju/Bureau/gisco/cnt/hr/grid/";
-	private static String[] files = new String[] {"Population_2011_Grid_1000m","Active_business_entities_2016_Grid_1000m","Tourism_2017_Grid_1000m"};
+	private static String basePath = "/home/juju/Bureau/gisco/grid_pop/";
 
 
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
 
+		int year = 2018;
 
-		
+		for(int resKm : new int[] {100, 50, 20, 10, 5}) {
+
+			logger.info("Load");
+			ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "pop_grid_" + year + "_"+ resKm +"km.csv");
+			logger.info(data.size());
+			logger.info(data.get(0).keySet());
+
+			for(Map<String, String> cell : data) {
+
+				String id = cell.get("GRD_ID");
+				GridCell gc = new GridCell(id);
+				cell.put("x", gc.getLowerLeftCornerPositionX()+"");
+				cell.put("y", gc.getLowerLeftCornerPositionY()+"");
+				cell.remove("GRD_ID");
+
+				cell.put("population", cell.get("TOT_P"));
+				cell.remove("TOT_P");
+			}
+
+			logger.info("save");
+			CSVUtil.save(data, basePath + "xy/" + "pop_grid_xy_" + year + "_"+ resKm +"km.csv");
+
+		}
+
 		logger.info("End");
 	}
 
