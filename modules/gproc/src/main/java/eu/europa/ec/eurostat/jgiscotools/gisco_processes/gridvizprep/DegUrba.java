@@ -46,7 +46,9 @@ public class DegUrba {
 
 		for (Map<String, String> d : data) {
 			String du = d.get("DGURBA_LVL2");
-			System.out.println(du);
+
+			//if(!du.equals("11") && !du.equals("12") && !du.equals("13") && !du.equals("21") && !du.equals("22") && !du.equals("23") && !du.equals("30") && !du.equals(""))
+			//	System.out.println(du);
 
 			d.put("uc", du.equals("30")? "1" : "0");
 			d.put("du", du.equals("23")? "1" : "0");
@@ -55,13 +57,18 @@ public class DegUrba {
 			d.put("r", du.equals("13")? "1" : "0");
 			d.put("lr", du.equals("12")? "1" : "0");
 			d.put("vlr", du.equals("11")? "1" : "0");
+			d.put("NA", du.equals("")? "1" : "0");
+			d.put("TOT", "1");
 
 			//clean
 			d.remove("DGURBA_LVL2");
 		}
 
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
 
-
+		logger.info("save");
+		CSVUtil.save(data, basePath + "degurba2_1km_prepared.csv");
 	}
 
 
