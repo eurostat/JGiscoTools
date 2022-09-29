@@ -2,11 +2,13 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class DegUrba {
@@ -19,13 +21,13 @@ public class DegUrba {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		format();
-		//aggregate();
+		//prepare();
+		aggregate();
 		//tiling();
 		logger.info("End");
 	}
 
-	private static void format() {
+	private static void prepare() {
 		logger.info("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "DGURBA_LEVEL2.txt",
 				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(";".charAt(0)));
@@ -71,5 +73,21 @@ public class DegUrba {
 		CSVUtil.save(data, basePath + "degurba2_1km_prepared.csv");
 	}
 
+
+	private static void aggregate() {
+
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "degurba2_1km_prepared.csv");
+		logger.info(data.size());
+
+		for (int res : resolutions) {
+			logger.info("Aggregate " + res + "m");
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, null, null);
+
+			logger.info("Save " + out.size());
+			CSVUtil.save(out, basePath + "degurba2_" + res + "m.csv");
+		}
+
+	}
 
 }
