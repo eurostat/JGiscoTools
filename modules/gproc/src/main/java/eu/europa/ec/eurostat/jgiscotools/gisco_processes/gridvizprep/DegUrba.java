@@ -2,13 +2,14 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class DegUrba {
@@ -23,7 +24,7 @@ public class DegUrba {
 		logger.info("Start");
 		//prepare();
 		aggregate();
-		//tiling();
+		tiling();
 		logger.info("End");
 	}
 
@@ -70,14 +71,15 @@ public class DegUrba {
 		logger.info(data.get(0).keySet());
 
 		logger.info("save");
-		CSVUtil.save(data, basePath + "degurba2_1km_prepared.csv");
+		CSVUtil.save(data, basePath + "out/degurba2_1km_prepared.csv");
 	}
+
 
 
 	private static void aggregate() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "degurba2_1km_prepared.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/degurba2_1km_prepared.csv");
 		logger.info(data.size());
 
 		for (int res : resolutions) {
@@ -85,9 +87,39 @@ public class DegUrba {
 			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, null, null);
 
 			logger.info("Save " + out.size());
-			CSVUtil.save(out, basePath + "degurba2_" + res + "m.csv");
+			CSVUtil.save(out, basePath + "out/degurba2_" + res + "m.csv");
 		}
 
 	}
+
+
+
+
+	// tile all resolutions
+	private static void tiling() {
+
+		for (int res : resolutions) {
+			logger.info("Tiling " + res + "m");
+
+			String f = basePath + "out/degurba2_" + res + "m.csv";
+
+			logger.info("Load");
+			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
+			logger.info(cells.size());
+
+			logger.info("Build tiles");
+			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
+
+			gst.createTiles();
+			logger.info(gst.getTiles().size() + " tiles created");
+
+			logger.info("Save");
+			String outpath = basePath + "out/tiled/" + res + "m";
+			gst.saveCSV(outpath);
+			gst.saveTilingInfoJSON(outpath, "degurba level 2 resolution " + res + "m");
+
+		}
+	}
+
 
 }
