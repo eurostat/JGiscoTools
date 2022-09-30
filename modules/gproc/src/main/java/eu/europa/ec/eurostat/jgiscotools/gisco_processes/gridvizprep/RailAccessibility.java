@@ -34,16 +34,35 @@ public class RailAccessibility {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-		prepare();
+		tiffToCSV();
 		aggregate();
 		tiling();
 		logger.info("End");
 	}
 
-	private static void prepare() throws Throwable {
+	private static void tiffToCSV() throws Throwable {
+
+		/*
+Accessibility: population within a 1.5-h travel by rail
+RAIL_ACC_xxxx_yy_GR_1KM_2019
+
+Performance: accessibility / proximity x 100
+RAIL_PERF_xxxx_yy_GR_1KM_2019
+
+xxxx = AV_T = average travel time
+xxxx = OPTI = optimal travel time
+
+yy = WW = walk + rail + walk
+yy = BW = bike + rail + walk
+yy = BB = bike + rail + bike		
+		*/
+
+		String zz = "ACC";
+		String xx = "AV_T";
+		String yy = "WW";
 
 		//get coverage from tiff file
-		File file = new File(basePath + "rail-2022-grid-data/RAIL_ACC_AV_T_WW_GR_1KM_2019.tif");
+		File file = new File(basePath + "rail-2022-grid-data/RAIL_"+zz+"_"+xx+"_"+yy+"_GR_1KM_2019.tif");
 		AbstractGridFormat format = GridFormatFinder.findFormat( file );
 		GridCoverage2DReader reader = format.getReader( file );
 		GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
@@ -80,7 +99,7 @@ public class RailAccessibility {
 				d.put("GRD_ID", gc.getId());
 				//d.put("x", x + "");
 				//d.put("y", y + "");
-				d.put("value", v + "");
+				d.put(zz+"_"+xx+"_"+yy, v + "");
 				data.add(d);
 			}
 
