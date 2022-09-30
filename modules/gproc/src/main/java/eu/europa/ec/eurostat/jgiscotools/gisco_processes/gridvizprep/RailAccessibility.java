@@ -1,7 +1,12 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
+import java.io.File;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.GridCoverage2DReader;
+import org.geotools.coverage.grid.io.GridFormatFinder;
 
 public class RailAccessibility {
 	static Logger logger = LogManager.getLogger(RailAccessibility.class.getName());
@@ -20,9 +25,14 @@ public class RailAccessibility {
 	}
 
 	private static void prepare() {
-		
-		
-		
+
+		File file = new File(basePath + "RAIL_ACC_AV_T_WW_GR_1KM_2019.tif");
+		System.out.println(file.exists());
+
+		AbstractGridFormat format = GridFormatFinder.findFormat( file );
+		GridCoverage2DReader reader = format.getReader( file );
+
+
 	}
-	
+
 }
