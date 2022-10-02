@@ -81,8 +81,6 @@ public class EurElevation {
 		//output
 		Collection<Map<String, String>> data = new ArrayList<>();
 
-		//TODO: parallel
-
 		int nb = 1;
 		int[] dest = new int[nb];
 
