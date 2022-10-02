@@ -33,11 +33,6 @@ public class EurElevation {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		/*
-	    IntStream.rangeClosed(1, 10).parallel().forEach(i -> {
-	    	System.out.println(i);
-	    });*/
-
 		//resampling
 		double resIni = 25.0;
 		for (int i=resolutions.length-1; i >=0; i--) {
