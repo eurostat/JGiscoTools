@@ -31,11 +31,12 @@ public class EurElevation {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-		
+
+		//resampling
 		double resIni = 25.0;
 		for (int res : resolutions) {
-			logger.info("Resample " + res + "m");
 			int ratio = (int)(res/resIni);
+			logger.info("Resample to " + res + "m (ratio="+ratio+")");
 			resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_"+res+".csv", ratio);
 		}
 		//tiling();
@@ -68,7 +69,7 @@ public class EurElevation {
 
 		//
 		double resT = ratio * resX;
-		System.out.println("Resampling from "+resX+" to "+resT);
+		logger.info("Resampling from "+resX+" to "+resT);
 
 		//output
 		Collection<Map<String, String>> data = new ArrayList<>();
