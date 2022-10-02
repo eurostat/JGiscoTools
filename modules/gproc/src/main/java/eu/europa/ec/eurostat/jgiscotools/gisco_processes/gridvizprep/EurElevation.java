@@ -77,7 +77,7 @@ public class EurElevation {
 				int y = (int)(envG.getMaximum(1) - (j+1)*resY);
 				GridCell gc = new GridCell("3035", 1000, x, y);
 
-				
+
 				Map<String, String> d = new HashMap<>();
 				d.put("GRD_ID", gc.getId());
 				//d.put("x", x + "");
@@ -91,7 +91,7 @@ public class EurElevation {
 	}
 
 
-/*
+	/*
 	private static void aggregate() {
 
 		logger.info("Load");
@@ -107,9 +107,9 @@ public class EurElevation {
 		}
 
 	}
-*/
+	 */
 
-/*
+	/*
 	// tile all resolutions
 	private static void tiling() {
 
@@ -135,5 +135,5 @@ public class EurElevation {
 
 		}
 	}
-*/
+	 */
 }
