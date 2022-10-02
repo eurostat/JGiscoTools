@@ -49,7 +49,7 @@ public class EurElevation {
 		Envelope envG = coverage.getEnvelope();
 		GridEnvelope2D env = coverage.getGridGeometry().getGridRange2D();
 		//System.out.println(envG);
-		//System.out.println(env);
+		System.out.println(env);
 
 		//compute and check resolution
 		double resX = (envG.getMaximum(0) - envG.getMinimum(0)) / env.getWidth();
@@ -61,15 +61,12 @@ public class EurElevation {
 		//output
 		Collection<Map<String, String>> data = new ArrayList<>();
 
-		//int naValue = (int) 2.147483647E9;
-
 		int nb = 1;
 		int[] dest = new int[nb];
 		for(int i=0; i<env.width; i++)
 			for(int j=0; j<env.height; j++){
 				coverage.evaluate(new GridCoordinates2D(i,j), dest);
 				int v = dest[0];
-				//if(v==naValue) continue;
 				if(v==0) continue;
 				//System.out.println(v);
 
