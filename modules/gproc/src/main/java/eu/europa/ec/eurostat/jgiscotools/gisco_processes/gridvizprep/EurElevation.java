@@ -25,16 +25,19 @@ public class EurElevation {
 	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
+	private static int[] resolutions = new int[] { /*500, 1000, 2000, 5000, 10000,*/ 20000, 50000, 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/elevation/EU_DEM_mosaic_1000K/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-		resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_400.csv", 400);
-		//resampling();
-		//tiffToCSV();
-		//aggregate();
+		
+		double resIni = 25.0;
+		for (int res : resolutions) {
+			logger.info("Resample " + res + "m");
+			int ratio = (int)(res/resIni);
+			resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_"+res+".csv", ratio);
+		}
 		//tiling();
 		logger.info("End");
 	}
