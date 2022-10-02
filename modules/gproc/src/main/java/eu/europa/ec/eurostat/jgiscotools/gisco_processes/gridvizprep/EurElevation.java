@@ -31,7 +31,7 @@ public class EurElevation {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-		resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_4000.csv", 4000);
+		resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_400.csv", 400);
 		//resampling();
 		//tiffToCSV();
 		//aggregate();
