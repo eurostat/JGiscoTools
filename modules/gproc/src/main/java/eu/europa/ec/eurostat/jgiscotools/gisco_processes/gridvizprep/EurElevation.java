@@ -31,12 +31,86 @@ public class EurElevation {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-		tiffToCSV();
+		//resampling();
+		//tiffToCSV();
 		//aggregate();
 		//tiling();
 		logger.info("End");
 	}
 
+
+	
+	
+	private static void resampleTiff(String inTiff, String outCSV, int ratio) throws Throwable {
+
+		//get coverage from tiff file
+		File file = new File(inTiff);
+		AbstractGridFormat format = GridFormatFinder.findFormat( file );
+		GridCoverage2DReader reader = format.getReader( file );
+		GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
+
+		//get envelopes
+		Envelope envG = coverage.getEnvelope();
+		GridEnvelope2D env = coverage.getGridGeometry().getGridRange2D();
+		//System.out.println(envG);
+		System.out.println(env);
+
+		//compute and check resolution
+		double resX = (envG.getMaximum(0) - envG.getMinimum(0)) / env.getWidth();
+		double resY = (envG.getMaximum(1) - envG.getMinimum(1)) / env.getHeight();
+		if(resX != resY)
+			throw new Error("Different X/Y resolutions: "+resX + " and "+resY);
+		//System.out.println(resX);
+
+		//output
+		Collection<Map<String, String>> data = new ArrayList<>();
+
+		int nb = 1;
+		int[] dest = new int[nb];
+		for(int i=0; i<env.width; i++)
+			for(int j=0; j<env.height; j++){
+				coverage.evaluate(new GridCoordinates2D(i,j), dest);
+				int v = dest[0];
+				if(v==0) continue;
+				//System.out.println(v);
+
+				int x = (int)(envG.getMinimum(0) + i*resX);
+				int y = (int)(envG.getMaximum(1) - (j+1)*resY);
+				GridCell gc = new GridCell("3035", 1000, x, y);
+
+
+				Map<String, String> d = new HashMap<>();
+				d.put("GRD_ID", gc.getId());
+				//d.put("x", x + "");
+				//d.put("y", y + "");
+				d.put("elevation", v + "");
+				data.add(d);
+			}
+
+		logger.info("save " + data.size());
+		CSVUtil.save(data, basePath + "out/out_prepared.csv");
+	}
+		
+		
+		
+		//see https://docs.geotools.org/stable/javadocs/org/geotools/coverage/processing/operation/Resample.html
+		//HashMap props;
+		//Hints hints;
+		//Resample.doOperation(new ParameterGroup(props), hints);
+
+		/*
+		//https://www.tabnine.com/code/java/methods/org.geotools.coverage.processing.operation.Resample/doOperation
+		GridGeometry2D gridGeometry;
+		Interpolation interpolation;
+		ParameterValueGroup param =    (ParameterValueGroup) Resample.getParameters();
+		param.parameter("Source").setValue(coverage);
+		param.parameter("GridGeometry").setValue(gridGeometry);
+		//param.parameter("InterpolationType").setValue(interpolation);
+		GridCoverage2D out = (GridCoverage2D) Resample.doOperation(param, hints);*/
+
+	}
+
+	/*
 	private static void tiffToCSV() throws Throwable {
 
 		//get coverage from tiff file
@@ -86,7 +160,7 @@ public class EurElevation {
 		logger.info("save " + data.size());
 		CSVUtil.save(data, basePath + "out/out_prepared.csv");
 	}
-
+	 */
 
 	/*
 	private static void aggregate() {
