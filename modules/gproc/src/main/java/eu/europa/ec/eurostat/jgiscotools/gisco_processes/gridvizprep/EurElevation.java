@@ -3,16 +3,20 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridEnvelope2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.opengis.geometry.Envelope;
+
+import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 
 public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
@@ -43,6 +47,8 @@ public class EurElevation {
 		//get envelopes
 		Envelope envG = coverage.getEnvelope();
 		GridEnvelope2D env = coverage.getGridGeometry().getGridRange2D();
+		//System.out.println(envG);
+		//System.out.println(env);
 
 		//compute and check resolution
 		double resX = (envG.getMaximum(0) - envG.getMinimum(0)) / env.getWidth();
@@ -53,30 +59,31 @@ public class EurElevation {
 		//output
 		Collection<Map<String, String>> data = new ArrayList<>();
 
-		int nb = 1;
 		//int naValue = (int) 2.147483647E9;
 
-/*
+		int nb = 1;
 		int[] dest = new int[nb];
 		for(int i=0; i<env.width; i++)
 			for(int j=0; j<env.height; j++){
 				coverage.evaluate(new GridCoordinates2D(i,j), dest);
 				int v = dest[0];
-				if(v==naValue) continue;
-				if(v==0) continue;
+				System.out.println(v);
+				//if(v==naValue) continue;
+				//if(v==0) continue;
 
 				int x = (int)(envG.getMinimum(0) + i*resX);
 				int y = (int)(envG.getMaximum(1) - (j+1)*resY);
 				GridCell gc = new GridCell("3035", 1000, x, y);
 
+				/*
 				Map<String, String> d = new HashMap<>();
 				d.put("GRD_ID", gc.getId());
 				//d.put("x", x + "");
 				//d.put("y", y + "");
 				d.put("elevation", v + "");
-				data.add(d);
+				data.add(d);*/
 			}
-*/
+
 
 		//logger.info("save " + data.size());
 		//CSVUtil.save(data, basePath + "out/out_prepared.csv");
