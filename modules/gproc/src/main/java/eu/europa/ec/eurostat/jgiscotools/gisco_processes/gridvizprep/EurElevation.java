@@ -3,24 +3,16 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridEnvelope2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.coverage.grid.io.GridFormatFinder;
-import org.locationtech.jts.geom.Coordinate;
 import org.opengis.geometry.Envelope;
-
-import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
-import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
-import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
