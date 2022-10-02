@@ -25,7 +25,7 @@ public class EurElevation {
 	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
+	private static int[] resolutions = new int[] { /*100, 200,*/ 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/elevation/EU_DEM_mosaic_1000K/";
 
 	// -Xms4g -Xmx16g
@@ -73,6 +73,8 @@ public class EurElevation {
 
 		//output
 		Collection<Map<String, String>> data = new ArrayList<>();
+
+		//TODO: parallel
 
 		int nb = 1;
 		int[] dest = new int[nb];
