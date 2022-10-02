@@ -28,7 +28,6 @@ import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.TilingInfo.DimStat;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 /**
  * Utility to create tiles of gridded statistics.

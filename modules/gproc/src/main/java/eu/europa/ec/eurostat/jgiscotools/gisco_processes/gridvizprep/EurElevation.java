@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,19 +26,25 @@ public class EurElevation {
 	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { /*100, 200,*/ 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
+	private static int[] resolutions = new int[] { 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/elevation/EU_DEM_mosaic_1000K/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
+		/*
+	    IntStream.rangeClosed(1, 10).parallel().forEach(i -> {
+	    	System.out.println(i);
+	    });*/
+
 		//resampling
 		double resIni = 25.0;
-		for (int res : resolutions) {
+		for (int i=resolutions.length-1; i >=0; i--) {
+			double res = resolutions[i];
 			int ratio = (int)(res/resIni);
 			logger.info("Resample to " + res + "m (ratio="+ratio+")");
-			resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_"+res+".csv", ratio, "elevation");
+			resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_"+((int)res)+".csv", ratio, "elevation");
 		}
 		//tiling();
 		logger.info("End");
@@ -78,7 +85,8 @@ public class EurElevation {
 
 		int nb = 1;
 		int[] dest = new int[nb];
-		for(int i=0; i<env.width/ratio; i++)
+
+		IntStream.rangeClosed(0, env.width/ratio -1).parallel().forEach(i -> {
 			for(int j=0; j<env.height/ratio; j++){
 				coverage.evaluate(new GridCoordinates2D(i*ratio,j*ratio), dest);
 				int v = dest[0];
@@ -97,6 +105,7 @@ public class EurElevation {
 				d.put(outProp, v + "");
 				data.add(d);
 			}
+		});
 
 		logger.info("save " + data.size());
 		CSVUtil.save(data, outCSV);
