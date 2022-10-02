@@ -17,6 +17,7 @@ import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.opengis.geometry.Envelope;
 
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
@@ -55,6 +56,7 @@ public class EurElevation {
 		double resY = (envG.getMaximum(1) - envG.getMinimum(1)) / env.getHeight();
 		if(resX != resY)
 			throw new Error("Different X/Y resolutions: "+resX + " and "+resY);
+		//System.out.println(resX);
 
 		//output
 		Collection<Map<String, String>> data = new ArrayList<>();
@@ -67,26 +69,25 @@ public class EurElevation {
 			for(int j=0; j<env.height; j++){
 				coverage.evaluate(new GridCoordinates2D(i,j), dest);
 				int v = dest[0];
-				System.out.println(v);
 				//if(v==naValue) continue;
-				//if(v==0) continue;
+				if(v==0) continue;
+				//System.out.println(v);
 
 				int x = (int)(envG.getMinimum(0) + i*resX);
 				int y = (int)(envG.getMaximum(1) - (j+1)*resY);
 				GridCell gc = new GridCell("3035", 1000, x, y);
 
-				/*
+				
 				Map<String, String> d = new HashMap<>();
 				d.put("GRD_ID", gc.getId());
 				//d.put("x", x + "");
 				//d.put("y", y + "");
 				d.put("elevation", v + "");
-				data.add(d);*/
+				data.add(d);
 			}
 
-
-		//logger.info("save " + data.size());
-		//CSVUtil.save(data, basePath + "out/out_prepared.csv");
+		logger.info("save " + data.size());
+		CSVUtil.save(data, basePath + "out/out_prepared.csv");
 	}
 
 
