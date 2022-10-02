@@ -37,7 +37,7 @@ public class EurElevation {
 		for (int res : resolutions) {
 			int ratio = (int)(res/resIni);
 			logger.info("Resample to " + res + "m (ratio="+ratio+")");
-			resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_"+res+".csv", ratio);
+			resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_"+res+".csv", ratio, "elevation");
 		}
 		//tiling();
 		logger.info("End");
@@ -46,7 +46,7 @@ public class EurElevation {
 
 
 
-	private static void resampleTiff(String inTiff, String outCSV, int ratio) throws Throwable {
+	private static void resampleTiff(String inTiff, String outCSV, int ratio, String outProp) throws Throwable {
 
 		//get coverage from tiff file
 		File file = new File(inTiff);
@@ -92,7 +92,7 @@ public class EurElevation {
 				d.put("GRD_ID", gc.getId());
 				//d.put("x", x + "");
 				//d.put("y", y + "");
-				d.put("elevation", v + "");
+				d.put(outProp, v + "");
 				data.add(d);
 			}
 
