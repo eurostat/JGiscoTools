@@ -29,37 +29,18 @@ public class EurElevation {
 
 	// the target resolutions
 	private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
-	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/regio_rail_perf/";
+	private static String basePath = "/home/juju/Bureau/gisco/elevation/EU_DEM_mosaic_1000K/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 		tiffToCSV();
-		aggregate();
-		tiling();
+		//aggregate();
+		//tiling();
 		logger.info("End");
 	}
 
 	private static void tiffToCSV() throws Throwable {
-
-		/*
-Accessibility: population within a 1.5-h travel by rail
-RAIL_ACC_xxxx_yy_GR_1KM_2019
-
-Performance: accessibility / proximity x 100
-RAIL_PERF_xxxx_yy_GR_1KM_2019
-
-xxxx = AV_T = average travel time
-xxxx = OPTI = optimal travel time
-
-yy = WW = walk + rail + walk
-yy = BW = bike + rail + walk
-yy = BB = bike + rail + bike		
-		*/
-
-		String zz = "ACC";
-		String xx = "AV_T";
-		String yy = "WW";
 
 		//get coverage from tiff file
 		File file = new File(basePath + "rail-2022-grid-data/RAIL_"+zz+"_"+xx+"_"+yy+"_GR_1KM_2019.tif");
@@ -108,7 +89,7 @@ yy = BB = bike + rail + bike
 	}
 
 
-
+/*
 	private static void aggregate() {
 
 		logger.info("Load");
@@ -124,8 +105,9 @@ yy = BB = bike + rail + bike
 		}
 
 	}
+*/
 
-
+/*
 	// tile all resolutions
 	private static void tiling() {
 
@@ -151,5 +133,5 @@ yy = BB = bike + rail + bike
 
 		}
 	}
-
+*/
 }
