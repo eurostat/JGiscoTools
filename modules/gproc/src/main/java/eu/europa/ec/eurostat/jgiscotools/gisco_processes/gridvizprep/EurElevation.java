@@ -62,8 +62,9 @@ public class EurElevation {
 		Collection<Map<String, String>> data = new ArrayList<>();
 
 		int nb = 1;
-		int naValue = (int) 2.147483647E9;
+		//int naValue = (int) 2.147483647E9;
 
+/*
 		int[] dest = new int[nb];
 		for(int i=0; i<env.width; i++)
 			for(int j=0; j<env.height; j++){
@@ -80,12 +81,13 @@ public class EurElevation {
 				d.put("GRD_ID", gc.getId());
 				//d.put("x", x + "");
 				//d.put("y", y + "");
-				d.put(zz+"_"+xx+"_"+yy, v + "");
+				d.put("elevation", v + "");
 				data.add(d);
 			}
+*/
 
-		logger.info("save " + data.size());
-		CSVUtil.save(data, basePath + "out/out_prepared.csv");
+		//logger.info("save " + data.size());
+		//CSVUtil.save(data, basePath + "out/out_prepared.csv");
 	}
 
 
