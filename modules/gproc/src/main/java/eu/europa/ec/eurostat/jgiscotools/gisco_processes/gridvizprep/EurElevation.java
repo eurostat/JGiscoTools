@@ -25,7 +25,7 @@ public class EurElevation {
 	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { /*500, 1000, 2000, 5000, 10000,*/ 20000, 50000, 100000 };
+	private static int[] resolutions = new int[] { 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/elevation/EU_DEM_mosaic_1000K/";
 
 	// -Xms4g -Xmx16g
@@ -58,7 +58,7 @@ public class EurElevation {
 		Envelope envG = coverage.getEnvelope();
 		GridEnvelope2D env = coverage.getGridGeometry().getGridRange2D();
 		//System.out.println(envG);
-		System.out.println(env);
+		//System.out.println(env);
 
 		//compute and check resolution
 		double resX = (envG.getMaximum(0) - envG.getMinimum(0)) / env.getWidth();
@@ -90,8 +90,8 @@ public class EurElevation {
 
 				Map<String, String> d = new HashMap<>();
 				d.put("GRD_ID", gc.getId());
-				d.put("x", x + "");
-				d.put("y", y + "");
+				//d.put("x", x + "");
+				//d.put("y", y + "");
 				d.put("elevation", v + "");
 				data.add(d);
 			}
