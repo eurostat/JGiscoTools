@@ -31,7 +31,7 @@ public class EurElevation {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-		resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_400.csv", 400);
+		resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_4000.csv", 4000);
 		//resampling();
 		//tiffToCSV();
 		//aggregate();
@@ -77,7 +77,7 @@ public class EurElevation {
 				coverage.evaluate(new GridCoordinates2D(i*ratio,j*ratio), dest);
 				int v = dest[0];
 				if(v==0) continue;
-				System.out.println(v);
+				//System.out.println(v);
 
 				int x = (int)(envG.getMinimum(0) + i*resT);
 				int y = (int)(envG.getMaximum(1) - (j+1)*resT);
