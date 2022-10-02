@@ -43,7 +43,7 @@ public class EurElevation {
 	private static void tiffToCSV() throws Throwable {
 
 		//get coverage from tiff file
-		File file = new File(basePath + "rail-2022-grid-data/RAIL_"+zz+"_"+xx+"_"+yy+"_GR_1KM_2019.tif");
+		File file = new File(basePath + "eudem_dem_3035_europe.tif");
 		AbstractGridFormat format = GridFormatFinder.findFormat( file );
 		GridCoverage2DReader reader = format.getReader( file );
 		GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
