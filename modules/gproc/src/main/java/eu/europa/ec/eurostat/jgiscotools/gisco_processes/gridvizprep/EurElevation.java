@@ -31,6 +31,7 @@ public class EurElevation {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
+		resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/out_prepared.csv", 400);
 		//resampling();
 		//tiffToCSV();
 		//aggregate();
@@ -39,8 +40,8 @@ public class EurElevation {
 	}
 
 
-	
-	
+
+
 	private static void resampleTiff(String inTiff, String outCSV, int ratio) throws Throwable {
 
 		//get coverage from tiff file
@@ -62,20 +63,24 @@ public class EurElevation {
 			throw new Error("Different X/Y resolutions: "+resX + " and "+resY);
 		//System.out.println(resX);
 
+		//
+		double resT = ratio * resX;
+		System.out.println("Resampling from "+resX+" to "+resT);
+
 		//output
 		Collection<Map<String, String>> data = new ArrayList<>();
 
 		int nb = 1;
 		int[] dest = new int[nb];
-		for(int i=0; i<env.width; i++)
-			for(int j=0; j<env.height; j++){
-				coverage.evaluate(new GridCoordinates2D(i,j), dest);
+		for(int i=0; i<env.width/ratio; i++)
+			for(int j=0; j<env.height/ratio; j++){
+				coverage.evaluate(new GridCoordinates2D(i*ratio,j*ratio), dest);
 				int v = dest[0];
 				if(v==0) continue;
 				//System.out.println(v);
 
-				int x = (int)(envG.getMinimum(0) + i*resX);
-				int y = (int)(envG.getMaximum(1) - (j+1)*resY);
+				int x = (int)(envG.getMinimum(0) + i*resT);
+				int y = (int)(envG.getMaximum(1) - (j+1)*resT);
 				GridCell gc = new GridCell("3035", 1000, x, y);
 
 
@@ -88,11 +93,8 @@ public class EurElevation {
 			}
 
 		logger.info("save " + data.size());
-		CSVUtil.save(data, basePath + "out/out_prepared.csv");
-	}
-		
-		
-		
+		CSVUtil.save(data, outCSV);
+
 		//see https://docs.geotools.org/stable/javadocs/org/geotools/coverage/processing/operation/Resample.html
 		//HashMap props;
 		//Hints hints;
