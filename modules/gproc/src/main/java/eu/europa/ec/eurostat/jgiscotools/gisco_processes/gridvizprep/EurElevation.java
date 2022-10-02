@@ -82,8 +82,7 @@ public class EurElevation {
 				int x = (int)(envG.getMinimum(0) + i*resT);
 				int y = (int)(envG.getMaximum(1) - (j+1)*resT);
 				GridCell gc = new GridCell("3035", 1000, x, y);
-
-				System.out.println(gc.getId());
+				//System.out.println(gc.getId());
 
 				Map<String, String> d = new HashMap<>();
 				d.put("GRD_ID", gc.getId());
