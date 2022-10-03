@@ -28,22 +28,24 @@ public class EurElevation {
 	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100, 200, 500, 1000, 2000/*, 5000, 10000, 20000, 50000, 100000*/ };
+	private static int[] resolutions = new int[] { /*100, 200,*/ 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/elevation/EU_DEM_mosaic_1000K/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		//resampling
+		/*/resampling
 		double resIni = 25.0;
 		for (int i=resolutions.length-1; i >=0; i--) {
 			int res = resolutions[i];
 			int ratio = (int)(res/resIni);
 			logger.info("Resample to " + res + "m (ratio="+ratio+")");
 			resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_"+res+".csv", ratio, "elevation");
-		}
-		//tiling();
+		}*/
+
+		
+		tiling();
 		logger.info("End");
 	}
 
@@ -83,6 +85,11 @@ public class EurElevation {
 
 		IntStream.rangeClosed(0, env.width/ratio -1).parallel().forEach(i -> {
 			for(int j=0; j<env.height/ratio; j++){
+				
+				//TODO check wha takes time. Evaluate or map creation ? Then improve what can.
+				//100000 7s
+				//50000 24s
+
 				coverage.evaluate(new GridCoordinates2D(i*ratio,j*ratio), dest);
 				int v = dest[0];
 				if(v==0) continue;
