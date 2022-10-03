@@ -28,7 +28,7 @@ public class EurElevation {
 	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { /*100, 200, 500, 1000, 2000, 5000, 10000, 20000,*/ 50000, 100000 };
+	private static int[] resolutions = new int[] { /*100, 200, 500, 1000, 2000, 5000, 10000,*/ 20000, 50000, 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/elevation/EU_DEM_mosaic_1000K/";
 
 	// -Xms4g -Xmx16g
@@ -84,13 +84,10 @@ public class EurElevation {
 
 		IntStream.rangeClosed(0, env.width/ratio -1).parallel().forEach(i -> {
 			for(int j=0; j<env.height/ratio; j++){
-				
-				//TODO check what takes time. Evaluate or map creation ? Then improve what can.
-				//100000 7s 9s 8s
-				//50000 24s 27s 23s
 
+				//find how to boost that. Index ?
 				coverage.evaluate(new GridCoordinates2D(i*ratio,j*ratio), dest);
-				/*int v = dest[0];
+				int v = dest[0];
 				if(v==0) continue;
 				//System.out.println(v);
 
@@ -104,12 +101,12 @@ public class EurElevation {
 				//d.put("x", x + "");
 				//d.put("y", y + "");
 				d.put(outProp, v + "");
-				data.add(d);*/
+				data.add(d);
 			}
 		});
 
-		logger.info("save " + data.size());
-		CSVUtil.save(data, outCSV);
+		//logger.info("save " + data.size());
+		//CSVUtil.save(data, outCSV);
 
 		//see https://docs.geotools.org/stable/javadocs/org/geotools/coverage/processing/operation/Resample.html
 		//HashMap props;
