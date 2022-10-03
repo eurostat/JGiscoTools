@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,23 +26,34 @@ public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
 
 	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
+	//https://docs.qgis.org/testing/en/docs/user_manual/working_with_raster/raster_analysis.html#raster-calculator
+	//https://docs.qgis.org/3.22/en/docs/gentle_gis_introduction/index.html
+
+	//https://qgis.org/pyqgis/3.16/analysis/QgsAlignRaster.html
+	//or https://qgis.org/pyqgis/3.16/analysis/QgsRasterCalculator.html
+
+	//gdal
+	//https://gdal.org/programs/gdalwarp.html#gdalwarp
+	//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-tr
+	//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r
+	//gdalwarp eudem_dem_3035_europe.tif 1000.tif -tr 1000 1000 -r average
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { /*100, 200, 500, 1000, 2000, 5000, 10000,*/ 20000, 50000, 100000 };
+	private static int[] resolutions = new int[] { /*100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000,*/ 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/elevation/EU_DEM_mosaic_1000K/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		//resampling
+		/*/resampling
 		double resIni = 25.0;
 		for (int i=resolutions.length-1; i >=0; i--) {
 			int res = resolutions[i];
 			int ratio = (int)(res/resIni);
 			logger.info("Resample to " + res + "m (ratio="+ratio+")");
 			resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_"+res+".csv", ratio, "elevation");
-		}
+		}*/
 
 		tiling();
 		logger.info("End");
@@ -117,23 +129,64 @@ public class EurElevation {
 
 		logger.info("save " + data.size());
 		CSVUtil.save(data, outCSV);
-
-		//see https://docs.geotools.org/stable/javadocs/org/geotools/coverage/processing/operation/Resample.html
-		//HashMap props;
-		//Hints hints;
-		//Resample.doOperation(new ParameterGroup(props), hints);
-
-		/*
-		//https://www.tabnine.com/code/java/methods/org.geotools.coverage.processing.operation.Resample/doOperation
-		GridGeometry2D gridGeometry;
-		Interpolation interpolation;
-		ParameterValueGroup param =    (ParameterValueGroup) Resample.getParameters();
-		param.parameter("Source").setValue(coverage);
-		param.parameter("GridGeometry").setValue(gridGeometry);
-		//param.parameter("InterpolationType").setValue(interpolation);
-		GridCoverage2D out = (GridCoverage2D) Resample.doOperation(param, hints);*/
-
 	}
+
+	public static ArrayList<Map<String, String>> loadCellsGeoTIFF(String inTiff, String outProp) {
+
+		//get coverage from tiff file
+		File file = new File(inTiff);
+		AbstractGridFormat format = GridFormatFinder.findFormat( file );
+		GridCoverage2DReader reader = format.getReader( file );
+		GridCoverage2D coverage = null;
+		try {
+			coverage = (GridCoverage2D) reader.read(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if(coverage == null) return null;
+
+		//get envelopes
+		Envelope envG = coverage.getEnvelope();
+		GridEnvelope2D env = coverage.getGridGeometry().getGridRange2D();
+		//System.out.println(envG);
+		//System.out.println(env);
+
+		//compute and check resolution
+		double resX = (envG.getMaximum(0) - envG.getMinimum(0)) / env.getWidth();
+		double resY = (envG.getMaximum(1) - envG.getMinimum(1)) / env.getHeight();
+		if(resX != resY)
+			throw new Error("Different X/Y resolutions: "+resX + " and "+resY);
+		//System.out.println(resX);
+
+		//output
+		ArrayList<Map<String, String>> out = new ArrayList<>();
+
+		int nb = 1;
+		int[] dest = new int[nb];
+
+		for(int i=0; i<env.width; i++){
+			for(int j=0; j<env.height; j++){
+
+				coverage.evaluate(new GridCoordinates2D(i,j), dest);
+				int v = dest[0];
+				if(v==0) continue;
+				//if(v<0) System.out.println(v);
+				//System.out.println(v);
+
+				int x = (int)(envG.getMinimum(0) + i*resX);
+				int y = (int)(envG.getMaximum(1) - (j+1)*resX);
+
+				Map<String, String> d = new HashMap<>();
+				d.put("GRD_ID", "CRS3035RES"+((int)resX)+"m"+"N"+y+"E"+x);
+				//d.put("x", x + "");
+				//d.put("y", y + "");
+				d.put(outProp, v + "");
+				out.add(d);
+			}
+		}
+		return out;
+	}
+
 
 	// tile all resolutions
 	private static void tiling() {
@@ -141,10 +194,11 @@ public class EurElevation {
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
-			String f = basePath + "out/resampled_"+res+".csv";
+			String f = basePath + res+".tif";
 
 			logger.info("Load");
-			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
+			ArrayList<Map<String, String>> cells = loadCellsGeoTIFF(f, "elevation");
+			//CSVUtil.load(f);
 			logger.info(cells.size());
 
 			logger.info("Build tiles");
@@ -157,7 +211,6 @@ public class EurElevation {
 			String outpath = basePath + "out/tiled/" + res + "m";
 			gst.saveCSV(outpath);
 			gst.saveTilingInfoJSON(outpath, "EU DEM Europe elevation " + res + "m");
-
 		}
 	}
 
