@@ -18,7 +18,6 @@ import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.geometry.Envelope;
 
-import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
@@ -44,7 +43,7 @@ public class EurElevation {
 			resampleTiff(basePath + "eudem_dem_3035_europe.tif", basePath + "out/resampled_"+res+".csv", ratio, "elevation");
 		}
 
-		//tiling();
+		tiling();
 		logger.info("End");
 	}
 
@@ -80,24 +79,35 @@ public class EurElevation {
 		Collection<Map<String, String>> data = new ArrayList<>();
 
 		int nb = 1;
+		int ratio2 = (int) (ratio*0.5);
 		int[] dest = new int[nb];
+		//GridCoordinates2D gco = new GridCoordinates2D(0,0);
 
 		IntStream.rangeClosed(0, env.width/ratio -1).parallel().forEach(i -> {
 			for(int j=0; j<env.height/ratio; j++){
 
+				//sample point
+				int iS = i*ratio + ratio2,
+						jS = j*ratio + ratio2;
+
 				//find how to boost that. Index ?
-				coverage.evaluate(new GridCoordinates2D(i*ratio,j*ratio), dest);
+				//GridCoordinates2D gc = new GridCoordinates2D(iS,jS);
+				//gco.setLocation(iS,jS);
+				//System.out.println(gco);
+				coverage.evaluate(new GridCoordinates2D(iS,jS), dest);
 				int v = dest[0];
 				if(v==0) continue;
+				//if(v<0) System.out.println(v);
 				//System.out.println(v);
 
 				int x = (int)(envG.getMinimum(0) + i*resT);
 				int y = (int)(envG.getMaximum(1) - (j+1)*resT);
-				GridCell gc = new GridCell("3035", resT, x, y);
+				//GridCell gc = new GridCell("3035", resT, x, y);
+				//String id = GridCell.getGridCellId("3035", resT, Coordinate(x,y))
 				//System.out.println(gc.getId());
 
 				Map<String, String> d = new HashMap<>();
-				d.put("GRD_ID", gc.getId());
+				d.put("GRD_ID", "CRS3035RES"+resT+"m"+"N"+y+"E"+x);
 				//d.put("x", x + "");
 				//d.put("y", y + "");
 				d.put(outProp, v + "");
@@ -105,8 +115,8 @@ public class EurElevation {
 			}
 		});
 
-		//logger.info("save " + data.size());
-		//CSVUtil.save(data, outCSV);
+		logger.info("save " + data.size());
+		CSVUtil.save(data, outCSV);
 
 		//see https://docs.geotools.org/stable/javadocs/org/geotools/coverage/processing/operation/Resample.html
 		//HashMap props;
