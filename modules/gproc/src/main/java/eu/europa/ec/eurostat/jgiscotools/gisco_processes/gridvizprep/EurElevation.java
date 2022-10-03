@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -98,7 +99,8 @@ public class EurElevation {
 		int nb = outProps.length;
 		double[] v = new double[nb];
 
-		for(int i=0; i<env.width; i++){
+		//for(int i=0; i<env.width; i++){
+		IntStream.rangeClosed(0, env.width -1).parallel().forEach(i -> {
 			for(int j=0; j<env.height; j++){
 
 				//get cell values
@@ -124,7 +126,7 @@ public class EurElevation {
 
 				out.add(d);
 			}
-		}
+		});
 		return out;
 	}
 
