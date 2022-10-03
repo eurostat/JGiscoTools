@@ -193,13 +193,13 @@ public class GridTiler {
 
 				// check x,y values. Should be within [0,tileResolutionPix-1]
 				if (x < 0)
-					logger.error("Too low value: " + x);
+					logger.error("Too low value: " + x + " <0");
 				if (y < 0)
-					logger.error("Too low value: " + y);
+					logger.error("Too low value: " + y + " <0");
 				if (x > this.tileResolutionPix - 1)
-					logger.error("Too high value: " + x);
+					logger.error("Too high value: " + x + " >"+(this.tileResolutionPix - 1));
 				if (y > this.tileResolutionPix - 1)
-					logger.error("Too high value: " + y);
+					logger.error("Too high value: " + y + " >"+(this.tileResolutionPix - 1));
 
 				// store x,y values
 				c_.put("x", "" + (int) x);
