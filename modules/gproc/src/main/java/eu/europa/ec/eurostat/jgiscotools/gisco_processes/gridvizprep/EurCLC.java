@@ -1,5 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.locationtech.jts.geom.Coordinate;
 
+import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 
 public class EurCLC {
@@ -51,9 +54,12 @@ public class EurCLC {
 		String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+resT+" "+resT+" -r mode";
 		System.out.println(cmd);
 
-		/*		
-		ProcessBuilder processBuilder = new ProcessBuilder();
-		processBuilder.command("bash", "-c", "ls /home/juju/");
+		//ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+		//ProcessBuilder processBuilder = new ProcessBuilder("gdalwarp", inF, outF, "-tr", resT+"", resT+"", "-r", "mode");
+		ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", cmd);
+		//ProcessBuilder processBuilder = new ProcessBuilder();
+		//processBuilder.command("bash", "-c", "ls /home/juju/");
+		//processBuilder.command(cmd);
 
 		try {
 			Process process = processBuilder.start();
@@ -77,7 +83,6 @@ public class EurCLC {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		 */
 	}
 
 

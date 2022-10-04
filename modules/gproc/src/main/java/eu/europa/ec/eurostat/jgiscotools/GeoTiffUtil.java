@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
+package eu.europa.ec.eurostat.jgiscotools;
 
 import java.io.File;
 import java.util.ArrayList;
