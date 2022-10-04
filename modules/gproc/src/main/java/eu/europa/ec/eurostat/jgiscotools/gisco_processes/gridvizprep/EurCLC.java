@@ -10,8 +10,8 @@ import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 
-public class EurElevation {
-	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
+public class EurCLC {
+	static Logger logger = LogManager.getLogger(EurCLC.class.getName());
 
 	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
 	//https://docs.qgis.org/testing/en/docs/user_manual/working_with_raster/raster_analysis.html#raster-calculator
