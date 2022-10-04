@@ -45,7 +45,6 @@ public class EurElevation {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-
 		tiling();
 		logger.info("End");
 	}
