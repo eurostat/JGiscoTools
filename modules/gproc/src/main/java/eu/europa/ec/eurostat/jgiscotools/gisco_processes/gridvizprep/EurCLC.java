@@ -1,9 +1,16 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
+import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 
 public class EurCLC {
 	static Logger logger = LogManager.getLogger(EurCLC.class.getName());
@@ -50,7 +57,7 @@ public class EurCLC {
 		}
 	}
 
-	/*/ tile all resolutions
+	// tile all resolutions
 	private static void tiling() {
 
 		for (int res : resolutions) {
@@ -62,7 +69,7 @@ public class EurCLC {
 			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
 
 			logger.info("Load grid cells");
-			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
+			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"clc"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
 			logger.info(cells.size());
 
 			//logger.info("Round");
@@ -76,9 +83,10 @@ public class EurCLC {
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = basePath + "out/tiled/" + res + "m";
+			String outpath = basePath + "out/" + res + "m";
 			gst.saveCSV(outpath);
-			gst.saveTilingInfoJSON(outpath, "EU DEM Europe elevation " + res + "m");
+			gst.saveTilingInfoJSON(outpath, "Corine Land Cover 2018 " + res + "m");
 		}
-	 */
+
+	}
 }
