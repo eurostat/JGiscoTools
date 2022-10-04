@@ -13,13 +13,6 @@ import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 public class EurCLC {
 	static Logger logger = LogManager.getLogger(EurCLC.class.getName());
 
-	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
-	//https://docs.qgis.org/testing/en/docs/user_manual/working_with_raster/raster_analysis.html#raster-calculator
-	//https://docs.qgis.org/3.22/en/docs/gentle_gis_introduction/index.html
-
-	//https://qgis.org/pyqgis/3.16/analysis/QgsAlignRaster.html
-	//or https://qgis.org/pyqgis/3.16/analysis/QgsRasterCalculator.html
-
 	//*******************
 	//resampling with GDAL
 
@@ -33,14 +26,24 @@ public class EurCLC {
 
 	// the target resolutions
 	//private static int[] resolutions = new int[] { 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100 };
-	private static String basePath = "/home/juju/Bureau/gisco/elevation/EU_DEM_mosaic_1000K/";
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 /*, 500, 200, 100*/ };
+	private static String basePath = "/home/juju/Bureau/gisco/clc/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-		tiling();
+
+		resampling();
+
+		//tiling();
 		logger.info("End");
+	}
+
+
+
+	private static void resampling() {
+
+
 	}
 
 
