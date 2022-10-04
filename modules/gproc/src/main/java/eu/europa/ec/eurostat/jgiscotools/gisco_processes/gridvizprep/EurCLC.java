@@ -17,26 +17,22 @@ public class EurCLC {
 
 	//*******************
 	//resampling with GDAL
-
-	//gdal
 	//https://gdal.org/programs/gdalwarp.html#gdalwarp
 	//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-tr
 	//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r
 	//gdalwarp eudem_dem_3035_europe.tif 1000.tif -tr 1000 1000 -r average
 	//*******************
 
-
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 , 500, 200, 100 };
+	private static int[] resolutions = new int[] { /*100000, 50000, 20000, 10000, 5000, 2000,*/ 1000 , 500, 200, 100 };
 	private static String basePath = "/home/juju/Bureau/gisco/clc/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		resampling();
-
-		//tiling();
+		//resampling();
+		tiling();
 
 		logger.info("End");
 	}
