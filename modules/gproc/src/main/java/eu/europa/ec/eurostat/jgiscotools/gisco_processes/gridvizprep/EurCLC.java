@@ -1,8 +1,5 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -46,8 +43,15 @@ public class EurCLC {
 
 	private static void resampling() {
 
-		//gdalwarp eudem_dem_3035_europe.tif 1000.tif -tr 1000 1000 -r average
+		//
 
+		int resT = 1000;
+		String inF = basePath + "u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif";
+		String outF = basePath + resT + ".tif";
+		String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+resT+" "+resT+" -r mode";
+		System.out.println(cmd);
+
+		/*		
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.command("bash", "-c", "ls /home/juju/");
 
@@ -73,7 +77,7 @@ public class EurCLC {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		 */
 	}
 
 
