@@ -1,5 +1,8 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -43,6 +46,33 @@ public class EurCLC {
 
 	private static void resampling() {
 
+		//gdalwarp eudem_dem_3035_europe.tif 1000.tif -tr 1000 1000 -r average
+
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		processBuilder.command("bash", "-c", "ls /home/juju/");
+
+		try {
+			Process process = processBuilder.start();
+			StringBuilder output = new StringBuilder();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+			String line;
+			while ((line = reader.readLine()) != null) {
+				output.append(line + "\n");
+			}
+
+			int exitVal = process.waitFor();
+			if (exitVal == 0) {
+				System.out.println("Success!");
+				System.out.println(output);
+				System.exit(0);
+			} else {
+				System.err.println("Problem");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
