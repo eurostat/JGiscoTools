@@ -13,7 +13,7 @@ import org.opengis.geometry.Envelope;
 
 public class GeoTiffUtil {
 
-	
+
 	//get coverage from tiff file
 	public static GridCoverage2D getGeoTIFFCoverage(String inTiff) {
 		/*
@@ -60,7 +60,7 @@ public class GeoTiffUtil {
 		int[] v = new int[nb];
 
 		for(int i=0; i<env.width; i++){
-		//IntStream.rangeClosed(0, env.width -1).parallel().forEach(i -> {
+			//IntStream.rangeClosed(0, env.width -1).parallel().forEach(i -> {
 			for(int j=0; j<env.height; j++){
 
 				//get cell values
