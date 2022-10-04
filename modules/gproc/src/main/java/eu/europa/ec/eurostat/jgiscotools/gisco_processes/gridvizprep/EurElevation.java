@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,7 +75,7 @@ public class EurElevation {
 		return null;
 	}
 
-	interface SkipFunction { boolean skip(double[] v); }
+	interface SkipFunction { boolean skip(int[] v); }
 
 	public static ArrayList<Map<String, String>> loadCells(GridCoverage2D coverage, String[] outProps, SkipFunction skip) {
 
@@ -97,10 +96,10 @@ public class EurElevation {
 		ArrayList<Map<String, String>> out = new ArrayList<>();
 
 		int nb = outProps.length;
-		double[] v = new double[nb];
+		int[] v = new int[nb];
 
-		//for(int i=0; i<env.width; i++){
-		IntStream.rangeClosed(0, env.width -1).parallel().forEach(i -> {
+		for(int i=0; i<env.width; i++){
+		//IntStream.rangeClosed(0, env.width -1).parallel().forEach(i -> {
 			for(int j=0; j<env.height; j++){
 
 				//get cell values
@@ -126,7 +125,7 @@ public class EurElevation {
 
 				out.add(d);
 			}
-		});
+		}//);
 		return out;
 	}
 
@@ -144,12 +143,12 @@ public class EurElevation {
 			GridCoverage2D coverage = getGeoTIFFCoverage(f);
 
 			logger.info("Load grid cells");
-			ArrayList<Map<String, String>> cells = loadCells(coverage, new String[] {"elevation"}, (v)->{return v[0]==0 || Double.isNaN(v[0]); } );
+			ArrayList<Map<String, String>> cells = loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
 			logger.info(cells.size());
 
-			logger.info("Round");
-			for(Map<String, String> cell : cells)
-				cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
+			//logger.info("Round");
+			//for(Map<String, String> cell : cells)
+			//	cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
