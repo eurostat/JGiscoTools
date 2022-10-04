@@ -1,7 +1,5 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -10,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.locationtech.jts.geom.Coordinate;
 
+import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 
@@ -28,8 +27,7 @@ public class EurCLC {
 
 
 	// the target resolutions
-	//private static int[] resolutions = new int[] { 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 /*, 500, 200, 100*/ };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 , 500, 200, 100 };
 	private static String basePath = "/home/juju/Bureau/gisco/clc/";
 
 	// -Xms4g -Xmx16g
@@ -45,47 +43,18 @@ public class EurCLC {
 
 
 	private static void resampling() {
-
-		//
-
-		int resT = 1000;
 		String inF = basePath + "u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif";
-		String outF = basePath + resT + ".tif";
-		String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+resT+" "+resT+" -r mode";
-		System.out.println(cmd);
 
-		//ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-		//ProcessBuilder processBuilder = new ProcessBuilder("gdalwarp", inF, outF, "-tr", resT+"", resT+"", "-r", "mode");
-		ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", cmd);
-		//ProcessBuilder processBuilder = new ProcessBuilder();
-		//processBuilder.command("bash", "-c", "ls /home/juju/");
-		//processBuilder.command(cmd);
+		for (int resT : resolutions) {
+			logger.info("Tiling " + resT + "m");
 
-		try {
-			Process process = processBuilder.start();
-			StringBuilder output = new StringBuilder();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String outF = basePath + resT + ".tif";
+			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+resT+" "+resT+" -r mode";
 
-			String line;
-			while ((line = reader.readLine()) != null) {
-				output.append(line + "\n");
-			}
-
-			int exitVal = process.waitFor();
-			if (exitVal == 0) {
-				System.out.println("Success!");
-				System.out.println(output);
-				System.exit(0);
-			} else {
-				System.err.println("Problem");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
+			logger.info(cmd);
+			CommandUtil.run(cmd);
 		}
 	}
-
-
 
 	// tile all resolutions
 	private static void tiling() {

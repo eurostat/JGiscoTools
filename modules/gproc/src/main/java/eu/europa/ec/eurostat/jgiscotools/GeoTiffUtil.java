@@ -36,7 +36,7 @@ public class GeoTiffUtil {
 		return null;
 	}
 
-	interface SkipFunction { boolean skip(int[] v); }
+	public interface SkipFunction { boolean skip(int[] v); }
 
 	public static ArrayList<Map<String, String>> loadCells(GridCoverage2D coverage, String[] outProps, SkipFunction skip) {
 
