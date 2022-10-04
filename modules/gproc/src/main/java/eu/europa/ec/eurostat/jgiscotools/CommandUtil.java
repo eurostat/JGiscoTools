@@ -27,7 +27,6 @@ public class CommandUtil {
 			if (exitVal == 0) {
 				System.out.println("Success!");
 				System.out.println(output);
-				System.exit(0);
 			} else {
 				System.err.println("Problem");
 			}
