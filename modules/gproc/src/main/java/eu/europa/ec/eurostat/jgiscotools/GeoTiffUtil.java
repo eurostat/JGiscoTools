@@ -54,10 +54,13 @@ public class GeoTiffUtil {
 			throw new Error("Different X/Y resolutions: "+resX + " and "+resY);
 		//System.out.println(resX);
 
-		//output
-		ArrayList<Map<String, String>> out = new ArrayList<>();
+		double minX = envG.getMinimum(0);
+		double maxY = envG.getMaximum(1);
 
 		int nb = outProps.length;
+
+		//output
+		ArrayList<Map<String, String>> out = new ArrayList<>();
 
 		//for(int i=0; i<env.width; i++){
 		IntStream.rangeClosed(0, env.width -1).parallel().forEach(i -> {
@@ -74,8 +77,8 @@ public class GeoTiffUtil {
 				Map<String, String> d = new HashMap<>();
 
 				//set cell code
-				int x = (int)(envG.getMinimum(0) + i*resX);
-				int y = (int)(envG.getMaximum(1) - (j+1)*resX);
+				int x = (int)(minX + i*resX);
+				int y = (int)(maxY - (j+1)*resX);
 				d.put("GRD_ID", "CRS3035RES"+((int)resX)+"m"+"N"+y+"E"+x);
 				//d.put("x", x + "");
 				//d.put("y", y + "");
