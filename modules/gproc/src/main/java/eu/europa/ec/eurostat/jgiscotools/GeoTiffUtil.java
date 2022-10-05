@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -57,10 +58,10 @@ public class GeoTiffUtil {
 		ArrayList<Map<String, String>> out = new ArrayList<>();
 
 		int nb = outProps.length;
-		int[] v = new int[nb];
 
-		for(int i=0; i<env.width; i++){
-			//IntStream.rangeClosed(0, env.width -1).parallel().forEach(i -> {
+		//for(int i=0; i<env.width; i++){
+		IntStream.rangeClosed(0, env.width -1).parallel().forEach(i -> {
+			int[] v = new int[nb];
 			for(int j=0; j<env.height; j++){
 
 				//get cell values
@@ -86,7 +87,7 @@ public class GeoTiffUtil {
 
 				out.add(d);
 			}
-		}//);
+		});
 		return out;
 	}
 
