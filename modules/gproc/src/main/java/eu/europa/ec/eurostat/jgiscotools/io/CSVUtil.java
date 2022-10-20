@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -298,6 +299,15 @@ public class CSVUtil {
 	}
 
 
+	/**
+	 * Join on one side
+	 * 
+	 * @param data1
+	 * @param key1
+	 * @param data2
+	 * @param key2
+	 * @param printWarnings
+	 */
 	public static void join(List<Map<String, String>> data1, String key1, List<Map<String, String>> data2, String key2, boolean printWarnings) {
 		//index data2 by key
 		HashMap<String,Map<String,String>> ind2 = new HashMap<>();
@@ -313,6 +323,68 @@ public class CSVUtil {
 			}
 			elt.putAll(elt2);
 		}
+	}
+
+
+
+
+
+	/**
+	 * Join on both sides
+	 * 
+	 * @param idProp
+	 * @param data1
+	 * @param data2
+	 * @param defaultValue
+	 * @param printWarnings
+	 * @return
+	 */
+	public static ArrayList<Map<String, String>> joinBothSides(String idProp, ArrayList<Map<String, String>> data1, ArrayList<Map<String, String>> data2, String defaultValue, boolean printWarnings) {
+		//special cases
+		if(data1.size() ==0) return data2;
+		if(data2.size() ==0) return data1;
+
+		//get all ids
+		HashSet<String> ids = new HashSet<>();
+		for(Map<String, String> c : data1) ids.add(c.get(idProp));
+		for(Map<String, String> c : data2) ids.add(c.get(idProp));
+
+		//index data1 and data2 by id
+		HashMap<String,Map<String,String>> ind1 = new HashMap<>();
+		for(Map<String, String> e : data1) ind1.put(e.get(idProp), e);
+		HashMap<String,Map<String,String>> ind2 = new HashMap<>();
+		for(Map<String, String> e : data2) ind2.put(e.get(idProp), e);
+
+		//get key sets
+		Set<String> ks1 = data1.get(0).keySet();
+		Set<String> ks2 = data2.get(0).keySet();
+
+		//build output
+		ArrayList<Map<String, String>> out = new ArrayList<>();
+		for(String id : ids) {
+			Map<String, String> e1 = ind1.get(id);
+			Map<String, String> e2 = ind2.get(id);
+
+			//make template
+			Map<String, String> e = new HashMap<>();
+			for(String k : ks1) if(k!=idProp) e.put(k, defaultValue);
+			for(String k : ks2) if(k!=idProp) e.put(k, defaultValue);
+			e.put(idProp, id);
+
+			//set data 1
+			if(e1 != null)
+				for(String k : ks1) if(k!=idProp) e.put(k, e1.get(k));
+			//set data 2
+			if(e2 != null)
+				for(String k : ks2) if(k!=idProp) e.put(k, e2.get(k));
+
+			if(printWarnings && (e1==null || e2==null))
+				System.out.println("No element to join for id: " + id);
+
+			out.add(e);
+		}
+
+		return out;
 	}
 
 }

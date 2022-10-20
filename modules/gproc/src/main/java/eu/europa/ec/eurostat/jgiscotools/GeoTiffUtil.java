@@ -15,7 +15,12 @@ import org.opengis.geometry.Envelope;
 public class GeoTiffUtil {
 
 
-	//get coverage from tiff file
+	/**
+	 * Get coverage from tiff file
+	 * 
+	 * @param inTiff
+	 * @return
+	 */
 	public static GridCoverage2D getGeoTIFFCoverage(String inTiff) {
 		/*
 		File file = new File(inTiff);
@@ -37,8 +42,16 @@ public class GeoTiffUtil {
 		return null;
 	}
 
+	//TODO handle case when float
 	public interface SkipFunction { boolean skip(int[] v); }
 
+
+	/**
+	 * @param coverage
+	 * @param outProps
+	 * @param skip
+	 * @return
+	 */
 	public static ArrayList<Map<String, String>> loadCells(GridCoverage2D coverage, String[] outProps, SkipFunction skip) {
 
 		//get envelopes
@@ -96,6 +109,12 @@ public class GeoTiffUtil {
 
 
 
+	/**
+	 * @param inTiff
+	 * @param outProps
+	 * @param skip
+	 * @return
+	 */
 	public static ArrayList<Map<String, String>> loadCells(String inTiff, String[] outProps, SkipFunction skip) {
 		GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(inTiff);
 		return GeoTiffUtil.loadCells(coverage, outProps, skip);

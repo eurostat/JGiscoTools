@@ -3,7 +3,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class RoadTransportPerformance {
 	static Logger logger = LogManager.getLogger(RoadTransportPerformance.class.getName());
@@ -96,7 +96,7 @@ public class RoadTransportPerformance {
 
 
 			logger.info("Join 1");
-			ArrayList<Map<String, String>> cells = joinBothSides("GRD_ID", cellsRA, cellsPP, "");
+			ArrayList<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsRA, cellsPP, "", false);
 
 			/*
 				logger.info("Build tiles");
@@ -114,50 +114,5 @@ public class RoadTransportPerformance {
 		}
 
 	}
-
-
-
-
-	private static ArrayList<Map<String, String>> joinBothSides(String idProp, ArrayList<Map<String, String>> data1, ArrayList<Map<String, String>> data2, String defaultValue) {
-		//special cases
-		if(data1.size() ==0) return data2;
-		if(data2.size() ==0) return data1;
-
-		//get all ids
-		HashSet<String> ids = new HashSet<>();
-		for(Map<String, String> c : data1) ids.add(c.get(idProp));
-		for(Map<String, String> c : data2) ids.add(c.get(idProp));
-
-		//index data1 and data2 by id
-		HashMap<String,Map<String,String>> ind1 = new HashMap<>();
-		for(Map<String, String> e : data1) ind1.put(e.get(idProp), e);
-		HashMap<String,Map<String,String>> ind2 = new HashMap<>();
-		for(Map<String, String> e : data2) ind2.put(e.get(idProp), e);
-
-		//get key sets
-		Set<String> ks1 = data1.get(0).keySet();
-		Set<String> ks2 = data2.get(0).keySet();
-
-		//build output
-		ArrayList<Map<String, String>> out = new ArrayList<>();
-		for(String id : ids) {
-			Map<String, String> e1 = ind1.get(id);
-			Map<String, String> e2 = ind2.get(id);
-
-			//make template
-			Map<String, String> e = new HashMap<>();
-			for(String k : ks1) if(k!=idProp) e.put(k, defaultValue);
-			for(String k : ks2) if(k!=idProp) e.put(k, defaultValue);
-			e.put(idProp, id);
-
-			System.out.println(e);
-
-			
-			out.add(e);
-		}
-
-		return out;
-	}
-
 
 }
