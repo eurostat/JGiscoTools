@@ -96,7 +96,16 @@ public class RoadTransportPerformance {
 
 
 			logger.info("Join 1");
-			ArrayList<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsRA, cellsPP, "", false);
+			ArrayList<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsRA, cellsPP, "", true);
+			logger.info(cells.size());
+
+			logger.info("Join 2");
+			cells = CSVUtil.joinBothSides("GRD_ID", cells, cellsRP, "", true);
+			logger.info(cells.size());
+
+			logger.info(cells.get(0).keySet());
+			System.out.println(cells.get(0));
+
 
 			/*
 				logger.info("Build tiles");
