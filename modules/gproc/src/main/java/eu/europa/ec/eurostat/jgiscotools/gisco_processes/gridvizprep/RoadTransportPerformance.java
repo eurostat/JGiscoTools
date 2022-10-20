@@ -5,11 +5,9 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.geotools.coverage.grid.GridCoverage2D;
 
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
-import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil.SkipFunction;
 
 public class RoadTransportPerformance {
 	static Logger logger = LogManager.getLogger(RoadTransportPerformance.class.getName());
@@ -64,36 +62,35 @@ public class RoadTransportPerformance {
 			logger.info("Tiling " + res + "m");
 
 			String in;
-/*
+
 			in = "ROAD_ACC_1H30";
 			logger.info("Load grid cells " + in);
 			ArrayList<Map<String, String>> cellsRA = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"v"},
-					(v)->{ System.out.println(v[0]); return v[0]==-1; }
+					(v)->{ return v[0]==-1; }
 					);
 			logger.info(cellsRA.size());
 
-			
 			in = "POPL_PROX_120KM";
 			logger.info("Load grid cells " + in);
 			ArrayList<Map<String, String>> cellsPP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"v"},
-					(v)->{ System.out.println(v[0]); return v[0]==-1; }
+					(v)->{ return v[0]==-1; }
 					);
 			logger.info(cellsPP.size());
-*/
+
 			in = "ROAD_PERF_1H30";
 			logger.info("Load grid cells " + in);
 			ArrayList<Map<String, String>> cellsRP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"v"},
-					(v)->{ System.out.println(v[0]); return v[0]==-1; }
+					(v)->{ return v[0]==-1; }
 					);
 			logger.info(cellsRP.size());
 
-			
+
 			//TODO join
 
 			/*
