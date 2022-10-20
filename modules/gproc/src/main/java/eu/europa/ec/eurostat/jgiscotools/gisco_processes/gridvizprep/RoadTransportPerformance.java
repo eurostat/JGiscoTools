@@ -25,12 +25,13 @@ public class RoadTransportPerformance {
 
 	private static void resampling() {
 		//Population in a neighbourhood of 120 km radius
-		String inF = basePath + "road_transport_performance_grid_datasets/POPL_PROX_120KM.tif";
+		String in = "POPL_PROX_120KM";
+		String inF = basePath + "road_transport_performance_grid_datasets/"+in+".tif";
 
 		for (int resT : resolutions) {
 			logger.info("Tiling " + resT + "m");
 
-			String outF = basePath + resT + ".tif";
+			String outF = basePath +in+"_"+ resT + ".tif";
 			//https://gdal.org/programs/gdalwarp.html#gdalwarp
 			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+resT+" "+resT+" -r average";
 
