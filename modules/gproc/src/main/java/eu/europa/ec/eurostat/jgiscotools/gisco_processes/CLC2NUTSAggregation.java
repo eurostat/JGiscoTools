@@ -4,12 +4,11 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
+import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
@@ -94,19 +93,33 @@ Wetlands and water bodies
 		//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
 		logger.info(nuts.size());
 
-		logger.info("Get nuts ids");
-		Set<String> nutsIds = new HashSet<>();
-		for(Feature f : nuts)
-			nutsIds.add(f.getID());
-
-		logger.info("Load CLC");
+		/*logger.info("Load CLC");
 		String clcFile = "/home/juju/Bureau/gisco/clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
-		ArrayList<Feature> clc = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID");
-		//Code_18
+		ArrayList<Feature> clc = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", CQL.toFilter("(NOT(Code_18='523'))"));
+		//Code_18 != 523
 		//logger.info(clc.get(0).getAttributes().keySet());
-		logger.info(clc.size());
+		logger.info(clc.size());*/
 
+
+
+		//for(Feature f : nuts) {
+		Feature f = nuts.get(0);
 		
+			String nutsId = f.getID();
+			Geometry g = f.getGeometry();
+
+			//get clcs from spatial index
+			logger.info("Load CLC");
+			String clcFile = "/home/juju/Bureau/gisco/clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
+			ArrayList<Feature> clc = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", CQL.toFilter("(NOT(Code_18='523') AND BBOX(the_geom,10,20,30,40))"));
+			//BBOX xMin,ymin,xMax,yMax
+			//Code_18 != 523
+			logger.info(clc.size());
+
+
+		//}
+
+
 		logger.info("End");
 	}
 
