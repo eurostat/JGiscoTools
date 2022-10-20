@@ -72,8 +72,6 @@ public class RoadTransportPerformance {
 						);
 				logger.info(cells.size());
 
-				logger.info(cells.get(0));
-
 				/*
 				logger.info("Build tiles");
 				GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
