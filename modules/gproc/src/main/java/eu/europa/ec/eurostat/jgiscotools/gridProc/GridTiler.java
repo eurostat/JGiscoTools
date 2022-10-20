@@ -43,7 +43,7 @@ public class GridTiler {
 	private String gridIdAtt = "GRD_ID";
 
 	/**
-	 * The position of origin of the grid to take into account to defining the
+	 * The position of origin of the grid to take into account to define the
 	 * tiling frame. It should be the bottom left corner of the tiling frame. Tiling
 	 * numbering goes from left to right, and from bottom to top. For LAEA, take
 	 * (0,0).

@@ -10,6 +10,7 @@ import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridEnvelope2D;
 import org.geotools.gce.geotiff.GeoTiffReader;
+import org.locationtech.jts.geom.Coordinate;
 import org.opengis.geometry.Envelope;
 
 public class GeoTiffUtil {
@@ -56,6 +57,7 @@ public class GeoTiffUtil {
 
 		//get envelopes
 		Envelope envG = coverage.getEnvelope();
+		//System.out.println("OriginG: " + envG.getMinimum(0) + ", " + envG.getMinimum(1));
 		GridEnvelope2D env = coverage.getGridGeometry().getGridRange2D();
 		//System.out.println(envG);
 		//System.out.println(env);
@@ -118,6 +120,20 @@ public class GeoTiffUtil {
 	public static ArrayList<Map<String, String>> loadCells(String inTiff, String[] outProps, SkipFunction skip) {
 		GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(inTiff);
 		return GeoTiffUtil.loadCells(coverage, outProps, skip);
+	}
+
+
+	/**
+	 * Geo coordinates of lower left corner.
+	 * 
+	 * @param inTiff
+	 * @return
+	 */
+	public static Coordinate getOriginCoordinates(String inTiff) {
+		GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(inTiff);
+		Envelope envG = coverage.getEnvelope();
+		//System.out.println("OriginG: " + envG.getMinimum(0) + ", " + envG.getMinimum(1));
+		return new Coordinate(envG.getMinimum(0), envG.getMinimum(1));
 	}
 
 }
