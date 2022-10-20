@@ -169,6 +169,7 @@ public class GeoData {
 				ArrayList<Feature> fs = SimpleFeatureUtil.get(sfc, idAtt);
 				//remove 'geometry' attribute
 				for(Feature f : fs) {
+					//TODO really usefull ?
 					/*Object o = */f.getAttributes().remove("geometry");
 					//if(o == null) LOGGER.warn("Could not remove geometry attribute when loading data from " + this.filePath);
 				}
