@@ -24,8 +24,8 @@ public class RoadTransportPerformance {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		resampling();
-		//tiling();
+		//resampling();
+		tiling();
 
 		logger.info("End");
 	}
