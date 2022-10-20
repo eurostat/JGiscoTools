@@ -346,7 +346,17 @@ public class CSVUtil {
 
 		//get all ids
 		HashSet<String> ids = new HashSet<>();
-		for(Map<String, String> c : data1) ids.add(c.get(idProp));
+		for(Map<String, String> c : data1) {
+			if(ids==null || c==null || idProp == null || c.get(idProp) == null) {
+				System.out.println(data1);
+				System.out.println(data1.size());
+				System.out.println(c);
+				System.out.println(idProp);
+				System.out.println(c.get(idProp));
+				System.exit(0);
+			}
+			ids.add(c.get(idProp));
+		}
 		for(Map<String, String> c : data2) ids.add(c.get(idProp));
 
 		//index data1 and data2 by id
