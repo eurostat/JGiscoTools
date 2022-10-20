@@ -1,9 +1,16 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
+import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 
 public class RoadTransportPerformance {
 	static Logger logger = LogManager.getLogger(RoadTransportPerformance.class.getName());
@@ -16,65 +23,72 @@ public class RoadTransportPerformance {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		resampling();
-		//tiling();
+		//resampling();
+		tiling();
 
 		logger.info("End");
 	}
 
 
+
+
 	private static void resampling() {
+
+		//population within a 90-minute drive:
 		//Population in a neighbourhood of 120 km radius
-		String in = "POPL_PROX_120KM";
-		String inF = basePath + "road_transport_performance_grid_datasets/"+in+".tif";
+		//Transport performance by car:
+		for(String in : new String[] {"ROAD_ACC_1H30", "POPL_PROX_120KM", "ROAD_PERF_1H30"}) {
 
-		for (int resT : resolutions) {
-			logger.info("Tiling " + resT + "m");
+			String inF = basePath + "road_transport_performance_grid_datasets/"+in+".tif";
 
-			String outF = basePath +in+"_"+ resT + ".tif";
-			//https://gdal.org/programs/gdalwarp.html#gdalwarp
-			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+resT+" "+resT+" -r average";
+			for (int res : resolutions) {
+				logger.info("Tiling " + res + "m");
 
-			logger.info(cmd);
-			CommandUtil.run(cmd);
+				String outF = basePath +in+"_"+ res + ".tif";
+				//https://gdal.org/programs/gdalwarp.html#gdalwarp
+				String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -r average";
+
+				logger.info(cmd);
+				CommandUtil.run(cmd);
+			}
 		}
+
 	}
 
-	/*/ tile all resolutions
+
+
+	// tile all resolutions
 	private static void tiling() {
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
+			for(String in : new String[] {"ROAD_ACC_1H30", "POPL_PROX_120KM", "ROAD_PERF_1H30"}) {
 
-			String f = basePath + res+".tif";
+				String f = basePath +in+"_"+ res + ".tif";
 
-			logger.info("Load geoTiff");
-			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
+				logger.info("Load geoTiff");
+				GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
 
-			logger.info("Load grid cells");
-			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"clc"},
-					(v)->{ return v[0]==0 || v[0]==128 || v[0]==44 || Double.isNaN(v[0]); }
-					);
-			logger.info(cells.size());
+				logger.info("Load grid cells");
+				ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"v"},
+						(v)->{ return false; }
+						);
+				logger.info(cells.size());
 
-			//logger.info("Round");
-			//for(Map<String, String> cell : cells)
-			//	cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
+				logger.info("Build tiles");
+				GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
 
-			logger.info("Build tiles");
-			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
+				gst.createTiles();
+				logger.info(gst.getTiles().size() + " tiles created");
 
-			gst.createTiles();
-			logger.info(gst.getTiles().size() + " tiles created");
-
-			logger.info("Save");
-			String outpath = basePath + "out/" + res + "m";
-			gst.saveCSV(outpath);
-			gst.saveTilingInfoJSON(outpath, "Corine Land Cover 2018 " + res + "m");
+				logger.info("Save");
+				String outpath = basePath + "out/" + res + "m";
+				gst.saveCSV(outpath);
+				gst.saveTilingInfoJSON(outpath, "Corine Land Cover 2018 " + res + "m");
+			}
 		}
 
 	}
-	 */
 
 
 }
