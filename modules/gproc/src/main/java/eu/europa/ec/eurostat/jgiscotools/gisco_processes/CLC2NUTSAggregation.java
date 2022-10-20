@@ -101,8 +101,9 @@ Wetlands and water bodies
 
 		logger.info("Load CLC");
 		String clcFile = "/home/juju/Bureau/gisco/clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
-		ArrayList<Feature> clc = GeoData.getFeatures(clcFile);
-		logger.info(clc.get(0).getAttributes().keySet());
+		ArrayList<Feature> clc = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID");
+		//Code_18
+		//logger.info(clc.get(0).getAttributes().keySet());
 		logger.info(clc.size());
 
 		
