@@ -21,6 +21,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class CLC2NUTSAggregation {
 	private static Logger logger = LogManager.getLogger(CLC2NUTSAggregation.class.getName());
 
+	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
@@ -91,19 +92,18 @@ Wetlands and water bodies
 		String nutsFile = "/home/juju/Bureau/gisco/geodata/gisco/GISCO.NUTS_RG_100K_2021_3035.gpkg";
 		ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("(STAT_LEVL_CODE='3')"));
 		//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
-		System.out.println(nuts.size());
+		logger.info(nuts.size());
 
 		logger.info("Get nuts ids");
 		Set<String> nutsIds = new HashSet<>();
 		for(Feature f : nuts)
 			nutsIds.add(f.getID());
-		System.out.println(nutsIds.size());
 
 		logger.info("Load CLC");
 		String clcFile = "/home/juju/Bureau/gisco/clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
 		ArrayList<Feature> clc = GeoData.getFeatures(clcFile);
-		System.out.println(clc.get(0).getAttributes().keySet());
-		System.out.println(clc.size());
+		logger.info(clc.get(0).getAttributes().keySet());
+		logger.info(clc.size());
 
 		
 		logger.info("End");
