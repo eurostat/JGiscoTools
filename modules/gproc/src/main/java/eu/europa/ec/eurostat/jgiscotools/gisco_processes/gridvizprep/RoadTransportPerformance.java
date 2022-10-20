@@ -62,17 +62,41 @@ public class RoadTransportPerformance {
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
-			for(String in : new String[] {"ROAD_ACC_1H30"/*, "POPL_PROX_120KM", "ROAD_PERF_1H30"*/}) {
 
-				logger.info("Load grid cells");
-				ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(
-						basePath +in+"_"+ res + ".tif",
-						new String[] {"v"},
-						(v)->{ return v[0]==-1; }
-						);
-				logger.info(cells.size());
+			String in;
+/*
+			in = "ROAD_ACC_1H30";
+			logger.info("Load grid cells " + in);
+			ArrayList<Map<String, String>> cellsRA = GeoTiffUtil.loadCells(
+					basePath +in+"_"+ res + ".tif",
+					new String[] {"v"},
+					(v)->{ System.out.println(v[0]); return v[0]==-1; }
+					);
+			logger.info(cellsRA.size());
 
-				/*
+			
+			in = "POPL_PROX_120KM";
+			logger.info("Load grid cells " + in);
+			ArrayList<Map<String, String>> cellsPP = GeoTiffUtil.loadCells(
+					basePath +in+"_"+ res + ".tif",
+					new String[] {"v"},
+					(v)->{ System.out.println(v[0]); return v[0]==-1; }
+					);
+			logger.info(cellsPP.size());
+*/
+			in = "ROAD_PERF_1H30";
+			logger.info("Load grid cells " + in);
+			ArrayList<Map<String, String>> cellsRP = GeoTiffUtil.loadCells(
+					basePath +in+"_"+ res + ".tif",
+					new String[] {"v"},
+					(v)->{ System.out.println(v[0]); return v[0]==-1; }
+					);
+			logger.info(cellsRP.size());
+
+			
+			//TODO join
+
+			/*
 				logger.info("Build tiles");
 				GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
 
@@ -83,8 +107,8 @@ public class RoadTransportPerformance {
 				String outpath = basePath + "out/" + res + "m";
 				gst.saveCSV(outpath);
 				gst.saveTilingInfoJSON(outpath, "Road transport performance " + res + "m");
-				 */
-			}
+			 */
+			//}
 		}
 
 	}
