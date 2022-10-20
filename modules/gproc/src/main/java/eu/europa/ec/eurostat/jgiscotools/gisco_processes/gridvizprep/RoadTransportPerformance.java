@@ -1,7 +1,11 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +18,7 @@ public class RoadTransportPerformance {
 
 	// the target resolutions
 	//private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
+	private static int[] resolutions = new int[] { 100000, 50000/*, 20000, 10000, 5000, 2000, 1000*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/regio_road_perf/";
 
 	// -Xms4g -Xmx16g
@@ -67,7 +71,7 @@ public class RoadTransportPerformance {
 			logger.info("Load grid cells " + in);
 			ArrayList<Map<String, String>> cellsRA = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
-					new String[] {"v"},
+					new String[] {"ra"},
 					(v)->{ return v[0]==-1; }
 					);
 			logger.info(cellsRA.size());
@@ -76,7 +80,7 @@ public class RoadTransportPerformance {
 			logger.info("Load grid cells " + in);
 			ArrayList<Map<String, String>> cellsPP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
-					new String[] {"v"},
+					new String[] {"pp"},
 					(v)->{ return v[0]==-1; }
 					);
 			logger.info(cellsPP.size());
@@ -85,13 +89,14 @@ public class RoadTransportPerformance {
 			logger.info("Load grid cells " + in);
 			ArrayList<Map<String, String>> cellsRP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
-					new String[] {"v"},
+					new String[] {"rp"},
 					(v)->{ return v[0]==-1; }
 					);
 			logger.info(cellsRP.size());
 
 
-			//TODO join
+			logger.info("Join 1");
+			ArrayList<Map<String, String>> cells = joinBothSides("GRD_ID", cellsRA, cellsPP, "");
 
 			/*
 				logger.info("Build tiles");
@@ -108,6 +113,50 @@ public class RoadTransportPerformance {
 			//}
 		}
 
+	}
+
+
+
+
+	private static ArrayList<Map<String, String>> joinBothSides(String idProp, ArrayList<Map<String, String>> data1, ArrayList<Map<String, String>> data2, String defaultValue) {
+		//special cases
+		if(data1.size() ==0) return data2;
+		if(data2.size() ==0) return data1;
+
+		//get all ids
+		HashSet<String> ids = new HashSet<>();
+		for(Map<String, String> c : data1) ids.add(c.get(idProp));
+		for(Map<String, String> c : data2) ids.add(c.get(idProp));
+
+		//index data1 and data2 by id
+		HashMap<String,Map<String,String>> ind1 = new HashMap<>();
+		for(Map<String, String> e : data1) ind1.put(e.get(idProp), e);
+		HashMap<String,Map<String,String>> ind2 = new HashMap<>();
+		for(Map<String, String> e : data2) ind2.put(e.get(idProp), e);
+
+		//get key sets
+		Set<String> ks1 = data1.get(0).keySet();
+		Set<String> ks2 = data2.get(0).keySet();
+
+		//build output
+		ArrayList<Map<String, String>> out = new ArrayList<>();
+		for(String id : ids) {
+			Map<String, String> e1 = ind1.get(id);
+			Map<String, String> e2 = ind2.get(id);
+
+			//make template
+			Map<String, String> e = new HashMap<>();
+			for(String k : ks1) if(k!=idProp) e.put(k, defaultValue);
+			for(String k : ks2) if(k!=idProp) e.put(k, defaultValue);
+			e.put(idProp, id);
+
+			System.out.println(e);
+
+			
+			out.add(e);
+		}
+
+		return out;
 	}
 
 
