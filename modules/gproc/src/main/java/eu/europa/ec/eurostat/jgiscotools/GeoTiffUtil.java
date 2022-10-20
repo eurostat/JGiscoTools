@@ -94,4 +94,11 @@ public class GeoTiffUtil {
 		return out;
 	}
 
+
+
+	public static ArrayList<Map<String, String>> loadCells(String inTiff, String[] outProps, SkipFunction skip) {
+		GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(inTiff);
+		return GeoTiffUtil.loadCells(coverage, outProps, skip);
+	}
+
 }

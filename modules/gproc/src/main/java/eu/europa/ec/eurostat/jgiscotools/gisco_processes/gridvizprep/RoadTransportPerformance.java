@@ -6,17 +6,17 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
+import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil.SkipFunction;
 
 public class RoadTransportPerformance {
 	static Logger logger = LogManager.getLogger(RoadTransportPerformance.class.getName());
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
+	//private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
 	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/regio_road_perf/";
 
 	// -Xms4g -Xmx16g
@@ -62,19 +62,19 @@ public class RoadTransportPerformance {
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
-			for(String in : new String[] {"ROAD_ACC_1H30", "POPL_PROX_120KM", "ROAD_PERF_1H30"}) {
-
-				String f = basePath +in+"_"+ res + ".tif";
-
-				logger.info("Load geoTiff");
-				GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
+			for(String in : new String[] {"ROAD_ACC_1H30"/*, "POPL_PROX_120KM", "ROAD_PERF_1H30"*/}) {
 
 				logger.info("Load grid cells");
-				ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"v"},
-						(v)->{ return false; }
+				ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(
+						basePath +in+"_"+ res + ".tif",
+						new String[] {"v"},
+						(v)->{ return v[0]==-1; }
 						);
 				logger.info(cells.size());
 
+				logger.info(cells.get(0));
+
+				/*
 				logger.info("Build tiles");
 				GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
 
@@ -84,7 +84,8 @@ public class RoadTransportPerformance {
 				logger.info("Save");
 				String outpath = basePath + "out/" + res + "m";
 				gst.saveCSV(outpath);
-				gst.saveTilingInfoJSON(outpath, "Corine Land Cover 2018 " + res + "m");
+				gst.saveTilingInfoJSON(outpath, "Road transport performance " + res + "m");
+				 */
 			}
 		}
 
