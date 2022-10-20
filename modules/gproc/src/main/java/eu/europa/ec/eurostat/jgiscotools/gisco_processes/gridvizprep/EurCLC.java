@@ -46,6 +46,7 @@ public class EurCLC {
 			logger.info("Tiling " + resT + "m");
 
 			String outF = basePath + resT + ".tif";
+			//https://gdal.org/programs/gdalwarp.html#gdalwarp
 			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+resT+" "+resT+" -r mode";
 
 			logger.info(cmd);
