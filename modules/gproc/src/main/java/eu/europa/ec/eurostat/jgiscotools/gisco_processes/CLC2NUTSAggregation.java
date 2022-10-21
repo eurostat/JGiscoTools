@@ -4,6 +4,8 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +14,7 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
@@ -41,10 +44,10 @@ Wetlands and water bodies
 4**
 5**
 
-*/
+	 */
 
-	
-	
+
+
 	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
@@ -56,6 +59,8 @@ Wetlands and water bodies
 		ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='3' AND SHAPE_AREA<0.01"));
 		//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
 		logger.info(nuts.size());
+
+		Collection<Map<String, String>> out = new ArrayList<>();
 
 		for(Feature f : nuts) {
 			//Feature f = nuts.get(0);
@@ -84,9 +89,10 @@ Wetlands and water bodies
 
 		}
 
-		logger.info("Save CSV");
-		
-		
+		logger.info("Save CSV " + out.size());
+		CSVUtil.save(out, "/home/juju/Bureau/gisco/clc/clc_nuts2021_lvl3_2018.csv");
+
+
 		logger.info("End");
 	}
 
