@@ -51,7 +51,7 @@ public class CLC2NUTSAggregation {
 			for(Feature f : nuts) {
 				if(f.getGeometry().isValid()) continue;
 				f.setGeometry(f.getGeometry().buffer(0));
-				logger.warning(f.getID() + " not valid. Correction = "+f.getGeometry().isValid());
+				logger.warn(f.getID() + " not valid. Correction = "+f.getGeometry().isValid());
 			}
 
 			//prepare output data
