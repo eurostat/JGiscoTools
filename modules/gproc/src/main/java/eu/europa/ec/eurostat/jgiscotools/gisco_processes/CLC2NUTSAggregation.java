@@ -85,6 +85,9 @@ Wetlands and water bodies
 				String code = clc.getAttribute("Code_18").toString();
 
 				logger.info("   "+code+"   "+area);
+				
+				Map<String, String> d = getTemplate();
+				out.add(d);
 			}
 
 		}
