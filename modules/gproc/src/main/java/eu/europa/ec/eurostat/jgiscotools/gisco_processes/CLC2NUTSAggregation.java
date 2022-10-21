@@ -34,73 +34,75 @@ public class CLC2NUTSAggregation {
 
 		String nutsFile = "/home/juju/Bureau/gisco/geodata/gisco/GISCO.NUTS_RG_100K_2021_3035.gpkg";
 		String clcFile = "/home/juju/Bureau/gisco/clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
-		int nutsLevel = 2;
 
-		logger.info("Load NUTS level 3");
-		ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='"+nutsLevel+"'")); // AND SHAPE_AREA<0.01
-		//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
-		logger.info(nuts.size());
+		for(int nutsLevel=3; nutsLevel>=0; nutsLevel--) {
 
-		//prepare output data
-		Collection<Map<String, String>> out = new ArrayList<>();
+			logger.info("Load NUTS level " + nutsLevel);
+			ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='"+nutsLevel+"'")); // AND SHAPE_AREA<0.01
+			//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
+			logger.info(nuts.size());
 
-		//handle all nuts regions in parallel
-		nuts.parallelStream().forEach(f -> {
-			String nutsId = f.getID();
-			logger.info(nutsId);
+			//prepare output data
+			Collection<Map<String, String>> out = new ArrayList<>();
 
-			Geometry g = f.getGeometry();
-			Envelope env = g.getEnvelopeInternal();
+			//handle all nuts regions in parallel
+			nuts.parallelStream().forEach(f -> {
+				String nutsId = f.getID();
+				logger.info(nutsId);
 
-			//load clcs whithin bbox, using spatial index
-			String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+env.getMinX()+","+env.getMinY()+","+env.getMaxX()+","+env.getMaxY()+")";
-			Filter fil = null;
-			try {fil = CQL.toFilter(filStr);	} catch (CQLException e1) {				e1.printStackTrace();	}
-			ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", fil);
-			//logger.info(clc.size());
+				Geometry g = f.getGeometry();
+				Envelope env = g.getEnvelopeInternal();
 
-			//compute contribution of each clc polygon
-			Map<String, Double> d = getTemplate();
-			for(Feature clc : clcs) {
+				//load clcs whithin bbox, using spatial index
+				String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+env.getMinX()+","+env.getMinY()+","+env.getMaxX()+","+env.getMaxY()+")";
+				Filter fil = null;
+				try {fil = CQL.toFilter(filStr);	} catch (CQLException e1) {				e1.printStackTrace();	}
+				ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", fil);
+				//logger.info(clc.size());
 
-				if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
-					continue;
+				//compute contribution of each clc polygon
+				Map<String, Double> d = getTemplate();
+				for(Feature clc : clcs) {
 
-				//compute intersection
-				Geometry inter = null;
-				try {
-					inter = clc.getGeometry().intersection(g);
-				} catch (Exception e1) {
-					logger.error("Problem with intersection computation - " + e1.getClass() + " for " + nutsId);
-					Geometry clcG = clc.getGeometry().buffer(0);
-					g = g.buffer(0);
-					inter = clcG.intersection(g);
+					if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
+						continue;
+
+					//compute intersection
+					Geometry inter = null;
+					try {
+						inter = clc.getGeometry().intersection(g);
+					} catch (Exception e1) {
+						logger.error("Problem with intersection computation - " + e1.getClass() + " for " + nutsId);
+						Geometry clcG = clc.getGeometry().buffer(0);
+						g = g.buffer(0);
+						inter = clcG.intersection(g);
+					}
+
+					//compute area
+					double area = inter.getArea();
+					if(area <= 0) continue;
+
+					//get clc code
+					String code = clc.getAttribute("Code_18").toString();
+					String aggCode = getAggCode(code);
+					//logger.info("   "+code+"   "+area);
+					//System.out.println(aggCode);
+
+					//add contribution
+					d.put(aggCode, d.get(aggCode) + area);
 				}
 
-				//compute area
-				double area = inter.getArea();
-				if(area <= 0) continue;
+				//add CSV line, reformated
+				Map<String, String> d_ = new HashMap<>();
+				for(Entry<String, Double> e : d.entrySet())
+					d_.put(e.getKey(), (Math.floor(e.getValue()/10000)/100)+"");
+				d_.put("NUTS_ID", nutsId);
+				out.add(d_);
+			});
 
-				//get clc code
-				String code = clc.getAttribute("Code_18").toString();
-				String aggCode = getAggCode(code);
-				//logger.info("   "+code+"   "+area);
-				//System.out.println(aggCode);
-
-				//add contribution
-				d.put(aggCode, d.get(aggCode) + area);
-			}
-
-			//add CSV line, reformated
-			Map<String, String> d_ = new HashMap<>();
-			for(Entry<String, Double> e : d.entrySet())
-				d_.put(e.getKey(), (Math.floor(e.getValue()/10000)/100)+"");
-			d_.put("NUTS_ID", nutsId);
-			out.add(d_);
-		});
-
-		logger.info("Save CSV " + out.size());
-		CSVUtil.save(out, "/home/juju/Bureau/gisco/clc/clc_nuts2021_lvl"+nutsLevel+"_2018.csv");
+			logger.info("Save CSV " + out.size());
+			CSVUtil.save(out, "/home/juju/Bureau/gisco/clc/clc_nuts2021_lvl"+nutsLevel+"_2018.csv");
+		}
 
 		logger.info("End");
 	}
