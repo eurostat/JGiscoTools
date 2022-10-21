@@ -357,7 +357,13 @@ public class CSVUtil {
 			}
 			ids.add(c.get(idProp));
 		}
-		for(Map<String, String> c : data2) ids.add(c.get(idProp));
+		for(Map<String, String> c : data2) {
+			if(data2==null) System.err.println("data2");
+			if(ids==null) System.err.println("ids");
+			if(c==null) System.err.println("c");
+			if(c.get(idProp)==null) System.err.println("c.get(idProp)");
+			ids.add(c.get(idProp));
+		}
 
 		//index data1 and data2 by id
 		HashMap<String,Map<String,String>> ind1 = new HashMap<>();
