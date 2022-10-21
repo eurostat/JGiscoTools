@@ -79,12 +79,20 @@ public class CLC2NUTSAggregation {
 	private static Map<String, String> getTemplate(String nutsId) {
 		Map<String, String> d = new HashMap<>();
 		d.put("NUTS_ID", nutsId);
+		d.put("artif", "0.0");
+		d.put("agri", "0.0");
+		d.put("past", "0.0");
+		d.put("forest", "0.0");
+		d.put("shrub", "0.0");
+		d.put("open", "0.0");
+		d.put("water", "0.0");
 		return d;
 	}
 
 
 	/*
 https://www.eea.europa.eu/data-and-maps/figures/corine-land-cover-1990-by-country/legend/image_large
+
 Artificial areas
 artif
 1**
