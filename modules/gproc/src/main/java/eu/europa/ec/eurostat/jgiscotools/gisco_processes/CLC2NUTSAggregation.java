@@ -34,11 +34,11 @@ public class CLC2NUTSAggregation {
 		String clcFile = "/home/juju/Bureau/gisco/clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
 
 		logger.info("Load NUTS level 3");
-		ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='3' AND SHAPE_AREA<0.01"));
+		ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='3'")); // AND SHAPE_AREA<0.01
 		//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
 		logger.info(nuts.size());
 
-		Collection<Map<String, Double>> data = new ArrayList<>();
+		Collection<Map<String, String>> out = new ArrayList<>();
 
 		for(Feature f : nuts) {
 			//Feature f = nuts.get(0);
@@ -47,15 +47,15 @@ public class CLC2NUTSAggregation {
 			Map<String, Double> d = getTemplate();
 
 			Geometry g = f.getGeometry();
-			Envelope e = g.getEnvelopeInternal();
+			Envelope env = g.getEnvelopeInternal();
 
 			//load clcs using spatial index
-			String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+e.getMinX()+","+e.getMinY()+","+e.getMaxX()+","+e.getMaxY()+")";
+			String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+env.getMinX()+","+env.getMinY()+","+env.getMaxX()+","+env.getMaxY()+")";
 			ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", CQL.toFilter(filStr));
 			//logger.info(clc.size());
 
 			for(Feature clc : clcs) {
-				if(! e.intersects(clc.getGeometry().getEnvelopeInternal()))
+				if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
 					continue;
 				//compute intersection
 				Geometry inter = clc.getGeometry().intersection(g);
@@ -70,18 +70,12 @@ public class CLC2NUTSAggregation {
 
 				//add contribution
 				d.put(aggCode, d.get(aggCode) + area);
-
-				data.add(d);
 			}
 
-		}
-
-		logger.info("Prepare CSV " + data.size());
-		Collection<Map<String, String>> out = new ArrayList<>();
-		for(Map<String, Double> d : data) {
 			Map<String, String> d_ = new HashMap<>();
 			for(Entry<String, Double> e : d.entrySet())
-				d_.put(e.getKey(), Math.floor(e.getValue()/1000000)+"");
+				d_.put(e.getKey(), (Math.floor(e.getValue()/10000)/100)+"");
+			d_.put("NUTS_ID", nutsId);
 			out.add(d_);
 		}
 
