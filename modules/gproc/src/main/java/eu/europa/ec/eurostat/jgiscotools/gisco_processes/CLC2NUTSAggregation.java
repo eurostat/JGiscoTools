@@ -91,6 +91,7 @@ public class CLC2NUTSAggregation {
 				d.put(aggCode, d.get(aggCode) + area);
 			}
 
+			//add CSV line, reformated
 			Map<String, String> d_ = new HashMap<>();
 			for(Entry<String, Double> e : d.entrySet())
 				d_.put(e.getKey(), (Math.floor(e.getValue()/10000)/100)+"");
