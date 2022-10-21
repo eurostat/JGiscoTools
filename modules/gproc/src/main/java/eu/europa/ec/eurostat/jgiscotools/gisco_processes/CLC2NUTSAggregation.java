@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -66,6 +67,7 @@ Wetlands and water bodies
 			//Feature f = nuts.get(0);
 			String nutsId = f.getID();
 			logger.info(nutsId);
+			Map<String, String> d = getTemplate(nutsId);
 
 			Geometry g = f.getGeometry();
 			Envelope e = g.getEnvelopeInternal();
@@ -85,8 +87,7 @@ Wetlands and water bodies
 				String code = clc.getAttribute("Code_18").toString();
 
 				logger.info("   "+code+"   "+area);
-				
-				Map<String, String> d = getTemplate();
+
 				out.add(d);
 			}
 
@@ -97,6 +98,12 @@ Wetlands and water bodies
 
 
 		logger.info("End");
+	}
+
+	private static Map<String, String> getTemplate(String nutsId) {
+		Map<String, String> d = new HashMap<>();
+		d.put("NUTS_ID", nutsId);
+		return d;
 	}
 
 }
