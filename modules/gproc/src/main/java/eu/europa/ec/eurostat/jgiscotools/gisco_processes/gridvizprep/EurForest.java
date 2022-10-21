@@ -12,8 +12,8 @@ import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
-public class RoadTransportPerformance {
-	static Logger logger = LogManager.getLogger(RoadTransportPerformance.class.getName());
+public class EurForest {
+	static Logger logger = LogManager.getLogger(EurForest.class.getName());
 
 	// the target resolutions
 	//private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };

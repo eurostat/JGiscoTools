@@ -40,8 +40,9 @@ public class CLC2NUTSAggregation {
 
 			logger.info("Load NUTS level " + nutsLevel);
 			ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='"+nutsLevel+"'"
-					+" AND NOT(NUTS_ID LIKE 'UK%')"
-					+" AND NOT(NUTS_ID LIKE 'TR%')"));
+					//+" AND NOT(NUTS_ID LIKE 'UK%')"
+					//+" AND NOT(NUTS_ID LIKE 'TR%')"
+					));
 			// AND NUTS_ID LIKE 'FR%'
 			// AND SHAPE_AREA<0.01
 			//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
