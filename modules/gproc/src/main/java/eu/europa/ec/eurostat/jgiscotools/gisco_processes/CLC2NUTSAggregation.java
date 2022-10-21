@@ -25,30 +25,6 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class CLC2NUTSAggregation {
 	private static Logger logger = LogManager.getLogger(CLC2NUTSAggregation.class.getName());
 
-	/*
-https://www.eea.europa.eu/data-and-maps/figures/corine-land-cover-1990-by-country/legend/image_large
-Artificial areas
-1**
-Arable land and permanent crops
-21*
-22*
-Pastures and heterogeneous agricultural areas
-23*
-24*
-Forest
-31*
-Shrubs
-32*
-Open spaces with little or no vegetation
-33*
-Wetlands and water bodies
-4**
-5**
-
-	 */
-
-
-
 	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
@@ -105,5 +81,37 @@ Wetlands and water bodies
 		d.put("NUTS_ID", nutsId);
 		return d;
 	}
+
+
+	/*
+https://www.eea.europa.eu/data-and-maps/figures/corine-land-cover-1990-by-country/legend/image_large
+Artificial areas
+artif
+1**
+Arable land and permanent crops
+agri
+21*
+22*
+Pastures and heterogeneous agricultural areas
+past
+23*
+24*
+Forest
+forest
+31*
+Shrubs
+shrub
+32*
+Open spaces with little or no vegetation
+open
+33*
+Wetlands and water bodies
+water
+4**
+5**
+
+	 */
+
+
 
 }
