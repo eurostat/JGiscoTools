@@ -12,8 +12,10 @@ import java.util.Map.Entry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
@@ -40,7 +42,8 @@ public class CLC2NUTSAggregation {
 
 		Collection<Map<String, String>> out = new ArrayList<>();
 
-		for(Feature f : nuts) {
+		nuts.parallelStream().forEach(f -> {
+			//for(Feature f : nuts) {
 			//Feature f = nuts.get(0);
 			String nutsId = f.getID();
 			logger.info(nutsId);
@@ -51,7 +54,9 @@ public class CLC2NUTSAggregation {
 
 			//load clcs using spatial index
 			String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+env.getMinX()+","+env.getMinY()+","+env.getMaxX()+","+env.getMaxY()+")";
-			ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", CQL.toFilter(filStr));
+			Filter fil = null;
+			try {fil = CQL.toFilter(filStr);	} catch (CQLException e1) {				e1.printStackTrace();	}
+			ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", fil);
 			//logger.info(clc.size());
 
 			for(Feature clc : clcs) {
@@ -77,7 +82,7 @@ public class CLC2NUTSAggregation {
 				d_.put(e.getKey(), (Math.floor(e.getValue()/10000)/100)+"");
 			d_.put("NUTS_ID", nutsId);
 			out.add(d_);
-		}
+		});
 
 		logger.info("Save CSV " + out.size());
 		CSVUtil.save(out, "/home/juju/Bureau/gisco/clc/clc_nuts2021_lvl3_2018.csv");
