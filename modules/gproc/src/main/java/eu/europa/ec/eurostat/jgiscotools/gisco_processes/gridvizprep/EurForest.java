@@ -1,9 +1,16 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
+import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurForest {
 	static Logger logger = LogManager.getLogger(EurForest.class.getName());
@@ -35,7 +42,7 @@ public class EurForest {
 			//https://gdal.org/programs/gdalwarp.html#gdalwarp
 
 			//DLT
-			String inF = basePath + "DLT_2018_010m_lu_03035_v020/DATA/DLT_2018_010m_E40N30_03035_v020.tif";
+			String inF = basePath + "DLT_2018_010m_lu_03035_v020/DATA/DLT_2018_010m_E40N29_03035_v020.tif";
 			String outF = basePath +"forest_DLT_"+ res + ".tif";
 			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r mode";
 
@@ -43,20 +50,18 @@ public class EurForest {
 			CommandUtil.run(cmd);
 
 			//TCD
-			inF = basePath + "TCD_2018_010m_lu_03035_v020/DATA/TCD_2018_010m_E40N30_03035_v020.tif";
+			inF = basePath + "TCD_2018_010m_lu_03035_v020/DATA/TCD_2018_010m_E40N29_03035_v020.tif";
 			outF = basePath +"forest_TCD_"+ res + ".tif";
 			cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average";
 
 			logger.info(cmd);
 			CommandUtil.run(cmd);
 		}
-
-
 	}
 
 
 
-	/*/ tile all resolutions
+	// tile all resolutions
 	private static void tiling() {
 
 		for (int res : resolutions) {
@@ -64,40 +69,26 @@ public class EurForest {
 
 			String in;
 
-			in = "ROAD_ACC_1H30";
+			in = "DLT";
 			logger.info("Load grid cells " + in);
-			ArrayList<Map<String, String>> cellsRA = GeoTiffUtil.loadCells(
-					basePath +in+"_"+ res + ".tif",
-					new String[] {"ra"},
-					(v)->{ return v[0]==-1; }
+			ArrayList<Map<String, String>> cellsDLT = GeoTiffUtil.loadCells(
+					basePath +"forest_"+in+"_"+ res + ".tif",
+					new String[] {"dlt"},
+					(v)->{ return v[0]==0; }
 					);
-			logger.info(cellsRA.size());
+			logger.info(cellsDLT.size());
 
-			in = "POPL_PROX_120KM";
+			in = "TCD";
 			logger.info("Load grid cells " + in);
-			ArrayList<Map<String, String>> cellsPP = GeoTiffUtil.loadCells(
-					basePath +in+"_"+ res + ".tif",
-					new String[] {"pp"},
-					(v)->{ return v[0]==-1; }
+			ArrayList<Map<String, String>> cellsTCD = GeoTiffUtil.loadCells(
+					basePath +"forest_"+in+"_"+ res + ".tif",
+					new String[] {"tcd"},
+					(v)->{ return v[0]==0; }
 					);
-			logger.info(cellsPP.size());
+			logger.info(cellsTCD.size());
 
-			in = "ROAD_PERF_1H30";
-			logger.info("Load grid cells " + in);
-			ArrayList<Map<String, String>> cellsRP = GeoTiffUtil.loadCells(
-					basePath +in+"_"+ res + ".tif",
-					new String[] {"rp"},
-					(v)->{ return v[0]==-1; }
-					);
-			logger.info(cellsRP.size());
-
-
-			logger.info("Join 1");
-			ArrayList<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsRA, cellsPP, "", false);
-			logger.info(cells.size());
-
-			logger.info("Join 2");
-			cells = CSVUtil.joinBothSides("GRD_ID", cells, cellsRP, "", false);
+			logger.info("Join");
+			ArrayList<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsDLT, cellsTCD, "", false);
 			logger.info(cells.size());
 
 			logger.info(cells.get(0).keySet());
@@ -112,9 +103,9 @@ public class EurForest {
 			logger.info("Save");
 			String outpath = basePath + "out/" + res + "m";
 			gst.saveCSV(outpath);
-			gst.saveTilingInfoJSON(outpath, "Road transport performance " + res + "m");
+			gst.saveTilingInfoJSON(outpath, "Forest - copernicus - TCD DLT " + res + "m");
 
 		}
-	}*/
+	}
 
 }
