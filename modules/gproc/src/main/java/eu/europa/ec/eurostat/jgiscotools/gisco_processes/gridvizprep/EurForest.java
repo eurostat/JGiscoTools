@@ -20,7 +20,7 @@ public class EurForest {
 
 	// the target resolutions
 	//private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100 };
+	private static int[] resolutions = new int[] { /*100000, 50000, 20000,*/ 10000, 5000, 2000, 1000, 500 /*, 200, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/forest/";
 
 	// -Xms4g -Xmx16g
@@ -42,7 +42,7 @@ public class EurForest {
 			//https://gdal.org/programs/gdalwarp.html#gdalwarp
 
 			//DLT
-			String inF = basePath + "DLT_2018_010m_lu_03035_v020/DATA/DLT_2018_010m_E40N29_03035_v020.tif";
+			String inF = basePath + "DLT_2018_010m_eu_03035_v020/DATA/DLT_2018_010m_eu_03035_V2_0.tif";
 			String outF = basePath +"forest_DLT_"+ res + ".tif";
 			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r mode";
 
@@ -50,7 +50,7 @@ public class EurForest {
 			CommandUtil.run(cmd);
 
 			//TCD
-			inF = basePath + "TCD_2018_010m_lu_03035_v020/DATA/TCD_2018_010m_E40N29_03035_v020.tif";
+			inF = basePath + "TCD_2018_010m_eu_03035_v020/DATA/TCD_2018_010m_eu_03035_V2_0.tif";
 			outF = basePath +"forest_TCD_"+ res + ".tif";
 			cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average";
 
@@ -74,7 +74,7 @@ public class EurForest {
 			ArrayList<Map<String, String>> cellsDLT = GeoTiffUtil.loadCells(
 					basePath +"forest_"+in+"_"+ res + ".tif",
 					new String[] {"dlt"},
-					(v)->{ return v[0]==0; }
+					(v)->{ return v[0]==0 || v[0]==255; }
 					);
 			logger.info(cellsDLT.size());
 
@@ -83,7 +83,7 @@ public class EurForest {
 			ArrayList<Map<String, String>> cellsTCD = GeoTiffUtil.loadCells(
 					basePath +"forest_"+in+"_"+ res + ".tif",
 					new String[] {"tcd"},
-					(v)->{ return v[0]==0; }
+					(v)->{ return v[0]==0 || v[0]==255; }
 					);
 			logger.info(cellsTCD.size());
 
