@@ -34,9 +34,10 @@ public class CLC2NUTSAggregation {
 
 		String nutsFile = "/home/juju/Bureau/gisco/geodata/gisco/GISCO.NUTS_RG_100K_2021_3035.gpkg";
 		String clcFile = "/home/juju/Bureau/gisco/clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
+		int nutsLevel = 2;
 
 		logger.info("Load NUTS level 3");
-		ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='3'")); // AND SHAPE_AREA<0.01
+		ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='"+nutsLevel+"'")); // AND SHAPE_AREA<0.01
 		//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
 		logger.info(nuts.size());
 
@@ -63,7 +64,15 @@ public class CLC2NUTSAggregation {
 				if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
 					continue;
 				//compute intersection
-				Geometry inter = clc.getGeometry().intersection(g);
+				Geometry inter = null;
+				try {
+					inter = clc.getGeometry().intersection(g);
+				} catch (Exception e1) {
+					logger.error("Problem with intersection computation - " + e1.getClass() + " for " + nutsId);
+					Geometry clcG = clc.getGeometry().buffer(0);
+					g = g.buffer(0);
+					inter = clcG.intersection(g);
+				}
 				double area = inter.getArea();
 				if(area<=0) continue;
 
@@ -85,7 +94,7 @@ public class CLC2NUTSAggregation {
 		});
 
 		logger.info("Save CSV " + out.size());
-		CSVUtil.save(out, "/home/juju/Bureau/gisco/clc/clc_nuts2021_lvl3_2018.csv");
+		CSVUtil.save(out, "/home/juju/Bureau/gisco/clc/clc_nuts2021_lvl"+nutsLevel+"_2018.csv");
 
 		logger.info("End");
 	}
