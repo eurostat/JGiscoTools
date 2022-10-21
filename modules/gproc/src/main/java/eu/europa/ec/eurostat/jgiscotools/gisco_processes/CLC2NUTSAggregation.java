@@ -32,17 +32,27 @@ public class CLC2NUTSAggregation {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		String nutsFile = "/home/juju/Bureau/gisco/geodata/gisco/GISCO.NUTS_RG_100K_2021_3035.gpkg";
-		String clcFile = "/home/juju/Bureau/gisco/clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
+		String basePath = "/home/juju/Bureau/gisco/";
+		String nutsFile = basePath + "geodata/gisco/GISCO.NUTS_RG_100K_2021_3035.gpkg";
+		String clcFile = basePath + "clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
 
 		for(int nutsLevel=3; nutsLevel>=0; nutsLevel--) {
 
 			logger.info("Load NUTS level " + nutsLevel);
-			ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='"+nutsLevel+"'"));
+			ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='"+nutsLevel+"'"
+					+" AND NOT(NUTS_ID LIKE 'UK%')"
+					+" AND NOT(NUTS_ID LIKE 'TR%')"));
 			// AND NUTS_ID LIKE 'FR%'
 			// AND SHAPE_AREA<0.01
 			//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
 			logger.info(nuts.size());
+
+			//make geometries valid
+			for(Feature f : nuts) {
+				if(f.getGeometry().isValid()) continue;
+				f.setGeometry(f.getGeometry().buffer(0));
+				logger.error(f.getID() + " not valid. Correction = "+f.getGeometry().isValid());
+			}
 
 			//prepare output data
 			Collection<Map<String, String>> out = new ArrayList<>();
