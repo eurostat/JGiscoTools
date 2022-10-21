@@ -1,16 +1,9 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
-import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
-import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurForest {
 	static Logger logger = LogManager.getLogger(EurForest.class.getName());
@@ -18,47 +11,40 @@ public class EurForest {
 	// the target resolutions
 	//private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
-	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/regio_road_perf/";
+	private static String basePath = "/home/juju/Bureau/gisco/geodata/forest/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		//resampling();
-		tiling();
+		resampling();
+		//tiling();
 
 		logger.info("End");
 	}
 
 
-
-
 	private static void resampling() {
 
-		//population within a 90-minute drive:
-		//Population in a neighbourhood of 120 km radius
-		//Transport performance by car:
-		for(String in : new String[] {"ROAD_ACC_1H30", "POPL_PROX_120KM", "ROAD_PERF_1H30"}) {
+		String inF = basePath + "DLT_2018_010m_lu_03035_v020/DATA/DLT_2018_010m_E40N30_03035_v020.tif";
 
-			String inF = basePath + "road_transport_performance_grid_datasets/"+in+".tif";
+		for (int res : resolutions) {
+			logger.info("Tiling " + res + "m");
 
-			for (int res : resolutions) {
-				logger.info("Tiling " + res + "m");
+			String outF = basePath +"forest_"+ res + ".tif";
+			//https://gdal.org/programs/gdalwarp.html#gdalwarp
+			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average";
 
-				String outF = basePath +in+"_"+ res + ".tif";
-				//https://gdal.org/programs/gdalwarp.html#gdalwarp
-				String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average";
-
-				logger.info(cmd);
-				CommandUtil.run(cmd);
-			}
+			logger.info(cmd);
+			CommandUtil.run(cmd);
 		}
+
 
 	}
 
 
 
-	// tile all resolutions
+	/*/ tile all resolutions
 	private static void tiling() {
 
 		for (int res : resolutions) {
@@ -117,6 +103,6 @@ public class EurForest {
 			gst.saveTilingInfoJSON(outpath, "Road transport performance " + res + "m");
 
 		}
-	}
+	}*/
 
 }
