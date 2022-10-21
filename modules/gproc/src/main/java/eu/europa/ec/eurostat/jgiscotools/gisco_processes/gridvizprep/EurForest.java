@@ -8,6 +8,9 @@ import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 public class EurForest {
 	static Logger logger = LogManager.getLogger(EurForest.class.getName());
 
+	//Dominant Leaf Type (DLT) - 0-1-2 -mode
+	//Tree Cover Density (TCD) - 0 to 100 -average
+
 	// the target resolutions
 	//private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
@@ -26,14 +29,23 @@ public class EurForest {
 
 	private static void resampling() {
 
-		String inF = basePath + "DLT_2018_010m_lu_03035_v020/DATA/DLT_2018_010m_E40N30_03035_v020.tif";
-
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
-			String outF = basePath +"forest_"+ res + ".tif";
 			//https://gdal.org/programs/gdalwarp.html#gdalwarp
-			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average";
+
+			//DLT
+			String inF = basePath + "DLT_2018_010m_lu_03035_v020/DATA/DLT_2018_010m_E40N30_03035_v020.tif";
+			String outF = basePath +"forest_DLT_"+ res + ".tif";
+			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r mode";
+
+			logger.info(cmd);
+			CommandUtil.run(cmd);
+
+			//TCD
+			inF = basePath + "TCD_2018_010m_lu_03035_v020/DATA/TCD_2018_010m_E40N30_03035_v020.tif";
+			outF = basePath +"forest_TCD_"+ res + ".tif";
+			cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average";
 
 			logger.info(cmd);
 			CommandUtil.run(cmd);
