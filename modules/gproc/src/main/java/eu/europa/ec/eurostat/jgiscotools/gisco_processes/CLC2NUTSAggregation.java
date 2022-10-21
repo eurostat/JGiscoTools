@@ -43,6 +43,8 @@ Wetlands and water bodies
 
 */
 
+	
+	
 	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
@@ -51,7 +53,7 @@ Wetlands and water bodies
 		String clcFile = "/home/juju/Bureau/gisco/clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
 
 		logger.info("Load NUTS level 3");
-		ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("(STAT_LEVL_CODE='3')"));
+		ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='3' AND SHAPE_AREA<0.01"));
 		//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
 		logger.info(nuts.size());
 
@@ -77,11 +79,14 @@ Wetlands and water bodies
 				if(area<=0) continue;
 				String code = clc.getAttribute("Code_18").toString();
 
-				//logger.info("   "+code+"   "+area);
+				logger.info("   "+code+"   "+area);
 			}
 
 		}
 
+		logger.info("Save CSV");
+		
+		
 		logger.info("End");
 	}
 
