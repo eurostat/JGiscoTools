@@ -41,28 +41,31 @@ public class CLC2NUTSAggregation {
 		//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
 		logger.info(nuts.size());
 
+		//prepare output data
 		Collection<Map<String, String>> out = new ArrayList<>();
 
+		//handle all nuts regions in parallel
 		nuts.parallelStream().forEach(f -> {
-			//for(Feature f : nuts) {
-			//Feature f = nuts.get(0);
 			String nutsId = f.getID();
 			logger.info(nutsId);
-			Map<String, Double> d = getTemplate();
 
 			Geometry g = f.getGeometry();
 			Envelope env = g.getEnvelopeInternal();
 
-			//load clcs using spatial index
+			//load clcs whithin bbox, using spatial index
 			String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+env.getMinX()+","+env.getMinY()+","+env.getMaxX()+","+env.getMaxY()+")";
 			Filter fil = null;
 			try {fil = CQL.toFilter(filStr);	} catch (CQLException e1) {				e1.printStackTrace();	}
 			ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", fil);
 			//logger.info(clc.size());
 
+			//compute contribution of each clc polygon
+			Map<String, Double> d = getTemplate();
 			for(Feature clc : clcs) {
+
 				if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
 					continue;
+
 				//compute intersection
 				Geometry inter = null;
 				try {
@@ -73,10 +76,12 @@ public class CLC2NUTSAggregation {
 					g = g.buffer(0);
 					inter = clcG.intersection(g);
 				}
-				double area = inter.getArea();
-				if(area<=0) continue;
 
-				//get code
+				//compute area
+				double area = inter.getArea();
+				if(area <= 0) continue;
+
+				//get clc code
 				String code = clc.getAttribute("Code_18").toString();
 				String aggCode = getAggCode(code);
 				//logger.info("   "+code+"   "+area);
@@ -100,6 +105,7 @@ public class CLC2NUTSAggregation {
 	}
 
 
+	//return the clc code - after aggregation
 	private static String getAggCode(String code) {
 
 		String f = code.substring(0, 1);
@@ -118,6 +124,7 @@ public class CLC2NUTSAggregation {
 	}
 
 
+	//prepare csv line
 	private static Map<String, Double> getTemplate() {
 		Map<String, Double> d = new HashMap<>();
 		d.put("artif", 0.0);
