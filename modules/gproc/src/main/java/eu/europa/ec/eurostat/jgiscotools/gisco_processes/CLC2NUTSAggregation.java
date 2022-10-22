@@ -101,6 +101,8 @@ public class CLC2NUTSAggregation {
 					//logger.info("   "+code+"   "+area);
 					//System.out.println(aggCode);
 
+					if(aggCode==null) continue;
+					
 					//add contribution
 					d.put(aggCode, d.get(aggCode) + area);
 				}
