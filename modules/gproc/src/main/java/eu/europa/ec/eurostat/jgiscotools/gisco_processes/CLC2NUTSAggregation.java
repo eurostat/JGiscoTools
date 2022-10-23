@@ -36,7 +36,7 @@ public class CLC2NUTSAggregation {
 		String nutsFile = basePath + "geodata/gisco/GISCO.NUTS_RG_100K_2021_3035.gpkg";
 		String clcFile = basePath + "clc/u2018_clc2018_v2020_20u1_geoPackage/DATA/U2018_CLC2018_V2020_20u1.gpkg";
 
-		for(int nutsLevel=3; nutsLevel>=0; nutsLevel--) {
+		for(int nutsLevel=2; nutsLevel>=2; nutsLevel--) {
 
 			logger.info("Load NUTS level " + nutsLevel);
 			ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='"+nutsLevel+"'"
