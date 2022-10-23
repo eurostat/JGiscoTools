@@ -49,11 +49,13 @@ public class CLC2NUTSAggregation {
 			logger.info(nuts.size());
 
 			//make geometries valid
-			for(Feature f : nuts) {
+			/*for(Feature f : nuts) {
 				if(f.getGeometry().isValid()) continue;
 				f.setGeometry(f.getGeometry().buffer(0));
 				logger.warn(f.getID() + " not valid. Correction = "+f.getGeometry().isValid());
-			}
+			}*/
+			for(Feature f : nuts)
+				f.setGeometry(f.getGeometry().buffer(0));
 
 			//prepare output data
 			Collection<Map<String, String>> out = new ArrayList<>();
@@ -102,7 +104,7 @@ public class CLC2NUTSAggregation {
 					//System.out.println(aggCode);
 
 					if(aggCode==null) continue;
-					
+
 					//add contribution
 					d.put(aggCode, d.get(aggCode) + area);
 				}
