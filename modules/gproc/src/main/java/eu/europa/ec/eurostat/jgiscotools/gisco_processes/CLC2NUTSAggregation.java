@@ -40,7 +40,7 @@ public class CLC2NUTSAggregation {
 
 			logger.info("Load NUTS level " + nutsLevel);
 			ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='"+nutsLevel+"'"
-					//+" AND NOT(NUTS_ID LIKE 'UK%')"
+					+ " AND NOT(NUTS_ID LIKE 'UK%' OR NUTS_ID LIKE 'IT%' OR NUTS_ID LIKE 'FR%' OR NUTS_ID LIKE 'TR%' OR NUTS_ID LIKE 'FI%' OR NUTS_ID LIKE 'ES%')"
 					//+" AND NOT(NUTS_ID LIKE 'TR%')"
 					));
 			// AND NUTS_ID LIKE 'FR%'
@@ -50,12 +50,12 @@ public class CLC2NUTSAggregation {
 
 			/*
 			2022-10-23 19:44:54 INFO  CLC2NUTSAggregation:64 - ITC1
-2022-10-23 19:46:37 INFO  CLC2NUTSAggregation:64 - ITC2
-2022-10-23 19:46:39 INFO  CLC2NUTSAggregation:64 - ITC3
-2022-10-23 19:47:05 INFO  CLC2NUTSAggregation:64 - ITC4
-2022-10-23 19:48:36 INFO  CLC2NUTSAggregation:64 - ITF1
-			*/
-			
+2022-10-23 19:46:37 INFO  CLC2NUTSAggregation:64 - ITC2 OK
+2022-10-23 19:46:39 INFO  CLC2NUTSAggregation:64 - ITC3 OK
+2022-10-23 19:47:05 INFO  CLC2NUTSAggregation:64 - ITC4 OK
+2022-10-23 19:48:36 INFO  CLC2NUTSAggregation:64 - ITF1 OK
+			 */
+
 			//make geometries valid
 			/*for(Feature f : nuts) {
 				if(f.getGeometry().isValid()) continue;
@@ -85,13 +85,14 @@ public class CLC2NUTSAggregation {
 
 				//compute contribution of each clc polygon
 				Map<String, Double> d = getTemplate();
+				Geometry inter;
 				for(Feature clc : clcs) {
 
 					if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
 						continue;
 
 					//compute intersection
-					Geometry inter = null;
+					inter = null;
 					try {
 						inter = clc.getGeometry().intersection(g);
 					} catch (Exception e1) {
@@ -117,7 +118,7 @@ public class CLC2NUTSAggregation {
 					d.put(aggCode, d.get(aggCode) + area);
 				}
 
-				//add CSV line, reformated
+				//add CSV line, reformated, with nuts id
 				Map<String, String> d_ = new HashMap<>();
 				for(Entry<String, Double> e : d.entrySet())
 					d_.put(e.getKey(), (Math.floor(e.getValue()/10000)/100)+"");
