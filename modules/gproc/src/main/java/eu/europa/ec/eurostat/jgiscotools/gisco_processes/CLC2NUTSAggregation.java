@@ -87,14 +87,13 @@ public class CLC2NUTSAggregation {
 
 				//compute contribution of each clc polygon
 				Map<String, Double> d = getTemplate();
-				Geometry inter;
 				for(Feature clc : clcs) {
 
 					if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
 						continue;
 
 					//compute intersection
-					inter = null;
+					Geometry inter = null;
 					try {
 						inter = clc.getGeometry().intersection(g);
 					} catch (Exception e1) {
@@ -127,6 +126,11 @@ public class CLC2NUTSAggregation {
 					d_.put(e.getKey(), (Math.floor(e.getValue()/10000)/100)+"");
 				d_.put("NUTS_ID", nutsId);
 				out.add(d_);
+
+				clcs.clear();
+				clcs = null;
+				g = null;
+				env = null;
 
 				logger.info(nutsId + " done.");
 			});
