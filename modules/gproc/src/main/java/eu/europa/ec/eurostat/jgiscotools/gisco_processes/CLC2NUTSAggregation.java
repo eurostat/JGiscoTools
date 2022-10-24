@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,8 +41,8 @@ public class CLC2NUTSAggregation {
 
 			logger.info("Load NUTS level " + nutsLevel);
 			ArrayList<Feature> nuts = GeoData.getFeatures(nutsFile, "NUTS_ID", CQL.toFilter("STAT_LEVL_CODE='"+nutsLevel+"'"
-					+ " AND NOT(NUTS_ID LIKE 'UK%' OR NUTS_ID LIKE 'IT%' OR NUTS_ID LIKE 'FR%' OR NUTS_ID LIKE 'TR%' OR NUTS_ID LIKE 'FI%' OR NUTS_ID LIKE 'ES%')"
-					//+" AND NOT(NUTS_ID LIKE 'TR%')"
+					//+ " AND NOT(NUTS_ID LIKE 'UK%' OR NUTS_ID LIKE 'IT%' OR NUTS_ID LIKE 'FR%' OR NUTS_ID LIKE 'TR%' OR NUTS_ID LIKE 'FI%' OR NUTS_ID LIKE 'ES%')"
+					//+" AND NUTS_ID LIKE 'FR%'"
 					));
 			// AND NUTS_ID LIKE 'FR%'
 			// AND SHAPE_AREA<0.01
@@ -69,7 +70,8 @@ public class CLC2NUTSAggregation {
 			Collection<Map<String, String>> out = new ArrayList<>();
 
 			//handle all nuts regions in parallel
-			nuts.parallelStream().forEach(f -> {
+			Stream<Feature> st = nuts.stream().parallel();
+			st.forEach(f -> {
 				String nutsId = f.getID();
 				logger.info(nutsId);
 
@@ -81,7 +83,7 @@ public class CLC2NUTSAggregation {
 				Filter fil = null;
 				try {fil = CQL.toFilter(filStr);	} catch (CQLException e1) {				e1.printStackTrace();	}
 				ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", fil);
-				//logger.info(clc.size());
+				logger.info("   " + nutsId + " -> " + clcs.size());
 
 				//compute contribution of each clc polygon
 				Map<String, Double> d = getTemplate();
@@ -111,6 +113,7 @@ public class CLC2NUTSAggregation {
 					String aggCode = getAggCode(code);
 					//logger.info("   "+code+"   "+area);
 					//System.out.println(aggCode);
+					//logger.info("   " + nutsId + " " + aggCode + " -> " + area);
 
 					if(aggCode==null) continue;
 
@@ -124,7 +127,10 @@ public class CLC2NUTSAggregation {
 					d_.put(e.getKey(), (Math.floor(e.getValue()/10000)/100)+"");
 				d_.put("NUTS_ID", nutsId);
 				out.add(d_);
+
+				logger.info(nutsId + " done.");
 			});
+			st.close();
 
 			logger.info("Save CSV " + out.size());
 			CSVUtil.save(out, "/home/juju/Bureau/gisco/clc/clc_nuts2021_lvl"+nutsLevel+"_2018.csv");
