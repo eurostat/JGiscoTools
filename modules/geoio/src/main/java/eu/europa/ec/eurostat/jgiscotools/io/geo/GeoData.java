@@ -26,6 +26,7 @@ import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geopkg.GeoPkgDataStoreFactory;
@@ -153,27 +154,32 @@ public class GeoData {
 		@Override
 		public ArrayList<Feature> getFeatures(File file, String typeName, Filter filter, String idAtt) {
 			try {
+				//build datastore
 				HashMap<String, Object> params = new HashMap<>();
 				params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
 				params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
 				DataStore store = DataStoreFinder.getDataStore(params);
-				String[] names = store.getTypeNames();
-				if(typeName == null && names.length > 1) {
-					typeName = names[0];
-					LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + typeName + " will be considered.");
-				} else if(typeName == null && names.length == 1)
-					typeName = names[0];
-				LOGGER.debug(typeName);
 
-				SimpleFeatureCollection sfc = filter==null? store.getFeatureSource(typeName).getFeatures() : store.getFeatureSource(typeName).getFeatures(filter);
+				//get typename
+				if(typeName ==null) {
+					String[] names = store.getTypeNames();
+					typeName = names[0];
+					if(names.length > 1)
+						LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + typeName + " will be considered.");
+				}
+				if(LOGGER.isDebugEnabled()) LOGGER.debug(typeName);
+
+				SimpleFeatureSource fso = store.getFeatureSource(typeName);
+				SimpleFeatureCollection sfc = filter==null? fso.getFeatures() : fso.getFeatures(filter);
 				ArrayList<Feature> fs = SimpleFeatureUtil.get(sfc, idAtt);
+				store.dispose();
+
 				//remove 'geometry' attribute
 				for(Feature f : fs) {
 					//TODO really usefull ?
 					/*Object o = */f.getAttributes().remove("geometry");
 					//if(o == null) LOGGER.warn("Could not remove geometry attribute when loading data from " + this.filePath);
 				}
-				store.dispose();
 				return fs;
 			} catch (Exception e) { e.printStackTrace(); }
 			return null;
