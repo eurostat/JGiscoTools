@@ -29,6 +29,8 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class CLC2NUTSAggregation {
 	private static Logger logger = LogManager.getLogger(CLC2NUTSAggregation.class.getName());
 
+	static int nb;
+
 	//use: -Xms2G -Xmx12G
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
@@ -70,10 +72,11 @@ public class CLC2NUTSAggregation {
 			Collection<Map<String, String>> out = new ArrayList<>();
 
 			//handle all nuts regions in parallel
+			nb = 0;
 			Stream<Feature> st = nuts.stream().parallel();
 			st.forEach(f -> {
 				String nutsId = f.getID();
-				logger.info(nutsId);
+				logger.info(nutsId + " " + (nb++) +"/"+nuts.size());
 
 				Geometry g = f.getGeometry();
 				Envelope env = g.getEnvelopeInternal();
@@ -102,6 +105,9 @@ public class CLC2NUTSAggregation {
 						g = g.buffer(0);
 						inter = clcG.intersection(g);
 					}
+					
+					//help the gc
+					clc.setGeometry(null);
 
 					//compute area
 					double area = inter.getArea();
@@ -116,6 +122,9 @@ public class CLC2NUTSAggregation {
 
 					if(aggCode==null) continue;
 
+					//help the gc
+					clc.getAttributes().clear();
+					
 					//add contribution
 					d.put(aggCode, d.get(aggCode) + area);
 				}
@@ -127,6 +136,7 @@ public class CLC2NUTSAggregation {
 				d_.put("NUTS_ID", nutsId);
 				out.add(d_);
 
+				//help the gc
 				clcs.clear();
 				clcs = null;
 				g = null;
