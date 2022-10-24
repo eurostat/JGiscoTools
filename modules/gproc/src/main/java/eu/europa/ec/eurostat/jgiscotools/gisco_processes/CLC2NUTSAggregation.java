@@ -48,6 +48,14 @@ public class CLC2NUTSAggregation {
 			//[OBJECTID, SHAPE_LEN, STAT_LEVL_CODE, id, NUTS_ID, SHAPE_AREA]
 			logger.info(nuts.size());
 
+			/*
+			2022-10-23 19:44:54 INFO  CLC2NUTSAggregation:64 - ITC1
+2022-10-23 19:46:37 INFO  CLC2NUTSAggregation:64 - ITC2
+2022-10-23 19:46:39 INFO  CLC2NUTSAggregation:64 - ITC3
+2022-10-23 19:47:05 INFO  CLC2NUTSAggregation:64 - ITC4
+2022-10-23 19:48:36 INFO  CLC2NUTSAggregation:64 - ITF1
+			*/
+			
 			//make geometries valid
 			/*for(Feature f : nuts) {
 				if(f.getGeometry().isValid()) continue;
