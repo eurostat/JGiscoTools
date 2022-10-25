@@ -83,18 +83,18 @@ public class CLC2NUTSAggregation {
 
 				logger.info(nutsId + " " + gs.size() + " " + (nb++) +"/"+nuts.size());
 
+				//load clcs whithin bbox, using spatial index
+				Envelope env = f.getGeometry().getEnvelopeInternal();
+				String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+env.getMinX()+","+env.getMinY()+","+env.getMaxX()+","+env.getMaxY()+")";
+				Filter fil = null;
+				try {fil = CQL.toFilter(filStr);	} catch (CQLException e1) {				e1.printStackTrace();	}
+				ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", fil);
+				logger.info("   " + nutsId + " -> " + clcs.size());
+
 				//prepare output data
 				Map<String, Double> d = getTemplate();
 
 				for(Geometry g : gs) {
-
-					//load clcs whithin bbox, using spatial index
-					Envelope env = g.getEnvelopeInternal();
-					String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+env.getMinX()+","+env.getMinY()+","+env.getMaxX()+","+env.getMaxY()+")";
-					Filter fil = null;
-					try {fil = CQL.toFilter(filStr);	} catch (CQLException e1) {				e1.printStackTrace();	}
-					ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", fil);
-					logger.info("   " + nutsId + " -> " + clcs.size());
 
 					//compute contribution of each clc polygon
 					for(Feature clc : clcs) {
