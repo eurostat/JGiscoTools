@@ -19,6 +19,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
@@ -95,17 +96,25 @@ public class CLC2NUTSAggregation {
 					if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
 						continue;
 
+					//TODO (2) recursivity - decompose ?
+
+					//clip by envelope
+					Envelope envReduc = env.intersection(clc.getGeometry().getEnvelopeInternal());
+					Geometry envReduc_ = JTSGeomUtil.getGeometry(envReduc);
+
 					//compute intersection
 					Geometry inter = null;
 					try {
-						inter = clc.getGeometry().intersection(g);
+						Geometry clcG = clc.getGeometry().intersection(envReduc_);
+						Geometry g_ = g.intersection(envReduc_);
+						inter = clcG.intersection(g_);
 					} catch (Exception e1) {
 						logger.error("Problem with intersection computation - " + e1.getClass() + " for " + nutsId);
-						Geometry clcG = clc.getGeometry().buffer(0);
-						g = g.buffer(0);
-						inter = clcG.intersection(g);
+						Geometry clcG = clc.getGeometry().buffer(0).intersection(envReduc_);
+						Geometry g_ = g.buffer(0).intersection(envReduc_);
+						inter = clcG.intersection(g_);
 					}
-					
+
 					//help the gc
 					clc.setGeometry(null);
 
@@ -124,7 +133,7 @@ public class CLC2NUTSAggregation {
 
 					//help the gc
 					clc.getAttributes().clear();
-					
+
 					//add contribution
 					d.put(aggCode, d.get(aggCode) + area);
 				}
