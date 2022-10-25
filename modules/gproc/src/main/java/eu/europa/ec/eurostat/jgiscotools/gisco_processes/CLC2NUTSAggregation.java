@@ -77,66 +77,82 @@ public class CLC2NUTSAggregation {
 			Stream<Feature> st = nuts.stream().parallel();
 			st.forEach(f -> {
 				String nutsId = f.getID();
-				logger.info(nutsId + " " + (nb++) +"/"+nuts.size());
 
-				Geometry g = f.getGeometry();
-				Envelope env = g.getEnvelopeInternal();
+				//get patches
+				Collection<Geometry> gs = JTSGeomUtil.getGeometries(f.getGeometry());
 
-				//load clcs whithin bbox, using spatial index
-				String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+env.getMinX()+","+env.getMinY()+","+env.getMaxX()+","+env.getMaxY()+")";
-				Filter fil = null;
-				try {fil = CQL.toFilter(filStr);	} catch (CQLException e1) {				e1.printStackTrace();	}
-				ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", fil);
-				logger.info("   " + nutsId + " -> " + clcs.size());
+				logger.info(nutsId + " " + gs.size() + " " + (nb++) +"/"+nuts.size());
 
-				//compute contribution of each clc polygon
+				//prepare output data
 				Map<String, Double> d = getTemplate();
-				for(Feature clc : clcs) {
 
-					if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
-						continue;
+				for(Geometry g : gs) {
 
-					//TODO (2) recursivity - decompose ?
+					//load clcs whithin bbox, using spatial index
+					Envelope env = g.getEnvelopeInternal();
+					String filStr = "NOT(Code_18='523') AND BBOX(Shape,"+env.getMinX()+","+env.getMinY()+","+env.getMaxX()+","+env.getMaxY()+")";
+					Filter fil = null;
+					try {fil = CQL.toFilter(filStr);	} catch (CQLException e1) {				e1.printStackTrace();	}
+					ArrayList<Feature> clcs = GeoData.getFeatures(clcFile, "U2018_CLC2018_V2020_20u1", "ID", fil);
+					logger.info("   " + nutsId + " -> " + clcs.size());
 
-					//clip by envelope
-					Envelope envReduc = env.intersection(clc.getGeometry().getEnvelopeInternal());
-					Geometry envReduc_ = JTSGeomUtil.getGeometry(envReduc);
+					//compute contribution of each clc polygon
+					for(Feature clc : clcs) {
 
-					//compute intersection
-					Geometry inter = null;
-					try {
-						Geometry clcG = clc.getGeometry().intersection(envReduc_);
-						Geometry g_ = g.intersection(envReduc_);
-						inter = clcG.intersection(g_);
-					} catch (Exception e1) {
-						logger.error("Problem with intersection computation - " + e1.getClass() + " for " + nutsId);
-						Geometry clcG = clc.getGeometry().buffer(0).intersection(envReduc_);
-						Geometry g_ = g.buffer(0).intersection(envReduc_);
-						inter = clcG.intersection(g_);
+						if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
+							continue;
+
+						//TODO (2) recursivity - decompose ?
+
+						//clip by envelope
+						Envelope envReduc = env.intersection(clc.getGeometry().getEnvelopeInternal());
+						Geometry envReduc_ = JTSGeomUtil.getGeometry(envReduc);
+
+						//compute intersection
+						Geometry inter = null;
+						try {
+							Geometry clcG = clc.getGeometry().intersection(envReduc_);
+							Geometry g_ = g.intersection(envReduc_);
+							inter = clcG.intersection(g_);
+						} catch (Exception e1) {
+							logger.error("Problem with intersection computation - " + e1.getClass() + " for " + nutsId);
+							Geometry clcG = clc.getGeometry().buffer(0).intersection(envReduc_);
+							Geometry g_ = g.buffer(0).intersection(envReduc_);
+							inter = clcG.intersection(g_);
+						}
+
+						//help the gc
+						clc.setGeometry(null);
+
+						//compute area
+						double area = inter.getArea();
+						if(area <= 0) continue;
+
+						//get clc code
+						String code = clc.getAttribute("Code_18").toString();
+						String aggCode = getAggCode(code);
+						//logger.info("   "+code+"   "+area);
+						//System.out.println(aggCode);
+						//logger.info("   " + nutsId + " " + aggCode + " -> " + area);
+
+						if(aggCode==null) continue;
+
+						//help the gc
+						clc.getAttributes().clear();
+
+						//add contribution
+						d.put(aggCode, d.get(aggCode) + area);
 					}
 
 					//help the gc
-					clc.setGeometry(null);
-
-					//compute area
-					double area = inter.getArea();
-					if(area <= 0) continue;
-
-					//get clc code
-					String code = clc.getAttribute("Code_18").toString();
-					String aggCode = getAggCode(code);
-					//logger.info("   "+code+"   "+area);
-					//System.out.println(aggCode);
-					//logger.info("   " + nutsId + " " + aggCode + " -> " + area);
-
-					if(aggCode==null) continue;
-
-					//help the gc
-					clc.getAttributes().clear();
-
-					//add contribution
-					d.put(aggCode, d.get(aggCode) + area);
+					clcs.clear();
+					clcs = null;
+					g = null;
+					env = null;
 				}
+
+				gs.clear();
+				gs = null;
 
 				//add CSV line, reformated, with nuts id
 				Map<String, String> d_ = new HashMap<>();
@@ -144,12 +160,6 @@ public class CLC2NUTSAggregation {
 					d_.put(e.getKey(), (Math.floor(e.getValue()/10000)/100)+"");
 				d_.put("NUTS_ID", nutsId);
 				out.add(d_);
-
-				//help the gc
-				clcs.clear();
-				clcs = null;
-				g = null;
-				env = null;
 
 				logger.info(nutsId + " done.");
 			});
