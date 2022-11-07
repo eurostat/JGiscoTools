@@ -102,6 +102,7 @@ public class CLC2NUTSAggregation {
 						if(! env.intersects(clc.getGeometry().getEnvelopeInternal()))
 							continue;
 
+						//TODO check FI1D
 						//TODO (2) recursivity - decompose ?
 
 						//clip by envelope
