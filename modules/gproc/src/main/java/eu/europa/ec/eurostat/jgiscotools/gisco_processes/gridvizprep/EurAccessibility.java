@@ -32,8 +32,8 @@ public class EurAccessibility {
 		// prepareEduc();
 		// check(2006);check(2011);check(2018);
 		//join(2018);
-		aggregate();
-		tiling();
+		//aggregate();
+		//tiling();
 		logger.info("End");
 	}
 
@@ -41,11 +41,11 @@ public class EurAccessibility {
 
 		logger.info("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(
-				basePath + "education/input/GRID_PRIMARY_NEAREST_01005.csv",
+				basePath + "education/input/GRID_PRIMARY_081122.csv",
 				CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(";".charAt(0)));
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
-		//[Total_Trav, ID]
+		//[Total_Trav, GRD_ID]
 
 		logger.info("Structure");
 		for (Map<String, String> d : data) {
@@ -56,7 +56,7 @@ public class EurAccessibility {
 
 		logger.info("Rename colums");
 		CSVUtil.renameColumn(data, "Total_Trav", "avg_time_nearest");
-		CSVUtil.renameColumn(data, "ID", "GRD_ID");
+		//CSVUtil.renameColumn(data, "ID", "GRD_ID");
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
@@ -95,7 +95,7 @@ public class EurAccessibility {
 
 	}
 
-	
+
 
 	private static void preparePop(int year) {
 		logger.info("Load");
@@ -108,7 +108,7 @@ public class EurAccessibility {
 		CSVUtil.save(data, basePath + "pop" + year + ".csv");
 	}
 
-	
+
 	private static void join(int year) {
 
 		ArrayList<Map<String, String>> data;
@@ -158,9 +158,9 @@ public class EurAccessibility {
 		CSVUtil.save(out, basePath + "prepared.csv");
 	}
 
-	
-	
-	
+
+
+
 	// derive resolutions
 	private static void aggregate() {
 
