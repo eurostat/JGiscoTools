@@ -26,9 +26,9 @@ public class EurAccessibility {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		// preparePop(2018);
+		//preparePop(2018);
 		//prepareHealth();
-		//prepareEducPrim();
+		prepareEducPrim();
 		// prepareEduc();
 		// check(2006);check(2011);check(2018);
 		//join(2018);
