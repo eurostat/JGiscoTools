@@ -28,12 +28,10 @@ public class EurAccessibility {
 		logger.info("Start");
 		//preparePop(2018);
 		//prepareHealth();
-		prepareEducPrim();
-		// prepareEduc();
-		// check(2006);check(2011);check(2018);
+		//prepareEducPrim();
 		//join(2018);
 		//aggregate();
-		//tiling();
+		tiling();
 		logger.info("End");
 	}
 
