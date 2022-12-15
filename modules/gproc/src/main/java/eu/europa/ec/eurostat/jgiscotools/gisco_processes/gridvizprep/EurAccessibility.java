@@ -133,52 +133,6 @@ public class EurAccessibility {
 		logger.info("save " + data.size());
 		CSVUtil.save(data, basePath + "prepared.csv");
 
-		/*
-		ArrayList<Map<String, String>> data;
-
-		data = CSVUtil.load(basePath + "pop" + year + ".csv");
-		logger.info("pop: " + data.size());
-		HashMap<String, Map<String, String>> iPop = Util.index(data, "GRD_ID");
-		logger.info("popI: " + iPop.keySet().size());
-
-		data = CSVUtil.load(basePath + "prepared_health.csv");
-		logger.info("acc: " + data.size());
-		HashMap<String, Map<String, String>> iHealth = Util.index(data, "GRD_ID");
-		logger.info("accI: " + iHealth.keySet().size());
-
-		data = CSVUtil.load(basePath + "prepared_educ_prim.csv");
-		logger.info("acc: " + data.size());
-		HashMap<String, Map<String, String>> iEducPrim = Util.index(data, "GRD_ID");
-		logger.info("accI: " + iHealth.keySet().size());
-
-		data = null;
-
-		// get all ids
-		Set<String> ids = new HashSet<String>();
-		ids.addAll(iPop.keySet());
-		ids.addAll(iHealth.keySet());
-		logger.info("Ids: " + ids.size());
-
-		// go through ids
-		ArrayList<Map<String, String>> out = new ArrayList<Map<String, String>>();
-		for (String id : ids) {
-			Map<String, String> d = new HashMap<String, String>();
-			d.put("GRD_ID", id);
-
-			String pop = iPop.get(id) == null ? "NA" : iPop.get(id).get("TOT_P");
-			d.put("TOT_P", pop);
-
-			String atnh = iHealth.get(id) == null ? "NA" : iHealth.get(id).get("avg_time_nearest");
-			d.put("avg_time_nearest_h", atnh);
-
-			atnh = iEducPrim.get(id) == null ? "NA" : iEducPrim.get(id).get("avg_time_nearest");
-			d.put("avg_time_nearest_ep", atnh);
-
-			out.add(d);
-		}
-
-		logger.info("save " + out.size());
-		CSVUtil.save(out, basePath + "prepared.csv");*/
 	}
 
 
