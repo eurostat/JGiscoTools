@@ -109,22 +109,29 @@ public class EurAccessibility {
 
 		ArrayList<Map<String, String>> data = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_1000m.csv");
 		logger.info("pop: " + data.size());
+		CSVUtil.removeColumn(data, "2006", "2011");
+		CSVUtil.renameColumn(data, "2018", "TOT_P");
+		logger.info(data.get(0).keySet());
 
 		ArrayList<Map<String, String>> d = CSVUtil.load(basePath + "prepared_health.csv");
 		logger.info("join health: " + d.size());
-		CSVUtil.join(data, "GRD_ID", d, "GRD_ID", true);
+		CSVUtil.renameColumn(d, "avg_time_nearest", "avg_time_nearest_h");
+		logger.info(d.get(0).keySet());
+		//CSVUtil.join(data, "GRD_ID", d, "GRD_ID", false);
+		data = CSVUtil.joinBothSides("GRD_ID", data, d, "", true);
 
 		d = CSVUtil.load(basePath + "prepared_educ_prim.csv");
 		logger.info("join educ: " + d.size());
-		CSVUtil.join(data, "GRD_ID", d, "GRD_ID", true);
-
+		CSVUtil.renameColumn(d, "avg_time_nearest", "avg_time_nearest_ep");
+		logger.info(d.get(0).keySet());
+		//CSVUtil.join(data, "GRD_ID", d, "GRD_ID", false);
+		data = CSVUtil.joinBothSides("GRD_ID", data, d, "", true);
 
 		logger.info("out: " + data.size());
 		logger.info(data.get(0).keySet());
 
-
-		//logger.info("save " + data.size());
-		//CSVUtil.save(data, basePath + "prepared.csv");
+		logger.info("save " + data.size());
+		CSVUtil.save(data, basePath + "prepared.csv");
 
 		/*
 		ArrayList<Map<String, String>> data;

@@ -300,7 +300,8 @@ public class CSVUtil {
 
 
 	/**
-	 * Join on one side
+	 * Join on one side.
+	 * If no element match on the second table, nothing is done.
 	 * 
 	 * @param data1
 	 * @param key1
