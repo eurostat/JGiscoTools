@@ -355,20 +355,24 @@ public class GridTiler {
 		bn.put("yMax", (int) ti.tilingBounds.getMaxY());
 		json.put("tilingBounds", bn);
 
+
+		JSONArray dims = new JSONArray();
+		for (DimStat ds : ti.dSt) dims.put(ds.dimValue);
+
 		// data on dimensions
-		JSONObject dims = new JSONObject();
+		/*JSONObject dims = new JSONObject();
 		for (DimStat ds : ti.dSt) {
 			JSONObject ds_ = new JSONObject();
 
-			ds_.put("minValue", ds.minValue);
-			ds_.put("maxValue", ds.maxValue);
-			ds_.put("averageValue", ds.averageValue);
+			//ds_.put("minValue", ds.minValue);
+			//ds_.put("maxValue", ds.maxValue);
+			//ds_.put("averageValue", ds.averageValue);
 			JSONArray p = new JSONArray();
 			for (double v : ds.percentiles)
 				p.put(v);
 			ds_.put("percentiles", p);
 			dims.put(ds.dimValue, ds_);
-		}
+		}*/
 		json.put("dims", dims);
 
 		// save
