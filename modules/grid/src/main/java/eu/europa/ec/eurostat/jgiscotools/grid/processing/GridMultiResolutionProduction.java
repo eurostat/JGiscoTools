@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.grid.processing;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,6 +131,29 @@ public class GridMultiResolutionProduction {
 				sum /= nb;
 				String sumS = (sum % 1) == 0 ? Integer.toString((int)sum) : Double.toString(sum);
 				return sumS;
+			}
+		};
+	}
+
+	//list of codes aggregator
+	public static Aggregator getCodesAggregator(String separator) {
+		return new Aggregator() {
+			@Override
+			public String aggregate(Collection<String> values) {
+				ArrayList<String> out = new ArrayList<String>();
+				for(String s : values) {
+					String[] cs = s.split(separator);
+					for(String c : cs)
+						if(!out.contains(c)) out.add(c);
+				}
+				Collections.sort(out);
+				StringBuffer sb = new StringBuffer();
+				for(String s : out) {
+					if(sb.length()>0)
+						sb.append(separator);
+					sb.append(s);
+				}
+				return sb.toString();
 			}
 		};
 	}
