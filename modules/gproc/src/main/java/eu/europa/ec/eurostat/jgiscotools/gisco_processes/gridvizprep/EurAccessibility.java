@@ -1,8 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,7 +12,6 @@ import org.locationtech.jts.geom.Coordinate;
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
-import eu.europa.ec.eurostat.jgiscotools.util.Util;
 
 public class EurAccessibility {
 	static Logger logger = LogManager.getLogger(EurAccessibility.class.getName());
@@ -23,15 +20,16 @@ public class EurAccessibility {
 	private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/";
 
+	// TOT_P	avg_time_nearest_ep	avg_time_nearest_h
+
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
-		//preparePop(2018);
 		//prepareHealth();
 		//prepareEducPrim();
-		//join(2018);
+		join();
 		//aggregate();
-		tiling();
+		//tiling();
 		logger.info("End");
 	}
 
@@ -107,8 +105,28 @@ public class EurAccessibility {
 	}
 
 
-	private static void join(int year) {
+	private static void join() {
 
+		ArrayList<Map<String, String>> data = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_1000m.csv");
+		logger.info("pop: " + data.size());
+
+		ArrayList<Map<String, String>> d = CSVUtil.load(basePath + "prepared_health.csv");
+		logger.info("join health: " + d.size());
+		CSVUtil.join(data, "GRD_ID", d, "GRD_ID", true);
+
+		d = CSVUtil.load(basePath + "prepared_educ_prim.csv");
+		logger.info("join educ: " + d.size());
+		CSVUtil.join(data, "GRD_ID", d, "GRD_ID", true);
+
+
+		logger.info("out: " + data.size());
+		logger.info(data.get(0).keySet());
+
+
+		//logger.info("save " + data.size());
+		//CSVUtil.save(data, basePath + "prepared.csv");
+
+		/*
 		ArrayList<Map<String, String>> data;
 
 		data = CSVUtil.load(basePath + "pop" + year + ".csv");
@@ -153,7 +171,7 @@ public class EurAccessibility {
 		}
 
 		logger.info("save " + out.size());
-		CSVUtil.save(out, basePath + "prepared.csv");
+		CSVUtil.save(out, basePath + "prepared.csv");*/
 	}
 
 

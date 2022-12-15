@@ -55,7 +55,7 @@ xxxx = OPTI = optimal travel time
 yy = WW = walk + rail + walk
 yy = BW = bike + rail + walk
 yy = BB = bike + rail + bike		
-		*/
+		 */
 
 		String zz = "ACC";
 		String xx = "AV_T";
