@@ -96,7 +96,7 @@ public class GridMultiResolutionProduction {
 	public interface Aggregator { String aggregate(Collection<String> values); }
 
 	//sum aggregator
-	public Aggregator getSumAggregator(double factor, Collection<String> valuesToIgnore) {
+	public static Aggregator getSumAggregator(double factor, Collection<String> valuesToIgnore) {
 		return new Aggregator() {
 			@Override
 			public String aggregate(Collection<String> values) {
@@ -114,7 +114,7 @@ public class GridMultiResolutionProduction {
 	}
 
 	//average aggregator
-	public Aggregator getAverageAggregator(double factor, Collection<String> valuesToIgnore) {
+	public static Aggregator getAverageAggregator(double factor, Collection<String> valuesToIgnore) {
 		return new Aggregator() {
 			@Override
 			public String aggregate(Collection<String> values) {

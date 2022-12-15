@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
+import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction.Aggregator;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
@@ -37,40 +38,13 @@ public class EurPop {
 
 		prepare();
 
-		/*
-		int year = 2018;
-
-		for(int resKm : new int[] {100, 50, 20, 10, 5}) {
-
-			logger.info("Load");
-			ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "pop_grid_" + year + "_"+ resKm +"km.csv");
-			logger.info(data.size());
-			logger.info(data.get(0).keySet());
-
-			for(Map<String, String> cell : data) {
-
-				String id = cell.get("GRD_ID");
-				GridCell gc = new GridCell(id);
-				cell.put("x", gc.getLowerLeftCornerPositionX()+"");
-				cell.put("y", gc.getLowerLeftCornerPositionY()+"");
-				cell.remove("GRD_ID");
-
-				cell.put("population", cell.get("TOT_P"));
-				cell.remove("TOT_P");
-			}
-
-			logger.info("save");
-			CSVUtil.save(data, basePath + "xy/" + "pop_grid_xy_" + year + "_"+ resKm +"km.csv");
-
-		}*/
-
 		logger.info("End");
 	}
 
 
 	private static void prepare() {
 
-		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_10km_surf.gpkg");
+		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
 		logger.info(fs.size() + " loaded");
 		logger.info(fs.get(0).getAttributes().keySet());
 		//2022-12-15 15:48:02 INFO  EurPop:73 - [DIST_BORD, TOT_P_2018, TOT_P_2006, GRD_ID, TOT_P_2011, Y_LLC, CNTR_ID, NUTS2016_3, NUTS2016_2, NUTS2016_1, NUTS2016_0, LAND_PC, X_LLC, NUTS2021_3, NUTS2021_2, DIST_COAST, NUTS2021_1, NUTS2021_0]
@@ -112,9 +86,17 @@ public class EurPop {
 		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "prepared.csv");
 		logger.info(data.size());
 
+		//define aggregations
+		Map<String, Aggregator> aggMap = new HashMap<String, Aggregator>();
+		aggMap.put("2006", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("2011", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("2018", GridMultiResolutionProduction.getSumAggregator(10000, null));
+
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, null, null);
+
+			//aggregate
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregationA(data, "GRD_ID", res, aggMap );
 
 			logger.info("Save " + out.size());
 			CSVUtil.save(out, outPath + "pop_" + res + "m.csv");
