@@ -3,7 +3,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.logging.log4j.LogManager;
@@ -29,8 +28,8 @@ public class EurAccessibility {
 		logger.info("Start");
 		//prepareHealth();
 		//prepareEducPrim();
-		join();
-		//aggregate();
+		//join();
+		aggregate();
 		//tiling();
 		logger.info("End");
 	}
