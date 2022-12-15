@@ -130,7 +130,7 @@ public class EurPop {
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = outPath + "out/tiled/" + res + "m";
+			String outpath = outPath + "tiled/" + res + "m";
 			gst.saveCSV(outpath);
 			gst.saveTilingInfoJSON(outpath, "Europe population resolution " + res + "m");
 
