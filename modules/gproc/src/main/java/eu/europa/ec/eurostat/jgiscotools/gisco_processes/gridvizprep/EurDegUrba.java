@@ -23,8 +23,9 @@ public class EurDegUrba {
 	public static void main(String[] args) {
 		logger.info("Start");
 		//prepare();
-		aggregate();
-		tiling();
+		join();
+		//aggregate();
+		//tiling();
 		logger.info("End");
 	}
 
@@ -70,16 +71,46 @@ public class EurDegUrba {
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 
+		
+		
 		logger.info("save");
 		CSVUtil.save(data, basePath + "out/degurba2_1km_prepared.csv");
 	}
 
 
 
-	private static void aggregate() {
+	private static void join() {
 
 		logger.info("Load");
 		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/degurba2_1km_prepared.csv");
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+		ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_1000m.csv");
+		logger.info("pop: " + pop.size());
+		CSVUtil.removeColumn(pop, "2006", "2011");
+		CSVUtil.renameColumn(pop, "2018", "TOT_P");
+		logger.info(pop.get(0).keySet());
+
+		//join
+		data = CSVUtil.joinBothSides("GRD_ID", data, pop, "", true);
+
+		logger.info("out: " + data.size());
+		logger.info(data.get(0).keySet());
+
+		logger.info("save " + data.size());
+		CSVUtil.save(data, basePath + "degurba2_1km_prepared_joined.csv");
+
+	}
+
+
+	
+	
+	
+	private static void aggregate() {
+
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/degurba2_1km_prepared_joined.csv");
 		logger.info(data.size());
 
 		for (int res : resolutions) {
