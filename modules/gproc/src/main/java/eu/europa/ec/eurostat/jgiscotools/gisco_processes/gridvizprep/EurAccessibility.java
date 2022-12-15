@@ -19,7 +19,7 @@ public class EurAccessibility {
 	static Logger logger = LogManager.getLogger(EurAccessibility.class.getName());
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
 	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/";
 
 	// TOT_P	avg_time_nearest_ep	avg_time_nearest_h
@@ -164,7 +164,7 @@ public class EurAccessibility {
 			// round + NA
 			for (Map<String, String> d : out) {
 				String ts = d.get("avg_time_nearest_h");
-				if(ts.equals("")) {
+				if(ts.equals("NaN")) {
 					d.put("avg_time_nearest_h", "NA");
 				} else {
 					double t = Double.parseDouble(ts);
@@ -172,7 +172,7 @@ public class EurAccessibility {
 				}
 
 				ts = d.get("avg_time_nearest_ep");
-				if(ts.equals("")) {
+				if(ts.equals("NaN")) {
 					d.put("avg_time_nearest_ep", "NA");
 				} else {
 					double t = Double.parseDouble(ts);
