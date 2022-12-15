@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
+import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction.Aggregator;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
@@ -145,12 +147,18 @@ public class EurAccessibility {
 		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "prepared.csv");
 		logger.info(data.size());
 
+		//define aggregations
+		Map<String, Aggregator> aggMap = new HashMap<String, Aggregator>();
+		aggMap.put("TOT_P", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("avg_time_nearest_h", GridMultiResolutionProduction.getAverageAggregator(10000, null));
+		aggMap.put("avg_time_nearest_ep", GridMultiResolutionProduction.getAverageAggregator(10000, null));
+		aggMap.put("CNTR_ID", GridMultiResolutionProduction.getCodesAggregator("-"));
+
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(
-					data, "GRD_ID", res,
-					10000, Set.of("avg_time_nearest_h", "avg_time_nearest_ep"), "NA");
-			logger.info(out.size());
+
+			//aggregate
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregationA(data, "GRD_ID", res, aggMap );
 
 			// round
 			for (Map<String, String> d : out) {
