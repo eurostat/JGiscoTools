@@ -117,7 +117,7 @@ yy = BB = bike + rail + bike
 
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, null, null);
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregationDeprecated(data, "GRD_ID", res, 10000, null, null);
 
 			logger.info("Save " + out.size());
 			CSVUtil.save(out, basePath + "out/out_" + res + "m.csv");

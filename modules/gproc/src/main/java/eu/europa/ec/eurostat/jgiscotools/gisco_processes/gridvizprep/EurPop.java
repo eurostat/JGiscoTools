@@ -101,7 +101,7 @@ public class EurPop {
 			logger.info("Aggregate " + res + "m");
 
 			//aggregate
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregationA(data, "GRD_ID", res, aggMap );
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, aggMap );
 
 			logger.info("Save " + out.size());
 			CSVUtil.save(out, outPath + "pop_" + res + "m.csv");

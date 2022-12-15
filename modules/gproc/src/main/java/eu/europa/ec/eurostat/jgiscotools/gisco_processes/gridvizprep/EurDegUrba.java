@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
+import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction.Aggregator;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
@@ -93,13 +95,13 @@ public class EurDegUrba {
 		logger.info(pop.get(0).keySet());
 
 		//join
-		data = CSVUtil.joinBothSides("GRD_ID", data, pop, "", true);
+		data = CSVUtil.joinBothSides("GRD_ID", data, pop, "0", true);
 
 		logger.info("out: " + data.size());
 		logger.info(data.get(0).keySet());
 
 		logger.info("save " + data.size());
-		CSVUtil.save(data, basePath + "degurba2_1km_prepared_joined.csv");
+		CSVUtil.save(data, basePath + "out/degurba2_1km_prepared_joined.csv");
 
 	}
 
@@ -113,9 +115,24 @@ public class EurDegUrba {
 		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/degurba2_1km_prepared_joined.csv");
 		logger.info(data.size());
 
+		//define aggregations
+		Map<String, Aggregator> aggMap = new HashMap<String, Aggregator>();
+		//[CNTR_ID, du, r, NA, sdu, lr, sbu, TOT, GRD_ID, vlr, uc, TOT_P]
+		aggMap.put("CNTR_ID", GridMultiResolutionProduction.getCodesAggregator("-"));
+		aggMap.put("du", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("r", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("NA", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("sdu", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("lr", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("sbu", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("TOT", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("vlr", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("uc", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("TOT_P", GridMultiResolutionProduction.getSumAggregator(10000, null));
+
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, 10000, null, null);
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, aggMap );
 
 			logger.info("Save " + out.size());
 			CSVUtil.save(out, basePath + "out/degurba2_" + res + "m.csv");

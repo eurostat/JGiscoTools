@@ -35,7 +35,7 @@ public class GridMultiResolutionProduction {
 	 * @param ignoreValue
 	 * @return
 	 */
-	public static ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String gridIdCol, int res, int factor, Set<String> average, String ignoreValue) {
+	public static ArrayList<Map<String, String>> gridAggregationDeprecated(ArrayList<Map<String, String>> cells, String gridIdCol, int res, int factor, Set<String> average, String ignoreValue) {
 
 		//index input data by upper grid cell
 		HashMap<String, List<Map<String, String>>> index = new HashMap<>();
@@ -170,7 +170,7 @@ public class GridMultiResolutionProduction {
 	 * @param aggregators 
 	 * @return
 	 */
-	public static ArrayList<Map<String, String>> gridAggregationA(ArrayList<Map<String, String>> cells, String gridIdCol, int res, Map<String,Aggregator> aggregators) {
+	public static ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String gridIdCol, int res, Map<String,Aggregator> aggregators) {
 
 		//index input data by upper grid cell
 		HashMap<String, List<Map<String, String>>> index = new HashMap<>();

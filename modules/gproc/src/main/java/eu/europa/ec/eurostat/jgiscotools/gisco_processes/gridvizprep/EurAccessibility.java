@@ -159,7 +159,7 @@ public class EurAccessibility {
 			logger.info("Aggregate " + res + "m");
 
 			//aggregate
-			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregationA(data, "GRD_ID", res, aggMap );
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, aggMap );
 
 			// round + NA
 			for (Map<String, String> d : out) {
