@@ -9,10 +9,12 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction.Aggregator;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
@@ -107,41 +109,18 @@ public class EurPop {
 	}
 
 
-
-
+	
 	// tile all resolutions
 	private static void tiling() {
 
-		/*
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
-			String in;
+			String f = outPath + "pop_" + res + "m.csv";
 
-			in = "DLT";
-			logger.info("Load grid cells " + in);
-			ArrayList<Map<String, String>> cellsDLT = GeoTiffUtil.loadCells(
-					basePath +"forest_"+in+"_"+ res + ".tif",
-					new String[] {"dlt"},
-					(v)->{ return v[0]<=0 || v[0]>=3; }
-					);
-			logger.info(cellsDLT.size());
-
-			in = "TCD";
-			logger.info("Load grid cells " + in);
-			ArrayList<Map<String, String>> cellsTCD = GeoTiffUtil.loadCells(
-					basePath +"forest_"+in+"_"+ res + ".tif",
-					new String[] {"tcd"},
-					(v)->{ return v[0]<=0 || v[0]>100; }
-					);
-			logger.info(cellsTCD.size());
-
-			logger.info("Join");
-			ArrayList<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsDLT, cellsTCD, "", false);
+			logger.info("Load");
+			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
 			logger.info(cells.size());
-
-			logger.info(cells.get(0).keySet());
-
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
@@ -150,12 +129,13 @@ public class EurPop {
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = basePath + "out/" + res + "m";
+			String outpath = outPath + "out/tiled/" + res + "m";
 			gst.saveCSV(outpath);
-			gst.saveTilingInfoJSON(outpath, "Forest - copernicus - TCD DLT " + res + "m");
+			gst.saveTilingInfoJSON(outpath, "Europe population resolution " + res + "m");
 
-		}*/
+		}
 	}
+
 
 
 }
