@@ -110,7 +110,7 @@ public class EurPop {
 	}
 
 
-	
+
 	// tile all resolutions
 	private static void tiling() {
 
@@ -136,7 +136,5 @@ public class EurPop {
 
 		}
 	}
-
-
 
 }
