@@ -93,14 +93,22 @@ public class GridMultiResolutionProduction {
 
 
 	//aggregation function
-	public interface Aggregator { String aggregate(Collection<String> v); }
+	public interface Aggregator { String aggregate(Collection<String> values); }
 
 	//sum aggregator
-	public Aggregator getSumAggregator(Collection<String> valuesToIgnore) {
+	public Aggregator getSumAggregator(double factor, Collection<String> valuesToIgnore) {
 		return new Aggregator() {
 			@Override
-			public String aggregate(Collection<String> v) {
-				return null;
+			public String aggregate(Collection<String> values) {
+				double sum = 0;
+				for(String s : values) {
+					if(valuesToIgnore != null && valuesToIgnore.contains(s)) continue;
+					double v = Double.parseDouble(s);
+					sum += factor * v;
+				}
+				sum /= factor;
+				String sumS = (sum % 1) == 0 ? Integer.toString((int)sum) : Double.toString(sum);
+				return sumS;
 			}
 		};
 	}
