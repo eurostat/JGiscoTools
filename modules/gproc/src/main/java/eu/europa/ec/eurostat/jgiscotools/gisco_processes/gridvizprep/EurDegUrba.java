@@ -26,8 +26,8 @@ public class EurDegUrba {
 		logger.info("Start");
 		//prepare();
 		//join();
-		aggregate();
-		//tiling();
+		//aggregate();
+		tiling();
 		logger.info("End");
 	}
 
