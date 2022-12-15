@@ -4,14 +4,14 @@
 package eu.europa.ec.eurostat.jgiscotools.grid.processing;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
-
-import java.util.Set;
 
 /**
  * Generate grids with lower resolution.
@@ -81,6 +81,96 @@ public class GridMultiResolutionProduction {
 				if(average!=null && average.contains(key)) sum /= nb;
 				String sumS = (sum % 1) == 0 ? Integer.toString((int)sum) : Double.toString(sum);
 				aggCell.put(key, sumS);
+			}
+			out.add(aggCell);
+		}
+
+		return out;
+	}
+
+
+
+
+
+	//aggregation function
+	public interface Aggregator { String aggregate(Collection<String> v); }
+
+	//sum aggregator
+	public Aggregator getSumAggregator(Collection<String> valuesToIgnore) {
+		return new Aggregator() {
+			@Override
+			public String aggregate(Collection<String> v) {
+				return null;
+			}
+		};
+	}
+
+	//average aggregator
+	public Aggregator getAverageAggregator(Collection<String> valuesToIgnore) {
+		return new Aggregator() {
+			@Override
+			public String aggregate(Collection<String> v) {
+				return null;
+			}
+		};
+	}
+
+
+	/**
+	 * Aggregate cell data (from CSV file usually) into a target resolution lower.
+	 * The target resolution is supposed to be a multiple of the input grid resolution.
+	 * Sum of attributes. Attributes are numerical values.
+	 * 
+	 * @param cells Input grid
+	 * @param gridIdCol The column with the cell id
+	 * @param res The target resolution
+	 * @param aggregators 
+	 * @return
+	 */
+	public static ArrayList<Map<String, String>> gridAggregationA(ArrayList<Map<String, String>> cells, String gridIdCol, int res, Map<String,Aggregator> aggregators) {
+
+		//index input data by upper grid cell
+		HashMap<String, List<Map<String, String>>> index = new HashMap<>();
+		for(Map<String, String> cell : cells) {
+
+			//get upper cell
+			GridCell up = new GridCell(cell.get(gridIdCol)).getUpperCell(res);
+			String id = up.getId();
+
+			//get upper cell list
+			List<Map<String, String>> list = index.get(id);
+			if(list == null) {
+				list = new ArrayList<>();
+				index.put(id, list);
+			}
+			list.add(cell);
+		}
+
+		//make output
+		ArrayList<Map<String, String>> out = new ArrayList<Map<String,String>>();
+		for(Entry<String, List<Map<String, String>>> e : index.entrySet()) {
+			//make aggregate cell
+			Map<String, String> aggCell = new HashMap<String, String>();
+			//set id
+			aggCell.put(gridIdCol, e.getKey());
+			//aggregate values, as sum, keys after keys
+			Set<String> keys = e.getValue().get(0).keySet();
+			for(String key : keys) {
+				if(key.equals(gridIdCol)) continue;
+
+				//get aggregator
+				Aggregator agg = aggregators.get(key);
+				if(agg == null) continue;
+
+				//get values to aggregate
+				Collection<String> vals = new ArrayList<String>();
+				for(Map<String, String> cell : e.getValue())
+					vals.add( cell.get(key) );
+
+				//compute aggregation
+				String vAgg = agg.aggregate(vals);
+
+				aggCell.put(key, vAgg);
 			}
 			out.add(aggCell);
 		}
