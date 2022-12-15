@@ -30,8 +30,8 @@ public class EurAccessibility {
 		//prepareHealth();
 		//prepareEducPrim();
 		//join();
-		aggregate();
-		//tiling();
+		//aggregate();
+		tiling();
 		logger.info("End");
 	}
 
@@ -161,16 +161,20 @@ public class EurAccessibility {
 			//aggregate
 			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregationA(data, "GRD_ID", res, aggMap );
 
-			// round
+			// round + NA
 			for (Map<String, String> d : out) {
 				String ts = d.get("avg_time_nearest_h");
-				if(!ts.equals("NA")) {
+				if(ts.equals("")) {
+					d.put("avg_time_nearest_h", "NA");
+				} else {
 					double t = Double.parseDouble(ts);
 					d.put("avg_time_nearest_h", ((int) Math.ceil(t)) + "");
 				}
 
 				ts = d.get("avg_time_nearest_ep");
-				if(!ts.equals("NA")) {
+				if(ts.equals("")) {
+					d.put("avg_time_nearest_ep", "NA");
+				} else {
 					double t = Double.parseDouble(ts);
 					d.put("avg_time_nearest_ep", (Math.ceil(t*10)/10) + "");
 				}
