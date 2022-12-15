@@ -92,6 +92,7 @@ public class EurPop {
 		aggMap.put("2006", GridMultiResolutionProduction.getSumAggregator(10000, null));
 		aggMap.put("2011", GridMultiResolutionProduction.getSumAggregator(10000, null));
 		aggMap.put("2018", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("CNTR_ID", GridMultiResolutionProduction.getCodesAggregator("-"));
 
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
