@@ -39,7 +39,8 @@ public class EurPop {
 		logger.info("Start");
 
 		//prepare();
-		aggregate();
+		//aggregate();
+		tiling();
 
 		logger.info("End");
 	}
