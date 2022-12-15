@@ -36,7 +36,8 @@ public class EurPop {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		prepare();
+		//prepare();
+		aggregate();
 
 		logger.info("End");
 	}
