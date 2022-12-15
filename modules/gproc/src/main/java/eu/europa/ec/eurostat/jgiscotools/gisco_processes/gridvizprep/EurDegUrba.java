@@ -18,15 +18,15 @@ public class EurDegUrba {
 	static Logger logger = LogManager.getLogger(EurDegUrba.class.getName());
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
 	private static String basePath = "/home/juju/Bureau/gisco/degurba/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) {
 		logger.info("Start");
 		//prepare();
-		join();
-		//aggregate();
+		//join();
+		aggregate();
 		//tiling();
 		logger.info("End");
 	}
