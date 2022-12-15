@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -148,9 +149,10 @@ public class EurAccessibility {
 
 		//define aggregations
 		Map<String, Aggregator> aggMap = new HashMap<String, Aggregator>();
-		aggMap.put("TOT_P", GridMultiResolutionProduction.getSumAggregator(10000, null));
-		aggMap.put("avg_time_nearest_h", GridMultiResolutionProduction.getAverageAggregator(10000, null));
-		aggMap.put("avg_time_nearest_ep", GridMultiResolutionProduction.getAverageAggregator(10000, null));
+		Collection<String> vti = new ArrayList<>(); vti.add("");
+		aggMap.put("TOT_P", GridMultiResolutionProduction.getSumAggregator(10000, vti));
+		aggMap.put("avg_time_nearest_h", GridMultiResolutionProduction.getAverageAggregator(10000, vti));
+		aggMap.put("avg_time_nearest_ep", GridMultiResolutionProduction.getAverageAggregator(10000, vti));
 		aggMap.put("CNTR_ID", GridMultiResolutionProduction.getCodesAggregator("-"));
 
 		for (int res : resolutions) {
