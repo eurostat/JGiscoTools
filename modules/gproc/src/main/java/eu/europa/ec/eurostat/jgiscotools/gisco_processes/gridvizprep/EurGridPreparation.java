@@ -27,7 +27,7 @@ public class EurGridPreparation {
 		logger.info("Start");
 
 		prepare();
-		//aggregate();
+		aggregate();
 
 		logger.info("End");
 	}
