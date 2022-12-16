@@ -64,7 +64,9 @@ public class EurGridPreparation {
 		logger.info(data.get(0).keySet());
 
 		logger.info("save");
-		CSVUtil.save(data, outPath + "prepared.csv");
+		CSVUtil.save(data, outPath + "prepared_all.csv");
 	}
+
+
 
 }
