@@ -31,7 +31,6 @@ public class EurRoadTransportPerformance {
 
 
 
-
 	private static void resampling() {
 
 		//population within a 90-minute drive:
@@ -52,7 +51,7 @@ public class EurRoadTransportPerformance {
 				//use -co to tile output
 				//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-co
 				//https://gdal.org/drivers/raster/gtiff.html#creation-options
-				
+
 				logger.info(cmd);
 				CommandUtil.run(cmd);
 			}
@@ -75,7 +74,8 @@ public class EurRoadTransportPerformance {
 			ArrayList<Map<String, String>> cellsRA = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"ra"},
-					(v)->{ return v[0]==-1; }
+					(v)->{ return v[0]==-1; },
+					false
 					);
 			logger.info(cellsRA.size());
 
@@ -84,7 +84,8 @@ public class EurRoadTransportPerformance {
 			ArrayList<Map<String, String>> cellsPP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"pp"},
-					(v)->{ return v[0]==-1; }
+					(v)->{ return v[0]==-1; },
+					false
 					);
 			logger.info(cellsPP.size());
 
@@ -93,7 +94,8 @@ public class EurRoadTransportPerformance {
 			ArrayList<Map<String, String>> cellsRP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"rp"},
-					(v)->{ return v[0]==-1; }
+					(v)->{ return v[0]==-1; },
+					false
 					);
 			logger.info(cellsRP.size());
 
