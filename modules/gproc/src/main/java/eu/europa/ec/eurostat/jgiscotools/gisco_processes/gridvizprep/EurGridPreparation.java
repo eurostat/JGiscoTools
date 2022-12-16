@@ -68,14 +68,14 @@ public class EurGridPreparation {
 		logger.info(data.get(0).keySet());
 
 		logger.info("save");
-		CSVUtil.save(data, outPath + "prepared_with_zero_pop.csv");
+		CSVUtil.save(data, outPath + "prepared_with_zero.csv");
 	}
 
 
 	private static void aggregate() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "prepared_with_zero_pop.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "prepared_with_zero.csv");
 		logger.info(data.size());
 
 		//define aggregations
