@@ -21,7 +21,7 @@ public class EurForest {
 	//Tree Cover Density (TCD) - 0 to 100 -average
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { /*100000, 50000, 20000, 10000, 5000, 2000,*/ 1000/*, 500, 200/*, 100*/ };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500 /*, 200/*, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/forest/";
 
 	// -Xms4g -Xmx16g
@@ -100,7 +100,6 @@ public class EurForest {
 				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_"+res+"m.csv");
 				logger.info("pop: " + pop.size());
 				CSVUtil.removeColumn(pop, "2006", "2011", "2018");
-				//CSVUtil.renameColumn(pop, "2018", "TOT_P");
 				logger.info(pop.get(0).keySet());
 
 				logger.info("Join pop");
@@ -125,14 +124,14 @@ public class EurForest {
 			} ).collect(Collectors.toList());
 			logger.info(cells.size());
 
-			if(res >= 1000) {
+			/*if(res >= 1000) {
 				//check cnt
 				cells = cells.stream().filter( c -> {
 					String cid = c.get("CNTR_ID");
-					return cid != null && !cid.isEmpty() && !"".equals(cid);
+					return !"".equals(cid);
 				} ).collect(Collectors.toList());
 			}
-			logger.info(cells.size());
+			logger.info(cells.size());*/
 
 
 			logger.info("Build tiles");
