@@ -86,14 +86,25 @@ public class EurCLC {
 				logger.info(cells.size());
 			}
 
+			//filter: cells without clc ? without CNTR ?
+			logger.info("Filter");
+			logger.info(cells.size());
+
+			//check clc
+			cells = (ArrayList<Map<String, String>>) cells.stream().filter( c -> {
+				String clc = c.get("clc");
+				return clc != null && !clc.isEmpty() && !"".equals(clc);
+			} );
+			logger.info(cells.size());
+
 			if(res >= 1000) {
-				logger.info("Filter");
-				cells.stream().filter( c -> {
+				//check cnt
+				cells = (ArrayList<Map<String, String>>) cells.stream().filter( c -> {
 					String cid = c.get("CNTR_ID");
 					return cid != null && !cid.isEmpty() && !"".equals(cid);
 				} );
-				logger.info(cells.size());
 			}
+			logger.info(cells.size());
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
