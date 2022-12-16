@@ -45,7 +45,7 @@ public class EurRoadTransportPerformance {
 
 				String outF = basePath +in+"_"+ res + ".tif";
 				//https://gdal.org/programs/gdalwarp.html#gdalwarp
-				String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average" + " -co TILED=YES";
+				String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average -co TILED=YES";
 
 				//TILED=YES
 				//use -co to tile output

@@ -37,14 +37,14 @@ public class EurForest {
 	private static void resampling() {
 
 		for (int res : resolutions) {
-			logger.info("Tiling " + res + "m");
+			logger.info("Resampling to " + res + "m");
 
 			//https://gdal.org/programs/gdalwarp.html#gdalwarp
 
 			//DLT
 			String inF = basePath + "DLT_2018_010m_eu_03035_v020/DATA/DLT_2018_010m_eu_03035_V2_0.tif";
 			String outF = basePath +"forest_DLT_"+ res + ".tif";
-			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r mode";
+			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r mode -co TILED=YES";
 
 			logger.info(cmd);
 			CommandUtil.run(cmd);

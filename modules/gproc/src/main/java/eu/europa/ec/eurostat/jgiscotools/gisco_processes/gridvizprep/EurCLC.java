@@ -48,7 +48,7 @@ public class EurCLC {
 
 			String outF = basePath + res + ".tif";
 			//https://gdal.org/programs/gdalwarp.html#gdalwarp
-			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r mode" + " -co TILED=YES";
+			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r mode -co TILED=YES";
 
 			logger.info(cmd);
 			CommandUtil.run(cmd);
