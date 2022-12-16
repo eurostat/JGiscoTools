@@ -124,14 +124,16 @@ public class EurForest {
 			} ).collect(Collectors.toList());
 			logger.info(cells.size());
 
-			/*if(res >= 1000) {
+			/*
+			if(res >= 1000) {
 				//check cnt
 				cells = cells.stream().filter( c -> {
 					String cid = c.get("CNTR_ID");
-					return !"".equals(cid);
+					return cid != null && !cid.isEmpty() && !"".equals(cid);
 				} ).collect(Collectors.toList());
 			}
-			logger.info(cells.size());*/
+			logger.info(cells.size());
+			 */
 
 
 			logger.info("Build tiles");
