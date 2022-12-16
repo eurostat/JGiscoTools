@@ -24,7 +24,7 @@ public class EurCLC {
 	//*******************
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100 };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500/*, 200, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/clc/";
 
 	// -Xms4g -Xmx16g
@@ -42,12 +42,12 @@ public class EurCLC {
 	private static void resampling() {
 		String inF = basePath + "u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif";
 
-		for (int resT : resolutions) {
-			logger.info("Tiling " + resT + "m");
+		for (int res : resolutions) {
+			logger.info("Tiling " + res + "m");
 
-			String outF = basePath + resT + ".tif";
+			String outF = basePath + res + ".tif";
 			//https://gdal.org/programs/gdalwarp.html#gdalwarp
-			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+resT+" "+resT+" -tap -r mode";
+			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r mode" + " -co TILED=YES";
 
 			logger.info(cmd);
 			CommandUtil.run(cmd);
