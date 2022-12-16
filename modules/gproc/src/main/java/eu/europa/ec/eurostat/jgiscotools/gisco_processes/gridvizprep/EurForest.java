@@ -94,15 +94,12 @@ public class EurForest {
 			List<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsDLT, cellsTCD, "", false);
 			logger.info(cells.size());
 
-			logger.info(cells.get(0).keySet());
-
-
 			//join country codes
 			if(res >= 1000) {
 				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_"+res+"m.csv");
 				logger.info("pop: " + pop.size());
-				CSVUtil.removeColumn(pop, "2006", "2011");
-				CSVUtil.renameColumn(pop, "2018", "TOT_P");
+				CSVUtil.removeColumn(pop, "2006", "2011", "2018");
+				//CSVUtil.renameColumn(pop, "2018", "TOT_P");
 				logger.info(pop.get(0).keySet());
 
 				logger.info("Join pop");
@@ -110,6 +107,7 @@ public class EurForest {
 				logger.info(cells.size());
 			}
 
+			logger.info(cells.get(0).keySet());
 
 			//filter: cells without clc ? without CNTR ?
 			logger.info("Filter");
@@ -118,6 +116,7 @@ public class EurForest {
 			//check tcd >0
 			cells = cells.stream().filter( c -> {
 				String tcd = c.get("tcd");
+				if(tcd == null || tcd.isEmpty()) return false;
 				double d = Double.parseDouble(tcd);
 				return d>0;
 			} ).collect(Collectors.toList());
