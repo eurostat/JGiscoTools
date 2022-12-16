@@ -8,6 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
+import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction.Aggregator;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
@@ -64,9 +66,34 @@ public class EurGridPreparation {
 		logger.info(data.get(0).keySet());
 
 		logger.info("save");
-		CSVUtil.save(data, outPath + "prepared_all.csv");
+		CSVUtil.save(data, outPath + "prepared_with_zero_pop.csv");
 	}
 
+
+	private static void aggregate() {
+
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "prepared_with_zero_pop.csv");
+		logger.info(data.size());
+
+		//define aggregations
+		Map<String, Aggregator> aggMap = new HashMap<String, Aggregator>();
+		aggMap.put("2006", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("2011", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("2018", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("CNTR_ID", GridMultiResolutionProduction.getCodesAggregator("-"));
+
+		for (int res : resolutions) {
+			logger.info("Aggregate " + res + "m");
+
+			//aggregate
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, aggMap );
+
+			logger.info("Save " + out.size());
+			CSVUtil.save(out, outPath + "pop_with_zero_" + res + "m.csv");
+		}
+
+	}
 
 
 }
