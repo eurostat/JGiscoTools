@@ -23,8 +23,8 @@ public class EurRoadTransportPerformance {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		resampling();
-		//tiling();
+		//resampling();
+		tiling();
 
 		logger.info("End");
 	}
@@ -92,6 +92,11 @@ public class EurRoadTransportPerformance {
 					);
 			logger.info(cellsRP.size());
 
+			ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_"+res+"m.csv");
+			logger.info("pop: " + pop.size());
+			CSVUtil.removeColumn(pop, "2006", "2011");
+			CSVUtil.renameColumn(pop, "2018", "TOT_P");
+			logger.info(pop.get(0).keySet());
 
 			logger.info("Join 1");
 			ArrayList<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsRA, cellsPP, "", false);
@@ -99,6 +104,10 @@ public class EurRoadTransportPerformance {
 
 			logger.info("Join 2");
 			cells = CSVUtil.joinBothSides("GRD_ID", cells, cellsRP, "", false);
+			logger.info(cells.size());
+
+			logger.info("Join pop");
+			cells = CSVUtil.joinBothSides("GRD_ID", cells, pop, "", false);
 			logger.info(cells.size());
 
 			logger.info(cells.get(0).keySet());
