@@ -1,7 +1,9 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,16 +21,15 @@ public class EurForest {
 	//Tree Cover Density (TCD) - 0 to 100 -average
 
 	// the target resolutions
-	//private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100 };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200/*, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/forest/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		resampling();
-		//tiling();
+		//resampling();
+		tiling();
 
 		logger.info("End");
 	}
@@ -94,6 +95,42 @@ public class EurForest {
 			logger.info(cells.size());
 
 			logger.info(cells.get(0).keySet());
+
+
+			//join country codes
+			if(res >= 1000) {
+				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_"+res+"m.csv");
+				logger.info("pop: " + pop.size());
+				CSVUtil.removeColumn(pop, "2006", "2011");
+				CSVUtil.renameColumn(pop, "2018", "TOT_P");
+				logger.info(pop.get(0).keySet());
+
+				logger.info("Join pop");
+				cells = CSVUtil.joinBothSides("GRD_ID", cells, pop, "", false);
+				logger.info(cells.size());
+			}
+
+
+			//filter: cells without clc ? without CNTR ?
+			logger.info("Filter");
+			logger.info(cells.size());
+
+			//check tcd >0
+			cells = cells.stream().filter( c -> {
+				String tcd = c.get("tcd");
+				double d = Double.parseDouble(tcd);
+				return d>0;
+			} ).collect(Collectors.toList());
+			logger.info(cells.size());
+
+			if(res >= 1000) {
+				//check cnt
+				cells = cells.stream().filter( c -> {
+					String cid = c.get("CNTR_ID");
+					return cid != null && !cid.isEmpty() && !"".equals(cid);
+				} ).collect(Collectors.toList());
+			}
+			logger.info(cells.size());
 
 
 			logger.info("Build tiles");
