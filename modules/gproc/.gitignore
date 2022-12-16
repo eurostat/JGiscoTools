@@ -12,3 +12,5 @@ hs_err_pid*
 .classpath
 .project
 .factorypath
+/.apt_generated/
+/.apt_generated_tests/
