@@ -43,7 +43,7 @@ public class EurCLC {
 		String inF = basePath + "u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif";
 
 		for (int res : resolutions) {
-			logger.info("Tiling " + res + "m");
+			logger.info("Resampling to " + res + "m");
 
 			String outF = basePath + res + ".tif";
 			//https://gdal.org/programs/gdalwarp.html#gdalwarp
