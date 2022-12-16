@@ -76,7 +76,7 @@ public class EurForest {
 					basePath +"forest_"+in+"_"+ res + ".tif",
 					new String[] {"dlt"},
 					(v)->{ return v[0]<=0 || v[0]>=3; },
-					true
+					false
 					);
 			logger.info(cellsDLT.size());
 
@@ -86,7 +86,7 @@ public class EurForest {
 					basePath +"forest_"+in+"_"+ res + ".tif",
 					new String[] {"tcd"},
 					(v)->{ return v[0]<=0 || v[0]>100; },
-					true
+					false
 					);
 			logger.info(cellsTCD.size());
 
