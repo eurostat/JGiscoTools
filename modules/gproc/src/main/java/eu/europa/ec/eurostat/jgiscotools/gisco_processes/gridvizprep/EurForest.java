@@ -130,8 +130,8 @@ public class EurForest {
 					String cid = c.get("CNTR_ID");
 					return cid != null && !cid.isEmpty() && !"".equals(cid);
 				} ).collect(Collectors.toList());
+				logger.info(cells.size());
 			}
-			logger.info(cells.size());
 
 
 			logger.info("Build tiles");

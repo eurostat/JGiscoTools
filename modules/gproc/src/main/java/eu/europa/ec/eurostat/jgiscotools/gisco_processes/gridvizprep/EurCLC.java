@@ -34,7 +34,7 @@ public class EurCLC {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		//resampling();
+		resampling();
 		tiling();
 
 		logger.info("End");
@@ -105,8 +105,8 @@ public class EurCLC {
 					String cid = c.get("CNTR_ID");
 					return cid != null && !cid.isEmpty() && !"".equals(cid);
 				} ).collect(Collectors.toList());
+				logger.info(cells.size());
 			}
-			logger.info(cells.size());
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
