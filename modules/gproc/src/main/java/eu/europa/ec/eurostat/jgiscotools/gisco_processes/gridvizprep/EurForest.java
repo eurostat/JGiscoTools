@@ -124,7 +124,6 @@ public class EurForest {
 			} ).collect(Collectors.toList());
 			logger.info(cells.size());
 
-			/*
 			if(res >= 1000) {
 				//check cnt
 				cells = cells.stream().filter( c -> {
@@ -133,7 +132,6 @@ public class EurForest {
 				} ).collect(Collectors.toList());
 			}
 			logger.info(cells.size());
-			 */
 
 
 			logger.info("Build tiles");

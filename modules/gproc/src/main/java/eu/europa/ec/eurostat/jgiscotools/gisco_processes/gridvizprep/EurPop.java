@@ -74,6 +74,8 @@ public class EurPop {
 			m.put("2018", p2018+"");
 			data.add(m);
 		}
+		fs.clear();
+		fs = null;
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
