@@ -11,6 +11,7 @@ import org.locationtech.jts.geom.Coordinate;
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurCLC {
 	static Logger logger = LogManager.getLogger(EurCLC.class.getName());
@@ -72,9 +73,18 @@ public class EurCLC {
 					);
 			logger.info(cells.size());
 
-			//logger.info("Round");
-			//for(Map<String, String> cell : cells)
-			//	cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
+			//join country codes
+			if(res >= 1000) {
+				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_"+res+"m.csv");
+				logger.info("pop: " + pop.size());
+				CSVUtil.removeColumn(pop, "2006", "2011", "2018");
+				//CSVUtil.renameColumn(pop, "2018", "TOT_P");
+				logger.info(pop.get(0).keySet());
+
+				logger.info("Join pop");
+				cells = CSVUtil.joinBothSides("GRD_ID", cells, pop, "", false);
+				logger.info(cells.size());
+			}
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
@@ -83,7 +93,7 @@ public class EurCLC {
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = basePath + "out/" + res + "m";
+			String outpath = basePath + "tiled/" + res + "m";
 			gst.saveCSV(outpath);
 			gst.saveTilingInfoJSON(outpath, "Corine Land Cover 2018 " + res + "m");
 		}
