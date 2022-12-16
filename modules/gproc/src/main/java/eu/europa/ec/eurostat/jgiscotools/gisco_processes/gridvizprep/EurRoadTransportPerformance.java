@@ -24,7 +24,7 @@ public class EurRoadTransportPerformance {
 		logger.info("Start");
 
 		//resampling();
-		tiling();
+		joiningTiling();
 
 		logger.info("End");
 	}
@@ -42,12 +42,17 @@ public class EurRoadTransportPerformance {
 			String inF = basePath + "road_transport_performance_grid_datasets/"+in+".tif";
 
 			for (int res : resolutions) {
-				logger.info("Tiling " + res + "m");
+				logger.info("Resamplig " + res + "m");
 
 				String outF = basePath +in+"_"+ res + ".tif";
 				//https://gdal.org/programs/gdalwarp.html#gdalwarp
-				String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average";
+				String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average" + " -co TILED=YES";
 
+				//TILED=YES
+				//use -co to tile output
+				//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-co
+				//https://gdal.org/drivers/raster/gtiff.html#creation-options
+				
 				logger.info(cmd);
 				CommandUtil.run(cmd);
 			}
@@ -58,7 +63,7 @@ public class EurRoadTransportPerformance {
 
 
 	// tile all resolutions
-	private static void tiling() {
+	private static void joiningTiling() {
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
@@ -120,7 +125,7 @@ public class EurRoadTransportPerformance {
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = basePath + "out/" + res + "m";
+			String outpath = basePath + "tiled/" + res + "m";
 			gst.saveCSV(outpath);
 			gst.saveTilingInfoJSON(outpath, "Road transport performance " + res + "m");
 
