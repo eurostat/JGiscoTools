@@ -28,7 +28,7 @@ public class EurForest {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		//resampling();
+		resampling();
 		tiling();
 
 		logger.info("End");
@@ -53,7 +53,7 @@ public class EurForest {
 			//TCD
 			inF = basePath + "TCD_2018_010m_eu_03035_v020/DATA/TCD_2018_010m_eu_03035_V2_0.tif";
 			outF = basePath +"forest_TCD_"+ res + ".tif";
-			cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average";
+			cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average TILED=YES";
 
 			logger.info(cmd);
 			CommandUtil.run(cmd);
