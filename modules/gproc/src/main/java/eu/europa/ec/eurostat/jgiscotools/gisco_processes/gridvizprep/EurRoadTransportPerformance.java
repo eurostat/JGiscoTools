@@ -119,6 +119,8 @@ public class EurRoadTransportPerformance {
 
 			logger.info(cells.get(0).keySet());
 
+			//TODO remove those with TOT_P = 0
+			//cells.stream().filter(arg0)
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
