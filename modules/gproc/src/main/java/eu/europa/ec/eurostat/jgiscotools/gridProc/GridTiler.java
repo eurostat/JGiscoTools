@@ -38,7 +38,7 @@ public class GridTiler {
 	private static Logger logger = LogManager.getLogger(GridTiler.class.getName());
 
 	/** The cells to tile */
-	private ArrayList<Map<String, String>> cells;
+	private List<Map<String, String>> cells;
 	/** The name of the attribute with the grid id */
 	private String gridIdAtt = "GRD_ID";
 
@@ -78,7 +78,7 @@ public class GridTiler {
 		this(CSVUtil.load(csvFilePath), gridIdAtt, originPoint, tileResolutionPix);
 	}
 
-	public GridTiler(ArrayList<Map<String, String>> cells, String gridIdAtt, Coordinate originPoint,
+	public GridTiler(List<Map<String, String>> cells, String gridIdAtt, Coordinate originPoint,
 			int tileResolutionPix) {
 		this.cells = cells;
 		this.gridIdAtt = gridIdAtt;

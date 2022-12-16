@@ -340,7 +340,7 @@ public class CSVUtil {
 	 * @param printWarnings
 	 * @return
 	 */
-	public static ArrayList<Map<String, String>> joinBothSides(String idProp, ArrayList<Map<String, String>> data1, ArrayList<Map<String, String>> data2, String defaultValue, boolean printWarnings) {
+	public static List<Map<String, String>> joinBothSides(String idProp, List<Map<String, String>> data1, List<Map<String, String>> data2, String defaultValue, boolean printWarnings) {
 		//special cases
 		if(data1.size() ==0) return data2;
 		if(data2.size() ==0) return data1;

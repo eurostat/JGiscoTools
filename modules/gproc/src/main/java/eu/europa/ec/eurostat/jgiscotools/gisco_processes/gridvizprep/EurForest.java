@@ -1,6 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -71,7 +71,7 @@ public class EurForest {
 
 			in = "DLT";
 			logger.info("Load grid cells " + in);
-			ArrayList<Map<String, String>> cellsDLT = GeoTiffUtil.loadCells(
+			List<Map<String, String>> cellsDLT = GeoTiffUtil.loadCells(
 					basePath +"forest_"+in+"_"+ res + ".tif",
 					new String[] {"dlt"},
 					(v)->{ return v[0]<=0 || v[0]>=3; },
@@ -81,7 +81,7 @@ public class EurForest {
 
 			in = "TCD";
 			logger.info("Load grid cells " + in);
-			ArrayList<Map<String, String>> cellsTCD = GeoTiffUtil.loadCells(
+			List<Map<String, String>> cellsTCD = GeoTiffUtil.loadCells(
 					basePath +"forest_"+in+"_"+ res + ".tif",
 					new String[] {"tcd"},
 					(v)->{ return v[0]<=0 || v[0]>100; },
@@ -90,7 +90,7 @@ public class EurForest {
 			logger.info(cellsTCD.size());
 
 			logger.info("Join");
-			ArrayList<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsDLT, cellsTCD, "", false);
+			List<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsDLT, cellsTCD, "", false);
 			logger.info(cells.size());
 
 			logger.info(cells.get(0).keySet());

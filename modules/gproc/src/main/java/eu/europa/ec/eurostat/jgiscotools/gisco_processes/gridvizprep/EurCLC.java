@@ -1,7 +1,9 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +69,7 @@ public class EurCLC {
 			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
 
 			logger.info("Load grid cells");
-			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"clc"},
+			List<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"clc"},
 					(v)->{ return v[0]==0 || v[0]==128 || v[0]==44 || Double.isNaN(v[0]); },
 					false
 					);
@@ -91,18 +93,18 @@ public class EurCLC {
 			logger.info(cells.size());
 
 			//check clc
-			cells = (ArrayList<Map<String, String>>) cells.stream().filter( c -> {
+			cells = cells.stream().filter( c -> {
 				String clc = c.get("clc");
 				return clc != null && !clc.isEmpty() && !"".equals(clc);
-			} );
+			} ).collect(Collectors.toList());
 			logger.info(cells.size());
 
 			if(res >= 1000) {
 				//check cnt
-				cells = (ArrayList<Map<String, String>>) cells.stream().filter( c -> {
+				cells = cells.stream().filter( c -> {
 					String cid = c.get("CNTR_ID");
 					return cid != null && !cid.isEmpty() && !"".equals(cid);
-				} );
+				} ).collect(Collectors.toList());
 			}
 			logger.info(cells.size());
 

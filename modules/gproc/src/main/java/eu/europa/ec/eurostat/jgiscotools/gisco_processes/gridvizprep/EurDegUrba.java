@@ -2,6 +2,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
@@ -84,7 +85,7 @@ public class EurDegUrba {
 	private static void join() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/degurba2_1km_prepared.csv");
+		List<Map<String, String>> data = CSVUtil.load(basePath + "out/degurba2_1km_prepared.csv");
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 

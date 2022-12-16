@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -81,7 +82,7 @@ public class EurRoadTransportPerformance {
 
 			in = "POPL_PROX_120KM";
 			logger.info("Load grid cells " + in);
-			ArrayList<Map<String, String>> cellsPP = GeoTiffUtil.loadCells(
+			List<Map<String, String>> cellsPP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"pp"},
 					(v)->{ return v[0]==-1; },
@@ -91,7 +92,7 @@ public class EurRoadTransportPerformance {
 
 			in = "ROAD_PERF_1H30";
 			logger.info("Load grid cells " + in);
-			ArrayList<Map<String, String>> cellsRP = GeoTiffUtil.loadCells(
+			List<Map<String, String>> cellsRP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"rp"},
 					(v)->{ return v[0]==-1; },
@@ -106,7 +107,7 @@ public class EurRoadTransportPerformance {
 			logger.info(pop.get(0).keySet());
 
 			logger.info("Join 1");
-			ArrayList<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsRA, cellsPP, "", false);
+			List<Map<String, String>> cells = CSVUtil.joinBothSides("GRD_ID", cellsRA, cellsPP, "", false);
 			logger.info(cells.size());
 
 			logger.info("Join 2");

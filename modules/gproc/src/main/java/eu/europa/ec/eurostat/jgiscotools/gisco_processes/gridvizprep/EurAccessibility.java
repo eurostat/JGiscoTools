@@ -3,6 +3,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
@@ -109,7 +110,7 @@ public class EurAccessibility {
 
 	private static void join() {
 
-		ArrayList<Map<String, String>> data = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_1000m.csv");
+		List<Map<String, String>> data = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_1000m.csv");
 		logger.info("pop: " + data.size());
 		CSVUtil.removeColumn(data, "2006", "2011");
 		CSVUtil.renameColumn(data, "2018", "TOT_P");
