@@ -86,6 +86,15 @@ public class EurCLC {
 				logger.info(cells.size());
 			}
 
+			if(res >= 1000) {
+				logger.info("Filter");
+				cells.stream().filter( c -> {
+					String cid = c.get("CNTR_ID");
+					return cid != null && !cid.isEmpty() && !"".equals(cid);
+				} );
+				logger.info(cells.size());
+			}
+
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
 
