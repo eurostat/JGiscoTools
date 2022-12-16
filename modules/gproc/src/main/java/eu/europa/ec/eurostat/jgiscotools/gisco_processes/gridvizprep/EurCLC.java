@@ -77,7 +77,7 @@ public class EurCLC {
 
 			//join country codes
 			if(res >= 1000) {
-				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_"+res+"m.csv");
+				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_with_zero_"+res+"m.csv");
 				logger.info("pop: " + pop.size());
 				CSVUtil.removeColumn(pop, "2006", "2011", "2018");
 				//CSVUtil.renameColumn(pop, "2018", "TOT_P");
