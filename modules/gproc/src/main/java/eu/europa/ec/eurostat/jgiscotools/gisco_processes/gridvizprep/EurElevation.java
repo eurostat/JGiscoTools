@@ -44,8 +44,6 @@ public class EurElevation {
 		logger.info("End");
 	}
 
-
-
 	// tile all resolutions
 	private static void tiling() {
 
@@ -77,87 +75,5 @@ public class EurElevation {
 			gst.saveTilingInfoJSON(outpath, "EU DEM Europe elevation " + res + "m");
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-	/*
-	private static void resampleTiff(String inTiff, String outCSV, int ratio, String outProp) throws Throwable {
-
-		//get coverage from tiff file
-		File file = new File(inTiff);
-		AbstractGridFormat format = GridFormatFinder.findFormat( file );
-		GridCoverage2DReader reader = format.getReader( file );
-		GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
-
-		//get envelopes
-		Envelope envG = coverage.getEnvelope();
-		GridEnvelope2D env = coverage.getGridGeometry().getGridRange2D();
-		//System.out.println(envG);
-		//System.out.println(env);
-
-		//compute and check resolution
-		double resX = (envG.getMaximum(0) - envG.getMinimum(0)) / env.getWidth();
-		double resY = (envG.getMaximum(1) - envG.getMinimum(1)) / env.getHeight();
-		if(resX != resY)
-			throw new Error("Different X/Y resolutions: "+resX + " and "+resY);
-		//System.out.println(resX);
-
-		//
-		int resT = (int) (ratio * resX);
-		//logger.info("Resampling from "+resX+" to "+resT);
-
-		//output
-		Collection<Map<String, String>> data = new ArrayList<>();
-
-		int nb = 1;
-		int ratio2 = (int) (ratio*0.5);
-		int[] dest = new int[nb];
-		//GridCoordinates2D gco = new GridCoordinates2D(0,0);
-
-		IntStream.rangeClosed(0, env.width/ratio -1).parallel().forEach(i -> {
-			for(int j=0; j<env.height/ratio; j++){
-
-				//sample point
-				int iS = i*ratio + ratio2,
-						jS = j*ratio + ratio2;
-
-				//find how to boost that. Index ?
-				//GridCoordinates2D gc = new GridCoordinates2D(iS,jS);
-				//gco.setLocation(iS,jS);
-				//System.out.println(gco);
-				coverage.evaluate(new GridCoordinates2D(iS,jS), dest);
-				int v = dest[0];
-				if(v==0) continue;
-				//if(v<0) System.out.println(v);
-				//System.out.println(v);
-
-				int x = (int)(envG.getMinimum(0) + i*resT);
-				int y = (int)(envG.getMaximum(1) - (j+1)*resT);
-				//GridCell gc = new GridCell("3035", resT, x, y);
-				//String id = GridCell.getGridCellId("3035", resT, Coordinate(x,y))
-				//System.out.println(gc.getId());
-
-				Map<String, String> d = new HashMap<>();
-				d.put("GRD_ID", "CRS3035RES"+resT+"m"+"N"+y+"E"+x);
-				//d.put("x", x + "");
-				//d.put("y", y + "");
-				d.put(outProp, v + "");
-				data.add(d);
-			}
-		});
-
-		logger.info("save " + data.size());
-		CSVUtil.save(data, outCSV);
-	}
-	 */
 
 }
