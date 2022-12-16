@@ -16,7 +16,6 @@ public class EurRoadTransportPerformance {
 	static Logger logger = LogManager.getLogger(EurRoadTransportPerformance.class.getName());
 
 	// the target resolutions
-	//private static int[] resolutions = new int[] { 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
 	private static String basePath = "/home/juju/Bureau/gisco/grid_accessibility/regio_road_perf/";
 
@@ -24,8 +23,8 @@ public class EurRoadTransportPerformance {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		//resampling();
-		tiling();
+		resampling();
+		//tiling();
 
 		logger.info("End");
 	}
