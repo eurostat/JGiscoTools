@@ -13,42 +13,30 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 
 public class PTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 
 		//https://blog.contactsunny.com/data-science/how-to-generate-parquet-files-in-java
 		//https://github.com/macalbert/WriteParquetJavaDemo/blob/master/src/main/java/com.instarsocial.parquet/App.java
 
 
+		String out = "/home/juju/Bureau/data.parquet";
 
+		Schema schema = parseSchema();
+		List<GenericData.Record> recordList = generateRecords(schema);
 
+		Path path = new Path(out);
+		ParquetWriter<GenericData.Record> writer = AvroParquetWriter.<GenericData.Record>builder(path)
+				.withSchema(schema)
+				.withCompressionCodec(CompressionCodecName.SNAPPY)
+				.withRowGroupSize(ParquetWriter.DEFAULT_BLOCK_SIZE)
+				.withPageSize(ParquetWriter.DEFAULT_PAGE_SIZE)
+				.withConf(new Configuration())
+				.withValidation(false)
+				.withDictionaryEncoding(false)
+				.build();
 
-		try {
-			Schema schema = parseSchema();
-			List<GenericData.Record> recordList = generateRecords(schema);
-
-			Path path = new Path("/home/juju/Bureau/data.parquet");
-
-			try (ParquetWriter<GenericData.Record> writer = AvroParquetWriter.<GenericData.Record>builder(path)
-					.withSchema(schema)
-					.withCompressionCodec(CompressionCodecName.SNAPPY)
-					.withRowGroupSize(ParquetWriter.DEFAULT_BLOCK_SIZE)
-					.withPageSize(ParquetWriter.DEFAULT_PAGE_SIZE)
-					.withConf(new Configuration())
-					.withValidation(false)
-					.withDictionaryEncoding(false)
-					.build()) {
-
-				for (GenericData.Record record : recordList) {
-					writer.write(record);
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace(System.out);
-		}
-
-
-
-
+		for (GenericData.Record record : recordList)
+			writer.write(record);
 	}
 
 
@@ -63,7 +51,7 @@ public class PTest {
 				+ " ]}";
 
 		System.out.println(schemaJson);
-		
+
 		Schema.Parser parser = new Schema.Parser().setValidate(true);
 		return parser.parse(schemaJson);
 	}
