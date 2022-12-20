@@ -26,7 +26,7 @@ public class PTest {
 			Schema schema = parseSchema();
 			List<GenericData.Record> recordList = generateRecords(schema);
 
-			Path path = new Path("~/Bureau/data.parquet");
+			Path path = new Path("/home/juju/Bureau/data.parquet");
 
 			try (ParquetWriter<GenericData.Record> writer = AvroParquetWriter.<GenericData.Record>builder(path)
 					.withSchema(schema)
@@ -75,7 +75,7 @@ public class PTest {
 		for(int i = 1; i <= 1000; i++) {
 
 			GenericData.Record record = new GenericData.Record(schema);
-			record.put("nb", i);
+			record.put("id", i);
 			record.put("text", i + " hi!");
 			record.put("mag", i * Math.PI);
 
