@@ -18,15 +18,15 @@ public class PTest {
 		//https://blog.contactsunny.com/data-science/how-to-generate-parquet-files-in-java
 		//https://github.com/macalbert/WriteParquetJavaDemo/blob/master/src/main/java/com.instarsocial.parquet/App.java
 
-		generateParquetFile();
-	}
 
-	private static void generateParquetFile() {
+
+
+
 		try {
 			Schema schema = parseSchema();
-			Path path = new Path("~/Bureau/data.parquet");
-
 			List<GenericData.Record> recordList = generateRecords(schema);
+
+			Path path = new Path("~/Bureau/data.parquet");
 
 			try (ParquetWriter<GenericData.Record> writer = AvroParquetWriter.<GenericData.Record>builder(path)
 					.withSchema(schema)
@@ -45,18 +45,25 @@ public class PTest {
 		} catch (Exception ex) {
 			ex.printStackTrace(System.out);
 		}
+
+
+
+
 	}
 
+
 	private static Schema parseSchema() {
-		String schemaJson = "{\"namespace\": \"org.myorganization.mynamespace\"," //Not used in Parquet, can put anything
-				+ "\"type\": \"record\"," //Must be set as record
-				+ "\"name\": \"myrecordname\"," //Not used in Parquet, can put anything
+		String schemaJson = "{\"namespace\": \"ns\","
+				+ "\"type\": \"record\"," //set as record
+				+ "\"name\": \"na\","
 				+ "\"fields\": ["
-				+ " {\"name\": \"myString\",  \"type\": [\"string\", \"null\"]}"
-				+ ", {\"name\": \"myInteger\", \"type\": \"int\"}" //Required field
-				+ ", {\"name\": \"myDateTime\", \"type\": [{\"type\": \"long\", \"logicalType\" : \"timestamp-millis\"}, \"null\"]}"
+				+ "{\"name\": \"id\", \"type\": \"int\"}" //required
+				+ ",{\"name\": \"text\", \"type\": [\"string\", \"null\"]}"
+				+ ",{\"name\": \"mag\", \"type\": \"float\"}"
 				+ " ]}";
 
+		System.out.println(schemaJson);
+		
 		Schema.Parser parser = new Schema.Parser().setValidate(true);
 		return parser.parse(schemaJson);
 	}
@@ -65,14 +72,12 @@ public class PTest {
 
 		List<GenericData.Record> recordList = new ArrayList<>();
 
-		long secondsOfDay = 24 * 60 * 60;
-
-		for(int i = 1; i <= secondsOfDay; i++) {
+		for(int i = 1; i <= 1000; i++) {
 
 			GenericData.Record record = new GenericData.Record(schema);
-			record.put("myInteger", i);
-			record.put("myString", i + " hi world of parquet!");
-			record.put("myDateTime", null);
+			record.put("nb", i);
+			record.put("text", i + " hi!");
+			record.put("mag", i * Math.PI);
 
 			recordList.add(record);
 		}
