@@ -28,7 +28,7 @@ public class EurForest {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		remove255();
+		//remove255TCD();
 		//resampling();
 		//tiling();
 
@@ -37,7 +37,7 @@ public class EurForest {
 
 
 	//replace 255 values by 0
-	private static void remove255() {
+	private static void remove255TCD() {
 		//https://stackoverflow.com/questions/18315096/gdal-how-to-conditionally-assign-a-new-value-to-pixels-of-a-raster-image
 		//gdal_calc.py -A crop.tif --outfile=level0100.tif --calc="A-A*(A=255)"     --NoDataValue=0
 		//https://gdal.org/programs/gdal_edit.html
@@ -46,10 +46,9 @@ public class EurForest {
 		//
 		String inF = basePath + "TCD_2018_010m_eu_03035_v020/DATA/TCD_2018_010m_eu_03035_V2_0.tif";
 		String outF = basePath +"forest_TCD_255.tif";
-		String cmd = "gdal_calc.py -A "+inF+" --outfile "+outF+" --calc=\"A-A*(A==255)\"";
+		String cmd = "gdal_calc.py -A "+inF+" --outfile "+outF+" --calc=\"A-A*(A==255)\" --type UInt16";
 
-		String pre = "export CHECK_DISK_FREE_SPACE=FALSE && ";
-		cmd = pre + cmd;
+		cmd = "export CHECK_DISK_FREE_SPACE=FALSE && " + cmd;
 
 		logger.info(cmd);
 		CommandUtil.run(cmd);
