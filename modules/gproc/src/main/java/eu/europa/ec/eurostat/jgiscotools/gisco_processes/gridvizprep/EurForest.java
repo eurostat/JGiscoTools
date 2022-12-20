@@ -28,8 +28,11 @@ public class EurForest {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		//resampling();
-		tiling();
+		//https://stackoverflow.com/questions/18315096/gdal-how-to-conditionally-assign-a-new-value-to-pixels-of-a-raster-image
+		//gdal_calc.py -A crop.tif --outfile=level0100.tif --calc="A-A*(A=255)"     --NoDataValue=0
+
+		resampling();
+		//tiling();
 
 		logger.info("End");
 	}
