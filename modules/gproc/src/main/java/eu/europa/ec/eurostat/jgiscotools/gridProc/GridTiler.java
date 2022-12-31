@@ -262,6 +262,7 @@ public class GridTiler {
 					recs.add(record);
 				}
 
+				
 				// save as parquet file
 				new File(folderPath + "/" + t.x + "/").mkdirs();
 				ParquetUtil.save(folderPath + "/" + t.x + "/" + t.y + ".parquet", schema, recs);
