@@ -80,7 +80,7 @@ public class CroatiaGrid {
 				String tag = (file.replace("_Grid_1000m", ""));
 				String outpath = basePath+ tag + "/" + res + "m";
 				gst.saveCSV(outpath);
-				gst.saveTilingInfoJSON(outpath, tag+" resolution " + res + "m");
+				gst.saveTilingInfoJSON(outpath, "CSV", tag+" resolution " + res + "m");
 			}
 
 		}

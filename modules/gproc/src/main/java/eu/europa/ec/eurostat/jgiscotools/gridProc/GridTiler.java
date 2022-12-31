@@ -329,9 +329,10 @@ public class GridTiler {
 	 * Save the tiling info.json file
 	 * 
 	 * @param outpath
+	 * @param format
 	 * @param description
 	 */
-	public void saveTilingInfoJSON(String outpath, String description) {
+	public void saveTilingInfoJSON(String outpath, String format, String description) {
 		TilingInfo ti = getTilesInfo();
 
 		// build JSON object
@@ -340,6 +341,7 @@ public class GridTiler {
 		json.put("resolutionGeo", ti.resolution);
 		json.put("tileSizeCell", this.tileResolutionPix);
 		json.put("crs", ti.ePSGCode);
+		json.put("format", format);
 
 		// origin point
 		JSONObject op = new JSONObject();
