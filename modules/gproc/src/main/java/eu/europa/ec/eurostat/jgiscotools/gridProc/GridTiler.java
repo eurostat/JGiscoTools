@@ -37,6 +37,11 @@ import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 public class GridTiler {
 	private static Logger logger = LogManager.getLogger(GridTiler.class.getName());
 
+	public enum Format {
+		CSV,
+		PARQUET
+	}
+
 	/** The cells to tile */
 	private List<Map<String, String>> cells;
 	/** The name of the attribute with the grid id */
