@@ -15,7 +15,6 @@ public class PTest {
 		//https://blog.contactsunny.com/data-science/how-to-generate-parquet-files-in-java
 		//https://github.com/macalbert/WriteParquetJavaDemo/blob/master/src/main/java/com.instarsocial.parquet/App.java
 
-
 		String out = "/home/juju/Bureau/data.parquet";
 
 		Schema schema = ParquetUtil.parseSchema("{\"namespace\": \"ns\","
@@ -48,6 +47,5 @@ public class PTest {
 
 		return recordList;
 	}
-
 
 }

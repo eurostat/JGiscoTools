@@ -17,13 +17,21 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
  */
 public class ParquetUtil {
 
-
-	
 	/**
 	 * @param schemaJson
 	 * @return
 	 */
 	public static Schema parseSchema(String schemaJson) {
+		/*
+		"{\"namespace\": \"ns\","
+				+ "\"type\": \"record\"," //set as record
+				+ "\"name\": \"na\","
+				+ "\"fields\": ["
+				+ "{\"name\": \"id\", \"type\": \"int\"}" //required
+				+ ",{\"name\": \"text\", \"type\": [\"string\", \"null\"]}"
+				+ ",{\"name\": \"mag\", \"type\": \"float\"}"
+				+ " ]}"
+		 */
 		Schema.Parser parser = new Schema.Parser().setValidate(true);
 		return parser.parse(schemaJson);
 	}
@@ -50,6 +58,5 @@ public class ParquetUtil {
 		for (GenericData.Record record : recs)
 			writer.write(record);
 	}
-
 
 }
