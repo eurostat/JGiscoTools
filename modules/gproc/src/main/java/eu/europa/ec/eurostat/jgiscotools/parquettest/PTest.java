@@ -5,11 +5,8 @@ import java.util.List;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.apache.parquet.avro.AvroParquetWriter;
-import org.apache.parquet.hadoop.ParquetWriter;
-import org.apache.parquet.hadoop.metadata.CompressionCodecName;
+
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.ParquetUtil;
 
 public class PTest {
 
@@ -21,40 +18,19 @@ public class PTest {
 
 		String out = "/home/juju/Bureau/data.parquet";
 
-		Schema schema = parseSchema();
-		List<GenericData.Record> recordList = generateRecords(schema);
-
-		Path path = new Path(out);
-		ParquetWriter<GenericData.Record> writer = AvroParquetWriter.<GenericData.Record>builder(path)
-				.withSchema(schema)
-				.withCompressionCodec(CompressionCodecName.SNAPPY)
-				.withRowGroupSize(ParquetWriter.DEFAULT_BLOCK_SIZE)
-				.withPageSize(ParquetWriter.DEFAULT_PAGE_SIZE)
-				.withConf(new Configuration())
-				.withValidation(false)
-				.withDictionaryEncoding(false)
-				.build();
-
-		for (GenericData.Record record : recordList)
-			writer.write(record);
-	}
-
-
-	private static Schema parseSchema() {
-		String schemaJson = "{\"namespace\": \"ns\","
+		Schema schema = ParquetUtil.parseSchema("{\"namespace\": \"ns\","
 				+ "\"type\": \"record\"," //set as record
 				+ "\"name\": \"na\","
 				+ "\"fields\": ["
 				+ "{\"name\": \"id\", \"type\": \"int\"}" //required
 				+ ",{\"name\": \"text\", \"type\": [\"string\", \"null\"]}"
 				+ ",{\"name\": \"mag\", \"type\": \"float\"}"
-				+ " ]}";
+				+ " ]}");
+		List<GenericData.Record> recordList = generateRecords(schema);
 
-		System.out.println(schemaJson);
-
-		Schema.Parser parser = new Schema.Parser().setValidate(true);
-		return parser.parse(schemaJson);
+		ParquetUtil.save(out, schema, recordList);
 	}
+
 
 	private static List<GenericData.Record> generateRecords(Schema schema) {
 
@@ -72,5 +48,6 @@ public class PTest {
 
 		return recordList;
 	}
+
 
 }
