@@ -71,8 +71,8 @@ public class EurElevation {
 
 			logger.info("Save");
 			String outpath = basePath + "out/tiled/" + res + "m";
-			gst.save(outpath, "CSV");
-			gst.saveTilingInfoJSON(outpath, "CSV", "EU DEM Europe elevation " + res + "m");
+			gst.save(outpath, GridTiler.Format.CSV);
+			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "EU DEM Europe elevation " + res + "m");
 		}
 	}
 

@@ -147,7 +147,7 @@ public class GridTiler {
 	 * @param format
 	 * @param header
 	 */
-	public void save(String folderPath, String format) {
+	public void save(String folderPath, Format format) {
 
 		// prepare list of columns, ordered
 		List<String> cols = new ArrayList<>(this.getTiles().iterator().next().cells.get(0).keySet());
@@ -338,7 +338,7 @@ public class GridTiler {
 	 * @param format
 	 * @param description
 	 */
-	public void saveTilingInfoJSON(String outpath, String format, String description) {
+	public void saveTilingInfoJSON(String outpath, Format format, String description) {
 		TilingInfo ti = getTilesInfo();
 
 		// build JSON object
@@ -347,7 +347,7 @@ public class GridTiler {
 		json.put("resolutionGeo", ti.resolution);
 		json.put("tileSizeCell", this.tileResolutionPix);
 		json.put("crs", ti.ePSGCode);
-		json.put("format", format);
+		json.put("format", format.toString());
 
 		// origin point
 		JSONObject op = new JSONObject();

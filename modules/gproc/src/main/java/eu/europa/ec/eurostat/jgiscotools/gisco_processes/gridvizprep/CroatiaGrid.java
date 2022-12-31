@@ -79,8 +79,8 @@ public class CroatiaGrid {
 				logger.info("Save");
 				String tag = (file.replace("_Grid_1000m", ""));
 				String outpath = basePath+ tag + "/" + res + "m";
-				gst.save(outpath, "CSV");
-				gst.saveTilingInfoJSON(outpath, "CSV", tag+" resolution " + res + "m");
+				gst.save(outpath, GridTiler.Format.CSV);
+				gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, tag+" resolution " + res + "m");
 			}
 
 		}

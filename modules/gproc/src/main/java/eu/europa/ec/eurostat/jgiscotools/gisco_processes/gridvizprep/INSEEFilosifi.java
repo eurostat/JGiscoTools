@@ -272,8 +272,8 @@ public class INSEEFilosifi {
 
 					logger.info("Save");
 					String outpath = basePath + "out/tiled/" + ds +"/"+ year +"/" + res + "m";
-					gst.save(outpath, "CSV");
-					gst.saveTilingInfoJSON(outpath, "CSV", "Filosofi "+year+ " " + ds +" resolution " + res + "m");
+					gst.save(outpath, GridTiler.Format.CSV);
+					gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Filosofi "+year+ " " + ds +" resolution " + res + "m");
 
 				}
 			}

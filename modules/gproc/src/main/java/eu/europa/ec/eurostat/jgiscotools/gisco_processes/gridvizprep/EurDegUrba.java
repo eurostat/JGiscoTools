@@ -164,8 +164,8 @@ public class EurDegUrba {
 
 			logger.info("Save");
 			String outpath = basePath + "out/tiled/" + res + "m";
-			gst.save(outpath, "CSV");
-			gst.saveTilingInfoJSON(outpath, "CSV", "degurba level 2 resolution " + res + "m");
+			gst.save(outpath, GridTiler.Format.CSV);
+			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "degurba level 2 resolution " + res + "m");
 
 		}
 	}
