@@ -117,7 +117,7 @@ public class EurCLC {
 			logger.info("Save");
 			String outpath = basePath + "tiled/" + res + "m";
 			gst.saveCSV(outpath);
-			gst.saveTilingInfoJSON(outpath, "Corine Land Cover 2018 " + res + "m");
+			gst.saveTilingInfoJSON(outpath, "CSV", "Corine Land Cover 2018 " + res + "m");
 		}
 
 	}
