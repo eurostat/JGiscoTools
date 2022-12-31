@@ -131,7 +131,7 @@ public class EurRoadTransportPerformance {
 
 			logger.info("Save");
 			String outpath = basePath + "tiled/" + res + "m";
-			gst.saveCSV(outpath, "CSV");
+			gst.save(outpath, "CSV");
 			gst.saveTilingInfoJSON(outpath, "CSV", "Road transport performance " + res + "m");
 
 		}
