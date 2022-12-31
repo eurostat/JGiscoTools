@@ -28,10 +28,10 @@ public class EurPop {
 
 
 	//the target resolutions
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
+	private static int[] resolutions = new int[] { 100000/*, 50000, 20000, 10000, 5000, 2000, 1000*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/";
 	private static String outPath = basePath + "grid_pop/";
-	private static Format format = Format.CSV;
+	private static Format format = Format.PARQUET;
 
 	//2006-2001-2018
 
@@ -135,7 +135,20 @@ public class EurPop {
 
 			logger.info("Save");
 			String outpath = outPath + "tiled/" + res + "m";
-			gst.save(outpath, format);
+			gst.save(outpath, format, 		"{\"namespace\": \"ns\","
+					+ "\"type\": \"record\"," //set as record
+					+ "\"name\": \"na\","
+					+ "\"fields\": ["
+					+ "{\"name\": \"id\", \"type\": \"int\"}" //required
+					+ ",{\"name\": \"x\", \"type\": \"int\"}"
+					+ ",{\"name\": \"y\", \"type\": \"int\"}"
+					+ ",{\"name\": \"2006\", \"type\": \"int\"}"
+					+ ",{\"name\": \"2011\", \"type\": \"int\"}"
+					+ ",{\"name\": \"2018\", \"type\": \"int\"}"
+					+ ",{\"name\": \"CNTR_ID\", \"type\": \"string\"}"
+					+ " ]}"
+					);
+
 			gst.saveTilingInfoJSON(outpath, format, "Europe population resolution " + res + "m");
 
 		}

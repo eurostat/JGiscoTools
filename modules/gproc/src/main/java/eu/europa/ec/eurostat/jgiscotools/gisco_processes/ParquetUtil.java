@@ -43,20 +43,29 @@ public class ParquetUtil {
 	 * @param recs
 	 * @throws IOException
 	 */
-	public static void save(String out, Schema schema, List<GenericData.Record> recs) throws IOException {
+	public static void save(String out, Schema schema, List<GenericData.Record> recs) {
 		Path path = new Path(out);
-		ParquetWriter<GenericData.Record> writer = AvroParquetWriter.<GenericData.Record>builder(path)
-				.withSchema(schema)
-				.withCompressionCodec(CompressionCodecName.SNAPPY)
-				.withRowGroupSize(ParquetWriter.DEFAULT_BLOCK_SIZE)
-				.withPageSize(ParquetWriter.DEFAULT_PAGE_SIZE)
-				.withConf(new Configuration())
-				.withValidation(false)
-				.withDictionaryEncoding(false)
-				.build();
+		ParquetWriter<GenericData.Record> writer;
+		try {
+			//prepare writer
+			writer = AvroParquetWriter.<GenericData.Record>builder(path)
+					.withSchema(schema)
+					.withCompressionCodec(CompressionCodecName.SNAPPY)
+					.withRowGroupSize(ParquetWriter.DEFAULT_BLOCK_SIZE)
+					.withPageSize(ParquetWriter.DEFAULT_PAGE_SIZE)
+					.withConf(new Configuration())
+					.withValidation(false)
+					.withDictionaryEncoding(false)
+					.build();
 
-		for (GenericData.Record record : recs)
-			writer.write(record);
+			//write records
+			for (GenericData.Record record : recs)
+				writer.write(record);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 
 }

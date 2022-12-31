@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericData.Record;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -25,6 +27,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 
 import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.ParquetUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.TilingInfo.DimStat;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
@@ -146,9 +149,9 @@ public class GridTiler {
 	 * 
 	 * @param folderPath
 	 * @param format
-	 * @param header
+	 * @param schemaJson
 	 */
-	public void save(String folderPath, Format format) {
+	public void save(String folderPath, Format format, String schemaJson) {
 
 		List<String> cols = null;
 		Schema schema = null;
@@ -177,7 +180,7 @@ public class GridTiler {
 			cols.sort(cp);
 		}
 		else if(format == Format.CSV) {
-			//TODO prepare schema
+			schema = ParquetUtil.parseSchema(schemaJson);
 		}
 
 		// save tiles
@@ -244,9 +247,24 @@ public class GridTiler {
 				new File(folderPath + "/" + t.x + "/").mkdirs();
 				CSVUtil.save(cells_, folderPath + "/" + t.x + "/" + t.y + ".csv", cols);
 			}
-			else if(format == Format.PARQUET) {				
-				// save as csv file
-				//TODO
+			else if(format == Format.PARQUET) {
+				List<Record> recs = new ArrayList<>();
+
+				int i=0;
+				Set<String> keys = cells_.get(0).keySet();
+				for(Map<String, String> c : cells_) {
+					GenericData.Record record = new GenericData.Record(schema);
+					record.put("id", i++);
+					for(String key : keys) {
+						//TODO type
+						record.put(key, c.get(key));
+					}
+					recs.add(record);
+				}
+
+				// save as parquet file
+				new File(folderPath + "/" + t.x + "/").mkdirs();
+				ParquetUtil.save(folderPath + "/" + t.x + "/" + t.y + ".parquet", schema, recs);
 			}
 
 		}
