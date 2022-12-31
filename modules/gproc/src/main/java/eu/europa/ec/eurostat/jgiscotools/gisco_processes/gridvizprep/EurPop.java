@@ -134,7 +134,7 @@ public class EurPop {
 
 			logger.info("Save");
 			String outpath = outPath + "tiled/" + res + "m";
-			gst.save(outpath, "CSV");
+			gst.save(outpath, format);
 			gst.saveTilingInfoJSON(outpath, format, "Europe population resolution " + res + "m");
 
 		}
