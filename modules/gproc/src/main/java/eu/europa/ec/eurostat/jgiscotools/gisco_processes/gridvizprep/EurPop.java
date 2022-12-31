@@ -30,6 +30,7 @@ public class EurPop {
 	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
 	private static String basePath = "/home/juju/Bureau/gisco/";
 	private static String outPath = basePath + "grid_pop/";
+	private static String format = "parquet";
 
 	//2006-2001-2018
 
@@ -38,9 +39,9 @@ public class EurPop {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		//prepare();
-		//aggregate();
-		tiling();
+		prepare();
+		aggregate();
+		//tiling();
 
 		logger.info("End");
 	}
