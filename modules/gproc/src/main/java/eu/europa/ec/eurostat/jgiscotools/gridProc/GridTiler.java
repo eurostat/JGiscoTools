@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.avro.Schema;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -149,28 +150,35 @@ public class GridTiler {
 	 */
 	public void save(String folderPath, Format format) {
 
-		// prepare list of columns, ordered
-		List<String> cols = new ArrayList<>(this.getTiles().iterator().next().cells.get(0).keySet());
-		cols.add("x");
-		cols.add("y");
-		cols.remove(this.gridIdAtt);
-		Comparator<String> cp = new Comparator<String>() {
-			@Override
-			public int compare(String s1, String s2) {
-				if (s1.equals(s2))
-					return 0;
-				if (s1.equals("x"))
-					return -1;
-				if (s2.equals("x"))
-					return 1;
-				if (s1.equals("y"))
-					return -1;
-				if (s2.equals("y"))
-					return 1;
-				return s1.compareTo(s2);
-			}
-		};
-		cols.sort(cp);
+		List<String> cols = null;
+		Schema schema = null;
+		if(format == Format.CSV) {
+			// prepare list of columns, ordered
+			cols = new ArrayList<>(this.getTiles().iterator().next().cells.get(0).keySet());
+			cols.add("x");
+			cols.add("y");
+			cols.remove(this.gridIdAtt);
+			Comparator<String> cp = new Comparator<String>() {
+				@Override
+				public int compare(String s1, String s2) {
+					if (s1.equals(s2))
+						return 0;
+					if (s1.equals("x"))
+						return -1;
+					if (s2.equals("x"))
+						return 1;
+					if (s1.equals("y"))
+						return -1;
+					if (s2.equals("y"))
+						return 1;
+					return s1.compareTo(s2);
+				}
+			};
+			cols.sort(cp);
+		}
+		else if(format == Format.CSV) {
+			//TODO prepare schema
+		}
 
 		// save tiles
 		for (GridStatTile t : tiles) {
@@ -215,25 +223,31 @@ public class GridTiler {
 				cells_.add(c_);
 			}
 
-			// sort stats by x and y
-			Collections.sort(cells_, new Comparator<Map<String, String>>() {
-				@Override
-				public int compare(Map<String, String> s1, Map<String, String> s2) {
-					if (Integer.parseInt(s1.get("x")) < Integer.parseInt(s2.get("x")))
-						return -1;
-					if (Integer.parseInt(s1.get("x")) > Integer.parseInt(s2.get("x")))
-						return 1;
-					if (Integer.parseInt(s1.get("y")) < Integer.parseInt(s2.get("y")))
-						return -1;
-					if (Integer.parseInt(s1.get("y")) > Integer.parseInt(s2.get("y")))
-						return 1;
-					return 0;
-				}
-			});
+			if(format == Format.CSV) {				
+				// sort cells by x and y
+				Collections.sort(cells_, new Comparator<Map<String, String>>() {
+					@Override
+					public int compare(Map<String, String> s1, Map<String, String> s2) {
+						if (Integer.parseInt(s1.get("x")) < Integer.parseInt(s2.get("x")))
+							return -1;
+						if (Integer.parseInt(s1.get("x")) > Integer.parseInt(s2.get("x")))
+							return 1;
+						if (Integer.parseInt(s1.get("y")) < Integer.parseInt(s2.get("y")))
+							return -1;
+						if (Integer.parseInt(s1.get("y")) > Integer.parseInt(s2.get("y")))
+							return 1;
+						return 0;
+					}
+				});
 
-			// save as csv file
-			new File(folderPath + "/" + t.x + "/").mkdirs();
-			CSVUtil.save(cells_, folderPath + "/" + t.x + "/" + t.y + ".csv", cols);
+				// save as csv file
+				new File(folderPath + "/" + t.x + "/").mkdirs();
+				CSVUtil.save(cells_, folderPath + "/" + t.x + "/" + t.y + ".csv", cols);
+			}
+			else if(format == Format.PARQUET) {				
+				// save as csv file
+				//TODO
+			}
 
 		}
 	}
