@@ -79,7 +79,7 @@ public class SwedenPop {
 
 			logger.info("Save");
 			String outpath = basePath+"tiled/"+res+"m";
-			gst.saveCSV(outpath);
+			gst.saveCSV(outpath, "CSV");
 			gst.saveTilingInfoJSON(outpath, "CSV", "Statistics Sweden population by gender and age - resolution " + res + "m");
 
 		}

@@ -163,7 +163,7 @@ public class EurForest {
 
 			logger.info("Save");
 			String outpath = basePath + "out/" + res + "m";
-			gst.saveCSV(outpath);
+			gst.saveCSV(outpath, "CSV");
 			gst.saveTilingInfoJSON(outpath, "CSV", "Forest - copernicus - TCD DLT " + res + "m");
 
 		}

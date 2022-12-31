@@ -139,9 +139,10 @@ public class GridTiler {
 	 * Save the tile as CSV.
 	 * 
 	 * @param folderPath
+	 * @param format
 	 * @param header
 	 */
-	public void saveCSV(String folderPath) {
+	public void saveCSV(String folderPath, String format) {
 
 		// prepare list of columns, ordered
 		List<String> cols = new ArrayList<>(this.getTiles().iterator().next().cells.get(0).keySet());
