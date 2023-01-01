@@ -278,7 +278,7 @@ public class GridTiler {
 				// save as parquet file
 				new File(folderPath + "/" + t.x + "/").mkdirs();
 				String f = folderPath + "/" + t.x + "/" + t.y + ".parquet";
-				ParquetUtil.save(f, schema, recs, comp, removeCRCfile);
+				ParquetUtil.save(folderPath + "/" + t.x + "/", t.y + ".parquet", schema, recs, comp, removeCRCfile);
 			}
 
 		}

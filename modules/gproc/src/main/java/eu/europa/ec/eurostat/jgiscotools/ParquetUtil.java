@@ -46,15 +46,16 @@ public class ParquetUtil {
 
 
 	/**
-	 * @param out
+	 * @param folderPath
+	 * @param file
 	 * @param schema
 	 * @param recs
 	 * @param comp
 	 * @param removeCRCfile
 	 * @throws IOException
 	 */
-	public static void save(String out, Schema schema, List<GenericData.Record> recs, CompressionCodecName comp, boolean removeCRCfile) {
-		Path path = new Path(out);
+	public static void save(String folderPath, String file, Schema schema, List<GenericData.Record> recs, CompressionCodecName comp, boolean removeCRCfile) {
+		Path path = new Path(folderPath + file);
 		ParquetWriter<GenericData.Record> writer;
 		try {
 			//prepare writer
@@ -79,8 +80,11 @@ public class ParquetUtil {
 		}
 
 		//remove crc file
-		if(removeCRCfile)
-			new File("."+out+".crc").delete();
+		if(removeCRCfile) {
+			String crc = "." + file + ".crc";
+			boolean b = new File(folderPath + crc).delete();
+			if(!b) System.err.println(file + "   " + crc);
+		}
 	}
 
 }

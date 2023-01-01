@@ -156,7 +156,7 @@ public class EurPop {
 					+ ",{\"name\": \"pop2018\", \"type\": \"int\"}"
 					+ ",{\"name\": \"CNTR_ID\", \"type\": \"string\"}"
 					+ " ]}",
-					CompressionCodecName.GZIP,
+					CompressionCodecName.SNAPPY,
 					true
 					);
 			gst.saveTilingInfoJSON(outpath, format, "Europe population resolution " + res + "m");
