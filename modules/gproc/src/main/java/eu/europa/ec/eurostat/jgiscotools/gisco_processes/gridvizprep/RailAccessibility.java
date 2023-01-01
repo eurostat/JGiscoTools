@@ -146,7 +146,7 @@ yy = BB = bike + rail + bike
 
 			logger.info("Save");
 			String outpath = basePath + "out/tiled/" + res + "m";
-			gst.save(outpath, GridTiler.Format.CSV);
+			gst.save(outpath, GridTiler.Format.CSV, null);
 			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "rail accessibility resolution " + res + "m");
 
 		}
