@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.avro.Schema;
+import org.apache.avro.Schema.Field;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericData.Record;
 import org.apache.logging.log4j.LogManager;
@@ -179,7 +180,7 @@ public class GridTiler {
 			};
 			cols.sort(cp);
 		}
-		else if(format == Format.CSV) {
+		else if(format == Format.PARQUET) {
 			schema = ParquetUtil.parseSchema(schemaJson);
 		}
 
@@ -252,17 +253,25 @@ public class GridTiler {
 
 				int i=0;
 				Set<String> keys = cells_.get(0).keySet();
+				System.out.println(keys);
 				for(Map<String, String> c : cells_) {
 					GenericData.Record record = new GenericData.Record(schema);
-					record.put("id", i++);
+					record.put("id", i);
 					for(String key : keys) {
-						//TODO type
-						record.put(key, c.get(key));
+						Field f = schema.getField(key);
+						String type = f.toString().replace(" type:", "").replace(" pos:"+f.pos(), "").replace(f.name(), "");
+						Object val = null;
+						if(type == "STRING") val = c.get(key);
+						else if(type == "INT") val = Integer.parseInt(c.get(key));
+						else if(type == "FLOAT") val = Float.parseFloat(c.get(key));
+						else if(type == "DOUBLE") val = Double.parseDouble(c.get(key));
+						else System.err.println("Unsupported parquet filed type: " + type);
+						record.put(key, val);
 					}
 					recs.add(record);
 				}
 
-				
+
 				// save as parquet file
 				new File(folderPath + "/" + t.x + "/").mkdirs();
 				ParquetUtil.save(folderPath + "/" + t.x + "/" + t.y + ".parquet", schema, recs);

@@ -127,6 +127,16 @@ public class EurPop {
 			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
 			logger.info(cells.size());
 
+			logger.info("Change year filed");
+			for(Map<String, String> c : cells) {
+				c.put("pop2006", c.get("2006"));
+				c.remove("2006");
+				c.put("pop2011", c.get("2011"));
+				c.remove("2011");
+				c.put("pop2018", c.get("2018"));
+				c.remove("2018");
+			}
+
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
 
@@ -135,20 +145,19 @@ public class EurPop {
 
 			logger.info("Save");
 			String outpath = outPath + "tiled/" + res + "m";
-			gst.save(outpath, format, 		"{\"namespace\": \"ns\","
+			gst.save(outpath, format, "{\"namespace\": \"ns\","
 					+ "\"type\": \"record\"," //set as record
 					+ "\"name\": \"na\","
 					+ "\"fields\": ["
 					+ "{\"name\": \"id\", \"type\": \"int\"}" //required
 					+ ",{\"name\": \"x\", \"type\": \"int\"}"
 					+ ",{\"name\": \"y\", \"type\": \"int\"}"
-					+ ",{\"name\": \"2006\", \"type\": \"int\"}"
-					+ ",{\"name\": \"2011\", \"type\": \"int\"}"
-					+ ",{\"name\": \"2018\", \"type\": \"int\"}"
+					+ ",{\"name\": \"pop2006\", \"type\": \"int\"}"
+					+ ",{\"name\": \"pop2011\", \"type\": \"int\"}"
+					+ ",{\"name\": \"pop2018\", \"type\": \"int\"}"
 					+ ",{\"name\": \"CNTR_ID\", \"type\": \"string\"}"
 					+ " ]}"
 					);
-
 			gst.saveTilingInfoJSON(outpath, format, "Europe population resolution " + res + "m");
 
 		}
