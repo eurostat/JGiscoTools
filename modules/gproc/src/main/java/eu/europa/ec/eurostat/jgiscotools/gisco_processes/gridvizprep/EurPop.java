@@ -127,7 +127,7 @@ public class EurPop {
 			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
 			logger.info(cells.size());
 
-			logger.info("Change year filed");
+			logger.info("Change year field names");
 			for(Map<String, String> c : cells) {
 				c.put("pop2006", c.get("2006"));
 				c.remove("2006");
