@@ -206,8 +206,8 @@ public class EurAccessibility {
 
 			logger.info("Save");
 			String outpath = basePath + "tiled/" + res + "m";
-			gst.save(outpath, GridTiler.Format.CSV, null, false);
-			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV	, "Euraccess resolution " + res + "m");
+			gst.save(outpath, GridTiler.Format.CSV, null, null, false);
+			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Euraccess resolution " + res + "m");
 
 		}
 	}

@@ -49,17 +49,18 @@ public class ParquetUtil {
 	 * @param out
 	 * @param schema
 	 * @param recs
+	 * @param comp
 	 * @param removeCRCfile
 	 * @throws IOException
 	 */
-	public static void save(String out, Schema schema, List<GenericData.Record> recs, boolean removeCRCfile) {
+	public static void save(String out, Schema schema, List<GenericData.Record> recs, CompressionCodecName comp, boolean removeCRCfile) {
 		Path path = new Path(out);
 		ParquetWriter<GenericData.Record> writer;
 		try {
 			//prepare writer
 			writer = AvroParquetWriter.<GenericData.Record>builder(path)
 					.withSchema(schema)
-					.withCompressionCodec(CompressionCodecName.SNAPPY)
+					.withCompressionCodec(comp)
 					.withRowGroupSize(ParquetWriter.DEFAULT_BLOCK_SIZE)
 					.withPageSize(ParquetWriter.DEFAULT_PAGE_SIZE)
 					.withConf(new Configuration())

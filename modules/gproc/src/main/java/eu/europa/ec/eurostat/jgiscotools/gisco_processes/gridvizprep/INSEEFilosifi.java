@@ -272,7 +272,7 @@ public class INSEEFilosifi {
 
 					logger.info("Save");
 					String outpath = basePath + "out/tiled/" + ds +"/"+ year +"/" + res + "m";
-					gst.save(outpath, GridTiler.Format.CSV, null, false);
+					gst.save(outpath, GridTiler.Format.CSV, null, null, false);
 					gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Filosofi "+year+ " " + ds +" resolution " + res + "m");
 
 				}

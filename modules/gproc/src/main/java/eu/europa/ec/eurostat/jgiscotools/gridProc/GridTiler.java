@@ -22,6 +22,7 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericData.Record;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
@@ -151,9 +152,10 @@ public class GridTiler {
 	 * @param folderPath
 	 * @param format
 	 * @param schemaJson
+	 * @param comp
 	 * @param removeCRCfile
 	 */
-	public void save(String folderPath, Format format, String schemaJson, boolean removeCRCfile) {
+	public void save(String folderPath, Format format, String schemaJson, CompressionCodecName comp, boolean removeCRCfile) {
 
 		List<String> cols = null;
 		Schema schema = null;
@@ -276,7 +278,7 @@ public class GridTiler {
 				// save as parquet file
 				new File(folderPath + "/" + t.x + "/").mkdirs();
 				String f = folderPath + "/" + t.x + "/" + t.y + ".parquet";
-				ParquetUtil.save(f, schema, recs, removeCRCfile);
+				ParquetUtil.save(f, schema, recs, comp, removeCRCfile);
 			}
 
 		}

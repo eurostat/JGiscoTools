@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -155,6 +156,7 @@ public class EurPop {
 					+ ",{\"name\": \"pop2018\", \"type\": \"int\"}"
 					+ ",{\"name\": \"CNTR_ID\", \"type\": \"string\"}"
 					+ " ]}",
+					CompressionCodecName.GZIP,
 					true
 					);
 			gst.saveTilingInfoJSON(outpath, format, "Europe population resolution " + res + "m");
