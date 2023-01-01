@@ -264,6 +264,7 @@ public class GridTiler {
 						else if("INT".equals(type)) val = Integer.parseInt(c.get(key));
 						else if("FLOAT".equals(type)) val = Float.parseFloat(c.get(key));
 						else if("DOUBLE".equals(type)) val = Double.parseDouble(c.get(key));
+						else if("BOOLEAN".equals(type)) val = Boolean.parseBoolean(c.get(key));
 						else System.err.println("Unsupported parquet filed type: " + type);
 						record.put(key, val);
 					}

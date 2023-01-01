@@ -18,6 +18,7 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 public class ParquetUtil {
 
 	//See
+	//https://avro.apache.org/docs/1.10.0/api/java/overview-summary.html
 	//https://parquet.apache.org/docs/contribution-guidelines/modules/
 	//https://github.com/Parquet/parquet-compatibility/blob/master/parquet-compat/src/test/java/parquet/compat/test/ConvertUtils.java
 
