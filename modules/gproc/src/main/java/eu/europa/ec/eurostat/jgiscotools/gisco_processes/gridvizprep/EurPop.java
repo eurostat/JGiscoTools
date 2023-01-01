@@ -33,8 +33,6 @@ public class EurPop {
 	private static String outPath = basePath + "grid_pop/";
 	private static Format format = Format.PARQUET;
 
-	//2006-2001-2018
-
 
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
@@ -156,7 +154,8 @@ public class EurPop {
 					+ ",{\"name\": \"pop2011\", \"type\": \"int\"}"
 					+ ",{\"name\": \"pop2018\", \"type\": \"int\"}"
 					+ ",{\"name\": \"CNTR_ID\", \"type\": \"string\"}"
-					+ " ]}"
+					+ " ]}",
+					true
 					);
 			gst.saveTilingInfoJSON(outpath, format, "Europe population resolution " + res + "m");
 

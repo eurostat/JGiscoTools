@@ -151,8 +151,9 @@ public class GridTiler {
 	 * @param folderPath
 	 * @param format
 	 * @param schemaJson
+	 * @param removeCRCfile
 	 */
-	public void save(String folderPath, Format format, String schemaJson) {
+	public void save(String folderPath, Format format, String schemaJson, boolean removeCRCfile) {
 
 		List<String> cols = null;
 		Schema schema = null;
@@ -274,7 +275,8 @@ public class GridTiler {
 
 				// save as parquet file
 				new File(folderPath + "/" + t.x + "/").mkdirs();
-				ParquetUtil.save(folderPath + "/" + t.x + "/" + t.y + ".parquet", schema, recs);
+				String f = folderPath + "/" + t.x + "/" + t.y + ".parquet";
+				ParquetUtil.save(f, schema, recs, removeCRCfile);
 			}
 
 		}
