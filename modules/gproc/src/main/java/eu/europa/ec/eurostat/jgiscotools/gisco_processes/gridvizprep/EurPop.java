@@ -28,7 +28,7 @@ public class EurPop {
 
 
 	//the target resolutions
-	private static int[] resolutions = new int[] { 100000/*, 50000, 20000, 10000, 5000, 2000, 1000*/ };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
 	private static String basePath = "/home/juju/Bureau/gisco/";
 	private static String outPath = basePath + "grid_pop/";
 	private static Format format = Format.PARQUET;
@@ -144,7 +144,7 @@ public class EurPop {
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = outPath + "tiled/" + res + "m";
+			String outpath = outPath + "tiled" + format + "/" + res + "m";
 			gst.save(outpath, format, "{\"namespace\": \"ns\","
 					+ "\"type\": \"record\"," //set as record
 					+ "\"name\": \"na\","
