@@ -62,6 +62,7 @@ public class ParquetUtil {
 			for (GenericData.Record record : recs)
 				writer.write(record);
 
+			writer.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;

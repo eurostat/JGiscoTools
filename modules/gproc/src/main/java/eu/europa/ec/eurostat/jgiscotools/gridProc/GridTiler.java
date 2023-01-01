@@ -253,7 +253,6 @@ public class GridTiler {
 
 				int i=1;
 				Set<String> keys = cells_.get(0).keySet();
-				System.out.println(keys);
 				for(Map<String, String> c : cells_) {
 					GenericData.Record record = new GenericData.Record(schema);
 					record.put("id", i++);
@@ -268,7 +267,6 @@ public class GridTiler {
 						else System.err.println("Unsupported parquet filed type: " + type);
 						record.put(key, val);
 					}
-					System.out.println(record);
 					recs.add(record);
 				}
 
