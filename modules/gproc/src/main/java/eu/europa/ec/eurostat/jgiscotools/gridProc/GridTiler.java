@@ -261,10 +261,10 @@ public class GridTiler {
 						Field f = schema.getField(key);
 						String type = f.toString().replace(" type:", "").replace(" pos:"+f.pos(), "").replace(f.name(), "");
 						Object val = null;
-						if(type == "STRING") val = c.get(key);
-						else if(type == "INT") val = Integer.parseInt(c.get(key));
-						else if(type == "FLOAT") val = Float.parseFloat(c.get(key));
-						else if(type == "DOUBLE") val = Double.parseDouble(c.get(key));
+						if("STRING".equals(type)) val = c.get(key);
+						else if("INT".equals(type)) val = Integer.parseInt(c.get(key));
+						else if("FLOAT".equals(type)) val = Float.parseFloat(c.get(key));
+						else if("DOUBLE".equals(type)) val = Double.parseDouble(c.get(key));
 						else System.err.println("Unsupported parquet filed type: " + type);
 						record.put(key, val);
 					}
