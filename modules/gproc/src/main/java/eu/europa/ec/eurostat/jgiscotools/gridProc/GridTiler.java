@@ -28,7 +28,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 
 import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.ParquetUtil;
+import eu.europa.ec.eurostat.jgiscotools.ParquetUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.TilingInfo.DimStat;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;

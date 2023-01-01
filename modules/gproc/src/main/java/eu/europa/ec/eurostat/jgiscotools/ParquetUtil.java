@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes;
+package eu.europa.ec.eurostat.jgiscotools;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,6 +16,11 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
  *
  */
 public class ParquetUtil {
+
+	//See
+	//https://parquet.apache.org/docs/contribution-guidelines/modules/
+	//https://github.com/Parquet/parquet-compatibility/blob/master/parquet-compat/src/test/java/parquet/compat/test/ConvertUtils.java
+
 
 	/**
 	 * @param schemaJson
