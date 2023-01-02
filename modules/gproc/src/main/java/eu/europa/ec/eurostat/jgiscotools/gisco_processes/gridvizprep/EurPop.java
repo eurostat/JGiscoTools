@@ -40,21 +40,16 @@ public class EurPop {
 		//prepare();
 		//aggregate();
 
-		/*
-		//tiling(Format.CSV, null, 128);
-		//tiling(Format.CSV, null, 256);
-		//tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 128);
-		//tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 256);
-		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 128);
-		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 256);
+		tiling(Format.CSV, null, 128);
+		tiling(Format.CSV, null, 256);
 		tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
 		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
+		tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 128);
+		tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 256);
+		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 128);
+		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 256);
 		tiling(Format.PARQUET, CompressionCodecName.ZSTD, 128);
 		tiling(Format.PARQUET, CompressionCodecName.ZSTD, 256);
-		*/
-		
-		//tiling(Format.PARQUET, CompressionCodecName., 128);
-		//tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
 
 		logger.info("End");
 	}
