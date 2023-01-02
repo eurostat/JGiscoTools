@@ -264,7 +264,10 @@ public class GridTiler {
 					CSVUtil.save(cells_, fp + t.y + ".csv", cols);
 
 					//convert csv to parquet
-					ParquetUtil.convertCSVToParquet(fp + t.y + ".csv", fp, t.y+"", comp.toString());
+					ParquetUtil.convertCSVToParquet(fp + t.y + ".csv", fp, "a", comp.toString());
+
+					//nename parquet file
+					new File(fp+"a.parquet").renameTo(new File(fp+t.y+".parquet"));
 
 					//delete csv file
 					new File(fp + t.y + ".csv").delete();
