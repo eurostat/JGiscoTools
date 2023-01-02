@@ -62,11 +62,12 @@ public class ParquetUtil {
 			writer = AvroParquetWriter.<GenericData.Record>builder(path)
 					.withSchema(schema)
 					.withCompressionCodec(comp)
-					.withRowGroupSize(ParquetWriter.DEFAULT_BLOCK_SIZE)
-					.withPageSize(ParquetWriter.DEFAULT_PAGE_SIZE)
+					//see https://parquet.apache.org/docs/file-format/configurations/
+					.withRowGroupSize(512 * 1024 * 1024) //ParquetWriter.DEFAULT_BLOCK_SIZE)
+					.withPageSize(1024 * 1024) //ParquetWriter.DEFAULT_PAGE_SIZE)
 					.withConf(new Configuration())
 					.withValidation(false)
-					.withDictionaryEncoding(false)
+					.withDictionaryEncoding(true)
 					.build();
 
 			//write records
