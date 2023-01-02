@@ -147,6 +147,13 @@
 		</dependency>
 
 
+
+		<dependency>
+			<groupId>org.duckdb</groupId>
+			<artifactId>duckdb_jdbc</artifactId>
+			<version>0.6.1</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
