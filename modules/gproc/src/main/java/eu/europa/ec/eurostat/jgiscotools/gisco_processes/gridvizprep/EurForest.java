@@ -30,13 +30,35 @@ public class EurForest {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		//remove255TCD();
-		resampling();
+		//prepare 100m files
+		//DLT
+		resample(basePath + "DLT_2018_010m_eu_03035_v020/DATA/DLT_2018_010m_eu_03035_V2_0.tif", basePath +"forest_DLT_2018_100.tif", 100, "mode");
+		resample(basePath + "DLT_2015_020m_eu_03035_d04_Full/DLT_2015_020m_eu_03035_d04_full.tif", basePath +"forest_DLT_2015_100.tif", 100, "mode");
+		resample(basePath + "DLT_2012_020m_eu_03035_d03_Full/DLT_2012_020m_eu_03035_d03_full.tif", basePath +"forest_DLT_2012_100.tif", 100, "mode");
+		//TCD
+		resample(basePath + "TCD_2018_010m_eu_03035_v020/DATA/TCD_2018_010m_eu_03035_V2_0.tif", basePath +"forest_TCD_2018_100.tif", 100, "average");
+		resample(basePath + "TCD_2015_100m_eu_03035_d04_Full/TCD_2015_100m_eu_03035_d04_full.tif", basePath +"forest_TCD_2015_100.tif", 100, "average");
+		resample(basePath + "TCD_2012_100m_eu_03035_d04_Full/TCD_2012_100m_eu_03035_d04_full.tif", basePath +"forest_TCD_2012_100.tif", 100, "average");
 
-		tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
+
+		//remove255TCD();
+		//resampling();
+
+		//tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
 
 		logger.info("End");
 	}
+
+
+	//resampling
+	private static void resample(String inF, String outF, int res, String method) {
+		String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r "+method+" -co TILED=YES";
+
+		logger.info(cmd);
+		CommandUtil.run(cmd);		
+	}
+
+
 
 
 	//replace 255 values by 0
@@ -156,7 +178,6 @@ public class EurForest {
 				} ).collect(Collectors.toList());
 				logger.info(cells.size());
 			}
-
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
