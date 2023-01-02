@@ -268,7 +268,8 @@ public class GridTiler {
 
 					//delete csv file
 					new File(fp + t.y + ".csv").delete();
-				} else {				
+
+				} else {
 
 					List<Record> recs = new ArrayList<>();
 

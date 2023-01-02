@@ -157,7 +157,7 @@ public class EurPop {
 
 			logger.info("Save");
 			String outpath = outPath + "tiled" + format + comp + nbp + "/" + res + "m";
-			gst.save(outpath, format, "{\"namespace\": \"ns\","
+			/*gst.save(outpath, format, "{\"namespace\": \"ns\","
 					+ "\"type\": \"record\"," //set as record
 					+ "\"name\": \"na\","
 					+ "\"fields\": ["
@@ -171,7 +171,8 @@ public class EurPop {
 					+ " ]}",
 					comp,
 					true
-					);
+					);*/
+			gst.save(outpath, format, "ddb", comp, true);
 			gst.saveTilingInfoJSON(outpath, format, "Europe population resolution " + res + "m");
 
 		}
