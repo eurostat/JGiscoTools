@@ -23,13 +23,14 @@ public class EurForest {
 	//Tree Cover Density (TCD) - 0 to 100 -average
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { /*100000, 50000, 20000, 10000, 5000, 2000, 1000 , 500 ,*/ 200 };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 , 500 };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/forest/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
+		/*
 		//prepare 100m files
 		//DLT
 		resample(basePath + "DLT_2018_010m_eu_03035_v020/DATA/DLT_2018_010m_eu_03035_V2_0.tif", basePath +"forest_DLT_2018_100.tif", 100, "mode");
@@ -39,10 +40,10 @@ public class EurForest {
 		resample(basePath + "TCD_2018_010m_eu_03035_v020/DATA/TCD_2018_010m_eu_03035_V2_0.tif", basePath +"forest_TCD_2018_100.tif", 100, "average");
 		resample(basePath + "TCD_2015_100m_eu_03035_d04_Full/TCD_2015_100m_eu_03035_d04_full.tif", basePath +"forest_TCD_2015_100.tif", 100, "average");
 		resample(basePath + "TCD_2012_100m_eu_03035_d04_Full/TCD_2012_100m_eu_03035_d04_full.tif", basePath +"forest_TCD_2012_100.tif", 100, "average");
-
+		 */
 
 		//remove255TCD();
-		//resampling();
+		resampling();
 
 		//tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
 
@@ -52,6 +53,7 @@ public class EurForest {
 
 	//resampling
 	private static void resample(String inF, String outF, int res, String method) {
+		//https://gdal.org/programs/gdalwarp.html#gdalwarp
 		String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r "+method+" -co TILED=YES";
 
 		logger.info(cmd);
@@ -83,27 +85,16 @@ public class EurForest {
 
 	private static void resampling() {
 
-		for (int res : resolutions) {
-			logger.info("Resampling to " + res + "m");
+		for (int year : new int[] { 2012, 2015, 2018 })
+			for (int res : resolutions) {
+				logger.info("Resampling " +year+ " to " + res + "m");
 
-			//https://gdal.org/programs/gdalwarp.html#gdalwarp
+				//DLT
+				resample(basePath +"in/forest_DLT_"+year+"_100.tif", basePath +"forest_DLT_"+year+"_"+res+".tif", res, "mode");
 
-			//DLT
-			String inF = basePath + "DLT_2018_010m_eu_03035_v020/DATA/DLT_2018_010m_eu_03035_V2_0.tif";
-			String outF = basePath +"forest_DLT_"+ res + ".tif";
-			String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r mode -co TILED=YES";
-
-			logger.info(cmd);
-			CommandUtil.run(cmd);
-
-			//TCD
-			inF = basePath + "TCD_2018_010m_eu_03035_v020/DATA/TCD_2018_010m_eu_03035_V2_0.tif";
-			outF = basePath +"forest_TCD_"+ res + ".tif";
-			cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r average -co TILED=YES";
-
-			logger.info(cmd);
-			CommandUtil.run(cmd);
-		}
+				//TCD
+				resample(basePath +"in/forest_TCD_"+year+"_100.tif", basePath +"forest_TCD_"+year+"_"+res+".tif", res, "average");
+			}
 	}
 
 
@@ -141,7 +132,7 @@ public class EurForest {
 			logger.info(cells.size());
 			cellsDLT.clear(); cellsTCD.clear();
 
-			//join country codes
+			/*/join country codes
 			if(res >= 1000) {
 				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_with_zero_"+res+"m.csv");
 				logger.info("pop: " + pop.size());
@@ -152,8 +143,7 @@ public class EurForest {
 				cells = CSVUtil.joinBothSides("GRD_ID", cells, pop, "", false);
 				logger.info(cells.size());
 			}
-
-			logger.info(cells.get(0).keySet());
+			logger.info(cells.get(0).keySet());*/
 
 			//filter: cells without clc ? without CNTR ?
 			logger.info("Filter");
@@ -170,14 +160,14 @@ public class EurForest {
 			} ).collect(Collectors.toList());
 			logger.info(cells.size());
 
-			if(res >= 1000) {
+			/*if(res >= 1000) {
 				//check cnt
 				cells = cells.stream().filter( c -> {
 					String cid = c.get("CNTR_ID");
 					return cid != null && !cid.isEmpty() && !"".equals(cid);
 				} ).collect(Collectors.toList());
 				logger.info(cells.size());
-			}
+			}*/
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
