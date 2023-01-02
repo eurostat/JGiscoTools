@@ -14,8 +14,12 @@ public class TestDuckDB {
 
 		Class.forName("org.duckdb.DuckDBDriver");
 		Connection conn = DriverManager.getConnection("jdbc:duckdb:");
+
+		// create a table
 		Statement stmt = conn.createStatement();
-		//ResultSet rs = stmt.executeQuery("SELECT 42");
+		stmt.execute("CREATE TABLE items (item VARCHAR, value DECIMAL(10,2), count INTEGER)");
+		// insert two items into the table
+		stmt.execute("INSERT INTO items VALUES ('jeans', 20.0, 1), ('hammer', 42.2, 2)");
 
 
 		//create table
@@ -25,8 +29,8 @@ public class TestDuckDB {
 
 		//"CREATE TEMP TABLE t1 AS SELECT * FROM read_csv_auto('/home/juju/Bureau/ex.csv');"
 
-		boolean a = stmt.execute("CREATE TEMP TABLE t AS SELECT * FROM read_csv_auto('/home/juju/Bureau/ex.csv');");
-		System.out.println(a);
+		//boolean a = stmt.execute("CREATE TEMP TABLE t AS SELECT * FROM read_csv_auto('/home/juju/Bureau/ex.csv');");
+		//System.out.println(a);
 
 		//CREATE TABLE csv_file(Choose STRING, a STRING, file STRING)
 		///home/juju/Bureau/ex.csv
@@ -45,17 +49,19 @@ public class TestDuckDB {
 			System.out.println(rs);
 		}*/
 
+
+
 		//export as parquet
 		//see https://observablehq.com/@observablehq/csv-to-parquet
 		//client.query(`EXPORT DATABASE '/tmp/duckdbexportparquet' (FORMAT 'parquet', CODEC 'GZIP')`);
 		//db.query(`COPY (${modifySQL}) TO 'modified.parquet' (FORMAT 'parquet', CODEC 'GZIP')`)
 
-		Statement stmt2 = conn.createStatement();
-		boolean a2 = stmt2.execute("EXPORT DATABASE '/home/juju/Bureau/exp' (FORMAT PARQUET, CODEC 'GZIP')");
-		System.out.println(a2);
+		//Statement stmt2 = conn.createStatement();
+		//boolean a2 = stmt2.execute("EXPORT DATABASE '/home/juju/Bureau/exp' (FORMAT PARQUET, CODEC 'GZIP')");
+		//System.out.println(a2);
 
 
-		stmt2.close();
+		//stmt2.close();
 		conn.close();
 
 		System.out.println("End");
