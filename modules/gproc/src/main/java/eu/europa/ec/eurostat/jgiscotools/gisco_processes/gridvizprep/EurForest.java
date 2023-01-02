@@ -23,7 +23,7 @@ public class EurForest {
 	//Tree Cover Density (TCD) - 0 to 100 -average
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500 /*, 200/*, 100*/ };
+	private static int[] resolutions = new int[] { /*100000, 50000, 20000, 10000, 5000, 2000, 1000 , 500 ,*/ 200 };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/forest/";
 
 	// -Xms4g -Xmx16g
@@ -31,16 +31,9 @@ public class EurForest {
 		logger.info("Start");
 
 		//remove255TCD();
-		//resampling();
+		resampling();
 
 		tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
-		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
-		tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 128);
-		tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 256);
-		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 128);
-		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 256);
-		tiling(Format.PARQUET, CompressionCodecName.ZSTD, 128);
-		tiling(Format.PARQUET, CompressionCodecName.ZSTD, 256);
 
 		logger.info("End");
 	}
