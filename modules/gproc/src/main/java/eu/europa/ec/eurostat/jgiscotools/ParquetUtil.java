@@ -22,7 +22,7 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
  */
 public class ParquetUtil {
 
-	
+
 	//https://duckdb.org/docs/installation/
 	//https://duckdb.org/docs/api/java.html
 	//https://duckdb.org/docs/data/overview
@@ -30,7 +30,7 @@ public class ParquetUtil {
 
 	public static void convertCSVToParquet(String inCSVPath, String outFolderPath, String outParquetName, String codec) {
 		try {
-			
+
 			//open duckdb
 			Class.forName("org.duckdb.DuckDBDriver");
 			Connection conn = DriverManager.getConnection("jdbc:duckdb:");
@@ -49,7 +49,7 @@ public class ParquetUtil {
 			//clean unnecessary files
 			new File(outFolderPath + "schema.sql").delete();
 			new File(outFolderPath + "load.sql").delete();
-			
+
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -58,11 +58,11 @@ public class ParquetUtil {
 
 	}
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	//See
 	//https://www.javadoc.io/doc/org.apache.parquet/parquet-column/1.10.0/index.html
 	//https://avro.apache.org/docs/1.10.0/api/java/overview-summary.html

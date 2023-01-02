@@ -159,7 +159,7 @@ public class GridTiler {
 
 		List<String> cols = null;
 		Schema schema = null;
-		if(format == Format.CSV) {
+		if(format == Format.CSV || "ddb".equals(schemaJson)) {
 			// prepare list of columns, ordered
 			cols = new ArrayList<>(this.getTiles().iterator().next().cells.get(0).keySet());
 			cols.add("x");
@@ -183,7 +183,7 @@ public class GridTiler {
 			};
 			cols.sort(cp);
 		}
-		else if(format == Format.PARQUET) {
+		else if(format == Format.PARQUET && !"ddb".equals(schemaJson)) {
 			schema = ParquetUtil.parseSchema(schemaJson);
 		}
 
