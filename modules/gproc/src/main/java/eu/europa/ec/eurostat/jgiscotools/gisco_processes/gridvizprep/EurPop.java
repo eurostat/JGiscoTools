@@ -32,8 +32,6 @@ public class EurPop {
 	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 };
 	private static String basePath = "/home/juju/Bureau/gisco/";
 	private static String outPath = basePath + "grid_pop/";
-	private static Format format = Format.PARQUET;
-
 
 	//-Xms4g -Xmx16g
 	public static void main(String[] args) {
@@ -41,7 +39,17 @@ public class EurPop {
 
 		//prepare();
 		//aggregate();
-		tiling();
+
+		tiling(Format.CSV, null, 128);
+		tiling(Format.CSV, null, 256);
+		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 128);
+		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 256);
+		tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 128);
+		tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 256);
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
+		tiling(Format.PARQUET, CompressionCodecName.ZSTD, 128);
+		tiling(Format.PARQUET, CompressionCodecName.ZSTD, 256);
 
 		logger.info("End");
 	}
@@ -115,7 +123,7 @@ public class EurPop {
 
 
 	// tile all resolutions
-	private static void tiling() {
+	private static void tiling(Format format, CompressionCodecName comp, int nbp) {
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
@@ -137,13 +145,13 @@ public class EurPop {
 			}
 
 			logger.info("Build tiles");
-			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
+			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
 
 			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = outPath + "tiled" + format + "/" + res + "m";
+			String outpath = outPath + "tiled" + format + comp + nbp + "/" + res + "m";
 			gst.save(outpath, format, "{\"namespace\": \"ns\","
 					+ "\"type\": \"record\"," //set as record
 					+ "\"name\": \"na\","
@@ -156,7 +164,7 @@ public class EurPop {
 					+ ",{\"name\": \"pop2018\", \"type\": \"int\"}"
 					+ ",{\"name\": \"CNTR_ID\", \"type\": \"string\"}"
 					+ " ]}",
-					CompressionCodecName.GZIP,
+					comp,
 					true
 					);
 			gst.saveTilingInfoJSON(outpath, format, "Europe population resolution " + res + "m");
