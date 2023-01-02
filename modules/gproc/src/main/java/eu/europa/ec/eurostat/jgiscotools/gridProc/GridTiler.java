@@ -252,33 +252,51 @@ public class GridTiler {
 				CSVUtil.save(cells_, folderPath + "/" + t.x + "/" + t.y + ".csv", cols);
 			}
 			else if(format == Format.PARQUET) {
-				List<Record> recs = new ArrayList<>();
 
-				int i=1;
-				Set<String> keys = cells_.get(0).keySet();
-				for(Map<String, String> c : cells_) {
-					GenericData.Record record = new GenericData.Record(schema);
-					record.put("id", i++);
-					for(String key : keys) {
-						Field f = schema.getField(key);
-						String type = f.toString().replace(" type:", "").replace(" pos:"+f.pos(), "").replace(f.name(), "");
-						Object val = null;
-						if("STRING".equals(type)) val = c.get(key);
-						else if("INT".equals(type)) val = Integer.parseInt(c.get(key));
-						else if("FLOAT".equals(type)) val = Float.parseFloat(c.get(key));
-						else if("DOUBLE".equals(type)) val = Double.parseDouble(c.get(key));
-						else if("BOOLEAN".equals(type)) val = Boolean.parseBoolean(c.get(key));
-						else System.err.println("Unsupported parquet filed type: " + type);
-						record.put(key, val);
+				if(schemaJson == "ddb") {
+					//save using duckdb CSV to parquet conversion function
+
+					//make dir
+					String fp = folderPath + "/" + t.x + "/";
+					new File(fp).mkdirs();
+
+					// save as csv file
+					CSVUtil.save(cells_, fp + t.y + ".csv", cols);
+
+					//convert csv to parquet
+					ParquetUtil.convertCSVToParquet(fp + t.y + ".csv", fp, t.y+"", comp.toString());
+
+					//delete csv file
+					new File(fp + t.y + ".csv").delete();
+				} else {				
+
+					List<Record> recs = new ArrayList<>();
+
+					int i=1;
+					Set<String> keys = cells_.get(0).keySet();
+					for(Map<String, String> c : cells_) {
+						GenericData.Record record = new GenericData.Record(schema);
+						record.put("id", i++);
+						for(String key : keys) {
+							Field f = schema.getField(key);
+							String type = f.toString().replace(" type:", "").replace(" pos:"+f.pos(), "").replace(f.name(), "");
+							Object val = null;
+							if("STRING".equals(type)) val = c.get(key);
+							else if("INT".equals(type)) val = Integer.parseInt(c.get(key));
+							else if("FLOAT".equals(type)) val = Float.parseFloat(c.get(key));
+							else if("DOUBLE".equals(type)) val = Double.parseDouble(c.get(key));
+							else if("BOOLEAN".equals(type)) val = Boolean.parseBoolean(c.get(key));
+							else System.err.println("Unsupported parquet filed type: " + type);
+							record.put(key, val);
+						}
+						recs.add(record);
 					}
-					recs.add(record);
+
+					// save as parquet file
+					new File(folderPath + "/" + t.x + "/").mkdirs();
+					String f = folderPath + "/" + t.x + "/" + t.y + ".parquet";
+					ParquetUtil.save(folderPath + "/" + t.x + "/", t.y + ".parquet", schema, recs, comp, removeCRCfile);
 				}
-
-
-				// save as parquet file
-				new File(folderPath + "/" + t.x + "/").mkdirs();
-				String f = folderPath + "/" + t.x + "/" + t.y + ".parquet";
-				ParquetUtil.save(folderPath + "/" + t.x + "/", t.y + ".parquet", schema, recs, comp, removeCRCfile);
 			}
 
 		}
