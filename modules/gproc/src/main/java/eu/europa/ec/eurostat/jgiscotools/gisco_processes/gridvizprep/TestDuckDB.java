@@ -2,7 +2,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class TestDuckDB {
@@ -11,8 +10,9 @@ public class TestDuckDB {
 		System.out.println("Start");
 
 		//see https://duckdb.org/docs/installation/
+		//https://duckdb.org/docs/api/java.html
 
-		//Class.forName("org.duckdb.DuckDBDriver");
+		Class.forName("org.duckdb.DuckDBDriver");
 		Connection conn = DriverManager.getConnection("jdbc:duckdb:");
 		Statement stmt = conn.createStatement();
 		//ResultSet rs = stmt.executeQuery("SELECT 42");
@@ -51,11 +51,11 @@ public class TestDuckDB {
 		//db.query(`COPY (${modifySQL}) TO 'modified.parquet' (FORMAT 'parquet', CODEC 'GZIP')`)
 
 		Statement stmt2 = conn.createStatement();
-		boolean a2 = stmt.execute("EXPORT DATABASE '/home/juju/Bureau/exp' (FORMAT 'parquet', CODEC 'GZIP')");
+		boolean a2 = stmt2.execute("EXPORT DATABASE '/home/juju/Bureau/exp' (FORMAT PARQUET, CODEC 'GZIP')");
 		System.out.println(a2);
 
 
-		stmt.close();
+		stmt2.close();
 		conn.close();
 
 		System.out.println("End");
