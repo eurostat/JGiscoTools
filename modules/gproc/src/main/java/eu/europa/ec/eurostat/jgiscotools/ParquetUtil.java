@@ -2,6 +2,10 @@ package eu.europa.ec.eurostat.jgiscotools;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.apache.avro.Schema;
@@ -18,6 +22,50 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
  */
 public class ParquetUtil {
 
+	
+
+	
+	
+	//https://duckdb.org/docs/installation/
+	//https://duckdb.org/docs/api/java.html
+	//https://duckdb.org/docs/data/overview
+	//https://duckdb.org/docs/data/csv
+
+	public static void convertCSVToParquet(String inCSVPath, String outFolderPath, String outParquetName, String codec) {
+		try {
+			
+			//open duckdb
+			Class.forName("org.duckdb.DuckDBDriver");
+			Connection conn = DriverManager.getConnection("jdbc:duckdb:");
+			Statement stmt = conn.createStatement();
+
+			//import CSV as duckbb
+			stmt.execute("CREATE TABLE "+outParquetName+" AS SELECT * FROM read_csv_auto('"+inCSVPath+"', delim=',', header=True)");
+
+			//export as parquet
+			stmt.execute("EXPORT DATABASE '"+outFolderPath+"' (FORMAT PARQUET, CODEC '"+codec+"')");
+
+			//close
+			stmt.close();
+			conn.close();
+
+			//clean unnecessary files
+			new File(outFolderPath + "schema.sql").delete();
+			new File(outFolderPath + "load.sql").delete();
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	
+	
+	
+	
+	
 	//See
 	//https://www.javadoc.io/doc/org.apache.parquet/parquet-column/1.10.0/index.html
 	//https://avro.apache.org/docs/1.10.0/api/java/overview-summary.html
