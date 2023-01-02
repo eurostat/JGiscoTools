@@ -23,9 +23,6 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 public class ParquetUtil {
 
 	
-
-	
-	
 	//https://duckdb.org/docs/installation/
 	//https://duckdb.org/docs/api/java.html
 	//https://duckdb.org/docs/data/overview
