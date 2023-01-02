@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurForest {
@@ -30,7 +32,15 @@ public class EurForest {
 
 		//remove255TCD();
 		//resampling();
-		//tiling();
+
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
+		tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 128);
+		tiling(Format.PARQUET, CompressionCodecName.UNCOMPRESSED, 256);
+		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 128);
+		tiling(Format.PARQUET, CompressionCodecName.SNAPPY, 256);
+		tiling(Format.PARQUET, CompressionCodecName.ZSTD, 128);
+		tiling(Format.PARQUET, CompressionCodecName.ZSTD, 256);
 
 		logger.info("End");
 	}
@@ -84,7 +94,7 @@ public class EurForest {
 
 
 	// tile all resolutions
-	private static void tiling() {
+	private static void tiling(Format format, CompressionCodecName comp, int nbp) {
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
@@ -156,14 +166,14 @@ public class EurForest {
 
 
 			logger.info("Build tiles");
-			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
+			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
 
 			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = basePath + "out/" + res + "m";
-			gst.save(outpath, GridTiler.Format.CSV, null, null, false);
+			String outpath = basePath + "tiled_"+comp+"_"+nbp+"/" + res + "m";
+			gst.save(outpath, format, "ddb", comp, true);
 			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Forest - copernicus - TCD DLT " + res + "m");
 
 		}
