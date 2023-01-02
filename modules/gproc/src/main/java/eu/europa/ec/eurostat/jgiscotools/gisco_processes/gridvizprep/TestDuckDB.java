@@ -19,15 +19,8 @@ public class TestDuckDB {
 
 
 		//create table
-		/*
-		CREATE TABLE weather (
-			    city           VARCHAR,
-			    temp_lo        INTEGER, -- minimum temperature on a day
-			    temp_hi        INTEGER, -- maximum temperature on a day
-			    prcp           REAL,
-			    date           DATE
-			);
-		*/
+		boolean a = stmt.execute("CREATE TABLE mytable (name VARCHAR, id INTEGER, qt REAL);");
+		System.out.println(a);
 		
 		//load csv
 		//COPY weather FROM '/home/user/weather.csv';
