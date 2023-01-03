@@ -23,7 +23,7 @@ public class EurElevation {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
-		resampling();
+		//resampling();
 		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
 		tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
 		tiling(Format.CSV, null, 256);
@@ -53,9 +53,9 @@ public class EurElevation {
 			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); }, true );
 			logger.info(cells.size());
 
-			//logger.info("Round");
-			//for(Map<String, String> cell : cells)
-			//	cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
+			logger.info("Round");
+			for(Map<String, String> cell : cells)
+				cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
@@ -64,7 +64,7 @@ public class EurElevation {
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = basePath + "out/tiled_"+format+"/" + res + "m";
+			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
 			gst.save(outpath, format, "ddb", comp, false);
 			gst.saveTilingInfoJSON(outpath, format, "EU DEM Europe elevation " + res + "m");
 		}
