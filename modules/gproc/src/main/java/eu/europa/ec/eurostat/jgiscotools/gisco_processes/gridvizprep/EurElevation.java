@@ -17,7 +17,7 @@ public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500 /*, 200 /*, 100*/ };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000/*, 2000, 1000, 500 /*, 200 /*, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/elevation/";
 
 	// -Xms4g -Xmx16g
@@ -53,9 +53,9 @@ public class EurElevation {
 			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); }, true );
 			logger.info(cells.size());
 
-			logger.info("Round");
-			for(Map<String, String> cell : cells)
-				cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
+			//logger.info("Round");
+			//for(Map<String, String> cell : cells)
+			//	cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
