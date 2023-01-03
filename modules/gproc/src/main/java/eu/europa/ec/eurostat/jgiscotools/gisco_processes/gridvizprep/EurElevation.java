@@ -14,26 +14,7 @@ import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
 
-	//https://docs.geotools.org/stable/userguide/library/coverage/geotiff.html
-	//https://docs.qgis.org/testing/en/docs/user_manual/working_with_raster/raster_analysis.html#raster-calculator
-	//https://docs.qgis.org/3.22/en/docs/gentle_gis_introduction/index.html
-
-	//https://qgis.org/pyqgis/3.16/analysis/QgsAlignRaster.html
-	//or https://qgis.org/pyqgis/3.16/analysis/QgsRasterCalculator.html
-
-	//*******************
-	//resampling with GDAL
-
-	//gdal
-	//https://gdal.org/programs/gdalwarp.html#gdalwarp
-	//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-tr
-	//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r
-	//gdalwarp eudem_dem_3035_europe.tif 1000.tif -tr 1000 1000 -r average
-	//*******************
-
-
 	// the target resolutions
-	//private static int[] resolutions = new int[] { 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000 };
 	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500 /*, 200 /*, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/elevation/EU_DEM_mosaic_1000K/";
 
@@ -45,7 +26,6 @@ public class EurElevation {
 		logger.info("End");
 	}
 
-
 	public static void resampling() {
 		for (int res : resolutions) {
 			logger.info("Resampling to " + res + "m");
@@ -53,8 +33,6 @@ public class EurElevation {
 		}
 	}
 
-
-	// tile all resolutions
 	private static void tiling() {
 
 		for (int res : resolutions) {
