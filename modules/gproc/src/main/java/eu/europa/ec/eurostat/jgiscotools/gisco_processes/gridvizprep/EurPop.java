@@ -40,7 +40,7 @@ public class EurPop {
 		//prepare();
 		//aggregate();
 
-		//tiling(Format.CSV, null, 128);
+		tiling(Format.CSV, null, 128);
 		//tiling(Format.CSV, null, 256);
 		tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
 		/*tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
@@ -144,7 +144,7 @@ public class EurPop {
 				c.remove("2018");
 
 				//remove country id
-				c.remove("CNTR_ID");
+				//c.remove("CNTR_ID");
 			}
 
 			logger.info("Build tiles");
