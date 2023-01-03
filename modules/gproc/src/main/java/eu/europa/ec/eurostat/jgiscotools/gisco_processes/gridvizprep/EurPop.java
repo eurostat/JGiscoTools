@@ -142,6 +142,9 @@ public class EurPop {
 				c.remove("2011");
 				c.put("pop2018", c.get("2018"));
 				c.remove("2018");
+
+				//remove country id
+				c.remove("CNTR_ID");
 			}
 
 			logger.info("Build tiles");
