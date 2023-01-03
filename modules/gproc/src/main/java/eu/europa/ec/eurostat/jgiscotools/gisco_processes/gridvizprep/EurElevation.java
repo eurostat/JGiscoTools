@@ -40,9 +40,19 @@ public class EurElevation {
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
+		resampling();
 		tiling();
 		logger.info("End");
 	}
+
+
+	public static void resampling() {
+		for (int res : resolutions) {
+			logger.info("Resampling to " + res + "m");
+			EurForest.resample(basePath +"EU_DEM_mosaic_1000K/eudem_dem_3035_europe.tif", basePath + res+".tif", res, "average");
+		}
+	}
+
 
 	// tile all resolutions
 	private static void tiling() {

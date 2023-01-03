@@ -1,6 +1,5 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,7 +51,7 @@ public class EurForest {
 
 
 	//resampling
-	private static void resample(String inF, String outF, int res, String method) {
+	public static void resample(String inF, String outF, int res, String method) {
 		//https://gdal.org/programs/gdalwarp.html#gdalwarp
 		String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r "+method+" -co TILED=YES";
 
@@ -83,7 +82,7 @@ public class EurForest {
 	}
 
 
-	private static void resampling() {
+	public static void resampling() {
 
 		for (int year : new int[] { 2012, 2015, 2018 })
 			for (int res : resolutions) {
