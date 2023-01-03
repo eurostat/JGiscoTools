@@ -5,11 +5,13 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
 
 public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
@@ -22,7 +24,10 @@ public class EurElevation {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 		resampling();
-		tiling();
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
+		tiling(Format.CSV, CompressionCodecName.GZIP, 256);
+		tiling(Format.CSV, CompressionCodecName.GZIP, 128);
 		logger.info("End");
 	}
 
@@ -33,7 +38,7 @@ public class EurElevation {
 		}
 	}
 
-	private static void tiling() {
+	private static void tiling(Format format, CompressionCodecName comp, int nbp) {
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
@@ -52,15 +57,15 @@ public class EurElevation {
 			//	cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
 
 			logger.info("Build tiles");
-			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
+			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
 
 			gst.createTiles();
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = basePath + "out/tiled/" + res + "m";
-			gst.save(outpath, GridTiler.Format.CSV, null, null, false);
-			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "EU DEM Europe elevation " + res + "m");
+			String outpath = basePath + "out/tiled_"+format+"/" + res + "m";
+			gst.save(outpath, format, "ddb", comp, false);
+			gst.saveTilingInfoJSON(outpath, format, "EU DEM Europe elevation " + res + "m");
 		}
 	}
 
