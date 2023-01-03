@@ -70,8 +70,7 @@ public class EurCLC {
 
 			logger.info("Load grid cells");
 			List<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"clc"},
-					(v)->{ return v[0]==0 || v[0]==128 || v[0]==44 || Double.isNaN(v[0]); },
-					false
+					(v)->{ return v[0]==0 || v[0]==128 || v[0]==44 || Double.isNaN(v[0]); }
 					);
 			logger.info(cells.size());
 

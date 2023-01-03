@@ -53,7 +53,7 @@ public class GeoTiffUtil {
 	 * @param parallel 
 	 * @return
 	 */
-	public static ArrayList<Map<String, String>> loadCells(GridCoverage2D coverage, String[] outProps, SkipFunction skip, boolean parallel) {
+	public static ArrayList<Map<String, String>> loadCells(GridCoverage2D coverage, String[] outProps, SkipFunction skip) {
 
 		//get envelopes
 		Envelope envG = coverage.getEnvelope();
@@ -79,7 +79,7 @@ public class GeoTiffUtil {
 
 		//for(int i=0; i<env.width; i++){
 		IntStream is = IntStream.rangeClosed(0, env.width -1);
-		if(parallel) is = is.parallel();
+		//if(parallel) is = is.parallel();
 		is.forEach(i -> {
 			int[] v = new int[nb];
 			for(int j=0; j<env.height; j++){
@@ -120,9 +120,9 @@ public class GeoTiffUtil {
 	 * @param parallel 
 	 * @return
 	 */
-	public static ArrayList<Map<String, String>> loadCells(String inTiff, String[] outProps, SkipFunction skip, boolean parallel) {
+	public static ArrayList<Map<String, String>> loadCells(String inTiff, String[] outProps, SkipFunction skip) {
 		GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(inTiff);
-		return GeoTiffUtil.loadCells(coverage, outProps, skip, parallel);
+		return GeoTiffUtil.loadCells(coverage, outProps, skip);
 	}
 
 

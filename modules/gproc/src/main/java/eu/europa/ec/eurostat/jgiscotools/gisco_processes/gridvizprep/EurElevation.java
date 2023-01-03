@@ -49,7 +49,7 @@ public class EurElevation {
 			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
 
 			logger.info("Load grid cells");
-			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); }, false );
+			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
 			logger.info(cells.size());
 
 			//logger.info("Round");

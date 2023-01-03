@@ -111,8 +111,7 @@ public class EurForest {
 			List<Map<String, String>> cellsDLT = GeoTiffUtil.loadCells(
 					basePath +"forest_"+in+"_"+ res + ".tif",
 					new String[] {"dlt"},
-					(v)->{ return v[0]<=0 || v[0]>=3; },
-					false
+					(v)->{ return v[0]<=0 || v[0]>=3; }
 					);
 			logger.info(cellsDLT.size());
 
@@ -121,8 +120,7 @@ public class EurForest {
 			List<Map<String, String>> cellsTCD = GeoTiffUtil.loadCells(
 					basePath +"forest_"+in+"_"+ res + ".tif",
 					new String[] {"tcd"},
-					(v)->{ return v[0]<=0 || v[0]>100; },
-					false
+					(v)->{ return v[0]<=0 || v[0]>100; }
 					);
 			logger.info(cellsTCD.size());
 

@@ -75,8 +75,7 @@ public class EurRoadTransportPerformance {
 			ArrayList<Map<String, String>> cellsRA = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"ra"},
-					(v)->{ return v[0]==-1; },
-					false
+					(v)->{ return v[0]==-1; }
 					);
 			logger.info(cellsRA.size());
 
@@ -85,8 +84,7 @@ public class EurRoadTransportPerformance {
 			List<Map<String, String>> cellsPP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"pp"},
-					(v)->{ return v[0]==-1; },
-					false
+					(v)->{ return v[0]==-1; }
 					);
 			logger.info(cellsPP.size());
 
@@ -95,8 +93,7 @@ public class EurRoadTransportPerformance {
 			List<Map<String, String>> cellsRP = GeoTiffUtil.loadCells(
 					basePath +in+"_"+ res + ".tif",
 					new String[] {"rp"},
-					(v)->{ return v[0]==-1; },
-					false
+					(v)->{ return v[0]==-1; }
 					);
 			logger.info(cellsRP.size());
 
