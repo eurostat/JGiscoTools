@@ -69,6 +69,7 @@ public class EurElevation {
 
 					int[] v = new int[1];
 					coverage.evaluate(new GridCoordinates2D(i,j), v);
+					if(v[0]==0 || Double.isNaN(v[0])) return null;
 					return v[0] + "";
 				}
 			});
