@@ -12,17 +12,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.avro.Schema;
-import org.apache.avro.Schema.Field;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericData.Record;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
@@ -48,32 +42,7 @@ public class GridTiler2 {
 		PARQUET
 	}
 
-	/**
-	 * The position of origin of the grid to take into account to define the
-	 * tiling frame. It should be the bottom left corner of the tiling frame. Tiling
-	 * numbering goes from left to right, and from bottom to top. For LAEA, take
-	 * (0,0).
-	 */
-	private Coordinate originPoint = new Coordinate(0, 0);
-
-	/**
-	 * The tile resolution, in number of grid cells.
-	 */
-	private int tileResolutionPix = 256;
-
-	private class GridStatTile {
-		public int x, y;
-		public ArrayList<Map<String, String>> cells = new ArrayList<Map<String, String>>();
-
-		GridStatTile(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-	}
-
-
-
-	public GridTiler2(Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix) {
+	public GridTiler2(Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, Format format, String folderPath) {
 
 		//tile frame caracteristics
 		double tileGeoSize = resolution * tileResolutionPix;
@@ -87,17 +56,77 @@ public class GridTiler2 {
 			for(int ty = tileMaxY; ty<tileMaxY; ty++) {
 				//handle tile (tx,ty)
 
-				for()
+				ArrayList<Map<String, String>> cells = new ArrayList<>();
 
-				//get cells, with their values
+				for(int xc = 0; xc<tileResolutionPix; xc ++)
+					for(int yc = 0; yc<tileResolutionPix; yc ++) {
+
+						//make new cell
+						HashMap<String, String> cell = new HashMap<>();
+
+						cell.put("x", xc+"");
+						cell.put("y", yc+"");
+
+						//get values
+
+
+
+						cells.add(cell);
+					}
 
 				//if no cells, next
+				if(cells.size() == 0) continue;
 
 				//save tile
 
-			}
+				// the output cells
+				ArrayList<Map<String, String>> cells_ = new ArrayList<Map<String, String>>();
 
+				if(format == Format.CSV) {				
+					// sort cells by x and y
+					Collections.sort(cells_, new Comparator<Map<String, String>>() {
+						@Override
+						public int compare(Map<String, String> s1, Map<String, String> s2) {
+							if (Integer.parseInt(s1.get("x")) < Integer.parseInt(s2.get("x")))
+								return -1;
+							if (Integer.parseInt(s1.get("x")) > Integer.parseInt(s2.get("x")))
+								return 1;
+							if (Integer.parseInt(s1.get("y")) < Integer.parseInt(s2.get("y")))
+								return -1;
+							if (Integer.parseInt(s1.get("y")) > Integer.parseInt(s2.get("y")))
+								return 1;
+							return 0;
+						}
+					});
+
+					// save as csv file
+					new File(folderPath + "/" + tx + "/").mkdirs();
+					CSVUtil.save(cells_, folderPath + "/" + tx + "/" + ty + ".csv");
+				}
+				else if(format == Format.PARQUET) {
+
+					//make dir
+					String fp = folderPath + "/" + tx + "/";
+					new File(fp).mkdirs();
+
+					// save as csv file
+					CSVUtil.save(cells_, fp + ty + ".csv");
+
+					//convert csv to parquet
+					ParquetUtil.convertCSVToParquet(fp + ty + ".csv", fp, "a", comp.toString());
+
+					//nename parquet file
+					new File(fp+"a.parquet").renameTo(new File(fp+ty+".parquet"));
+
+					//delete csv file
+					new File(fp + ty + ".csv").delete();
+
+				}
+
+			}
 	}
+
+
 
 
 
@@ -148,166 +177,6 @@ public class GridTiler2 {
 
 		tiles = tiles_.values();
 		tilesInfo = null;
-	}
-
-	/**
-	 * Save the tile as CSV.
-	 * 
-	 * @param folderPath
-	 * @param format
-	 * @param schemaJson
-	 * @param comp
-	 * @param removeCRCfile
-	 */
-	public void save(String folderPath, Format format, String schemaJson, CompressionCodecName comp, boolean removeCRCfile) {
-
-		List<String> cols = null;
-		Schema schema = null;
-		if(format == Format.CSV || "ddb".equals(schemaJson)) {
-			// prepare list of columns, ordered
-			cols = new ArrayList<>(this.getTiles().iterator().next().cells.get(0).keySet());
-			cols.add("x");
-			cols.add("y");
-			//cols.remove(this.gridIdAtt);
-			Comparator<String> cp = new Comparator<String>() {
-				@Override
-				public int compare(String s1, String s2) {
-					if (s1.equals(s2))
-						return 0;
-					if (s1.equals("x"))
-						return -1;
-					if (s2.equals("x"))
-						return 1;
-					if (s1.equals("y"))
-						return -1;
-					if (s2.equals("y"))
-						return 1;
-					return s1.compareTo(s2);
-				}
-			};
-			cols.sort(cp);
-		}
-		else if(format == Format.PARQUET && !"ddb".equals(schemaJson)) {
-			schema = ParquetUtil.parseSchema(schemaJson);
-		}
-
-		// save tiles
-		for (GridStatTile t : tiles) {
-
-			// the output cells
-			ArrayList<Map<String, String>> cells_ = new ArrayList<Map<String, String>>();
-
-			// prepare tile cells for export
-			for (Map<String, String> c : t.cells) {
-
-				// new cell
-				HashMap<String, String> c_ = new HashMap<String, String>();
-				// copy without grid id
-				c_.putAll(c);
-				c_.remove(this.gridIdAtt);
-
-				// get cell position
-				GridCell cell = new GridCell(c.get(gridIdAtt));
-				double x = cell.getLowerLeftCornerPositionX() - originPoint.x;
-				double y = cell.getLowerLeftCornerPositionY() - originPoint.y;
-				double r = cell.getResolution();
-
-				// compute cell position in tile space
-				x = x / r - t.x * tileResolutionPix;
-				y = y / r - t.y * tileResolutionPix;
-
-				// check x,y values. Should be within [0,tileResolutionPix-1]
-				if (x < 0)
-					logger.error("Too low value: " + x + " <0");
-				if (y < 0)
-					logger.error("Too low value: " + y + " <0");
-				if (x > this.tileResolutionPix - 1)
-					logger.error("Too high value: " + x + " >"+(this.tileResolutionPix - 1));
-				if (y > this.tileResolutionPix - 1)
-					logger.error("Too high value: " + y + " >"+(this.tileResolutionPix - 1));
-
-				// store x,y values
-				c_.put("x", "" + (int) x);
-				c_.put("y", "" + (int) y);
-
-				// keep
-				cells_.add(c_);
-			}
-
-			if(format == Format.CSV) {				
-				// sort cells by x and y
-				Collections.sort(cells_, new Comparator<Map<String, String>>() {
-					@Override
-					public int compare(Map<String, String> s1, Map<String, String> s2) {
-						if (Integer.parseInt(s1.get("x")) < Integer.parseInt(s2.get("x")))
-							return -1;
-						if (Integer.parseInt(s1.get("x")) > Integer.parseInt(s2.get("x")))
-							return 1;
-						if (Integer.parseInt(s1.get("y")) < Integer.parseInt(s2.get("y")))
-							return -1;
-						if (Integer.parseInt(s1.get("y")) > Integer.parseInt(s2.get("y")))
-							return 1;
-						return 0;
-					}
-				});
-
-				// save as csv file
-				new File(folderPath + "/" + t.x + "/").mkdirs();
-				CSVUtil.save(cells_, folderPath + "/" + t.x + "/" + t.y + ".csv", cols);
-			}
-			else if(format == Format.PARQUET) {
-
-				if(schemaJson == "ddb") {
-					//save using duckdb CSV to parquet conversion function
-
-					//make dir
-					String fp = folderPath + "/" + t.x + "/";
-					new File(fp).mkdirs();
-
-					// save as csv file
-					CSVUtil.save(cells_, fp + t.y + ".csv", cols);
-
-					//convert csv to parquet
-					ParquetUtil.convertCSVToParquet(fp + t.y + ".csv", fp, "a", comp.toString());
-
-					//nename parquet file
-					new File(fp+"a.parquet").renameTo(new File(fp+t.y+".parquet"));
-
-					//delete csv file
-					new File(fp + t.y + ".csv").delete();
-
-				} else {
-
-					List<Record> recs = new ArrayList<>();
-
-					int i=1;
-					Set<String> keys = cells_.get(0).keySet();
-					for(Map<String, String> c : cells_) {
-						GenericData.Record record = new GenericData.Record(schema);
-						record.put("id", i++);
-						for(String key : keys) {
-							Field f = schema.getField(key);
-							String type = f.toString().replace(" type:", "").replace(" pos:"+f.pos(), "").replace(f.name(), "");
-							Object val = null;
-							if("STRING".equals(type)) val = c.get(key);
-							else if("INT".equals(type)) val = Integer.parseInt(c.get(key));
-							else if("FLOAT".equals(type)) val = Float.parseFloat(c.get(key));
-							else if("DOUBLE".equals(type)) val = Double.parseDouble(c.get(key));
-							else if("BOOLEAN".equals(type)) val = Boolean.parseBoolean(c.get(key));
-							else System.err.println("Unsupported parquet filed type: " + type);
-							record.put(key, val);
-						}
-						recs.add(record);
-					}
-
-					// save as parquet file
-					new File(folderPath + "/" + t.x + "/").mkdirs();
-					String f = folderPath + "/" + t.x + "/" + t.y + ".parquet";
-					ParquetUtil.save(folderPath + "/" + t.x + "/", t.y + ".parquet", schema, recs, comp, removeCRCfile);
-				}
-			}
-
-		}
 	}
 
 
