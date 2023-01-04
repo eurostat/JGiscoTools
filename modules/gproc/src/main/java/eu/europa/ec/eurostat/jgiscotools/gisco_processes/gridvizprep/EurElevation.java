@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.Envelope;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2.ColummCalculator;
 
 public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());

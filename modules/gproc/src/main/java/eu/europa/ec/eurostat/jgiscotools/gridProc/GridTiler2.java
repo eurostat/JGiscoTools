@@ -22,6 +22,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 
 import eu.europa.ec.eurostat.jgiscotools.ParquetUtil;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 
@@ -61,11 +62,6 @@ public class GridTiler2 {
 		System.out.println("End");
 	}
 	 */
-
-	public enum Format {
-		CSV,
-		PARQUET
-	}
 
 	public interface ColummCalculator {
 		String getValue(double xG, double yG);
