@@ -68,14 +68,14 @@ public class GridTiler2 {
 	}
 
 
-	public static void tile(String description, Map<String, ColummCalculator> values, Coordinate originPoint, Envelope envG, int resolutionG, int tileResolutionPix, String crs, Format format, CompressionCodecName comp, String folderPath) {
+	public static void tile(String description, Map<String, ColummCalculator> values, Coordinate originPoint, Envelope envG, int resolutionG, int tileSizeNbCells, String crs, Format format, CompressionCodecName comp, String folderPath) {
 
 		//tile frame caracteristics
-		double tileGeoSize = resolutionG * tileResolutionPix;
-		int tileMinX = (int) Math.floor( (envG.getMinimum(0) - originPoint.x) / tileGeoSize );
-		int tileMaxX = (int) Math.ceil( (envG.getMaximum(0) - originPoint.x) / tileGeoSize );
-		int tileMinY = (int) Math.floor( (envG.getMinimum(1) - originPoint.y) / tileGeoSize );
-		int tileMaxY = (int) Math.ceil( (envG.getMaximum(1) - originPoint.y) / tileGeoSize );
+		double tileSizeGeo = resolutionG * tileSizeNbCells;
+		int tileMinX = (int) Math.floor( (envG.getMinimum(0) - originPoint.x) / tileSizeGeo );
+		int tileMaxX = (int) Math.ceil( (envG.getMaximum(0) - originPoint.x) / tileSizeGeo );
+		int tileMinY = (int) Math.floor( (envG.getMinimum(1) - originPoint.y) / tileSizeGeo );
+		int tileMaxY = (int) Math.ceil( (envG.getMaximum(1) - originPoint.y) / tileSizeGeo );
 
 		//column labels
 		Set<String> keys = values.keySet();
@@ -89,16 +89,17 @@ public class GridTiler2 {
 				//prepare tile cells
 				ArrayList<Map<String, String>> cells = new ArrayList<>();
 
-				for(int xc = 0; xc<tileResolutionPix; xc ++)
-					for(int yc = 0; yc<tileResolutionPix; yc ++) {
+				for(int xtc = 0; xtc<tileSizeNbCells; xtc ++)
+					for(int ytc = 0; ytc<tileSizeNbCells; ytc ++) {
 
 						//make new cell
 						HashMap<String, String> cell = null;
 
 						//get values
 						for(Entry<String,ColummCalculator> e : es) {
-							double xG = originPoint.x + tx * tileGeoSize + xc*resolutionG;
-							double yG = originPoint.y + ty * tileGeoSize + yc*resolutionG;
+							double xG = originPoint.x + tx * tileSizeGeo + xtc*resolutionG;
+							double yG = originPoint.y + ty * tileSizeGeo + ytc*resolutionG;
+
 							String v = e.getValue().getValue(xG, yG);
 							if(v==null) continue;
 							if(cell == null) cell = makeCell(keys);
@@ -108,8 +109,8 @@ public class GridTiler2 {
 						//no value found: skip
 						if(cell == null) continue;
 
-						cell.put("x", xc+"");
-						cell.put("y", yc+"");
+						cell.put("x", xtc+"");
+						cell.put("y", ytc+"");
 
 						cells.add(cell);
 					}
@@ -167,7 +168,7 @@ public class GridTiler2 {
 		JSONObject json = new JSONObject();
 
 		json.put("resolutionGeo", resolutionG);
-		json.put("tileSizeCell", tileResolutionPix);
+		json.put("tileSizeCell", tileSizeNbCells);
 		json.put("crs", crs);
 		json.put("format", format.toString());
 		json.put("description", description);
@@ -205,6 +206,7 @@ public class GridTiler2 {
 
 	private static HashMap<String, String> makeCell(Set<String> keys) {
 		HashMap<String, String> cell = new HashMap<String, String>();
+		for(String key : keys) cell.put(key, null);
 		return cell;
 	}
 

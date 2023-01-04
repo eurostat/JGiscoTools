@@ -54,6 +54,10 @@ public class EurElevation {
 			double minGX = envG.getMinimum(0);
 			double maxGY = envG.getMaximum(1);
 
+			System.out.println(envG);
+			System.out.println(minGX);
+			System.out.println(maxGY);
+
 			/*
 			logger.info("Load grid cells");
 			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
@@ -64,6 +68,7 @@ public class EurElevation {
 			values.put("elevation", new ColummCalculator() {
 				@Override
 				public String getValue(double xG, double yG) {
+					System.out.println(xG + "   " + yG);
 					int i = (int)((xG-minGX)/res);
 					int j = (int)(-(yG-maxGY)/res) -1;
 
