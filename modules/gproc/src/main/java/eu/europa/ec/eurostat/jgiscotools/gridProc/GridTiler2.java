@@ -97,12 +97,16 @@ public class GridTiler2 {
 
 						//get values
 						for(Entry<String,ColummCalculator> e : es) {
+							//compute geo coordinate
 							double xG = originPoint.x + tx * tileSizeGeo + xtc*resolutionG;
 							double yG = originPoint.y + ty * tileSizeGeo + ytc*resolutionG;
 
+							//get value
 							String v = e.getValue().getValue(xG, yG);
+
+							//
 							if(v==null) continue;
-							if(cell == null) cell = makeCell(keys);
+							if(cell == null) cell = new HashMap<String, String>(); //makeCell(keys);
 							cell.put(e.getKey(), v);
 						}
 
@@ -203,11 +207,11 @@ public class GridTiler2 {
 
 	}
 
-
+	/*/make cell template: all entries there, with null
 	private static HashMap<String, String> makeCell(Set<String> keys) {
 		HashMap<String, String> cell = new HashMap<String, String>();
 		for(String key : keys) cell.put(key, null);
 		return cell;
-	}
+	}*/
 
 }
