@@ -33,6 +33,10 @@ import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 public class GridTiler2 {
 	//private static Logger logger = LogManager.getLogger(GridTiler2.class.getName());
 
+	public static void main(String[] args) {
+
+	}
+
 	public enum Format {
 		CSV,
 		PARQUET
@@ -43,7 +47,7 @@ public class GridTiler2 {
 	}
 
 
-	public GridTiler2(String description, Map<String, ColummCalculator> values, Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, String crs, Format format, CompressionCodecName comp, String folderPath) {
+	public static void tile(String description, Map<String, ColummCalculator> values, Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, String crs, Format format, CompressionCodecName comp, String folderPath) {
 
 		//tile frame caracteristics
 		double tileGeoSize = resolution * tileResolutionPix;
@@ -178,7 +182,7 @@ public class GridTiler2 {
 	}
 
 
-	private HashMap<String, String> makeCell(Set<String> keys) {
+	private static HashMap<String, String> makeCell(Set<String> keys) {
 		HashMap<String, String> cell = new HashMap<String, String>();
 		return cell;
 	}
