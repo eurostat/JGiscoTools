@@ -73,14 +73,14 @@ public class GridTiler2 {
 
 
 	public GridTiler2(Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix) {
-		//TODO
 
 		//tile frame caracteristics
 		double tileGeoSize = resolution * tileResolutionPix;
-		double dx = env.getMaxX() - env.getMinX();
-		double dy = env.getMaxX() - env.getMinX();
 
-		int tileMin = (int) Math.floor( env.getMinX() / tileGeoSize );
+		int tileMinX = (int) Math.floor( (env.getMinX() - originPoint.x) / tileGeoSize );
+		int tileMaxX = (int) Math.ceil( (env.getMaxX() - originPoint.x) / tileGeoSize );
+		int tileMinY = (int) Math.floor( (env.getMinY() - originPoint.y) / tileGeoSize );
+		int tileMaxY = (int) Math.ceil( (env.getMaxY() - originPoint.y) / tileGeoSize );
 
 
 
