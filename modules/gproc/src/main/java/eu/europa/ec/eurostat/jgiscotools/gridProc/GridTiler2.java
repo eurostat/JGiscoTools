@@ -132,9 +132,7 @@ public class GridTiler2 {
 
 					//delete csv file
 					new File(fp + ty + ".csv").delete();
-
 				}
-
 			}
 
 
