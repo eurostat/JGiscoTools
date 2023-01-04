@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
@@ -42,20 +43,21 @@ public class GridTiler2 {
 		PARQUET
 	}
 
-	public GridTiler2(Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, Format format, String folderPath) {
+	public GridTiler2(Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, Format format, CompressionCodecName comp, String folderPath) {
 
 		//tile frame caracteristics
 		double tileGeoSize = resolution * tileResolutionPix;
-
 		int tileMinX = (int) Math.floor( (env.getMinX() - originPoint.x) / tileGeoSize );
 		int tileMaxX = (int) Math.ceil( (env.getMaxX() - originPoint.x) / tileGeoSize );
 		int tileMinY = (int) Math.floor( (env.getMinY() - originPoint.y) / tileGeoSize );
 		int tileMaxY = (int) Math.ceil( (env.getMaxY() - originPoint.y) / tileGeoSize );
 
-		for(int tx = tileMaxX; tx<tileMaxX; tx++)
-			for(int ty = tileMaxY; ty<tileMaxY; ty++) {
+		//scan tiles
+		for(int tx = tileMinX; tx<tileMaxX; tx++)
+			for(int ty = tileMinY; ty<tileMaxY; ty++) {
 				//handle tile (tx,ty)
 
+				//prepare tile cells
 				ArrayList<Map<String, String>> cells = new ArrayList<>();
 
 				for(int xc = 0; xc<tileResolutionPix; xc ++)
@@ -68,23 +70,19 @@ public class GridTiler2 {
 						cell.put("y", yc+"");
 
 						//get values
-
-
+						//TODO
 
 						cells.add(cell);
 					}
 
-				//if no cells, next
+				//if no cell within tile, skip
 				if(cells.size() == 0) continue;
 
 				//save tile
 
-				// the output cells
-				ArrayList<Map<String, String>> cells_ = new ArrayList<Map<String, String>>();
-
 				if(format == Format.CSV) {				
 					// sort cells by x and y
-					Collections.sort(cells_, new Comparator<Map<String, String>>() {
+					Collections.sort(cells, new Comparator<Map<String, String>>() {
 						@Override
 						public int compare(Map<String, String> s1, Map<String, String> s2) {
 							if (Integer.parseInt(s1.get("x")) < Integer.parseInt(s2.get("x")))
@@ -101,7 +99,7 @@ public class GridTiler2 {
 
 					// save as csv file
 					new File(folderPath + "/" + tx + "/").mkdirs();
-					CSVUtil.save(cells_, folderPath + "/" + tx + "/" + ty + ".csv");
+					CSVUtil.save(cells, folderPath + "/" + tx + "/" + ty + ".csv");
 				}
 				else if(format == Format.PARQUET) {
 
@@ -110,7 +108,7 @@ public class GridTiler2 {
 					new File(fp).mkdirs();
 
 					// save as csv file
-					CSVUtil.save(cells_, fp + ty + ".csv");
+					CSVUtil.save(cells, fp + ty + ".csv");
 
 					//convert csv to parquet
 					ParquetUtil.convertCSVToParquet(fp + ty + ".csv", fp, "a", comp.toString());
