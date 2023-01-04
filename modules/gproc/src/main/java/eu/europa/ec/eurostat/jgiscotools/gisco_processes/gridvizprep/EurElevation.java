@@ -54,11 +54,16 @@ public class EurElevation {
 			/*
 			logger.info("Load grid cells");
 			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
-			logger.info(cells.size());*/
+			logger.info(cells.size());
+			 */
 
 			Map<String, ColummCalculator> values = new HashMap<>();
-
-
+			values.put("elevation", new ColummCalculator() {
+				@Override
+				public String getValue(double xG, double yG) {
+					return null;
+				}
+			});
 
 			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
 			GridTiler2.tile("desc", values, new Coordinate(0,0),
