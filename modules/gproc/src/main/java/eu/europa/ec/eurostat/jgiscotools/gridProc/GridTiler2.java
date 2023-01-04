@@ -72,7 +72,7 @@ public class GridTiler2 {
 	}
 
 
-	
+
 	public GridTiler2(Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix) {
 
 		//tile frame caracteristics
@@ -86,26 +86,16 @@ public class GridTiler2 {
 		for(int tx = tileMaxX; tx<tileMaxX; tx++)
 			for(int ty = tileMaxY; ty<tileMaxY; ty++) {
 				//handle tile (tx,ty)
-				
-				
-				
+
+				for()
+
+				//get cells, with their values
+
+				//if no cells, next
+
+				//save tile
+
 			}
-		
-		
-
-
-		//go through list of possible tiles
-
-
-
-		//get cells, with their values
-
-		//if no cells, next
-
-		//save tile
-
-
-
 
 	}
 
