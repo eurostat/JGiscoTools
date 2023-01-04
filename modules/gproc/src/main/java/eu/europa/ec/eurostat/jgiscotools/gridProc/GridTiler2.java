@@ -8,12 +8,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,10 +21,7 @@ import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 
-import eu.europa.ec.eurostat.java4eurostat.util.StatsUtil;
 import eu.europa.ec.eurostat.jgiscotools.ParquetUtil;
-import eu.europa.ec.eurostat.jgiscotools.grid.GridCell;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2.TilingInfo.DimStat;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 
@@ -36,14 +31,19 @@ import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
  * @author Julien Gaffuri
  */
 public class GridTiler2 {
-	private static Logger logger = LogManager.getLogger(GridTiler2.class.getName());
+	//private static Logger logger = LogManager.getLogger(GridTiler2.class.getName());
 
 	public enum Format {
 		CSV,
 		PARQUET
 	}
+	
+	interface colummCalculator {
+		String getValue(int x, int y);
+	}
 
-	public GridTiler2(Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, Format format, CompressionCodecName comp, String folderPath) {
+
+	public GridTiler2(Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, String crs, Format format, CompressionCodecName comp, String folderPath) {
 
 		//tile frame caracteristics
 		double tileGeoSize = resolution * tileResolutionPix;
@@ -122,218 +122,48 @@ public class GridTiler2 {
 				}
 
 			}
-	}
 
 
-
-
-
-	/**
-	 * Build the tiles for several tile sizes.
-	 */
-	public void createTiles() {
-
-		// create tile dictionary tileId -> tile
-		HashMap<String, GridStatTile> tiles_ = new HashMap<String, GridStatTile>();
-
-		// go through cell stats and assign it to a tile
-		for (Map<String, String> c : this.cells) {
-
-			// get cell information
-			String gridId = c.get(gridIdAtt);
-			GridCell cell = new GridCell(gridId);
-			double x = cell.getLowerLeftCornerPositionX();
-			double y = cell.getLowerLeftCornerPositionY();
-			int resolution = cell.getResolution();
-
-			// compute tile size, in geo unit
-			int tileSizeM = resolution * this.tileResolutionPix;
-
-			// find tile position
-			int xt = (int) ((x - originPoint.x) / tileSizeM);
-			int yt = (int) ((y - originPoint.y) / tileSizeM);
-
-			// get tile. If it does not exists, create it.
-			String tileId = xt + "_" + yt;
-			GridStatTile tile = tiles_.get(tileId);
-			if (tile == null) {
-				tile = new GridStatTile(xt, yt);
-				tiles_.put(tileId, tile);
-			}
-
-			// add cell to tile
-			tile.cells.add(c);
-		}
-
-		/*
-		 * if(createEmptyTiles) { Envelope bn = getTilesInfo().tilingBounds; for(int
-		 * xt=(int)bn.getMinX(); xt<=bn.getMaxX(); xt++) { for(int yt=(int)bn.getMinY();
-		 * yt<=bn.getMaxY(); yt++) { String tileId = xt+"_"+yt; GridStatTile tile =
-		 * tiles_.get(tileId); if(tile == null) { tile = new GridStatTile(xt, yt);
-		 * tiles_.put(tileId, tile); } } } }
-		 */
-
-		tiles = tiles_.values();
-		tilesInfo = null;
-	}
-
-
-
-
-	private TilingInfo tilesInfo = null;
-
-	public TilingInfo getTilesInfo() {
-		if (tilesInfo == null)
-			computeTilesInfo();
-		return tilesInfo;
-	}
-
-	public static class TilingInfo {
-		Envelope tilingBounds = null;
-		public int resolution = -1;
-		public String ePSGCode;
-		public ArrayList<DimStat> dSt = new ArrayList<>();
-
-		public static class DimStat {
-			public String dimValue;
-			public double minValue = Double.MAX_VALUE, maxValue = -Double.MAX_VALUE;
-			public double[] percentiles;
-			public double averageValue;
-		}
-	}
-
-	private TilingInfo computeTilesInfo() {
-		tilesInfo = new TilingInfo();
-
-		for (GridStatTile t : getTiles()) {
-			// set x/y envelope
-			if (tilesInfo.tilingBounds == null)
-				tilesInfo.tilingBounds = new Envelope(new Coordinate(t.x, t.y));
-			else
-				tilesInfo.tilingBounds.expandToInclude(t.x, t.y);
-
-			// set resolution and CRS
-			if (tilesInfo.resolution == -1 && t.cells.size() > 0) {
-				GridCell cell = new GridCell(t.cells.get(0).get(gridIdAtt));
-				tilesInfo.resolution = cell.getResolution();
-				tilesInfo.ePSGCode = cell.getEpsgCode();
-			}
-
-		}
-
-		// get value columns
-		Set<String> keys = this.cells.get(0).keySet();
-		keys.remove(this.gridIdAtt);
-
-		// get all values, indexed by column
-		HashMap<String, Collection<Double>> vals = new HashMap<>();
-		for (String key : keys) {
-			if (key.equals(this.gridIdAtt))
-				continue;
-			vals.put(key, new ArrayList<>());
-		}
-		for (Map<String, String> c : this.cells)
-			for (String key : keys) {
-				try {
-					Double d = Double.parseDouble(c.get(key));
-					vals.get(key).add(d);
-				} catch (NumberFormatException e) {
-				}
-			}
-
-		// compute stats
-		for (String key : keys)
-			tilesInfo.dSt.add(getStats(key, vals.get(key)));
-
-		return tilesInfo;
-	}
-
-	private DimStat getStats(String dimValue, Collection<Double> vals) {
-		DimStat ds = new DimStat();
-		ds.dimValue = dimValue;
-
-		// percentiles
-		ds.percentiles = StatsUtil.getQuantiles(vals, 99);
-
-		// average
-		ds.averageValue = 0;
-		for (double v : vals)
-			ds.averageValue += v;
-		ds.averageValue /= vals.size();
-
-		// max and min
-		ds.maxValue = Double.NEGATIVE_INFINITY;
-		ds.minValue = Double.POSITIVE_INFINITY;
-		for (double v : vals) {
-			if (v > ds.maxValue)
-				ds.maxValue = v;
-			if (v < ds.minValue)
-				ds.minValue = v;
-		}
-		return ds;
-	}
-
-	/**
-	 * Save the tiling info.json file
-	 * 
-	 * @param outpath
-	 * @param format
-	 * @param description
-	 */
-	public void saveTilingInfoJSON(String outpath, Format format, String description) {
-		TilingInfo ti = getTilesInfo();
+		//save tiles info.json
 
 		// build JSON object
 		JSONObject json = new JSONObject();
 
-		json.put("resolutionGeo", ti.resolution);
-		json.put("tileSizeCell", this.tileResolutionPix);
-		json.put("crs", ti.ePSGCode);
+		json.put("resolutionGeo", resolution);
+		json.put("tileSizeCell", tileResolutionPix);
+		json.put("crs", crs);
 		json.put("format", format.toString());
+		json.put("description", description);
 
 		// origin point
 		JSONObject op = new JSONObject();
-		op.put("x", this.originPoint.x);
-		op.put("y", this.originPoint.y);
+		op.put("x", originPoint.x);
+		op.put("y", originPoint.y);
 		json.put("originPoint", op);
 
 		// tiling bounding
 		JSONObject bn = new JSONObject();
-		bn.put("xMin", (int) ti.tilingBounds.getMinX());
-		bn.put("xMax", (int) ti.tilingBounds.getMaxX());
-		bn.put("yMin", (int) ti.tilingBounds.getMinY());
-		bn.put("yMax", (int) ti.tilingBounds.getMaxY());
+		bn.put("xMin", (int) tileMinX);
+		bn.put("xMax", (int) tileMaxX);
+		bn.put("yMin", (int) tileMinY);
+		bn.put("yMax", (int) tileMaxY);
 		json.put("tilingBounds", bn);
 
 
 		JSONArray dims = new JSONArray();
-		for (DimStat ds : ti.dSt) dims.put(ds.dimValue);
-
-		// data on dimensions
-		/*JSONObject dims = new JSONObject();
-		for (DimStat ds : ti.dSt) {
-			JSONObject ds_ = new JSONObject();
-
-			//ds_.put("minValue", ds.minValue);
-			//ds_.put("maxValue", ds.maxValue);
-			//ds_.put("averageValue", ds.averageValue);
-			JSONArray p = new JSONArray();
-			for (double v : ds.percentiles)
-				p.put(v);
-			ds_.put("percentiles", p);
-			dims.put(ds.dimValue, ds_);
-		}*/
+		for (String key : keys) dims.put(key);
 		json.put("dims", dims);
 
 		// save
 		try {
-			File f = FileUtil.getFile(outpath + "/info.json", true, true);
+			File f = FileUtil.getFile(folderPath + "/info.json", true, true);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
 			bw.write(json.toString(3));
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 }

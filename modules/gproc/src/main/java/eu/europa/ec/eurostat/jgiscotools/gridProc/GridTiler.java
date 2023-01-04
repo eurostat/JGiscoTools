@@ -416,6 +416,7 @@ public class GridTiler {
 		json.put("tileSizeCell", this.tileResolutionPix);
 		json.put("crs", ti.ePSGCode);
 		json.put("format", format.toString());
+		json.put("description", description);
 
 		// origin point
 		JSONObject op = new JSONObject();
