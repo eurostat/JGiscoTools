@@ -6,9 +6,10 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
+import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
+import org.opengis.geometry.Envelope;
 
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
@@ -49,7 +50,9 @@ public class EurElevation {
 
 			logger.info("Get envelope");
 			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
-			Envelope env = (Envelope) coverage.getEnvelope();
+			Envelope envG = coverage.getEnvelope();
+			double minGX = envG.getMinimum(0);
+			double maxGY = envG.getMaximum(1);
 
 			/*
 			logger.info("Load grid cells");
@@ -61,13 +64,18 @@ public class EurElevation {
 			values.put("elevation", new ColummCalculator() {
 				@Override
 				public String getValue(double xG, double yG) {
-					return null;
+					int i = (int)((xG-minGX)/res);
+					int j = (int)(-(yG-maxGY)/res) -1;
+
+					int[] v = new int[1];
+					coverage.evaluate(new GridCoordinates2D(i,j), v);
+					return v[0] + "";
 				}
 			});
 
 			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
 			GridTiler2.tile("desc", values, new Coordinate(0,0),
-					env,
+					envG,
 					res, nbp, "EPSG:3035", format, comp, outpath);
 
 

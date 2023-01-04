@@ -19,7 +19,7 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
+import org.opengis.geometry.Envelope;
 
 import eu.europa.ec.eurostat.jgiscotools.ParquetUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
@@ -68,14 +68,14 @@ public class GridTiler2 {
 	}
 
 
-	public static void tile(String description, Map<String, ColummCalculator> values, Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, String crs, Format format, CompressionCodecName comp, String folderPath) {
+	public static void tile(String description, Map<String, ColummCalculator> values, Coordinate originPoint, Envelope envG, int resolutionG, int tileResolutionPix, String crs, Format format, CompressionCodecName comp, String folderPath) {
 
 		//tile frame caracteristics
-		double tileGeoSize = resolution * tileResolutionPix;
-		int tileMinX = (int) Math.floor( (env.getMinX() - originPoint.x) / tileGeoSize );
-		int tileMaxX = (int) Math.ceil( (env.getMaxX() - originPoint.x) / tileGeoSize );
-		int tileMinY = (int) Math.floor( (env.getMinY() - originPoint.y) / tileGeoSize );
-		int tileMaxY = (int) Math.ceil( (env.getMaxY() - originPoint.y) / tileGeoSize );
+		double tileGeoSize = resolutionG * tileResolutionPix;
+		int tileMinX = (int) Math.floor( (envG.getMinimum(0) - originPoint.x) / tileGeoSize );
+		int tileMaxX = (int) Math.ceil( (envG.getMaximum(0) - originPoint.x) / tileGeoSize );
+		int tileMinY = (int) Math.floor( (envG.getMinimum(1) - originPoint.y) / tileGeoSize );
+		int tileMaxY = (int) Math.ceil( (envG.getMaximum(1) - originPoint.y) / tileGeoSize );
 
 		//column labels
 		Set<String> keys = values.keySet();
@@ -97,8 +97,8 @@ public class GridTiler2 {
 
 						//get values
 						for(Entry<String,ColummCalculator> e : es) {
-							double xG = originPoint.x + tx * tileGeoSize + xc*resolution;
-							double yG = originPoint.y + ty * tileGeoSize + yc*resolution;
+							double xG = originPoint.x + tx * tileGeoSize + xc*resolutionG;
+							double yG = originPoint.y + ty * tileGeoSize + yc*resolutionG;
 							String v = e.getValue().getValue(xG, yG);
 							if(v==null) continue;
 							if(cell == null) cell = makeCell(keys);
@@ -166,7 +166,7 @@ public class GridTiler2 {
 		// build JSON object
 		JSONObject json = new JSONObject();
 
-		json.put("resolutionGeo", resolution);
+		json.put("resolutionGeo", resolutionG);
 		json.put("tileSizeCell", tileResolutionPix);
 		json.put("crs", crs);
 		json.put("format", format.toString());
