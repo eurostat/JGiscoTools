@@ -57,7 +57,7 @@ public class EurElevation {
 			logger.info(cells.size());*/
 
 			Map<String, ColummCalculator> values = new HashMap<>();
-			
+
 
 
 			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
