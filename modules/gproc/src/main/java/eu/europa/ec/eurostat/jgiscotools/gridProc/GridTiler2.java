@@ -67,7 +67,7 @@ public class GridTiler2 {
 		PARQUET
 	}
 
-	interface ColummCalculator {
+	public interface ColummCalculator {
 		String getValue(double xG, double yG);
 	}
 

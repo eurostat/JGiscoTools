@@ -1,6 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -8,10 +8,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2;
 
 public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
@@ -45,16 +46,32 @@ public class EurElevation {
 
 			String f = basePath + res+".tif";
 
+			logger.info("Get envelope");
+			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
+			Envelope env = (Envelope) coverage.getEnvelope();
+
+			/*
+			logger.info("Load grid cells");
+			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
+			logger.info(cells.size());*/
+
+			Map<String, ColummCalculator> values = new HashMap<>();
+			
+
+
+			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
+			GridTiler2.tile("desc", values, new Coordinate(0,0),
+					env,
+					res, nbp, "EPSG:3035", format, comp, outpath);
+
+
+			/*
 			logger.info("Load geoTiff");
 			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
 
 			logger.info("Load grid cells");
 			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
 			logger.info(cells.size());
-
-			//logger.info("Round");
-			//for(Map<String, String> cell : cells)
-			//	cell.put("elevation", "" + (int)Double.parseDouble(cell.get("elevation")));
 
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
@@ -66,6 +83,7 @@ public class EurElevation {
 			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
 			gst.save(outpath, format, "ddb", comp, false);
 			gst.saveTilingInfoJSON(outpath, format, "EU DEM Europe elevation " + res + "m");
+			 */
 		}
 	}
 
