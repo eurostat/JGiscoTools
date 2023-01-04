@@ -33,11 +33,18 @@ import eu.europa.ec.eurostat.jgiscotools.io.FileUtil;
 public class GridTiler2 {
 	//private static Logger logger = LogManager.getLogger(GridTiler2.class.getName());
 
+	/*
 	public static void main(String[] args) {
 		System.out.println("Start");
 
 		Map<String, ColummCalculator> values = new HashMap<>();
-		
+		values.put("val", new ColummCalculator() {
+			@Override
+			public String getValue(double xG, double yG) {
+				return xG + " " +yG;
+			}
+		});
+
 		tile(
 				"my description",
 				values,
@@ -53,6 +60,7 @@ public class GridTiler2 {
 
 		System.out.println("End");
 	}
+	 */
 
 	public enum Format {
 		CSV,
