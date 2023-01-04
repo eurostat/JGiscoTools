@@ -34,7 +34,24 @@ public class GridTiler2 {
 	//private static Logger logger = LogManager.getLogger(GridTiler2.class.getName());
 
 	public static void main(String[] args) {
+		System.out.println("Start");
 
+		Map<String, ColummCalculator> values = new HashMap<>();
+		
+		tile(
+				"my description",
+				values,
+				new Coordinate(0,0),
+				new Envelope(0, 100, 0, 100),
+				1,
+				10,
+				"EPSG:3035",
+				Format.CSV,
+				null,
+				"/home/juju/Bureau/ttt/"
+				);
+
+		System.out.println("End");
 	}
 
 	public enum Format {
