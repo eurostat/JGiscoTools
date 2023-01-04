@@ -12,9 +12,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,13 +37,13 @@ public class GridTiler2 {
 		CSV,
 		PARQUET
 	}
-	
-	interface colummCalculator {
-		String getValue(int x, int y);
+
+	interface ColummCalculator {
+		String getValue(double xG, double yG);
 	}
 
 
-	public GridTiler2(Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, String crs, Format format, CompressionCodecName comp, String folderPath) {
+	public GridTiler2(String description, Map<String, ColummCalculator> values, Coordinate originPoint, Envelope env, int resolution, int tileResolutionPix, String crs, Format format, CompressionCodecName comp, String folderPath) {
 
 		//tile frame caracteristics
 		double tileGeoSize = resolution * tileResolutionPix;
@@ -51,6 +51,10 @@ public class GridTiler2 {
 		int tileMaxX = (int) Math.ceil( (env.getMaxX() - originPoint.x) / tileGeoSize );
 		int tileMinY = (int) Math.floor( (env.getMinY() - originPoint.y) / tileGeoSize );
 		int tileMaxY = (int) Math.ceil( (env.getMaxY() - originPoint.y) / tileGeoSize );
+
+		//column labels
+		Set<String> keys = values.keySet();
+		Set<Entry<String, ColummCalculator>> es = values.entrySet();
 
 		//scan tiles
 		for(int tx = tileMinX; tx<tileMaxX; tx++)
@@ -64,13 +68,23 @@ public class GridTiler2 {
 					for(int yc = 0; yc<tileResolutionPix; yc ++) {
 
 						//make new cell
-						HashMap<String, String> cell = new HashMap<>();
+						HashMap<String, String> cell = null;
+
+						//get values
+						for(Entry<String,ColummCalculator> e : es) {
+							double xG = originPoint.x + tx * tileGeoSize + xc*resolution;
+							double yG = originPoint.y + ty * tileGeoSize + yc*resolution;
+							String v = e.getValue().getValue(xG, yG);
+							if(v==null) continue;
+							if(cell == null) cell = makeCell(keys);
+							cell.put(e.getKey(), v);
+						}
+
+						//no value found: skip
+						if(cell == null) continue;
 
 						cell.put("x", xc+"");
 						cell.put("y", yc+"");
-
-						//get values
-						//TODO
 
 						cells.add(cell);
 					}
@@ -143,12 +157,11 @@ public class GridTiler2 {
 
 		// tiling bounding
 		JSONObject bn = new JSONObject();
-		bn.put("xMin", (int) tileMinX);
-		bn.put("xMax", (int) tileMaxX);
-		bn.put("yMin", (int) tileMinY);
-		bn.put("yMax", (int) tileMaxY);
+		bn.put("xMin", tileMinX);
+		bn.put("xMax", tileMaxX);
+		bn.put("yMin", tileMinY);
+		bn.put("yMax", tileMaxY);
 		json.put("tilingBounds", bn);
-
 
 		JSONArray dims = new JSONArray();
 		for (String key : keys) dims.put(key);
@@ -164,6 +177,12 @@ public class GridTiler2 {
 			e.printStackTrace();
 		}
 
+	}
+
+
+	private HashMap<String, String> makeCell(Set<String> keys) {
+		HashMap<String, String> cell = new HashMap<String, String>();
+		return cell;
 	}
 
 }
