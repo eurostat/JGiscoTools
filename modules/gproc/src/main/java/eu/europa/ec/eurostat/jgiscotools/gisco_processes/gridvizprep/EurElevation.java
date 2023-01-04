@@ -72,6 +72,8 @@ public class EurElevation {
 					int i = (int)((xG-minGX)/res);
 					int j = (int)(-(yG-maxGY)/res) -1;
 
+					System.out.println(i + "   " +j);
+
 					int[] v = new int[1];
 					coverage.evaluate(new GridCoordinates2D(i,j), v);
 					if(v[0]==0 || Double.isNaN(v[0])) return null;
