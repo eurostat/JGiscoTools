@@ -101,6 +101,10 @@ public class GridTiler2 {
 							double xG = originPoint.x + tx * tileSizeGeo + xtc*resolutionG;
 							double yG = originPoint.y + ty * tileSizeGeo + ytc*resolutionG;
 
+							if(xG<envG.getMinimum(0)) continue;
+							if(yG>envG.getMaximum(0)-resolutionG) continue;
+							//TODO same with y
+
 							//get value
 							String v = e.getValue().getValue(xG, yG);
 
