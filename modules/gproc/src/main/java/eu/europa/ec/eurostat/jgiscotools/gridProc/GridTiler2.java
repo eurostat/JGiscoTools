@@ -127,6 +127,8 @@ public class GridTiler2 {
 				//if no cell within tile, skip
 				if(cells.size() == 0) continue;
 
+				//TODO store max/min x/y tile
+
 				//save tile
 
 				if(format == Format.CSV) {				

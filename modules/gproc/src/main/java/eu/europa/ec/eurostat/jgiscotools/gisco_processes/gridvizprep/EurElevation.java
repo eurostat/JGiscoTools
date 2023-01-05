@@ -20,7 +20,7 @@ public class EurElevation {
 	static Logger logger = LogManager.getLogger(EurElevation.class.getName());
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100000, 50000 , 20000, 10000/*, 5000, 2000, 1000, 500 /*, 200 /*, 100*/ };
+	private static int[] resolutions = new int[] { 100000, 50000 , 20000, 10000, 5000, 2000, 1000, 500 /*, 200 /*, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/elevation/";
 
 	// -Xms4g -Xmx16g
@@ -29,7 +29,7 @@ public class EurElevation {
 
 		//resampling();
 
-		tiling(Format.CSV, CompressionCodecName.GZIP, 256);
+		tiling(Format.CSV, CompressionCodecName.GZIP, 128);
 
 		logger.info("End");
 	}
@@ -74,6 +74,7 @@ public class EurElevation {
 				}
 			});
 
+			logger.info("Tiling...");
 			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
 			GridTiler2.tile("desc", values, new Coordinate(0,0),
 					envG,
