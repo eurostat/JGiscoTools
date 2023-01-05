@@ -103,7 +103,8 @@ public class GridTiler2 {
 
 							if(xG<envG.getMinimum(0)) continue;
 							if(yG>envG.getMaximum(0)-resolutionG) continue;
-							//TODO same with y
+							if(yG<envG.getMinimum(1)) continue;
+							if(yG>envG.getMaximum(1)-resolutionG) continue;
 
 							//get value
 							String v = e.getValue().getValue(xG, yG);
