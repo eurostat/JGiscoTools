@@ -43,6 +43,38 @@ public class EurElevation {
 		}
 	}
 
+
+
+	public interface OverrideFunction { String override(int v); }
+
+	public static ColummCalculator geoTiffColummCalculator(String f, int res, OverrideFunction of) {
+
+		//open geotiff
+		GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
+		Envelope envG = coverage.getEnvelope();
+		double minGX = envG.getMinimum(0);
+		double maxGY = envG.getMaximum(1);
+
+		return new ColummCalculator() {
+			@Override
+			public String getValue(double xG, double yG) {
+				//compute raster position
+				int i = (int)((xG-minGX)/res);
+				int j = (int)(-(yG-maxGY)/res) -1;
+
+				//get value
+				int[] v = new int[1];
+				coverage.evaluate(new GridCoordinates2D(i,j), v);
+
+				if(of != null) return of.override(v[0]);
+				return v[0] + "";
+			}
+		};
+
+	}
+
+
+
 	private static void tiling(Format format, CompressionCodecName comp, int nbp) {
 
 		for (int res : resolutions) {
@@ -50,20 +82,17 @@ public class EurElevation {
 
 			String f = basePath + res+".tif";
 
+			ColummCalculator cc = geoTiffColummCalculator(f, res, v -> {
+				if(v==0 || Double.isNaN(v)) return null;
+				return v+"";
+			});
+
+			/*
 			logger.info("Get envelope");
-			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
-			Envelope envG = coverage.getEnvelope();
 			double minGX = envG.getMinimum(0);
 			double maxGY = envG.getMaximum(1);
 
-			/*
-			logger.info("Load grid cells");
-			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
-			logger.info(cells.size());
-			 */
-
-			Map<String, ColummCalculator> values = new HashMap<>();
-			values.put("elevation", new ColummCalculator() {
+			ColummCalculator cc = new ColummCalculator() {
 				@Override
 				public String getValue(double xG, double yG) {
 					int i = (int)((xG-minGX)/res);
@@ -74,7 +103,14 @@ public class EurElevation {
 					if(v[0]==0 || Double.isNaN(v[0])) return null;
 					return v[0] + "";
 				}
-			});
+			};*/
+
+			Map<String, ColummCalculator> values = new HashMap<>();
+			values.put("elevation", cc);
+
+			//get enveloppe
+			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
+			Envelope envG = coverage.getEnvelope();
 
 			logger.info("Tiling...");
 			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
@@ -82,26 +118,6 @@ public class EurElevation {
 					envG,
 					res, nbp, "EPSG:3035", format, comp, outpath);
 
-
-			/*
-			logger.info("Load geoTiff");
-			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
-
-			logger.info("Load grid cells");
-			ArrayList<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"elevation"}, (v)->{ return v[0]==0 || Double.isNaN(v[0]); } );
-			logger.info(cells.size());
-
-			logger.info("Build tiles");
-			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
-
-			gst.createTiles();
-			logger.info(gst.getTiles().size() + " tiles created");
-
-			logger.info("Save");
-			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
-			gst.save(outpath, format, "ddb", comp, false);
-			gst.saveTilingInfoJSON(outpath, format, "EU DEM Europe elevation " + res + "m");
-			 */
 		}
 	}
 

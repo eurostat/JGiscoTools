@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurCLC {
@@ -33,8 +35,8 @@ public class EurCLC {
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		resampling();
-		//tiling();
+		//resampling();
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
 
 		logger.info("End");
 	}
@@ -56,13 +58,14 @@ public class EurCLC {
 	}
 
 	// tile all resolutions
-	private static void tiling() {
+	private static void tiling(Format format, CompressionCodecName comp, int nbp) {
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
-			String f = basePath + res+".tif";
 
+
+			/*
 			logger.info("Load geoTiff");
 			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
 
@@ -115,6 +118,7 @@ public class EurCLC {
 			String outpath = basePath + "tiled/" + res + "m";
 			gst.save(outpath, GridTiler.Format.CSV, null, null, false);
 			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Corine Land Cover 2018 " + res + "m");
+			 */
 		}
 
 	}
