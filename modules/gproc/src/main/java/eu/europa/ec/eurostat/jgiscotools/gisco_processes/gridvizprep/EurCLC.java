@@ -43,11 +43,15 @@ public class EurCLC {
 		for (int res : resolutions) {
 			logger.info("Resampling to " + res + "m");
 			//1990
+			EurForest.resample(basePath + "u2000_clc1990_v2020_20u1_raster100m/DATA/U2000_CLC1990_V2020_20u1.tif", basePath + "1990" + res+".tif", res, "average");
 			//2000
+			EurForest.resample(basePath + "u2006_clc2000_v2020_20u1_raster100m/DATA/U2000_CLC2000_V2020_20u1.tif", basePath + "2000" + res+".tif", res, "average");
 			//2006
+			EurForest.resample(basePath + "u2012_clc2006_v2020_20u1_raster100m/DATA/U2000_CLC206_V2020_20u1.tif", basePath + "2006" + res+".tif", res, "average");
 			//2012
+			EurForest.resample(basePath + "u2018_clc2012_v2020_20u1_raster100m/DATA/U2000_CLC2012_V2020_20u1.tif", basePath + "2012" + res+".tif", res, "average");
 			//2018
-			EurForest.resample(basePath + "u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif", basePath + res+".tif", res, "average");
+			EurForest.resample(basePath + "u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif", basePath + "2018" + res+".tif", res, "average");
 		}
 	}
 
