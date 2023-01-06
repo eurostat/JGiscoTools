@@ -116,14 +116,17 @@ public class CSVUtil {
 			String[] header = cf.getHeader(); int nb = header.length;
 			CSVPrinter printer = new CSVPrinter(out, cf);
 			for(Map<String, String> raw : data) {
-				String[] values = new String[nb];
+				Object[] values = new String[nb];
 				for(int i=0; i<nb; i++) {
 					String val = raw.get(header[i]);
 					//for numerical values, check if it is a int to avoid writing the ".0" in the end.
-					if (Util.isNumeric(val) && (Double.parseDouble(val) % 1) == 0)
+
+					if ( val != null
+							&& Util.isNumeric(val) 
+							&& (Double.parseDouble(val) % 1) == 0)
 						values[i] = "" + (int)Double.parseDouble(val);
 					else
-						values[i] = val;
+						values[i] = val == null? "" : val;
 				}
 				printer.printRecord(values);
 			}

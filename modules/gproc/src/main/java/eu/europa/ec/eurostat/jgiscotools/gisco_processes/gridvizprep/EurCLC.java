@@ -27,8 +27,8 @@ public class EurCLC {
 
 		//resampling();
 
-		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
 		tiling(Format.CSV, null, 256);
+		//tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
 
 		logger.info("End");
 	}
@@ -55,11 +55,12 @@ public class EurCLC {
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
+			//make column calculators
 			Map<String, ColummCalculator> values = new HashMap<>();
 			for (int year : new int[] { 1990, 2000, 2006, 2012, 2018 }) {
 				values.put("y"+year, EurElevation.geoTiffColummCalculator(basePath + year + "_" + res+".tif", res, v -> {
 					if(v==0 || v==128 || v==44 || Double.isNaN(v)) return null;
-					return v+"";
+					return ""+v;
 				}));
 			}
 
