@@ -50,16 +50,6 @@ public class EurForest {
 	}
 
 
-	//resampling
-	public static void resample(String inF, String outF, int res, String method) {
-		//https://gdal.org/programs/gdalwarp.html#gdalwarp
-		String cmd = "gdalwarp "+ inF +" "+outF+" -tr "+res+" "+res+" -tap -r "+method+" -co TILED=YES";
-
-		logger.info(cmd);
-		CommandUtil.run(cmd);		
-	}
-
-
 
 
 	//replace 255 values by 0
