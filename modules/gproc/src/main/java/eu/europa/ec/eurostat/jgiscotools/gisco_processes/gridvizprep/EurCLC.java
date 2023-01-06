@@ -40,10 +40,14 @@ public class EurCLC {
 	}
 
 	private static void resampling() {
-		String inF = basePath + "u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif";
 		for (int res : resolutions) {
 			logger.info("Resampling to " + res + "m");
-			EurForest.resample(inF, basePath + res+".tif", res, "average");
+			//1990
+			//2000
+			//2006
+			//2012
+			//2018
+			EurForest.resample(basePath + "u2018_clc2018_v2020_20u1_raster100m/DATA/U2018_CLC2018_V2020_20u1.tif", basePath + res+".tif", res, "average");
 		}
 	}
 
