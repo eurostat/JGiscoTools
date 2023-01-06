@@ -215,7 +215,7 @@ public class GridTiler2 {
 
 	}
 
-	/*/make cell template: all entries there, with null
+	/*/make cell template: all entries there, with null or some default value, if defined (?)
 	private static HashMap<String, String> makeCell(Set<String> keys) {
 		HashMap<String, String> cell = new HashMap<String, String>();
 		for(String key : keys) cell.put(key, null);
