@@ -73,18 +73,7 @@ public class EurCLC {
 					res, nbp, "EPSG:3035", format, comp, outpath
 					);
 
-
-			/*
-			logger.info("Load geoTiff");
-			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
-
-			logger.info("Load grid cells");
-			List<Map<String, String>> cells = GeoTiffUtil.loadCells(coverage, new String[] {"clc"},
-					(v)->{ return v[0]==0 || v[0]==128 || v[0]==44 || Double.isNaN(v[0]); }
-					);
-			logger.info(cells.size());
-
-			//join country codes
+			/*/join country codes
 			if(res >= 1000) {
 				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_with_zero_"+res+"m.csv");
 				logger.info("pop: " + pop.size());
@@ -95,39 +84,8 @@ public class EurCLC {
 				logger.info("Join pop");
 				cells = CSVUtil.joinBothSides("GRD_ID", cells, pop, "", false);
 				logger.info(cells.size());
-			}
+			}//*/
 
-			//filter: cells without clc ? without CNTR ?
-			logger.info("Filter");
-			logger.info(cells.size());
-
-			//check clc
-			cells = cells.stream().filter( c -> {
-				String clc = c.get("clc");
-				return clc != null && !clc.isEmpty() && !"".equals(clc);
-			} ).collect(Collectors.toList());
-			logger.info(cells.size());
-
-			if(res >= 1000) {
-				//check cnt
-				cells = cells.stream().filter( c -> {
-					String cid = c.get("CNTR_ID");
-					return cid != null && !cid.isEmpty() && !"".equals(cid);
-				} ).collect(Collectors.toList());
-				logger.info(cells.size());
-			}
-
-			logger.info("Build tiles");
-			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 128);
-
-			gst.createTiles();
-			logger.info(gst.getTiles().size() + " tiles created");
-
-			logger.info("Save");
-			String outpath = basePath + "tiled/" + res + "m";
-			gst.save(outpath, GridTiler.Format.CSV, null, null, false);
-			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Corine Land Cover 2018 " + res + "m");
-			 */
 		}
 
 	}
