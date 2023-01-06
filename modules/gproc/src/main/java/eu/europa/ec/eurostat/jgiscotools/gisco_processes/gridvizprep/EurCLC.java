@@ -1,35 +1,20 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
-import org.geotools.coverage.grid.GridCoverage2D;
 import org.locationtech.jts.geom.Coordinate;
-import org.opengis.geometry.Envelope;
 
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2.ColummCalculator;
-import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurCLC {
 	static Logger logger = LogManager.getLogger(EurCLC.class.getName());
-
-	//*******************
-	//resampling with GDAL
-	//https://gdal.org/programs/gdalwarp.html#gdalwarp
-	//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-tr
-	//https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r
-	//gdalwarp eudem_dem_3035_europe.tif 1000.tif -tr 1000 1000 -r average
-	//*******************
 
 	// the target resolutions
 	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100 };
@@ -74,7 +59,6 @@ public class EurCLC {
 					return v+"";
 				}));
 			}
-
 
 			logger.info("Tiling...");
 			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
