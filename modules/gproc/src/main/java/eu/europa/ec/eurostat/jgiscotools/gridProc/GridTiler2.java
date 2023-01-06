@@ -82,6 +82,7 @@ public class GridTiler2 {
 		Set<Entry<String, ColummCalculator>> es = values.entrySet();
 
 		//scan tiles
+		//TODO parallel ?
 		for(int tx = tileMinX; tx<tileMaxX; tx++)
 			for(int ty = tileMinY; ty<tileMaxY; ty++) {
 				//handle tile (tx,ty)
