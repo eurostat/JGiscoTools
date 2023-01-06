@@ -108,14 +108,12 @@ public class EurElevation {
 			Map<String, ColummCalculator> values = new HashMap<>();
 			values.put("elevation", cc);
 
-			//get enveloppe
-			GridCoverage2D coverage = GeoTiffUtil.getGeoTIFFCoverage(f);
-			Envelope envG = coverage.getEnvelope();
-
 			logger.info("Tiling...");
 			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
-			GridTiler2.tile("desc", values, new Coordinate(0,0),
-					envG,
+			GridTiler2.tile("Elevation Europe",
+					values,
+					new Coordinate(0,0),
+					GeoTiffUtil.getGeoTIFFCoverage(f).getEnvelope(),
 					res, nbp, "EPSG:3035", format, comp, outpath);
 
 		}

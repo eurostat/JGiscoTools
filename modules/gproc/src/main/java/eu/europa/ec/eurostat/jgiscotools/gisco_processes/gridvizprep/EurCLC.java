@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,10 +11,13 @@ import org.apache.logging.log4j.Logger;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.locationtech.jts.geom.Coordinate;
+import org.opengis.geometry.Envelope;
 
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2.ColummCalculator;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurCLC {
@@ -63,7 +67,22 @@ public class EurCLC {
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
-			
+			Map<String, ColummCalculator> values = new HashMap<>();
+			for (int year : new int[] { 1990, 2000, 2006, 2012, 2018 }) {
+				values.put("y"+year, EurElevation.geoTiffColummCalculator(basePath + year + "_" + res+".tif", res, v -> {
+					if(v==0 || Double.isNaN(v)) return null;
+					return v+"";
+				}));
+			}
+
+
+			logger.info("Tiling...");
+			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
+			GridTiler2.tile("Corine Land Cover - Copernicus land monitoring - European commission",
+					values,
+					new Coordinate(0,0),
+					GeoTiffUtil.getGeoTIFFCoverage(basePath + 2018 + "_" + res+".tif").getEnvelope(),
+					res, nbp, "EPSG:3035", format, comp, outpath);
 
 
 			/*
