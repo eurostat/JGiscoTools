@@ -18,7 +18,7 @@ public class EurCLC {
 	static Logger logger = LogManager.getLogger(EurCLC.class.getName());
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, /*1000, 500 , 200, 100*/ };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500 /*, 200, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/clc/";
 
 	// -Xms4g -Xmx16g
@@ -27,8 +27,8 @@ public class EurCLC {
 
 		//resampling();
 
-		tiling(Format.CSV, null, 128);
-		//tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
+		//tiling(Format.CSV, null, 128);
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
 
 		logger.info("End");
 	}
