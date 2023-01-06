@@ -79,10 +79,10 @@ public class EurForest {
 				logger.info("Resampling " +year+ " to " + res + "m");
 
 				//DLT
-				resample(basePath +"in/forest_DLT_"+year+"_100.tif", basePath +"forest_DLT_"+year+"_"+res+".tif", res, "mode");
+				GDALResampling.resample(basePath +"in/forest_DLT_"+year+"_100.tif", basePath +"forest_DLT_"+year+"_"+res+".tif", res, "mode");
 
 				//TCD
-				resample(basePath +"in/forest_TCD_"+year+"_100.tif", basePath +"forest_TCD_"+year+"_"+res+".tif", res, "average");
+				GDALResampling.resample(basePath +"in/forest_TCD_"+year+"_100.tif", basePath +"forest_TCD_"+year+"_"+res+".tif", res, "average");
 			}
 	}
 

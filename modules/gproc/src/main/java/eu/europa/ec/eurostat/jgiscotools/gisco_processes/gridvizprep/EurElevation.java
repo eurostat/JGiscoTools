@@ -39,7 +39,7 @@ public class EurElevation {
 	public static void resampling() {
 		for (int res : resolutions) {
 			logger.info("Resampling to " + res + "m");
-			EurForest.resample(basePath +"EU_DEM_mosaic_1000K/eudem_dem_3035_europe.tif", basePath + res+".tif", res, "average");
+			GDALResampling.resample(basePath +"EU_DEM_mosaic_1000K/eudem_dem_3035_europe.tif", basePath + res+".tif", res, "average");
 		}
 	}
 
