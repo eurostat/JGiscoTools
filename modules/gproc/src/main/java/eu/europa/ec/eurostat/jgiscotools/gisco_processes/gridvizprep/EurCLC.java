@@ -27,15 +27,15 @@ public class EurCLC {
 	//*******************
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { /*100000, 50000, 20000, 10000, 5000, 2000, 1000, 500,*/ 200/*, 100*/ };
-	private static String basePath = "/home/juju/Bureau/gisco/clc/";
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, /*200/*, 100*/ };
+	private static String basePath = "/home/juju/Bureau/gisco/geodata/clc/";
 
 	// -Xms4g -Xmx16g
 	public static void main(String[] args) throws Throwable {
 		logger.info("Start");
 
-		//resampling();
-		tiling();
+		resampling();
+		//tiling();
 
 		logger.info("End");
 	}
