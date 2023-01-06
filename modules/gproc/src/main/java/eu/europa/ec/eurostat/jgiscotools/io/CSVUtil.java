@@ -126,7 +126,7 @@ public class CSVUtil {
 							&& (Double.parseDouble(val) % 1) == 0)
 						values[i] = "" + (int)Double.parseDouble(val);
 					else
-						values[i] = val == null? "" : val;
+						values[i] = val;
 				}
 				printer.printRecord(values);
 			}
