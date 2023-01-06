@@ -30,8 +30,8 @@ public class EurElevation {
 		//resampling();
 
 		//tiling(Format.CSV, null, 128);
-		tiling(Format.CSV, null, 256);
-		//tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
+		//tiling(Format.CSV, null, 256);
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
 
 		logger.info("End");
 	}
