@@ -18,7 +18,7 @@ public class EurCLC {
 	static Logger logger = LogManager.getLogger(EurCLC.class.getName());
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100 };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500 /*, 200, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/clc/";
 
 	// -Xms4g -Xmx16g
@@ -26,7 +26,9 @@ public class EurCLC {
 		logger.info("Start");
 
 		//resampling();
+
 		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
+		tiling(Format.CSV, null, 256);
 
 		logger.info("End");
 	}
@@ -56,7 +58,7 @@ public class EurCLC {
 			Map<String, ColummCalculator> values = new HashMap<>();
 			for (int year : new int[] { 1990, 2000, 2006, 2012, 2018 }) {
 				values.put("y"+year, EurElevation.geoTiffColummCalculator(basePath + year + "_" + res+".tif", res, v -> {
-					if(v==0 || Double.isNaN(v)) return null;
+					if(v==0 || v==128 || v==44 || Double.isNaN(v)) return null;
 					return v+"";
 				}));
 			}
