@@ -10,6 +10,7 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
+import eu.europa.ec.eurostat.jgiscotools.GDALResampling;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;

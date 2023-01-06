@@ -11,6 +11,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.geometry.Envelope;
 
+import eu.europa.ec.eurostat.jgiscotools.GDALResampling;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2;

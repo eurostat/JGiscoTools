@@ -1,12 +1,10 @@
 /**
  * 
  */
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
+package eu.europa.ec.eurostat.jgiscotools;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 
 /**
  * @author julien Gaffuri
