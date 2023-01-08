@@ -1,5 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,7 +14,9 @@ import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 import eu.europa.ec.eurostat.jgiscotools.GDALResampling;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2.ColummCalculator;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurForest {
@@ -45,7 +48,8 @@ public class EurForest {
 		//remove255TCD();
 		//resampling();
 
-		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
+		tiling(Format.CSV, null, 256);
+		//tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
 
 		logger.info("End");
 	}
@@ -91,10 +95,47 @@ public class EurForest {
 
 	// tile all resolutions
 	private static void tiling(Format format, CompressionCodecName comp, int nbp) {
-		
-		
-		
-		
+
+
+		for (int res : resolutions) {
+			logger.info("Tiling " + res + "m");
+
+			//make column calculators
+			Map<String, ColummCalculator> values = new HashMap<>();
+			for (int year : new int[] { 2012, 2015, 2018 }) {
+				values.put("dlt"+year, EurElevation.geoTiffColummCalculator(basePath +"forest_DLT_"+year+"_"+res+".tif", res, v -> {
+					return ""+v;
+				}));
+				values.put("tcd"+year, EurElevation.geoTiffColummCalculator(basePath +"forest_TCD_"+year+"_"+res+".tif", res, v -> {
+					return ""+v;
+				}));
+			}
+
+			logger.info("Tiling...");
+			String outpath = basePath + "tiled_"+format+"_"+comp+"_"+nbp+"/" + res + "m";
+			GridTiler2.tile("Forest - Copernicus land monitoring - European commission",
+					values,
+					new Coordinate(0,0),
+					GeoTiffUtil.getGeoTIFFCoverage(basePath + 2018 + "_" + res+".tif").getEnvelope(),
+					res, nbp, "EPSG:3035", format, comp, outpath
+					);
+
+			/*/join country codes
+			if(res >= 1000) {
+				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_with_zero_"+res+"m.csv");
+				logger.info("pop: " + pop.size());
+				CSVUtil.removeColumn(pop, "2006", "2011", "2018");
+				//CSVUtil.renameColumn(pop, "2018", "TOT_P");
+				logger.info(pop.get(0).keySet());
+
+				logger.info("Join pop");
+				cells = CSVUtil.joinBothSides("GRD_ID", cells, pop, "", false);
+				logger.info(cells.size());
+			}//*/
+
+		}
+
+
 
 		/*
 		for (int res : resolutions) {
@@ -138,7 +179,7 @@ public class EurForest {
 			}
 			logger.info(cells.get(0).keySet());//*/
 
-			/*/filter: cells without clc ? without CNTR ?
+		/*/filter: cells without clc ? without CNTR ?
 			logger.info("Filter");
 			logger.info(cells.size());
 
@@ -161,7 +202,7 @@ public class EurForest {
 				} ).collect(Collectors.toList());
 				logger.info(cells.size());
 			}//*/
-/*
+		/*
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
 
