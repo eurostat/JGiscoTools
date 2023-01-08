@@ -23,7 +23,7 @@ public class EurForest {
 	//Tree Cover Density (TCD) - 0 to 100 -average
 
 	// the target resolutions
-	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000 , 500 };
+	private static int[] resolutions = new int[] { 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, /*200, 100*/ };
 	private static String basePath = "/home/juju/Bureau/gisco/geodata/forest/";
 
 	// -Xms4g -Xmx16g
@@ -43,9 +43,9 @@ public class EurForest {
 		 */
 
 		//remove255TCD();
-		resampling();
+		//resampling();
 
-		//tiling(Format.PARQUET, CompressionCodecName.GZIP, 128);
+		tiling(Format.PARQUET, CompressionCodecName.GZIP, 256);
 
 		logger.info("End");
 	}
@@ -91,7 +91,12 @@ public class EurForest {
 
 	// tile all resolutions
 	private static void tiling(Format format, CompressionCodecName comp, int nbp) {
+		
+		
+		
+		
 
+		/*
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
@@ -120,7 +125,7 @@ public class EurForest {
 			logger.info(cells.size());
 			cellsDLT.clear(); cellsTCD.clear();
 
-			/*/join country codes
+			/*join country codes
 			if(res >= 1000) {
 				ArrayList<Map<String, String>> pop = CSVUtil.load("/home/juju/Bureau/gisco/grid_pop/pop_with_zero_"+res+"m.csv");
 				logger.info("pop: " + pop.size());
@@ -131,9 +136,9 @@ public class EurForest {
 				cells = CSVUtil.joinBothSides("GRD_ID", cells, pop, "", false);
 				logger.info(cells.size());
 			}
-			logger.info(cells.get(0).keySet());*/
+			logger.info(cells.get(0).keySet());//*/
 
-			//filter: cells without clc ? without CNTR ?
+			/*/filter: cells without clc ? without CNTR ?
 			logger.info("Filter");
 			logger.info(cells.size());
 
@@ -155,8 +160,8 @@ public class EurForest {
 					return cid != null && !cid.isEmpty() && !"".equals(cid);
 				} ).collect(Collectors.toList());
 				logger.info(cells.size());
-			}*/
-
+			}//*/
+/*
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
 
@@ -168,7 +173,7 @@ public class EurForest {
 			gst.save(outpath, format, "ddb", comp, true);
 			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Forest - copernicus - TCD DLT " + res + "m");
 
-		}
+		}*/
 	}
 
 }
