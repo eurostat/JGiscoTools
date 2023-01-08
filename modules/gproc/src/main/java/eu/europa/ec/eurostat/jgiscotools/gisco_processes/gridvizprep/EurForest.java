@@ -104,9 +104,11 @@ public class EurForest {
 			Map<String, ColummCalculator> values = new HashMap<>();
 			for (int year : new int[] { 2012, 2015, 2018 }) {
 				values.put("dlt"+year, EurElevation.geoTiffColummCalculator(basePath +"forest_DLT_"+year+"_"+res+".tif", res, v -> {
+					if(v<=0 || v>=3) return null;
 					return ""+v;
 				}));
 				values.put("tcd"+year, EurElevation.geoTiffColummCalculator(basePath +"forest_TCD_"+year+"_"+res+".tif", res, v -> {
+					if(v<=0 || v>100) return null;
 					return ""+v;
 				}));
 			}
