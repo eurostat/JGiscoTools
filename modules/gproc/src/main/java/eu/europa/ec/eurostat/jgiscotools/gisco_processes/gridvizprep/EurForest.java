@@ -1,9 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,11 +11,9 @@ import org.locationtech.jts.geom.Coordinate;
 import eu.europa.ec.eurostat.jgiscotools.CommandUtil;
 import eu.europa.ec.eurostat.jgiscotools.GDALResampling;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler.Format;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2;
 import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler2.ColummCalculator;
-import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 public class EurForest {
 	static Logger logger = LogManager.getLogger(EurForest.class.getName());
