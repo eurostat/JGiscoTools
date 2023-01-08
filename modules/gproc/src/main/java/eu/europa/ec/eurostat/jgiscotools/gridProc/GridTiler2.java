@@ -130,7 +130,24 @@ public class GridTiler2 {
 
 				//TODO store max/min x/y tile
 
-				//TODO remove column with all values null ?
+
+				//remove column with all values null
+				//check columns
+				for(String key : keys) {
+					//check if cells all have key as column
+					boolean toRemove = true;
+					for(Map<String, String> c : cells) {
+						if(c.get(key)==null) continue;
+						toRemove = false;
+						break;
+					}
+					if(toRemove) {
+						for(Map<String, String> c : cells)
+							c.remove(key);
+						keys.remove(key);
+					}
+				}
+
 
 				//save tile
 
