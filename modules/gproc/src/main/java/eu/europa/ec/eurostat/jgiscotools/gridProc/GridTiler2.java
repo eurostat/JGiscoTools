@@ -112,7 +112,7 @@ public class GridTiler2 {
 
 							//
 							if(v==null) continue;
-							if(cell == null) cell = new HashMap<String, String>(); //makeCell(keys);
+							if(cell == null) cell = makeCell(keys);
 							cell.put(e.getKey(), v);
 						}
 
@@ -129,6 +129,8 @@ public class GridTiler2 {
 				if(cells.size() == 0) continue;
 
 				//TODO store max/min x/y tile
+
+				//TODO remove column with all values null ?
 
 				//save tile
 
@@ -215,11 +217,11 @@ public class GridTiler2 {
 
 	}
 
-	/*/make cell template: all entries there, with null or some default value, if defined (?)
+	//make cell template: all entries there, with null or some default value, if defined (?)
 	private static HashMap<String, String> makeCell(Set<String> keys) {
 		HashMap<String, String> cell = new HashMap<String, String>();
 		for(String key : keys) cell.put(key, null);
 		return cell;
-	}*/
+	}
 
 }
