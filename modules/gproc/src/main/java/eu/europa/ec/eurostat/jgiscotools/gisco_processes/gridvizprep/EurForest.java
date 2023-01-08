@@ -116,7 +116,7 @@ public class EurForest {
 			GridTiler2.tile("Forest - Copernicus land monitoring - European commission",
 					values,
 					new Coordinate(0,0),
-					GeoTiffUtil.getGeoTIFFCoverage(basePath + 2018 + "_" + res+".tif").getEnvelope(),
+					GeoTiffUtil.getGeoTIFFCoverage(basePath +"forest_DLT_2018_"+res+".tif").getEnvelope(),
 					res, nbp, "EPSG:3035", format, comp, outpath
 					);
 
