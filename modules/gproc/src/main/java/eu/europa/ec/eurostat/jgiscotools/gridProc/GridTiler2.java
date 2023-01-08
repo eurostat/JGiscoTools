@@ -141,6 +141,7 @@ public class GridTiler2 {
 						toRemove = false;
 						break;
 					}
+					//remove columns
 					if(toRemove) {
 						for(Map<String, String> c : cells)
 							c.remove(key);
