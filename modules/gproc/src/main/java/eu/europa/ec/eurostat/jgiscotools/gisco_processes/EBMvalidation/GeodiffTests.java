@@ -15,19 +15,19 @@ public class GeodiffTests {
 
 		String t = "EBM_P";
 
-		SimpleFeatureType sc1 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2022/BasicGeometry/"+t+".gpkg");
+		SimpleFeatureType sc1 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2022/"+t+".gpkg");
 		System.out.println(sc1);
 		//System.out.println( sc1.getGeometryDescriptor() );
 
-		SimpleFeatureType sc2 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2023/BasicGeometry/"+t+".gpkg");
+		SimpleFeatureType sc2 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2023/"+t+".gpkg");
 		System.out.println(sc2);
 		//System.out.println( sc2.getGeometryDescriptor() );
 
 
-		ArrayList<Feature> fs1 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2022/BasicGeometry/"+t+".gpkg", "inspireId");
+		ArrayList<Feature> fs1 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2022/"+t+".gpkg", "inspireId");
 		System.out.println(fs1.size());
 
-		ArrayList<Feature> fs2 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2023/BasicGeometry/"+t+".gpkg", "inspireId");
+		ArrayList<Feature> fs2 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2023/"+t+".gpkg", "inspireId");
 		System.out.println(fs2.size());
 
 
