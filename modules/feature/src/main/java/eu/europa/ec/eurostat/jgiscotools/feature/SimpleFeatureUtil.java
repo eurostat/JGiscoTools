@@ -111,8 +111,9 @@ public class SimpleFeatureUtil {
 
 	private static String[] getAttributeNames(SimpleFeatureType ft){
 		ArrayList<String> atts = new ArrayList<String>();
-		for(int i=0; i<ft.getAttributeCount(); i++){
+		for(int i=0; i<ft.getAttributeCount(); i++) {
 			String att = ft.getDescriptor(i).getLocalName();
+			if(ft.getGeometryDescriptor() == null) LOGGER.warn("No geometry descriptor");
 			if(ft.getGeometryDescriptor() != null) {
 				String geomColName = ft.getGeometryDescriptor().getName().toString();
 				if(geomColName != null && geomColName.equals(att)) continue;
