@@ -49,7 +49,7 @@ public class SimpleFeatureUtil {
 		else if(sf.getID() != null && !"".equals(sf.getID())) f.setID(sf.getID());
 
 		//set geometry
-		Property pg = sf.getProperty( sf.getFeatureType().getGeometryDescriptor().getName() );
+		Property pg = sf.getFeatureType().getGeometryDescriptor() != null? sf.getProperty( sf.getFeatureType().getGeometryDescriptor().getName() ) : null;
 		if(pg==null) pg = sf.getProperty("the_geom");
 		if(pg==null) pg = sf.getProperty("geometry");
 		if(pg==null) pg = sf.getProperty("geom");
@@ -113,12 +113,14 @@ public class SimpleFeatureUtil {
 		ArrayList<String> atts = new ArrayList<String>();
 		for(int i=0; i<ft.getAttributeCount(); i++){
 			String att = ft.getDescriptor(i).getLocalName();
-			String geomColName = ft.getGeometryDescriptor().getName().toString();
-			if(geomColName != null && geomColName.equals(att)) continue;
-			if("the_geom".equals(att)) continue;
-			if("GEOM".equals(att)) continue;
-			if("geom".equals(att)) continue;
-			if("Geom".equals(att)) continue;
+			if(ft.getGeometryDescriptor() != null) {
+				String geomColName = ft.getGeometryDescriptor().getName().toString();
+				if(geomColName != null && geomColName.equals(att)) continue;
+				if("the_geom".equals(att)) continue;
+				if("GEOM".equals(att)) continue;
+				if("geom".equals(att)) continue;
+				if("Geom".equals(att)) continue;
+			}
 			atts.add(att);
 		}
 		return atts.toArray(new String[atts.size()]);
