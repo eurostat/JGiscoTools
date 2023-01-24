@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.EBMvalidation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -15,19 +16,19 @@ public class GeodiffTests {
 
 		String t = "EBM_P";
 
-		SimpleFeatureType sc1 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2022/"+t+".gpkg");
+		SimpleFeatureType sc1 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2022_"+t+".gpkg");
 		System.out.println(sc1);
 		//System.out.println( sc1.getGeometryDescriptor() );
 
-		SimpleFeatureType sc2 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2023/"+t+".gpkg");
+		SimpleFeatureType sc2 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2023_"+t+".gpkg");
 		System.out.println(sc2);
 		//System.out.println( sc2.getGeometryDescriptor() );
 
 
-		ArrayList<Feature> fs1 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2022/"+t+".gpkg", "inspireId");
+		ArrayList<Feature> fs1 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2022_"+t+".gpkg", "inspireId");
 		System.out.println(fs1.size());
 
-		ArrayList<Feature> fs2 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2023/"+t+".gpkg", "inspireId");
+		ArrayList<Feature> fs2 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2023_"+t+".gpkg", "inspireId");
 		System.out.println(fs2.size());
 
 
@@ -47,6 +48,9 @@ public class GeodiffTests {
 		if(gd.getGeomDifferences().size() > 0)
 			GeoData.save(gd.getGeomDifferences(), "/home/juju/Bureau/gisco/EBM_validation/geodiff/"+t+"/geomDifferences.gpkg", sc1.getCoordinateReferenceSystem());
 
+		Collection<Feature> si = GeoDiff.findIdStabilityIssues(gd.getDifferences(), 20);
+		if(si.size() > 0)
+			GeoData.save(si, "/home/juju/Bureau/gisco/EBM_validation/geodiff/"+t+"/idStabIssues.gpkg", sc1.getCoordinateReferenceSystem());
 
 		System.out.println("End");
 	}
