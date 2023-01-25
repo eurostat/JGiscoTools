@@ -29,10 +29,10 @@ public class GeodiffTests {
 			//System.out.println( sc2.getGeometryDescriptor() );
 
 			ArrayList<Feature> fs1 = GeoData.getFeatures(inFolder + "2022_"+t+".gpkg", "inspireId");
-			System.out.println(fs1.size());
+			System.out.println("2022: " + fs1.size());
 
 			ArrayList<Feature> fs2 = GeoData.getFeatures(inFolder + "2023_"+t+".gpkg", "inspireId");
-			System.out.println(fs2.size());
+			System.out.println("2023: " + fs2.size());
 
 
 			GeoDiff gd = new GeoDiff(fs1, fs2, 20);
@@ -41,13 +41,22 @@ public class GeodiffTests {
 			gd.setAttributesToIgnore("OBJECTID");
 
 
-			//
+			//compute and save geodiff
+
+			System.out.println("Differences: " + gd.getDifferences().size());
 			if(gd.getDifferences().size() > 0)
 				GeoData.save(gd.getDifferences(), outFolder+t+"/geodiff.gpkg", sc1.getCoordinateReferenceSystem());
+
+			System.out.println("Hausdorf Geom Differences: " + gd.getHausdorffGeomDifferences().size());
 			if(gd.getHausdorffGeomDifferences().size() > 0)
 				GeoData.save(gd.getHausdorffGeomDifferences(), outFolder+t+"/hausdorf.gpkg", sc1.getCoordinateReferenceSystem());
+
+			/*System.out.println("Identical: " + gd.getIdentical().size());
 			if(gd.getIdentical().size() > 0)
 				GeoData.save(gd.getIdentical(), outFolder+t+"/identical.gpkg", sc1.getCoordinateReferenceSystem());
+			*/
+
+			System.out.println("Geom Differences: " + gd.getGeomDifferences().size());
 			if(gd.getGeomDifferences().size() > 0)
 				GeoData.save(gd.getGeomDifferences(), outFolder+t+"/geomDifferences.gpkg", sc1.getCoordinateReferenceSystem());
 
