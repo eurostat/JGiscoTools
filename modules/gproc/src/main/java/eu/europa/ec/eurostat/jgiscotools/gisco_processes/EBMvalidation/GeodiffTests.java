@@ -45,8 +45,7 @@ public class GeodiffTests {
 
 			System.out.println("Differences: " + gd.getDifferences().size());
 			if(gd.getDifferences().size() > 0) {
-				for(Feature f : gd.getDifferences())
-					f.setAttribute("beginLifespanVersion", f.getAttribute("beginLifespanVersion").toString());
+				for(Feature f : gd.getDifferences()) f.setAttribute("beginLifespanVersion", f.getAttribute("beginLifespanVersion").toString());
 				GeoData.save(gd.getDifferences(), outFolder+t+"/geodiff.gpkg", sc1.getCoordinateReferenceSystem());
 			}
 
@@ -65,9 +64,8 @@ public class GeodiffTests {
 
 			Collection<Feature> si = GeoDiff.findIdStabilityIssues(gd.getDifferences(), 20);
 			System.out.println("Stability issues: " + si.size());
-			if(si.size() > 0) {			
-				for(Feature f : si)
-					f.setAttribute("beginLifespanVersion", f.getAttribute("beginLifespanVersion").toString());
+			if(si.size() > 0) {
+				for(Feature f : si) f.setAttribute("beginLifespanVersion", f.getAttribute("beginLifespanVersion").toString());
 				GeoData.save(si, outFolder+t+"/idStabIssues.gpkg", sc1.getCoordinateReferenceSystem());
 			}
 
