@@ -24,7 +24,7 @@ public class GeodiffTests {
 			//System.out.println(sc1);
 			//System.out.println( sc1.getGeometryDescriptor() );
 
-			SimpleFeatureType sc2 = GeoData.getSchema(inFolder + "2023_"+t+".gpkg");
+			//SimpleFeatureType sc2 = GeoData.getSchema(inFolder + "2023_"+t+".gpkg");
 			//System.out.println(sc2);
 			//System.out.println( sc2.getGeometryDescriptor() );
 
@@ -44,8 +44,11 @@ public class GeodiffTests {
 			//compute and save geodiff
 
 			System.out.println("Differences: " + gd.getDifferences().size());
-			if(gd.getDifferences().size() > 0)
+			if(gd.getDifferences().size() > 0) {
+				for(Feature f : gd.getDifferences())
+					f.setAttribute("beginLifespanVersion", f.getAttribute("beginLifespanVersion").toString());
 				GeoData.save(gd.getDifferences(), outFolder+t+"/geodiff.gpkg", sc1.getCoordinateReferenceSystem());
+			}
 
 			System.out.println("Hausdorf Geom Differences: " + gd.getHausdorffGeomDifferences().size());
 			if(gd.getHausdorffGeomDifferences().size() > 0)
@@ -54,7 +57,7 @@ public class GeodiffTests {
 			/*System.out.println("Identical: " + gd.getIdentical().size());
 			if(gd.getIdentical().size() > 0)
 				GeoData.save(gd.getIdentical(), outFolder+t+"/identical.gpkg", sc1.getCoordinateReferenceSystem());
-			*/
+			 */
 
 			System.out.println("Geom Differences: " + gd.getGeomDifferences().size());
 			if(gd.getGeomDifferences().size() > 0)
@@ -62,8 +65,11 @@ public class GeodiffTests {
 
 			Collection<Feature> si = GeoDiff.findIdStabilityIssues(gd.getDifferences(), 20);
 			System.out.println("Stability issues: " + si.size());
-			if(si.size() > 0)
+			if(si.size() > 0) {			
+				for(Feature f : si)
+					f.setAttribute("beginLifespanVersion", f.getAttribute("beginLifespanVersion").toString());
 				GeoData.save(si, outFolder+t+"/idStabIssues.gpkg", sc1.getCoordinateReferenceSystem());
+			}
 
 		}
 
