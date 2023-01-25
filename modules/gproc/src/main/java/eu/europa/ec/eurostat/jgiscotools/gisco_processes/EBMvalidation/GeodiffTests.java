@@ -17,7 +17,7 @@ public class GeodiffTests {
 		String inFolder = "/home/juju/Bureau/gisco/geodata/EBM/";
 		String outFolder = "/home/juju/Bureau/gisco/EBM_validation/geodiff/";
 
-		for(String t : new String[] { "EBM_A", /*"EBM_P",*/ "NUTS_3", "LAU", "NUTS_2", "NUTS_1", }) {
+		for(String t : new String[] { "EBM_A", "NUTS_3", "LAU", "NUTS_2", "NUTS_1", "EBM_P" }) {
 			System.out.println("GeoDiff of " + t);
 
 			SimpleFeatureType sc1 = GeoData.getSchema(inFolder + "2022_"+t+".gpkg");
