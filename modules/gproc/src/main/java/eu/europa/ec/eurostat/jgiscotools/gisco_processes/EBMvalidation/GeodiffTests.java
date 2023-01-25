@@ -13,22 +13,24 @@ public class GeodiffTests {
 
 	public static void main(String[] args) {
 		System.out.println("Start");
+		
+		String inFolder = "/home/juju/Bureau/gisco/geodata/EBM/";
+		String outFolder = "/home/juju/Bureau/gisco/EBM_validation/geodiff/";
 
 		String t = "EBM_P";
 
-		SimpleFeatureType sc1 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2022_"+t+".gpkg");
-		System.out.println(sc1);
+		SimpleFeatureType sc1 = GeoData.getSchema(inFolder + "2022_"+t+".gpkg");
+		//System.out.println(sc1);
 		//System.out.println( sc1.getGeometryDescriptor() );
 
-		SimpleFeatureType sc2 = GeoData.getSchema("/home/juju/Bureau/gisco/geodata/EBM/2023_"+t+".gpkg");
-		System.out.println(sc2);
+		SimpleFeatureType sc2 = GeoData.getSchema(inFolder + "2023_"+t+".gpkg");
+		//System.out.println(sc2);
 		//System.out.println( sc2.getGeometryDescriptor() );
 
-
-		ArrayList<Feature> fs1 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2022_"+t+".gpkg", "inspireId");
+		ArrayList<Feature> fs1 = GeoData.getFeatures(inFolder + "2022_"+t+".gpkg", "inspireId");
 		System.out.println(fs1.size());
 
-		ArrayList<Feature> fs2 = GeoData.getFeatures("/home/juju/Bureau/gisco/geodata/EBM/2023_"+t+".gpkg", "inspireId");
+		ArrayList<Feature> fs2 = GeoData.getFeatures(inFolder + "2023_"+t+".gpkg", "inspireId");
 		System.out.println(fs2.size());
 
 
@@ -40,17 +42,18 @@ public class GeodiffTests {
 
 		//
 		if(gd.getDifferences().size() > 0)
-			GeoData.save(gd.getDifferences(), "/home/juju/Bureau/gisco/EBM_validation/geodiff/"+t+"/geodiff.gpkg", sc1.getCoordinateReferenceSystem());
+			GeoData.save(gd.getDifferences(), outFolder+t+"/geodiff.gpkg", sc1.getCoordinateReferenceSystem());
 		if(gd.getHausdorffGeomDifferences().size() > 0)
-			GeoData.save(gd.getHausdorffGeomDifferences(), "/home/juju/Bureau/gisco/EBM_validation/geodiff/"+t+"/hausdorf.gpkg", sc1.getCoordinateReferenceSystem());
+			GeoData.save(gd.getHausdorffGeomDifferences(), outFolder+t+"/hausdorf.gpkg", sc1.getCoordinateReferenceSystem());
 		if(gd.getIdentical().size() > 0)
-			GeoData.save(gd.getIdentical(), "/home/juju/Bureau/gisco/EBM_validation/geodiff/"+t+"/identical.gpkg", sc1.getCoordinateReferenceSystem());
+			GeoData.save(gd.getIdentical(), outFolder+t+"/identical.gpkg", sc1.getCoordinateReferenceSystem());
 		if(gd.getGeomDifferences().size() > 0)
-			GeoData.save(gd.getGeomDifferences(), "/home/juju/Bureau/gisco/EBM_validation/geodiff/"+t+"/geomDifferences.gpkg", sc1.getCoordinateReferenceSystem());
+			GeoData.save(gd.getGeomDifferences(), outFolder+t+"/geomDifferences.gpkg", sc1.getCoordinateReferenceSystem());
 
 		Collection<Feature> si = GeoDiff.findIdStabilityIssues(gd.getDifferences(), 20);
+		System.out.println("Stability issues: " + si.size());
 		if(si.size() > 0)
-			GeoData.save(si, "/home/juju/Bureau/gisco/EBM_validation/geodiff/"+t+"/idStabIssues.gpkg", sc1.getCoordinateReferenceSystem());
+			GeoData.save(si, outFolder+t+"/idStabIssues.gpkg", sc1.getCoordinateReferenceSystem());
 
 		System.out.println("End");
 	}
