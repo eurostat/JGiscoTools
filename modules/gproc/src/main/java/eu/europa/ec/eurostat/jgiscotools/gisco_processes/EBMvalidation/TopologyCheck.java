@@ -19,11 +19,11 @@ public class TopologyCheck {
 		for(String t : new String[] { /*"EBM_A",*/ "NUTS_3",/* "LAU", "NUTS_2", "NUTS_1"*/ }) {
 			System.out.println("Topology quality of " + t);
 
-			SimpleFeatureType sc1 = GeoData.getSchema(inFolder + "2023_"+t+".gpkg");
-			ArrayList<Feature> fs1 = GeoData.getFeatures(inFolder + "2023_"+t+".gpkg", "inspireId");
-			System.out.println(fs1.size());
+			SimpleFeatureType sc = GeoData.getSchema(inFolder + "2023_"+t+".gpkg");
+			ArrayList<Feature> fs = GeoData.getFeatures(inFolder + "2023_"+t+".gpkg", "inspireId");
+			System.out.println(fs.size());
 
-			TesselationQuality.checkQuality(null, 0, null, false, false, 0, 0, false);
+			TesselationQuality.checkQuality(fs, 1, outFolder + "topocheck_"+t+".gpkg", true, true, 100000, 2000, true);
 
 		}
 		
