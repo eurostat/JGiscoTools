@@ -107,6 +107,7 @@ public class TesselationQuality {
 		return fs;
 	}
 
+
 	public static void clip(Collection<Feature> fs, Envelope env) {
 		Polygon extend = JTS.toGeometry(env);
 		Collection<Feature> toBeRemoved = new HashSet<Feature>();

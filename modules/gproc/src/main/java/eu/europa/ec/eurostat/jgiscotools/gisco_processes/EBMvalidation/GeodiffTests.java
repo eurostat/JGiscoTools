@@ -17,7 +17,7 @@ public class GeodiffTests {
 		String inFolder = "/home/juju/Bureau/gisco/geodata/EBM/";
 		String outFolder = "/home/juju/Bureau/gisco/EBM_validation/geodiff/";
 
-		for(String t : new String[] { "EBM_A", "NUTS_3", "LAU", "NUTS_2", "NUTS_1", "EBM_P" }) {
+		for(String t : new String[] { /*"EBM_A", "NUTS_3",*/ "LAU", "NUTS_2", "NUTS_1", "EBM_P" }) {
 			System.out.println("GeoDiff of " + t);
 
 			SimpleFeatureType sc1 = GeoData.getSchema(inFolder + "2022_"+t+".gpkg");
@@ -45,7 +45,7 @@ public class GeodiffTests {
 
 			System.out.println("Differences: " + gd.getDifferences().size());
 			if(gd.getDifferences().size() > 0) {
-				for(Feature f : gd.getDifferences()) f.setAttribute("beginLifespanVersion", f.getAttribute("beginLifespanVersion").toString());
+				for(Feature f : gd.getDifferences()) f.setAttribute("beginLifespanVersion", ""+f.getAttribute("beginLifespanVersion"));
 				GeoData.save(gd.getDifferences(), outFolder+t+"/geodiff.gpkg", sc1.getCoordinateReferenceSystem());
 			}
 
@@ -65,7 +65,7 @@ public class GeodiffTests {
 			Collection<Feature> si = GeoDiff.findIdStabilityIssues(gd.getDifferences(), 20);
 			System.out.println("Stability issues: " + si.size());
 			if(si.size() > 0) {
-				for(Feature f : si) f.setAttribute("beginLifespanVersion", f.getAttribute("beginLifespanVersion").toString());
+				for(Feature f : si) f.setAttribute("beginLifespanVersion", ""+f.getAttribute("beginLifespanVersion"));
 				GeoData.save(si, outFolder+t+"/idStabIssues.gpkg", sc1.getCoordinateReferenceSystem());
 			}
 
