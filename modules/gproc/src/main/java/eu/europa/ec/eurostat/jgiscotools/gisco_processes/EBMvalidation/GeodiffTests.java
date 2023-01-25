@@ -38,7 +38,7 @@ public class GeodiffTests {
 			GeoDiff gd = new GeoDiff(fs1, fs2, 20);
 			//SimpleFeatureTypeImpl BasicGeometry/EBM_P identified extends Feature(geom:geom,OBJECTID:OBJECTID,inspireId:inspireId,beginLifespanVersion:beginLifespanVersion,ICC:ICC,SHN:SHN)
 			//SimpleFeatureTypeImpl BasicGeometry/EBM_P identified extends Feature(geom:geom,OBJECTID:OBJECTID,inspireId:inspireId,beginLifespanVersion:beginLifespanVersion,ICC:ICC,SHN:SHN)
-			gd.setAttributesToIgnore("OBJECTID");
+			gd.setAttributesToIgnore("OBJECTID", "Shape_Length", "Shape_Area");
 
 
 			//compute and save geodiff
