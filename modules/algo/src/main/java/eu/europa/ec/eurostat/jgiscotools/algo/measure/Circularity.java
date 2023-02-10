@@ -3,7 +3,7 @@ package eu.europa.ec.eurostat.jgiscotools.algo.measure;
 import org.locationtech.jts.geom.Geometry;
 
 /**
- * Maesure if a shape is close to a circle or not.
+ * Measure if a shape is close to a circle or not.
  * 
  * @author julien Gaffuri
  *
