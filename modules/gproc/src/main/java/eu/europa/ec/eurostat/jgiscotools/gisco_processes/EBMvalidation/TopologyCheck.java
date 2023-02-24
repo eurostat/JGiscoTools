@@ -14,7 +14,7 @@ public class TopologyCheck {
 		String inFolder = "/home/juju/Bureau/gisco/geodata/EBM/";
 		String outFolder = "/home/juju/Bureau/gisco/EBM_validation/";
 
-		for(String t : new String[] { "EBM_A",/* "NUTS_3",*/ "LAU", "NUTS_2", "NUTS_1" }) {
+		for(String t : new String[] { "NUTS_3", "EBM_A", "LAU", "NUTS_2", "NUTS_1" }) {
 			System.out.println("Topology quality of " + t);
 
 			//SimpleFeatureType sc = GeoData.getSchema(inFolder + "2023_"+t+".gpkg");
