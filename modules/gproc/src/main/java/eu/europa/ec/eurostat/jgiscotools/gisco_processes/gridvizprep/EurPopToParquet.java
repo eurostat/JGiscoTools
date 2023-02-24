@@ -25,7 +25,7 @@ public class EurPopToParquet {
 
 		for(int r : resolutions) {
 			logger.info("Resolution " + r + "m");		
-			ParquetUtil.convertCSVToParquet(path + "pop_"+r+"m.csv", path, "pop_"+r+"m___.parquet", "GZIP");
+			ParquetUtil.convertCSVToParquet(path + "pop_"+r+"m.csv", path, "___pop_"+r+"m.parquet", "GZIP");
 		}
 
 		logger.info("End");
