@@ -62,7 +62,7 @@ public class INSEEFilosifiPopulation {
 		//CSVUtil.save(data, basePath + "out/2015_prepared.csv");
 
 
-
+/*
 		// 2017
 		// Idcar_200m
 		// Ind - Nombre d’individus
@@ -90,14 +90,16 @@ public class INSEEFilosifiPopulation {
 
 		 */
 
+		/*
 		logger.info("Rename colums");
 		CSVUtil.renameColumn(data, "Idcar_200m", "GRD_ID");
 		CSVUtil.renameColumn(data, "I_est_200", "imputed");
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
+*/
 
-		//logger.info("save 2017");
+//logger.info("save 2017");
 		//CSVUtil.save(data, basePath + "out/2017_prepared.csv");
 	}
 
@@ -129,6 +131,7 @@ public class INSEEFilosifiPopulation {
 	// tile all resolutions
 	private static void tiling() {
 
+		/*
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
@@ -148,6 +151,7 @@ public class INSEEFilosifiPopulation {
 			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Filosofi population resolution " + res + "m");
 
 		}
+		*/
 	}
 
 }
