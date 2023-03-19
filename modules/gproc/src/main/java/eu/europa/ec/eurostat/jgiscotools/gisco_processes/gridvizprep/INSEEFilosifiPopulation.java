@@ -4,6 +4,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +29,9 @@ public class INSEEFilosifiPopulation {
 		logger.info("Start");
 
 		//prepare2015();
-		prepare2017();
+		//prepare2017();
+
+		join();
 
 		//aggregate();
 		//tiling();
@@ -45,7 +48,7 @@ public class INSEEFilosifiPopulation {
 
 		logger.info("Load 2015");
 		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "2015/Filosofi2015_carreaux_200m_metropole.csv");
-		//logger.info(data.size());
+		logger.info(data.size());
 		//logger.info(data.get(0).keySet());
 
 		logger.info("Remove colums");
@@ -72,7 +75,7 @@ public class INSEEFilosifiPopulation {
 
 		logger.info("Load 2017");
 		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "2017/Filosofi2017_carreaux_200m_met.csv");
-		//logger.info(data.size());
+		logger.info(data.size());
 		//logger.info(data.get(0).keySet());
 
 		logger.info("Remove colums");
@@ -90,6 +93,26 @@ public class INSEEFilosifiPopulation {
 		CSVUtil.save(data, basePath + "out/2017_prepared.csv");
 	}
 
+
+
+	private static void join() {
+
+		logger.info("Load 2015");
+		ArrayList<Map<String, String>> data2015 = CSVUtil.load(basePath + "out/2015_prepared.csv");
+		logger.info(data2015.size());
+
+		logger.info("Load 2017");
+		ArrayList<Map<String, String>> data2017 = CSVUtil.load(basePath + "out/2017_prepared.csv");
+		logger.info(data2017.size());
+
+		logger.info("join");
+		List<Map<String, String>> data = CSVUtil.joinBothSides("GRD_ID", data2015, data2017, "0", true);
+		logger.info(data.size());
+
+		logger.info("save");
+		CSVUtil.save(data, basePath + "out/joined.csv");
+
+	}
 
 
 	// derive resolutions
