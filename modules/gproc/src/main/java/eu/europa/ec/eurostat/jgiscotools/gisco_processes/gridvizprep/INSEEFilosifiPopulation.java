@@ -62,7 +62,7 @@ public class INSEEFilosifiPopulation {
 		//CSVUtil.save(data, basePath + "out/2015_prepared.csv");
 
 
-		
+
 		// 2017
 		// Idcar_200m
 		// Ind - Nombre d’individus
@@ -88,8 +88,8 @@ public class INSEEFilosifiPopulation {
 					"Men_mais", "Ind_0_3", "Ind_4_5", "Ind_6_10", "Ind_11_17", "Ind_18_24", "Ind_25_39", "Ind_40_54",
 					"Ind_55_64", "Ind_65_79", "Ind_80p", "Ind_inc", "Men_pauv", "Men");
 
-*/
-		
+		 */
+
 		logger.info("Rename colums");
 		CSVUtil.renameColumn(data, "Idcar_200m", "GRD_ID");
 		CSVUtil.renameColumn(data, "I_est_200", "imputed");
@@ -129,29 +129,24 @@ public class INSEEFilosifiPopulation {
 	// tile all resolutions
 	private static void tiling() {
 
-		for (String ds : new String[] { "ind", "men", "log" }) {
-			for (int year : new int[] { 2015, 2017 }) {
+		for (int res : resolutions) {
+			logger.info("Tiling " + res + "m");
 
-				for (int res : resolutions) {
-					logger.info("Tiling " +ds+" "+year+" " + res + "m");
+			logger.info("Load");
+			ArrayList<Map<String, String>> cells = CSVUtil.load(basePath + "out/" + year + "_"+ds+"_"+res+".csv");
+			logger.info(cells.size());
 
-					logger.info("Load");
-					ArrayList<Map<String, String>> cells = CSVUtil.load(basePath + "out/" + year + "_"+ds+"_"+res+".csv");
-					logger.info(cells.size());
+			logger.info("Build tiles");
+			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 256);
 
-					logger.info("Build tiles");
-					GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), 256);
+			gst.createTiles();
+			logger.info(gst.getTiles().size() + " tiles created");
 
-					gst.createTiles();
-					logger.info(gst.getTiles().size() + " tiles created");
+			logger.info("Save");
+			String outpath = basePath + "out/tiled/pop/" + res + "m";
+			gst.save(outpath, GridTiler.Format.CSV, null, null, false);
+			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Filosofi population resolution " + res + "m");
 
-					logger.info("Save");
-					String outpath = basePath + "out/tiled/" + ds +"/"+ year +"/" + res + "m";
-					gst.save(outpath, GridTiler.Format.CSV, null, null, false);
-					gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Filosofi "+year+ " " + ds +" resolution " + res + "m");
-
-				}
-			}
 		}
 	}
 
