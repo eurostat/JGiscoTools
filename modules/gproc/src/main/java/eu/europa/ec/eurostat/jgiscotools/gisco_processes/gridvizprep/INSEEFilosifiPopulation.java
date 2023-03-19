@@ -8,10 +8,8 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
-import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 /**
@@ -45,8 +43,8 @@ public class INSEEFilosifiPopulation {
 
 		logger.info("Load 2015");
 		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "2015/Filosofi2015_carreaux_200m_metropole.csv");
-		//logger.info(data.size());
-		//logger.info(data.get(0).keySet());
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
 
 		logger.info("Remove colums");
 		CSVUtil.removeColumn(data, "Id_carr1km", "Id_carr_n", "Groupe", "Depcom", "I_pauv", "Id_car2010", "I_est_1km");
