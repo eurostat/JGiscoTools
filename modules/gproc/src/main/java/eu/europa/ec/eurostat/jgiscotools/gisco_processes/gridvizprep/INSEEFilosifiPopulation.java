@@ -30,10 +30,8 @@ public class INSEEFilosifiPopulation {
 
 		//prepare2015();
 		//prepare2017();
-
-		join();
-
-		//aggregate();
+		//join();
+		aggregate();
 		//tiling();
 
 		logger.info("End");
@@ -106,7 +104,7 @@ public class INSEEFilosifiPopulation {
 		logger.info(data2017.size());
 
 		logger.info("join");
-		List<Map<String, String>> data = CSVUtil.joinBothSides("GRD_ID", data2015, data2017, "0", true);
+		List<Map<String, String>> data = CSVUtil.joinBothSides("GRD_ID", data2015, data2017, "0", false);
 		logger.info(data.size());
 
 		logger.info("save");
@@ -118,22 +116,18 @@ public class INSEEFilosifiPopulation {
 	// derive resolutions
 	private static void aggregate() {
 
-		for (String ds : new String[] { "ind", "men", "log" }) {
-			for (int year : new int[] { 2015, 2017 }) {
-				logger.info("Load "+ds+" "+year);
-				ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/" + year + "_"+ds+".csv");
-				logger.info(data.size());
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "out/joined.csv");
+		logger.info(data.size());
 
-				for (int res : resolutions) {
-					logger.info("Aggregate " + res + "m");
-					ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregationDeprecated(data, "GRD_ID", res,
-							10000, null, null);
-					logger.info(out.size());
+		for (int res : resolutions) {
+			logger.info("Aggregate " + res + "m");
+			ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregationDeprecated(data, "GRD_ID", res,
+					10000, null, null);
+			logger.info(out.size());
 
-					logger.info("Save");
-					CSVUtil.save(out, basePath + "out/" + year + "_"+ds+"_"+res+".csv");
-				}
-			}
+			logger.info("Save");
+			CSVUtil.save(out, basePath + "out/" +res+".csv");
 		}
 
 	}
