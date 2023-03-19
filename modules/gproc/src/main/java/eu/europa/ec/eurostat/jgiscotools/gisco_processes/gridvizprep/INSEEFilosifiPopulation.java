@@ -30,11 +30,11 @@ public class INSEEFilosifiPopulation {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		prepare2015();
-		prepare2017();
-		join();
-		aggregate();
-		//tiling();
+		//prepare2015();
+		//prepare2017();
+		//join();
+		//aggregate();
+		tiling();
 
 		logger.info("End");
 	}
