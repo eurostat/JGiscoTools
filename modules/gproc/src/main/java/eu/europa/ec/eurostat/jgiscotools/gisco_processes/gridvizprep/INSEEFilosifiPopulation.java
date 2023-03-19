@@ -36,7 +36,7 @@ public class INSEEFilosifiPopulation {
 		logger.info("End");
 	}
 
-	
+
 	private static void prepare2015() {
 
 		// 2015
@@ -62,7 +62,7 @@ public class INSEEFilosifiPopulation {
 		//logger.info("save 2015");
 		CSVUtil.save(data, basePath + "out/2015_prepared.csv");
 	}
-	
+
 
 	private static void prepare2017() {
 
@@ -76,34 +76,18 @@ public class INSEEFilosifiPopulation {
 		logger.info(data.get(0).keySet());
 
 		logger.info("Remove colums");
-		CSVUtil.removeColumn(data, "Idcar_1km", "Idcar_nat", "I_est_1km", "Groupe", "lcog_geo");
+		CSVUtil.removeColumn(data, "Idcar_1km", "I_est_1km", "Idcar_nat", "Groupe", "Men_1ind", "Men_5ind", "Men_prop",		"Men_fmp", "Ind_snv", "Men_surf", "Men_coll", "Men_mais", "Log_av45", "Log_45_70", "Log_70_90", "Log_ap90", "Log_inc", "Log_soc", "Ind_0_3", "Ind_4_5", "Ind_6_10",		"Ind_11_17", "Ind_18_24", "Ind_25_39", "Ind_40_54", "Ind_55_64", "Ind_65_79", "Ind_80p", "Ind_inc", "Men_pauv", "Men", "lcog_geo");
 
-		/*
-		CSVUtil.removeColumn(data, "Men_1ind", "Men_5ind", "Men_prop", "Men_fmp", "Men_surf", "Men_coll",
-				"Men_mais", "Log_av45", "Log_45_70", "Log_70_90", "Log_ap90", "Log_inc", "Log_soc", "Men_pauv",
-				"Men");
-
-		CSVUtil.removeColumn(data, "Ind_snv", "Log_av45", "Log_45_70", "Log_70_90", "Log_ap90", "Log_inc",
-				"Log_soc", "Ind_0_3", "Ind_4_5", "Ind_6_10", "Ind_11_17", "Ind_18_24", "Ind_25_39", "Ind_40_54",
-				"Ind_55_64", "Ind_65_79", "Ind_80p", "Ind_inc");
-
-			CSVUtil.removeColumn(data, "Men_1ind", "Men_5ind", "Men_prop", "Men_fmp", "Ind_snv", "Men_surf", "Men_coll",
-					"Men_mais", "Ind_0_3", "Ind_4_5", "Ind_6_10", "Ind_11_17", "Ind_18_24", "Ind_25_39", "Ind_40_54",
-					"Ind_55_64", "Ind_65_79", "Ind_80p", "Ind_inc", "Men_pauv", "Men");
-
-		 */
-
-		/*
 		logger.info("Rename colums");
+		CSVUtil.renameColumn(data, "Ind", "Ind_2017");
 		CSVUtil.renameColumn(data, "Idcar_200m", "GRD_ID");
 		CSVUtil.renameColumn(data, "I_est_200", "imputed");
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
-		 */
 
-		//logger.info("save 2017");
-		//CSVUtil.save(data, basePath + "out/2017_prepared.csv");
+		logger.info("save 2017");
+		CSVUtil.save(data, basePath + "out/2017_prepared.csv");
 	}
 
 
