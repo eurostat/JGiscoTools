@@ -30,7 +30,7 @@ public class GridMultiResolutionProduction {
 	 * @param cells Input grid
 	 * @param gridIdCol The column with the cell id
 	 * @param res The target resolution
-	 * @param factor A factor to avoid floating precision errors, such as "245.0000000034". Set to 10000
+	 * @param factor A factor to avoid floating precision errors, such as "245.0000000034". Set to 10000.
 	 * @param average Set of attributes to average instead of sum.
 	 * @param ignoreValue
 	 * @return

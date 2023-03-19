@@ -9,8 +9,10 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Coordinate;
 
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
+import eu.europa.ec.eurostat.jgiscotools.gridProc.GridTiler;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 
 /**
@@ -28,9 +30,9 @@ public class INSEEFilosifiPopulation {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		//prepare2015();
-		//prepare2017();
-		//join();
+		prepare2015();
+		prepare2017();
+		join();
 		aggregate();
 		//tiling();
 
@@ -55,7 +57,7 @@ public class INSEEFilosifiPopulation {
 		logger.info("Rename colums");
 		CSVUtil.renameColumn(data, "Ind", "Ind_2015");
 		CSVUtil.renameColumn(data, "IdINSPIRE", "GRD_ID");
-		CSVUtil.renameColumn(data, "I_est_cr", "imputed");
+		CSVUtil.renameColumn(data, "I_est_cr", "imputed_2015");
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
@@ -82,7 +84,7 @@ public class INSEEFilosifiPopulation {
 		logger.info("Rename colums");
 		CSVUtil.renameColumn(data, "Ind", "Ind_2017");
 		CSVUtil.renameColumn(data, "Idcar_200m", "GRD_ID");
-		CSVUtil.renameColumn(data, "I_est_200", "imputed");
+		CSVUtil.renameColumn(data, "I_est_200", "imputed_2017");
 
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
@@ -135,12 +137,11 @@ public class INSEEFilosifiPopulation {
 	// tile all resolutions
 	private static void tiling() {
 
-		/*
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
 
 			logger.info("Load");
-			ArrayList<Map<String, String>> cells = CSVUtil.load(basePath + "out/" + year + "_"+ds+"_"+res+".csv");
+			ArrayList<Map<String, String>> cells = CSVUtil.load(basePath + "out/" +res+".csv");
 			logger.info(cells.size());
 
 			logger.info("Build tiles");
@@ -155,7 +156,7 @@ public class INSEEFilosifiPopulation {
 			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "Filosofi population resolution " + res + "m");
 
 		}
-		 */
+
 	}
 
 }
