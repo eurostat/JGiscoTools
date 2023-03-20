@@ -40,7 +40,7 @@ public class EurPopCensus2021 {
 
 		//prepare();
 		//prepare2021();
-		join();
+		//join();
 		aggregate();
 
 		tiling(Format.CSV, null, 128);
@@ -129,6 +129,12 @@ public class EurPopCensus2021 {
 		List<Map<String, String>> data_ = CSVUtil.joinBothSides("GRD_ID", data, data2021, "0", false);
 		logger.info(data.size());
 
+		logger.info("Remove CNTR_ID 0");
+		for (Map<String, String> d : data_) {
+			String c = d.get("CNTR_ID");
+			if(c.equals("0")) d.put("CNTR_ID", "");
+		}
+		
 		logger.info("save");
 		CSVUtil.save(data_, outPath + "joined2021.csv");
 
