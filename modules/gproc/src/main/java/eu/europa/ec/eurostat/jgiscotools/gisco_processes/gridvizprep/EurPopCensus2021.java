@@ -40,10 +40,9 @@ public class EurPopCensus2021 {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		//prepare();
-		//prepare2021();
-		//join();
-		//aggregate();
+		prepare2021();
+		prepareJoin();
+		aggregate();
 		tiling(Format.CSV, null, 128);
 
 		logger.info("End");
