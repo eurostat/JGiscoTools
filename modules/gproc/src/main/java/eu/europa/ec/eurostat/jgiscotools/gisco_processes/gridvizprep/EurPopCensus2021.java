@@ -134,7 +134,7 @@ public class EurPopCensus2021 {
 			String c = d.get("CNTR_ID");
 			if(c.equals("0")) d.put("CNTR_ID", "");
 		}
-		
+
 		logger.info("save");
 		CSVUtil.save(data_, outPath + "joined2021.csv");
 
