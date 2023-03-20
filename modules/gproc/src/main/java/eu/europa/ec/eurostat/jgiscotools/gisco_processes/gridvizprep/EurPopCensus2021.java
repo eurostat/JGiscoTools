@@ -92,7 +92,7 @@ public class EurPopCensus2021 {
 	private static void prepare2021() {
 	
 		logger.info("Load 2021 GPKG data");
-		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
+		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/CENSUS_2021.gpkg");
 		logger.info(fs.size() + " loaded");
 		logger.info(fs.get(0).getAttributes().keySet());
 
