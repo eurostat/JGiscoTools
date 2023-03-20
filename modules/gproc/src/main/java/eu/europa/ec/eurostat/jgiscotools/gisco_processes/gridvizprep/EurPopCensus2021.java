@@ -39,7 +39,7 @@ public class EurPopCensus2021 {
 		logger.info("Start");
 
 		//prepare();
-		prepare2021();
+		//prepare2021();
 		join();
 		aggregate();
 
@@ -90,7 +90,7 @@ public class EurPopCensus2021 {
 
 
 	private static void prepare2021() {
-	
+
 		logger.info("Load 2021 GPKG data");
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/CENSUS_2021.gpkg");
 		logger.info(fs.size() + " loaded");
@@ -130,17 +130,17 @@ public class EurPopCensus2021 {
 		logger.info(data.size());
 
 		logger.info("save");
-		CSVUtil.save(data_, basePath + "out/joined2021.csv");
+		CSVUtil.save(data_, outPath + "joined2021.csv");
 
 	}
 
-	
-	
-	
+
+
+
 	private static void aggregate() {
 
 		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "prepared.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "joined2021.csv");
 		logger.info(data.size());
 
 		//define aggregations
