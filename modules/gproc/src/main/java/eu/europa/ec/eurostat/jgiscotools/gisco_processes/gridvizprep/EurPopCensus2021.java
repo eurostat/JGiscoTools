@@ -99,11 +99,15 @@ public class EurPopCensus2021 {
 		ArrayList<Map<String, String>> data = new ArrayList<Map<String,String>>();
 		for(Feature f : fs) {
 			Map<String,String> m = new HashMap<String, String>();
-			m.put("GRD_ID", f.getAttribute("GRD_ID").toString());
 			int p2021 = (int) Double.parseDouble( f.getAttribute("OBS_VALUE_T").toString() );
+			if(p2021 == 0) continue;
 			m.put("TOT_P_2021", p2021+"");
+			m.put("GRD_ID", f.getAttribute("GRD_ID").toString());
 			data.add(m);
 		}
+
+		logger.info(data.size());
+		logger.info(data.get(0).keySet());
 
 		logger.info("save");
 		CSVUtil.save(data, outPath + "prepared2021.csv");
