@@ -40,7 +40,7 @@ public class EurPopCensus2021 {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		prepare2021();
+		//prepare2021();
 		prepareJoin();
 		aggregate();
 		tiling(Format.CSV, null, 128);
@@ -117,6 +117,7 @@ public class EurPopCensus2021 {
 
 	private static void prepareJoin() {
 
+		logger.info("Load data");
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
 		logger.info(fs.size() + " loaded");
 		logger.info(fs.get(0).getAttributes().keySet());
@@ -161,11 +162,11 @@ public class EurPopCensus2021 {
 
 		logger.info("filter");
 		Stream<Map<String, String>> s = data_.stream().filter(d -> {
-			int p;
-			p = Integer.parseInt(d.get("TOT_P_2006")); if(p!=0) return true;
-			p = Integer.parseInt(d.get("TOT_P_2011")); if(p!=0) return true;
-			p = Integer.parseInt(d.get("TOT_P_2018")); if(p!=0) return true;
-			p = Integer.parseInt(d.get("TOT_P_2021")); if(p!=0) return true;
+			int pop;
+			pop = Integer.parseInt(d.get("TOT_P_2006")); if(pop!=0) return true;
+			pop = Integer.parseInt(d.get("TOT_P_2011")); if(pop!=0) return true;
+			pop = Integer.parseInt(d.get("TOT_P_2018")); if(pop!=0) return true;
+			pop = Integer.parseInt(d.get("TOT_P_2021")); if(pop!=0) return true;
 			return false;
 		});
 		data_ = s.collect(Collectors.toList());
