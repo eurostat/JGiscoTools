@@ -40,9 +40,8 @@ public class EurPopCensus2021 {
 
 		//prepare();
 		//prepare2021();
-		join();
+		//join();
 		aggregate();
-
 		tiling(Format.CSV, null, 128);
 
 		logger.info("End");
