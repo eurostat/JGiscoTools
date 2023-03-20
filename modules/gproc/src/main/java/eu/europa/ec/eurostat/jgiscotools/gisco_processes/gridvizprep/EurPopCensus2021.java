@@ -38,6 +38,8 @@ public class EurPopCensus2021 {
 		logger.info("Start");
 
 		prepare();
+		prepare2021();
+		//join2021();
 		//aggregate();
 
 		//tiling(Format.CSV, null, 128);
@@ -69,9 +71,9 @@ public class EurPopCensus2021 {
 
 			m.put("GRD_ID", f.getAttribute("GRD_ID").toString());
 			m.put("CNTR_ID", f.getAttribute("CNTR_ID").toString());
-			m.put("2006", p2006+"");
-			m.put("2011", p2011+"");
-			m.put("2018", p2018+"");
+			m.put("TOT_P_2006", p2006+"");
+			m.put("TOT_P_2011", p2011+"");
+			m.put("TOT_P_2018", p2018+"");
 			data.add(m);
 		}
 		fs.clear();
@@ -85,7 +87,31 @@ public class EurPopCensus2021 {
 	}
 
 
+	private static void prepare2021() {
+	
+		logger.info("Load 2021 GPKG data");
+		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
+		logger.info(fs.size() + " loaded");
+		logger.info(fs.get(0).getAttributes().keySet());
 
+		ArrayList<Map<String, String>> data = new ArrayList<Map<String,String>>();
+		for(Feature f : fs) {
+			Map<String,String> m = new HashMap<String, String>();
+			m.put("GRD_ID", f.getAttribute("GRD_ID").toString());
+			int p2021 = (int) Double.parseDouble( f.getAttribute("OBS_VALUE_T").toString() );
+			m.put("TOT_P_2021", p2021+"");
+			data.add(m);
+		}
+
+		logger.info("save");
+		CSVUtil.save(data, outPath + "prepared2021.csv");
+
+	}
+
+
+	
+	
+	
 	private static void aggregate() {
 
 		logger.info("Load");
