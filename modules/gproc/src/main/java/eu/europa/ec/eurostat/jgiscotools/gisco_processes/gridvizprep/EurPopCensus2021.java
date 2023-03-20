@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,7 +50,7 @@ public class EurPopCensus2021 {
 	}
 
 
-	private static void prepare() {
+	/*private static void prepare() {
 
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
 		logger.info(fs.size() + " loaded");
@@ -67,7 +69,7 @@ public class EurPopCensus2021 {
 			int p2006 = (int) Double.parseDouble( f.getAttribute("TOT_P_2006").toString() );
 			int p2011 = (int) Double.parseDouble( f.getAttribute("TOT_P_2011").toString() );
 			int p2018 = (int) Double.parseDouble( f.getAttribute("TOT_P_2018").toString() );
-			if(p2006 == 0 && p2011 == 0 && p2018 == 0) continue;
+			//if(p2006 == 0 && p2011 == 0 && p2018 == 0) continue;
 
 			m.put("GRD_ID", f.getAttribute("GRD_ID").toString());
 			m.put("CNTR_ID", f.getAttribute("CNTR_ID").toString());
@@ -84,7 +86,7 @@ public class EurPopCensus2021 {
 
 		logger.info("save");
 		CSVUtil.save(data, outPath + "prepared.csv");
-	}
+	}*/
 
 
 
@@ -114,11 +116,41 @@ public class EurPopCensus2021 {
 	}
 
 
-	private static void join() {
+	private static void prepareJoin() {
 
-		logger.info("Load");
-		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "prepared.csv");
+		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
+		logger.info(fs.size() + " loaded");
+		logger.info(fs.get(0).getAttributes().keySet());
+		//2022-12-15 15:48:02 INFO  EurPop:73 - [DIST_BORD, TOT_P_2018, TOT_P_2006, GRD_ID, TOT_P_2011, Y_LLC, CNTR_ID, NUTS2016_3, NUTS2016_2, NUTS2016_1, NUTS2016_0, LAND_PC, X_LLC, NUTS2021_3, NUTS2021_2, DIST_COAST, NUTS2021_1, NUTS2021_0]
+
+		ArrayList<Map<String, String>> data = new ArrayList<Map<String,String>>();
+		for(Feature f : fs) {
+			Map<String,String> m = new HashMap<String, String>();
+
+			double lpc = Double.parseDouble(f.getAttribute("LAND_PC").toString());
+			if(lpc == 0) continue;
+			//String cid = f.getAttribute("CNTR_ID").toString();
+			//if(cid.isEmpty()) System.out.println("aaa");
+
+			int p2006 = (int) Double.parseDouble( f.getAttribute("TOT_P_2006").toString() );
+			int p2011 = (int) Double.parseDouble( f.getAttribute("TOT_P_2011").toString() );
+			int p2018 = (int) Double.parseDouble( f.getAttribute("TOT_P_2018").toString() );
+			//if(p2006 == 0 && p2011 == 0 && p2018 == 0) continue;
+
+			m.put("GRD_ID", f.getAttribute("GRD_ID").toString());
+			m.put("CNTR_ID", f.getAttribute("CNTR_ID").toString());
+			m.put("TOT_P_2006", p2006+"");
+			m.put("TOT_P_2011", p2011+"");
+			m.put("TOT_P_2018", p2018+"");
+			data.add(m);
+		}
+		fs.clear();
+		fs = null;
+
 		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+
 
 		logger.info("Load 2021");
 		ArrayList<Map<String, String>> data2021 = CSVUtil.load(outPath + "prepared2021.csv");
@@ -126,7 +158,19 @@ public class EurPopCensus2021 {
 
 		logger.info("join");
 		List<Map<String, String>> data_ = CSVUtil.joinBothSides("GRD_ID", data, data2021, "0", false);
-		logger.info(data.size());
+		logger.info(data_.size());
+
+		logger.info("filter");
+		Stream<Map<String, String>> s = data_.stream().filter(d -> {
+			int p;
+			p = Integer.parseInt(d.get("TOT_P_2006")); if(p!=0) return true;
+			p = Integer.parseInt(d.get("TOT_P_2011")); if(p!=0) return true;
+			p = Integer.parseInt(d.get("TOT_P_2018")); if(p!=0) return true;
+			p = Integer.parseInt(d.get("TOT_P_2021")); if(p!=0) return true;
+			return false;
+		});
+		data_ = s.collect(Collectors.toList());
+		logger.info(data_.size());
 
 		logger.info("Remove CNTR_ID 0");
 		for (Map<String, String> d : data_) {
