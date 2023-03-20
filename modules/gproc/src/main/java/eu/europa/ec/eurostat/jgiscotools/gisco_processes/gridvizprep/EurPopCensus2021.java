@@ -170,6 +170,7 @@ public class EurPopCensus2021 {
 			return false;
 		});
 		data_ = s.collect(Collectors.toList());
+		s.close(); s = null;
 		logger.info(data_.size());
 
 		logger.info("Remove CNTR_ID 0");
