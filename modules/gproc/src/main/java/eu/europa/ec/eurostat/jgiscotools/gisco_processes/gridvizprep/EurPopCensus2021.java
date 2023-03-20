@@ -5,6 +5,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,12 +38,12 @@ public class EurPopCensus2021 {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		prepare();
+		//prepare();
 		prepare2021();
-		//join2021();
-		//aggregate();
+		join();
+		aggregate();
 
-		//tiling(Format.CSV, null, 128);
+		tiling(Format.CSV, null, 128);
 
 		logger.info("End");
 	}
@@ -87,6 +88,7 @@ public class EurPopCensus2021 {
 	}
 
 
+
 	private static void prepare2021() {
 	
 		logger.info("Load 2021 GPKG data");
@@ -109,6 +111,25 @@ public class EurPopCensus2021 {
 	}
 
 
+	private static void join() {
+
+		logger.info("Load");
+		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "prepared.csv");
+		logger.info(data.size());
+
+		logger.info("Load 2021");
+		ArrayList<Map<String, String>> data2021 = CSVUtil.load(outPath + "prepared2021.csv");
+		logger.info(data2021.size());
+
+		logger.info("join");
+		List<Map<String, String>> data_ = CSVUtil.joinBothSides("GRD_ID", data, data2021, "0", false);
+		logger.info(data.size());
+
+		logger.info("save");
+		CSVUtil.save(data_, basePath + "out/joined2021.csv");
+
+	}
+
 	
 	
 	
@@ -120,9 +141,10 @@ public class EurPopCensus2021 {
 
 		//define aggregations
 		Map<String, Aggregator> aggMap = new HashMap<String, Aggregator>();
-		aggMap.put("2006", GridMultiResolutionProduction.getSumAggregator(10000, null));
-		aggMap.put("2011", GridMultiResolutionProduction.getSumAggregator(10000, null));
-		aggMap.put("2018", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("TOT_P_2006", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("TOT_P_2011", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("TOT_P_2018", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		aggMap.put("TOT_P_2021", GridMultiResolutionProduction.getSumAggregator(10000, null));
 		aggMap.put("CNTR_ID", GridMultiResolutionProduction.getCodesAggregator("-"));
 
 		for (int res : resolutions) {
@@ -151,19 +173,6 @@ public class EurPopCensus2021 {
 			ArrayList<Map<String, String>> cells = CSVUtil.load(f);
 			logger.info(cells.size());
 
-			logger.info("Change year field names");
-			for(Map<String, String> c : cells) {
-				c.put("pop2006", c.get("2006"));
-				c.remove("2006");
-				c.put("pop2011", c.get("2011"));
-				c.remove("2011");
-				c.put("pop2018", c.get("2018"));
-				c.remove("2018");
-
-				//remove country id
-				//c.remove("CNTR_ID");
-			}
-
 			logger.info("Build tiles");
 			GridTiler gst = new GridTiler(cells, "GRD_ID", new Coordinate(0, 0), nbp);
 
@@ -172,21 +181,7 @@ public class EurPopCensus2021 {
 
 			logger.info("Save");
 			String outpath = outPath + "tiled" + format + comp + nbp + "/" + res + "m";
-			/*gst.save(outpath, format, "{\"namespace\": \"ns\","
-					+ "\"type\": \"record\"," //set as record
-					+ "\"name\": \"na\","
-					+ "\"fields\": ["
-					+ "{\"name\": \"id\", \"type\": \"int\"}" //required
-					+ ",{\"name\": \"x\", \"type\": \"int\"}"
-					+ ",{\"name\": \"y\", \"type\": \"int\"}"
-					+ ",{\"name\": \"pop2006\", \"type\": \"int\"}"
-					+ ",{\"name\": \"pop2011\", \"type\": \"int\"}"
-					+ ",{\"name\": \"pop2018\", \"type\": \"int\"}"
-					+ ",{\"name\": \"CNTR_ID\", \"type\": \"string\"}"
-					+ " ]}",
-					comp,
-					true
-					);*/
+
 			gst.save(outpath, format, "ddb", comp, true);
 			gst.saveTilingInfoJSON(outpath, format, "Europe population resolution " + res + "m");
 
