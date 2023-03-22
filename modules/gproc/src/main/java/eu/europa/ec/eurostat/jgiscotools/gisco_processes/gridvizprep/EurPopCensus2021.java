@@ -90,6 +90,7 @@ public class EurPopCensus2021 {
 
 
 	private static void prepare2021() {
+		logger.info("*** Prepare 2021");
 
 		logger.info("Load 2021 GPKG data");
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/CENSUS_2021.gpkg");
@@ -116,6 +117,7 @@ public class EurPopCensus2021 {
 
 
 	private static void prepareJoin() {
+		logger.info("*** Prepare and join");
 
 		logger.info("Load GPKG 2006-2011-2018 data");
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
@@ -188,6 +190,7 @@ public class EurPopCensus2021 {
 
 
 	private static void aggregate() {
+		logger.info("*** Aggregate");
 
 		logger.info("Load population CSV");
 		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "joined2021.csv");
@@ -217,6 +220,7 @@ public class EurPopCensus2021 {
 
 	// tile all resolutions
 	private static void tiling(Format format, CompressionCodecName comp, int nbp) {
+		logger.info("*** Tilling");
 
 		for (int res : resolutions) {
 			logger.info("Tiling " + res + "m");
