@@ -109,7 +109,7 @@ public class EurPopCensus2021 {
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 
-		logger.info("save");
+		logger.info("save prepared 2021");
 		CSVUtil.save(data, outPath + "prepared2021.csv");
 
 	}
@@ -117,7 +117,7 @@ public class EurPopCensus2021 {
 
 	private static void prepareJoin() {
 
-		logger.info("Load data");
+		logger.info("Load GPKG 2006-2011-2018 data");
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
 		logger.info(fs.size() + " loaded");
 		logger.info(fs.get(0).getAttributes().keySet());
@@ -160,7 +160,7 @@ public class EurPopCensus2021 {
 		List<Map<String, String>> data_ = CSVUtil.joinBothSides("GRD_ID", data, data2021, "0", false);
 		logger.info(data_.size());
 
-		logger.info("filter");
+		logger.info("filter- remove non populated cells");
 		Stream<Map<String, String>> s = data_.stream().filter(d -> {
 			int pop;
 			pop = Integer.parseInt(d.get("TOT_P_2006")); if(pop!=0) return true;
@@ -179,7 +179,7 @@ public class EurPopCensus2021 {
 			if(c.equals("0")) d.put("CNTR_ID", "");
 		}
 
-		logger.info("save");
+		logger.info("save joined data CSV");
 		CSVUtil.save(data_, outPath + "joined2021.csv");
 
 	}
@@ -189,7 +189,7 @@ public class EurPopCensus2021 {
 
 	private static void aggregate() {
 
-		logger.info("Load");
+		logger.info("Load population CSV");
 		ArrayList<Map<String, String>> data = CSVUtil.load(outPath + "joined2021.csv");
 		logger.info(data.size());
 
