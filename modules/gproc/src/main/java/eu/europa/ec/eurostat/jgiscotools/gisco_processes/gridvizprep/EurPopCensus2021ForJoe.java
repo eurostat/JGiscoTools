@@ -6,8 +6,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridvizprep;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,31 +30,9 @@ public class EurPopCensus2021ForJoe {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		logger.info("*** Prepare 2021");
-
-		logger.info("Load 2021 GPKG data");
-		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/CENSUS_2021.gpkg");
-		logger.info(fs.size() + " loaded");
-		logger.info(fs.get(0).getAttributes().keySet());
-
-		ArrayList<Map<String, String>> data = new ArrayList<Map<String,String>>();
-		for(Feature f : fs) {
-			Map<String,String> m = new HashMap<String, String>();
-			int p2021 = (int) Double.parseDouble( f.getAttribute("OBS_VALUE_T").toString() );
-			if(p2021 == 0) continue;
-			m.put("TOT_P_2021", p2021+"");
-			m.put("GRD_ID", f.getAttribute("GRD_ID").toString());
-			data.add(m);
-		}
-		fs.clear(); fs = null;
-
-		logger.info(data.size());
-		logger.info(data.get(0).keySet());
-
-
 
 		logger.info("Load GPKG 2006-2011-2018 data");
-		fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
+		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
 		logger.info(fs.size() + " loaded");
 		logger.info(fs.get(0).getAttributes().keySet());
 		//2022-12-15 15:48:02 INFO  EurPop:73 - [DIST_BORD, TOT_P_2018, TOT_P_2006, GRD_ID, TOT_P_2011, Y_LLC, CNTR_ID, NUTS2016_3, NUTS2016_2, NUTS2016_1, NUTS2016_0, LAND_PC, X_LLC, NUTS2021_3, NUTS2021_2, DIST_COAST, NUTS2021_1, NUTS2021_0]
@@ -71,52 +47,68 @@ public class EurPopCensus2021ForJoe {
 			cntInd.put(gid, cid);
 			landInd.put(gid, lpc);
 		}
-		fs.clear();
-		fs = null;
+		fs.clear(); fs = null;
 
-		logger.info("Filter by CNT and LAND_PC");
-		logger.info(data.size());
-		Stream<Map<String, String>> s = data.stream().filter(d -> {
-			String gid = d.get("GRD_ID");
+
+		logger.info("Load 2021 GPKG data");
+		fs = GeoData.getFeatures(basePath + "grids/CENSUS_2021.gpkg");
+		logger.info(fs.size() + " loaded");
+		logger.info(fs.get(0).getAttributes().keySet());
+
+		ArrayList<Map<String, String>> data = new ArrayList<Map<String,String>>();
+		for(Feature f : fs) {
+			Map<String,String> m = new HashMap<String, String>();
+
+			String gid = f.getAttribute("GRD_ID").toString();
 
 			double lpc = landInd.get(gid);
-			if(lpc == 0) return false;
+			if(lpc == 0) continue;
 
 			String cid = cntInd.get(gid);
 
-			if (cid == "IS") return false;
+			if (cid == "IS") continue;
 
-			if (cid == "UK") return false;
-			if (cid == "IE-UK") return false;
-			if (cid == "UK-IE") return false;
+			if (cid == "UK") continue;
+			if (cid == "IE-UK") continue;
+			if (cid == "UK-IE") continue;
 
-			if (cid == "BA") return false;
-			if (cid == "RS") return false;
-			if (cid == "BA-RS") return false;
-			if (cid == "RS-BA") return false;
-			if (cid == "ME") return false;
-			if (cid == "BA-ME") return false;
-			if (cid == "ME-BA") return false;
-			if (cid == "ME-RS") return false;
-			if (cid == "BA-ME-RS") return false;
-			if (cid == "AL") return false;
-			if (cid == "AL-ME") return false;
-			if (cid == "AL-RS") return false;
+			if (cid == "BA") continue;
+			if (cid == "RS") continue;
+			if (cid == "BA-RS") continue;
+			if (cid == "RS-BA") continue;
+			if (cid == "ME") continue;
+			if (cid == "BA-ME") continue;
+			if (cid == "ME-BA") continue;
+			if (cid == "ME-RS") continue;
+			if (cid == "BA-ME-RS") continue;
+			if (cid == "AL") continue;
+			if (cid == "AL-ME") continue;
+			if (cid == "AL-RS") continue;
 
-			if (cid == "MK") return false;
-			if (cid == "MK-RS") return false;
-			if (cid == "AL-MK") return false;
+			if (cid == "MK") continue;
+			if (cid == "MK-RS") continue;
+			if (cid == "AL-MK") continue;
 
-			if (cid == "IM") return false;
-			if (cid == "SM") return false;
-			if (cid == "VA") return false;
-			if (cid == "MC") return false;
+			if (cid == "IM") continue;
+			if (cid == "SM") continue;
+			if (cid == "VA") continue;
+			if (cid == "MC") continue;
 
-			return true;
-		});
-		data = new ArrayList<>(s.collect(Collectors.toList()));
-		s.close(); s = null;
+			int p2021 = (int) Double.parseDouble( f.getAttribute("OBS_VALUE_T").toString() );
+			//if(p2021 == 0) continue;
+			m.put("TOT_P_2021", p2021+"");
+
+			m.put("GRD_ID", gid);
+			data.add(m);
+		}
+		fs.clear(); fs = null;
+		cntInd = null;
+		landInd = null;
+
+
 		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
 
 
 		int res = 5000;
