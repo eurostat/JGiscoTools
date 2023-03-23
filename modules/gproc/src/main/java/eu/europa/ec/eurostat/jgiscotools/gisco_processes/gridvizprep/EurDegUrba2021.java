@@ -30,8 +30,9 @@ public class EurDegUrba2021 {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		prepare();
-		//aggregate();
+		//prepare();
+		aggregate();
+		tiling();
 
 		logger.info("End");
 	}
@@ -98,18 +99,20 @@ public class EurDegUrba2021 {
 		fs.clear(); fs = null;
 		//System.out.println(cntInd);
 
+
 		logger.info("Join CNT");
 		logger.info(data.get(0).keySet());
+
 		for(Map<String, String> d : data) {
-			String gid = d.get("GRD_ID").toString();
-			System.out.println(gid);
-			System.out.println(d);
+			String gid = d.get("GRD_ID");
+			//System.out.println(gid);
+			//System.out.println(d);
 			String cnt = cntInd.get(gid);
-			if(cnt == null) {
+			/*if(cnt == null) {
 				System.err.println("No cnt id for " + gid);
 				System.err.println(d);
 				continue;
-			}
+			}*/
 			d.put("CNTR_ID", cnt);
 		}
 
