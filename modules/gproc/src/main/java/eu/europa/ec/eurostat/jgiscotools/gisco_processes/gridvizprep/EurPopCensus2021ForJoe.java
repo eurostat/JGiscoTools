@@ -34,7 +34,7 @@ public class EurPopCensus2021ForJoe {
 		logger.info("Load GPKG 2006-2011-2018 data");
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
 		logger.info(fs.size() + " loaded");
-		logger.info(fs.get(0).getAttributes().keySet());
+		//logger.info(fs.get(0).getAttributes().keySet());
 		//2022-12-15 15:48:02 INFO  EurPop:73 - [DIST_BORD, TOT_P_2018, TOT_P_2006, GRD_ID, TOT_P_2011, Y_LLC, CNTR_ID, NUTS2016_3, NUTS2016_2, NUTS2016_1, NUTS2016_0, LAND_PC, X_LLC, NUTS2021_3, NUTS2021_2, DIST_COAST, NUTS2021_1, NUTS2021_0]
 
 		logger.info("Index CNT and LAND_PC");
