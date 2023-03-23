@@ -51,11 +51,7 @@ public class EurDegUrba2021 {
 
 		logger.info("filter- remove non populated cells");
 		logger.info(data.size());
-		Stream<Map<String, String>> s = data.stream().filter(d -> {
-			int pop = Integer.parseInt(d.get("TOT_P_2021"));
-			if(pop!=0) return true;
-			return false;
-		});
+		Stream<Map<String, String>> s = data.stream().filter(d -> Integer.parseInt(d.get("TOT_P_2021")) != 0);
 		data = new ArrayList<>(s.collect(Collectors.toList()));
 		s.close(); s = null;
 		logger.info(data.size());
@@ -86,7 +82,7 @@ public class EurDegUrba2021 {
 		logger.info(data.get(0).keySet());
 
 
-		logger.info("Load GPKG 2006-2011-2018 data");
+		logger.info("Load GPKG data");
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
 		logger.info(fs.size() + " loaded");
 		//logger.info(fs.get(0).getAttributes().keySet());
@@ -100,13 +96,20 @@ public class EurDegUrba2021 {
 			cntInd.put(gid, cid);
 		}
 		fs.clear(); fs = null;
+		//System.out.println(cntInd);
 
 		logger.info("Join CNT");
-		for(Map<String, String> d:data) {
-			String gid = d.get("GRD_ID");
+		logger.info(data.get(0).keySet());
+		for(Map<String, String> d : data) {
+			String gid = d.get("GRD_ID").toString();
+			System.out.println(gid);
+			System.out.println(d);
 			String cnt = cntInd.get(gid);
-			if(cnt == null)
-				System.err.println("No cnt id for "+gid);
+			if(cnt == null) {
+				System.err.println("No cnt id for " + gid);
+				System.err.println(d);
+				continue;
+			}
 			d.put("CNTR_ID", cnt);
 		}
 
