@@ -75,6 +75,7 @@ public class EurPopCensus2021ForJoe {
 		fs = null;
 
 		logger.info("Filter by CNT and LAND_PC");
+		logger.info(data.size());
 		Stream<Map<String, String>> s = data.stream().filter(d -> {
 			String gid = d.get("GRD_ID");
 
@@ -118,17 +119,13 @@ public class EurPopCensus2021ForJoe {
 		logger.info(data.size());
 
 
-
-		logger.info("*** Aggregate");
-
+		int res = 5000;
+		logger.info("Aggregate " + res + "m");
 
 		//define aggregations
 		Map<String, Aggregator> aggMap = new HashMap<String, Aggregator>();
 		aggMap.put("TOT_P_2021", GridMultiResolutionProduction.getSumAggregator(10000, null));
 		aggMap.put("CNTR_ID", GridMultiResolutionProduction.getCodesAggregator("-"));
-
-		int res = 5000;
-		logger.info("Aggregate " + res + "m");
 
 		//aggregate
 		ArrayList<Map<String, String>> out = GridMultiResolutionProduction.gridAggregation(data, "GRD_ID", res, aggMap );
