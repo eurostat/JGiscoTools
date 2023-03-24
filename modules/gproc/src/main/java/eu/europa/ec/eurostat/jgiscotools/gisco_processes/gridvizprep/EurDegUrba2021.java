@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.csv.CSVFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
@@ -40,22 +41,28 @@ public class EurDegUrba2021 {
 	private static void prepare() {
 
 		logger.info("Load degurba");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePathDU + "2021_DGURBA_LV2v2_dens.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePathDU + "2021_DGURBA_LV2.csv");
 		logger.info(data.size());
 		logger.info(data.get(0).keySet());
 		// [﻿GRD_ID, OBS_VALUE_T, gridcode]
+		//logger.info(data.get(0).keySet().size());
+		//logger.info(data.get(0).keySet().iterator().next());
 
-		logger.info("Rename columns");
-		CSVUtil.renameColumn(data, "OBS_VALUE_T", "TOT_P_2021");
-		logger.info(data.get(0).keySet());
+		//for(Map<String, String> d : data) System.out.println(d.get("GRD_ID"));
+		//for(Map<String, String> d : data) System.out.println(d);
 
 
 		logger.info("filter- remove non populated cells");
 		logger.info(data.size());
-		Stream<Map<String, String>> s = data.stream().filter(d -> Integer.parseInt(d.get("TOT_P_2021")) != 0);
+		Stream<Map<String, String>> s = data.stream().filter(d -> Integer.parseInt(d.get("OBS_VALUE_T")) != 0);
 		data = new ArrayList<>(s.collect(Collectors.toList()));
 		s.close(); s = null;
 		logger.info(data.size());
+		logger.info(data.get(0).keySet());
+
+
+		logger.info("Rename columns");
+		CSVUtil.renameColumn(data, "OBS_VALUE_T", "TOT_P_2021");
 		logger.info(data.get(0).keySet());
 
 
@@ -82,7 +89,7 @@ public class EurDegUrba2021 {
 
 		logger.info(data.get(0).keySet());
 
-/*
+
 		logger.info("Load GPKG data");
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg");
 		logger.info(fs.size() + " loaded");
@@ -98,22 +105,22 @@ public class EurDegUrba2021 {
 		}
 		fs.clear(); fs = null;
 		//System.out.println(cntInd);
-*/
+
 
 		logger.info("Join CNT");
 		logger.info(data.get(0).keySet());
 
 		for(Map<String, String> d : data) {
 			String gid = d.get("GRD_ID");
-			System.out.println(gid);
+			//System.out.println(gid);
 			//System.out.println(d);
-			//String cnt = cntInd.get(gid);
-			/*if(cnt == null) {
+			String cnt = cntInd.get(gid);
+			if(cnt == null) {
 				System.err.println("No cnt id for " + gid);
 				System.err.println(d);
 				continue;
-			}*/
-			//d.put("CNTR_ID", cnt);
+			}
+			d.put("CNTR_ID", cnt);
 		}
 
 		logger.info("save");
