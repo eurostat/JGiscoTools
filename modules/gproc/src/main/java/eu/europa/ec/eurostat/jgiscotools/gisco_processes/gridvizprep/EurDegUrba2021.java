@@ -31,8 +31,8 @@ public class EurDegUrba2021 {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		prepare();
-		//aggregate();
+		//prepare();
+		aggregate();
 		tiling();
 
 		logger.info("End");
@@ -180,7 +180,7 @@ public class EurDegUrba2021 {
 			logger.info(gst.getTiles().size() + " tiles created");
 
 			logger.info("Save");
-			String outpath = basePath + "out/tiled/" + res + "m";
+			String outpath = outPath + "tiled/" + res + "m";
 			gst.save(outpath, GridTiler.Format.CSV, null, null, false);
 			gst.saveTilingInfoJSON(outpath, GridTiler.Format.CSV, "degurba level 2 2021 resolution " + res + "m");
 
