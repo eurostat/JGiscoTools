@@ -73,6 +73,7 @@ public class ZZZJoin2021Population {
 				logger.info(fs.size());
 				//System.out.println(fs.iterator().next().getAttributes().keySet());
 
+				logger.info("Save output GPKG");
 				GeoData.save(fs, basePath+"out/grid_"+resKM+"km_"+gt+".gpkg", crs);
 			}
 		}
