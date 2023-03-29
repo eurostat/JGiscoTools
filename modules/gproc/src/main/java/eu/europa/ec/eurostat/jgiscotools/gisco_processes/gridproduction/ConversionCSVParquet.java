@@ -13,8 +13,8 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
-public class ZZZJoin2021Population {
-	static Logger logger = LogManager.getLogger(ZZZJoin2021Population.class.getName());
+public class ConversionCSVParquet {
+	static Logger logger = LogManager.getLogger(ConversionCSVParquet.class.getName());
 
 	public static String basePath = "/home/juju/Bureau/gisco/grid_dissemination/";
 	public static String basePathPop = "/home/juju/Bureau/gisco/grid_pop/";
