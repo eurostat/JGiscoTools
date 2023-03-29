@@ -6,9 +6,25 @@ import org.apache.logging.log4j.Logger;
 public class ZZZJoin2021Population {
 	static Logger logger = LogManager.getLogger(ZZZJoin2021Population.class.getName());
 
-	//use: -Xms2G -Xmx6G
+	public static String basePath = "/home/juju/Bureau/gisco/grid_dissemination/";
+
+	//the different resolutions, in KM
+	public static int[] resKMs = new int[] {100/*,50,20,10,5,2,1*/};
+
+
+	//use: -Xms8g -Xmx24g
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
+
+		for(int resKM : resKMs) {
+			for(String gt : new String[]{"surf", "point"}) {
+				logger.info("res " + resKM + " " + gt);
+
+				logger.info("res " + resKM);
+
+
+			}
+		}
 
 	}
 
