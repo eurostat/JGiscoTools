@@ -1,7 +1,12 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction;
 
+import java.util.Collection;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 public class ZZZJoin2021Population {
 	static Logger logger = LogManager.getLogger(ZZZJoin2021Population.class.getName());
@@ -17,11 +22,16 @@ public class ZZZJoin2021Population {
 		logger.info("Start");
 
 		for(int resKM : resKMs) {
+
+			logger.info("load 2021 population figures ");
+
+
 			for(String gt : new String[]{"surf", "point"}) {
 				logger.info("res " + resKM + " " + gt);
 
-				logger.info("res " + resKM);
-
+				logger.info("load intial GPKG ");
+				Collection<Feature> fs = GeoData.getFeatures(basePath+"in/grid_"+resKM+"km_"+gt+".gpkg");
+				logger.info(fs.size());
 
 			}
 		}
