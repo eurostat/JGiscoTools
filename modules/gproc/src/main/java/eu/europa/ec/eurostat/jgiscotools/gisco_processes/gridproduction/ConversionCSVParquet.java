@@ -1,5 +1,8 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,7 +11,6 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.ParquetUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
@@ -28,14 +30,11 @@ public class ConversionCSVParquet {
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
-		//get crs
-		CoordinateReferenceSystem crs = GeoData.getCRS(basePath+"in/grid_100km_point.gpkg");
-
 		for(int resKM : resKMs) {
 			logger.info("res " + resKM + "km");
 
-			logger.info("load intial GPKG");
-			Collection<Feature> fs = GeoData.getFeatures(basePath+"in/grid_"+resKM+"km_point.gpkg");
+			logger.info("load GPKG data");
+			Collection<Feature> fs = GeoData.getFeatures(basePath+"out/grid_"+resKM+"km_point.gpkg");
 			logger.info(fs.size());
 			//System.out.println(fs.iterator().next().getAttributes().keySet());
 			//[DIST_BORD, TOT_P_2018, TOT_P_2006, GRD_ID, TOT_P_2011, Y_LLC, CNTR_ID, NUTS2016_3, NUTS2016_2, NUTS2016_1, NUTS2016_0, LAND_PC, X_LLC, NUTS2021_3, NUTS2021_2, DIST_COAST, NUTS2021_1, NUTS2021_0]
@@ -50,16 +49,22 @@ public class ConversionCSVParquet {
 				//release a bit memory progressively
 				f.getAttributes().clear();
 				f.setGeometry(null);
+				data.add(d);
 			}
 			fs.clear(); fs = null;
 			logger.info(data.size());
 
 			logger.info("save CSV");
-			CSVUtil.save(data, basePath+"in/grid_"+resKM+"km.csv");
+			CSVUtil.save(data, basePath+"out/grid_"+resKM+"km.csv");
 			data.clear(); data = null;
 
 			logger.info("convert to parquet");
-			ParquetUtil.convertCSVToParquet(basePath+"in/grid_"+resKM+"km.csv", basePath+"in/", "grid_"+resKM+"km", "GZIP");
+			ParquetUtil.convertCSVToParquet(basePath+"out/grid_"+resKM+"km.csv", basePath+"out/", "grid_xxxkm", "GZIP");
+
+			logger.info("change parquet file name");
+			Path source = Paths.get(basePath+"out/grid_xxxkm.parquet");
+			Files.move(source, source.resolveSibling("grid_"+resKM+"km.parquet"));
+
 		}
 
 		logger.info("End");
