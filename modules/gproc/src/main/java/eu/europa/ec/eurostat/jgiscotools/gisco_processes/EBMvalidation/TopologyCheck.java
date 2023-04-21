@@ -21,7 +21,7 @@ public class TopologyCheck {
 			ArrayList<Feature> fs = GeoData.getFeatures(inFolder + "2023_"+t+".gpkg", "inspireId");
 			System.out.println(fs.size());
 
-			TesselationQuality.checkQuality(fs, 1, outFolder + "topocheck_"+t+".csv", true, false, 100000, 20000, true);
+			TesselationQuality.checkQuality(fs, 1, outFolder + "topocheck_"+t+".csv", false, 100000, 20000, true);
 		}
 
 		System.out.println("End");

@@ -91,10 +91,10 @@ public class Engine<T extends Agent> {
 	 * @param overrideFile
 	 * @return this
 	 */
-	public Engine<T> runEvaluation(String outFilePath, boolean overrideFile){
+	public Engine<T> runEvaluation(String outFilePath){
 		try {
 			File f = new File(outFilePath);
-			if(overrideFile && f.exists()) f.delete();
+			//if(overrideFile && f.exists()) f.delete();
 			if(!f.exists()) f.createNewFile();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
 

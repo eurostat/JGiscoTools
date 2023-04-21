@@ -38,7 +38,7 @@ public class TesselationQuality {
 
 
 	//
-	public static void checkQuality(Collection<Feature> units, double nodingResolution, String outFilePath, boolean overrideFile, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean tracePartitionning) {
+	public static void checkQuality(Collection<Feature> units, double nodingResolution, String outFilePath, boolean parallel, int maxCoordinatesNumber, int objMaxCoordinateNumber, boolean tracePartitionning) {
 		Partition.runRecursivelyApply(units, p -> {
 			if(tracePartitionning) LOGGER.info(p);
 
@@ -59,7 +59,7 @@ public class TesselationQuality {
 
 			LOGGER.debug("Run evaluation");
 			Engine<AUnit> uEng = new Engine<AUnit>(t.aUnits).sort();
-			uEng.runEvaluation(outFilePath, overrideFile).clear();
+			uEng.runEvaluation(outFilePath).clear();
 
 			t.clear();
 
