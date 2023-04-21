@@ -50,6 +50,10 @@ public class LocalParameters {
 		System.setProperty("https.proxyHost", "pslux.ec.europa.eu");
 		System.setProperty("https.proxyPort", "8012");
 
+		//necessary since java 1.8, apparently
+		System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "false");
+		System.setProperty("jdk.http.auth.proxying.disabledSchemes", "false");
+
 		Authenticator.setDefault(new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
@@ -62,5 +66,5 @@ public class LocalParameters {
 	/*public static void main(String[] args) {
 		System.out.println( System.getProperty("user.home") );
 	}*/
-	
+
 }
