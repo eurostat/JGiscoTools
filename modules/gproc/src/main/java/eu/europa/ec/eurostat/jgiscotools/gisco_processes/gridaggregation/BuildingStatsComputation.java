@@ -12,7 +12,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.ReduceOperation;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
@@ -32,16 +34,12 @@ public class BuildingStatsComputation {
 		logger.info("Load cells...");
 		Filter fil = null;
 		try {
-			fil = CQL.toFilter("(NUTS2021_1='FRF')");
+			fil = CQL.toFilter("NUTS2021_0 LIKE '%LU%' OR NUTS2021_3 LIKE '%FRF33%' OR NUTS2021_2 LIKE '%BE34%'");
 		} catch (CQLException e) { e.printStackTrace(); }
 		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg", null, fil);
 		logger.info(cells.size() + " cells");
 
-		//NUTS2021_0='LU'
-		//NUTS2021_3='FRF33'
-		//NUTS2021_2='BE34'
-
-
+		System.exit(0);
 
 		logger.info("Define map operation");
 		MapOperation<double[]> mapOp = new MapOperation<>() {
@@ -173,13 +171,12 @@ public class BuildingStatsComputation {
 
 
 
-		/*
 		logger.info("Load buildings...");
 		fil = null;
-		/*try {
+		try {
 			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
-		} catch (CQLException e) { e.printStackTrace(); }*/
-		/*		Collection<Feature> fs = null;
+		} catch (CQLException e) { e.printStackTrace(); }
+		Collection<Feature> fs = null;
 		for(String dep : new String[] { "008" , "010", "051", "052", "054", "055", "057", "088", "067", "068" }) {
 			logger.info("   "+dep);
 			if(fs == null) fs = GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
@@ -207,7 +204,6 @@ public class BuildingStatsComputation {
 		//TODO order columns
 		CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/building_area.csv", "bu_stat");
 
-		 */
 
 		logger.info("End");
 	}
@@ -218,6 +214,8 @@ public class BuildingStatsComputation {
 		if(type.equals(u2)) return 0.3;
 		return 0;
 	}	
+
+
 
 
 
