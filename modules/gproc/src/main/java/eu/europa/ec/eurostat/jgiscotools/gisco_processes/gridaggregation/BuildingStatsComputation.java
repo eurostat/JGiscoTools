@@ -178,7 +178,7 @@ public class BuildingStatsComputation {
 		Collection<Feature> fs = null;
 		for(String dep : new String[] { "057" }) {
 			logger.info("   "+dep);
-			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
+			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATI/BATIMENT.gpkg", null, fil);
 			if(fs == null) fs = fs_; else fs.addAll( fs_ );
 			fs_.clear();
 			logger.info(fs.size() + " buildings");
