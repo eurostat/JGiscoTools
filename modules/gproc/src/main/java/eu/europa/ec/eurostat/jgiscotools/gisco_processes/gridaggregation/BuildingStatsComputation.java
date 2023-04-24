@@ -54,8 +54,9 @@ public class BuildingStatsComputation {
 				ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg", null, fil);
 				logger.info(cells.size() + " cells");
 
+				if(cells.size() == 0) continue;
 
-				logger.info("Load buildings...");
+				logger.info("Load buildings FR...");
 				fil = null;
 				try {
 					String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
@@ -69,6 +70,8 @@ public class BuildingStatsComputation {
 					if(fs == null) fs = fs_; else fs.addAll( fs_ );
 					logger.info(fs.size() + " buildings");
 				}
+
+				if(fs.size() == 0) continue;
 
 				logger.info("Remove duplicates");
 				fs = removeDuplicates(fs, "ID");
