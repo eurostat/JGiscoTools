@@ -41,10 +41,8 @@ public class BuildingStatsComputation {
 				int xMax = xMin + step;
 				int yMax = yMin + step;
 
-				logger.info("Partition " + xMax + " " + yMax);
+				logger.info("Partition " + xMin + " " + yMin);
 
-				
-				
 			}
 
 		logger.info("Load cells...");
