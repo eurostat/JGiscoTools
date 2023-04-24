@@ -197,13 +197,9 @@ public class BuildingStatsComputation {
 		for(Stat s : ga.getStats().stats)
 			s.value = (int) Math.round(s.value);
 
-
-
-
 		logger.info("Save...");
 		//TODO order columns
 		CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/building_area.csv", "bu_stat");
-
 
 		logger.info("End");
 	}
