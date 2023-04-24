@@ -42,6 +42,8 @@ public class BuildingStatsComputation {
 				int yMax = yMin + step;
 
 				logger.info("Partition " + xMin + " " + yMin);
+				
+				
 
 			}
 
