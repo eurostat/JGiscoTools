@@ -33,6 +33,18 @@ public class BuildingStatsComputation {
 
 
 
+		int xMin_ = 3900000, xMax_ = 4100000;
+		int yMin_ = 2800000, yMax_ = 3100000;
+		int step = 100000;
+		for(int xMin = xMin_; xMin<xMax_; xMin += step)
+			for(int yMin = yMin_; yMin<yMax_; yMin += step) {
+				int xMax = xMin + step;
+				int yMax = yMin + step;
+
+				logger.info("Partition " + xMax + " " + yMax);
+
+			}
+
 		logger.info("Load cells...");
 		Filter fil = null;
 		try {
