@@ -37,6 +37,10 @@ public class BuildingStatsComputation {
 		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg", null, fil);
 		logger.info(cells.size() + " cells");
 
+		//NUTS2021_0='LU'
+		//NUTS2021_3='FRF33'
+		//NUTS2021_2='BE34'
+
 
 
 		logger.info("Define map operation");
@@ -79,6 +83,7 @@ public class BuildingStatsComputation {
 				};
 			}
 		};
+
 
 		logger.info("Define reduce operation");
 		ReduceOperation<double[]> reduceOp = new ReduceOperation<>() {
@@ -148,7 +153,7 @@ public class BuildingStatsComputation {
 			}
 		};
 
-		
+
 		//TODO test partitionning - cut, do not cut.
 		//decomposer
 		//partition dataset
@@ -158,7 +163,7 @@ public class BuildingStatsComputation {
 				new PartitionedOperation() {
 			@Override
 			public void run(Partition p) {
-				
+
 				//TODO Improve partitionning method: the cells may be split here.
 				//make partitionning that do not split items
 				//cells = p.getFeatures();
