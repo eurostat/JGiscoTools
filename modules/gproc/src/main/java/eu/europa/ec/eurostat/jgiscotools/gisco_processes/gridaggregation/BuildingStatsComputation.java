@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
+import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
@@ -50,18 +51,14 @@ public class BuildingStatsComputation {
 		Collection<Feature> fs = null;
 		for(String dep : new String[] { "057" }) {
 			logger.info("   "+dep);
-			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATI/BATIMENT.gpkg", null, fil);
+			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATI/BATIMENT.shp"); //, null, fil);
 			if(fs == null) fs = fs_; else fs.addAll( fs_ );
-			fs_.clear();
 			logger.info(fs.size() + " buildings");
 		}
 
 		logger.info("Remove duplicates");
 		fs = removeDuplicates(fs, "ID");
 		logger.info(fs.size() + " buildings");
-
-
-		System.exit(0);
 
 
 
@@ -206,7 +203,7 @@ public class BuildingStatsComputation {
 
 		logger.info("Save...");
 		//TODO order columns
-		//CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/building_area.csv", "bu_stat");
+		CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/building_area.csv", "bu_stat");
 
 		logger.info("End");
 	}
