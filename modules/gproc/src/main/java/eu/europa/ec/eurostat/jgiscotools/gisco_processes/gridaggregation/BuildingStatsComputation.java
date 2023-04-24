@@ -30,6 +30,8 @@ public class BuildingStatsComputation {
 		//String basePath = "E:/workspace/building_stats/test/";
 		String basePath = "/home/juju/Bureau/gisco/";
 
+
+
 		logger.info("Load cells...");
 		Filter fil = null;
 		try {
@@ -38,7 +40,31 @@ public class BuildingStatsComputation {
 		ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg", null, fil);
 		logger.info(cells.size() + " cells");
 
+
+
+		logger.info("Load buildings...");
+		fil = null;
+		try {
+			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
+		} catch (CQLException e) { e.printStackTrace(); }
+		Collection<Feature> fs = null;
+		for(String dep : new String[] { "057" }) {
+			logger.info("   "+dep);
+			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATI/BATIMENT.gpkg", null, fil);
+			if(fs == null) fs = fs_; else fs.addAll( fs_ );
+			fs_.clear();
+			logger.info(fs.size() + " buildings");
+		}
+
+		logger.info("Remove duplicates");
+		fs = removeDuplicates(fs, "ID");
+		logger.info(fs.size() + " buildings");
+
+
 		System.exit(0);
+
+
+
 
 		logger.info("Define map operation");
 		MapOperation<double[]> mapOp = new MapOperation<>() {
@@ -168,25 +194,6 @@ public class BuildingStatsComputation {
 			}}
 		, false, 5000, 5000, true, GeomType.ONLY_AREAS, 0);*/
 
-
-
-		logger.info("Load buildings...");
-		fil = null;
-		try {
-			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
-		} catch (CQLException e) { e.printStackTrace(); }
-		Collection<Feature> fs = null;
-		for(String dep : new String[] { "057" }) {
-			logger.info("   "+dep);
-			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATI/BATIMENT.gpkg", null, fil);
-			if(fs == null) fs = fs_; else fs.addAll( fs_ );
-			fs_.clear();
-			logger.info(fs.size() + " buildings");
-		}
-
-		logger.info("Remove duplicates");
-		fs = removeDuplicates(fs, "ID");
-		logger.info(fs.size() + " buildings");
 
 
 		//compute aggregation
