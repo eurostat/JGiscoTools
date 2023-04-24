@@ -12,7 +12,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
-import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
@@ -177,10 +176,11 @@ public class BuildingStatsComputation {
 			fil = CQL.toFilter("(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
 		} catch (CQLException e) { e.printStackTrace(); }
 		Collection<Feature> fs = null;
-		for(String dep : new String[] { "008" , "010", "051", "052", "054", "055", "057", "088", "067", "068" }) {
+		for(String dep : new String[] { "057" }) {
 			logger.info("   "+dep);
-			if(fs == null) fs = GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
-			else fs.addAll( GeoData.getFeatures(basePath + "cnt/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil) );
+			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
+			if(fs == null) fs = fs_; else fs.addAll( fs_ );
+			fs_.clear();
 			logger.info(fs.size() + " buildings");
 		}
 
@@ -199,7 +199,7 @@ public class BuildingStatsComputation {
 
 		logger.info("Save...");
 		//TODO order columns
-		CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/building_area.csv", "bu_stat");
+		//CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/building_area.csv", "bu_stat");
 
 		logger.info("End");
 	}
