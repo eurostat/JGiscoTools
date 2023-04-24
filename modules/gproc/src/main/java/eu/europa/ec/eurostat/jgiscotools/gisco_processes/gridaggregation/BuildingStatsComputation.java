@@ -56,29 +56,33 @@ public class BuildingStatsComputation {
 
 				if(cells.size() == 0) continue;
 
+
 				logger.info("Load buildings FR...");
 				fil = null;
 				try {
 					String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
 					fil = CQL.toFilter(bg + "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
 				} catch (CQLException e) { e.printStackTrace(); }
-				Collection<Feature> fs = null;
+				Collection<Feature> buFR = null;
 				for(String dep : new String[] { "057" }) {
 					logger.info("   "+dep);
 					//System.out.println(GeoData.getSchema(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg").getGeometryDescriptor());
 					ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
-					if(fs == null) fs = fs_; else fs.addAll( fs_ );
-					logger.info(fs.size() + " buildings");
+					if(buFR == null) buFR = fs_; else buFR.addAll( fs_ );
+					logger.info(buFR.size() + " buildings");
 				}
 
-				if(fs.size() == 0) continue;
+				if(buFR.size() == 0) continue;
 
 				logger.info("Remove duplicates");
-				fs = removeDuplicates(fs, "ID");
-				logger.info(fs.size() + " buildings");
+				buFR = removeDuplicates(buFR, "ID");
+				logger.info(buFR.size() + " buildings");
 
+
+				
+				
 				//compute aggregation
-				GridAggregator<double[]> ga = new GridAggregator<>(cells, "GRD_ID", fs, mapOp, reduceOp);
+				GridAggregator<double[]> ga = new GridAggregator<>(cells, "GRD_ID", buFR, mapOp, reduceOp);
 				ga.compute(true);
 
 				if(ga.getStats().stats.size() == 0) continue;
