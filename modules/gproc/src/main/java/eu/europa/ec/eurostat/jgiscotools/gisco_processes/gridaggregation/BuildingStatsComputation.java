@@ -43,6 +43,8 @@ public class BuildingStatsComputation {
 
 				logger.info("Partition " + xMax + " " + yMax);
 
+				
+				
 			}
 
 		logger.info("Load cells...");
