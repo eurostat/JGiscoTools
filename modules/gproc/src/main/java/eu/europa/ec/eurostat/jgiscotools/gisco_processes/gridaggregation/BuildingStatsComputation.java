@@ -149,18 +149,15 @@ public class BuildingStatsComputation {
 	}
 
 	private static Collection<Feature> loadLU(String basePath, int xMin, int yMin, int xMax, int yMax) {
-
-		Filter fil = null;
 		try {
-			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+")";
-			fil = CQL.toFilter(bg /*+ "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"*/);
+			ArrayList<Feature> fs = GeoData.getFeatures(
+					basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg",
+					null,
+					CQL.toFilter("BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+")")
+					);
+			return fs;
 		} catch (CQLException e) { e.printStackTrace(); }
-		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", null, fil);
-
-		//logger.info("Remove duplicates");
-		//buFR = removeDuplicates(buFR, "ID");
-
-		return fs;
+		return null;
 	}
 
 
