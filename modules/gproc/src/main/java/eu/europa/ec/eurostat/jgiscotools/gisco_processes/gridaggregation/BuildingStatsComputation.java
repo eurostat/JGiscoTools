@@ -66,6 +66,18 @@ public class BuildingStatsComputation {
 				logger.info(buFR.size() + " buildings");
 				bu.addAll(buFR);
 
+				logger.info("Load buildings BE...");
+				Collection<Feature> buBE = loadBE(basePath, xMin, yMin, xMax, yMax);
+				for(Feature f : buBE) f.setAttribute("CC", "BE");
+				logger.info(buBE.size() + " buildings");
+				//bu.addAll(buBE);
+
+				logger.info("Load buildings LU...");
+				Collection<Feature> buLU = loadLU(basePath, xMin, yMin, xMax, yMax);
+				for(Feature f : buLU) f.setAttribute("CC", "LU");
+				logger.info(buLU.size() + " buildings");
+				//bu.addAll(buLU);
+
 				//logger.info("Load buildings BE...");
 				// geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg
 				//logger.info("Load buildings LU...");
