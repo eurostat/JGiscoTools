@@ -131,6 +131,8 @@ public class BuildingStatsComputation {
 			String cc = f.getAttribute("CC").toString();
 			switch (cc) {
 			case "FR": return mapOpFR.map(f, inter);
+			case "BE": return mapOpFR.map(f, inter);
+			case "LU": return mapOpFR.map(f, inter);
 			default: return null;
 			}
 		}
@@ -176,6 +178,38 @@ public class BuildingStatsComputation {
 		}
 	};
 
+
+
+	private static MapOperation<double[]> mapOpBE = new MapOperation<>() {
+		@Override
+		public double[] map(Feature f, Geometry inter) {
+
+			double[] out = new double[4];
+			for(int i=0; i<4; i++) out[i]=0;
+
+			if(inter == null || inter.isEmpty()) return out;
+
+			//TODO
+
+			return out;
+		}
+	};
+
+
+	private static MapOperation<double[]> mapOpLU = new MapOperation<>() {
+		@Override
+		public double[] map(Feature f, Geometry inter) {
+
+			double[] out = new double[4];
+			for(int i=0; i<4; i++) out[i]=0;
+
+			if(inter == null || inter.isEmpty()) return out;
+
+			//TODO
+
+			return out;
+		}
+	};
 
 
 
