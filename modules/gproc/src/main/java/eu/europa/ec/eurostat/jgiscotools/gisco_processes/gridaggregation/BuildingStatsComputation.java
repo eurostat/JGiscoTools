@@ -214,6 +214,9 @@ public class BuildingStatsComputation {
 
 
 
+
+
+
 	private static ReduceOperation<double[]> reduceOp = new ReduceOperation<>() {
 		@Override
 		public Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<double[]> data) {
@@ -280,6 +283,7 @@ public class BuildingStatsComputation {
 			return -999;
 		}
 	};
+
 
 
 
