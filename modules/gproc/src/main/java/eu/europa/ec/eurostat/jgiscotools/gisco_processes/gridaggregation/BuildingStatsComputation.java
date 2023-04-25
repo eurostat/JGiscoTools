@@ -32,8 +32,8 @@ public class BuildingStatsComputation {
 		//String basePath = "E:/workspace/building_stats/test/";
 		String basePath = "/home/juju/Bureau/gisco/";
 
-		int xMin_ = 3800000, xMax_ = 4200000;
-		int yMin_ = 2800000, yMax_ = 3200000;
+		int xMin_ = 3800000, xMax_ = 4300000;
+		int yMin_ = 2700000, yMax_ = 3300000;
 		int step = 200000;
 
 		StatsHypercube shOut = null;
