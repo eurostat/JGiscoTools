@@ -36,6 +36,7 @@ public class BuildingStatsComputation {
 		int yMin_ = 2700000, yMax_ = 3300000;
 		int step = 200000;
 
+		//the output statistics
 		StatsHypercube shOut = null;
 
 		for(int xMin = xMin_; xMin<xMax_; xMin += step) {
@@ -44,20 +45,18 @@ public class BuildingStatsComputation {
 				int yMax = yMin + step;
 
 				logger.info("Partition " + xMin + " " + yMin);
-				Filter fil = null;
-
 
 				logger.info("Load cells...");
+				ArrayList<Feature> cells = null;
 				try {
 					String bg = "BBOX(geometry, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
-					fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_3 LIKE '%FRF33%' OR NUTS2021_2 LIKE '%BE34%')");
+					Filter fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_3 LIKE '%FRF33%' OR NUTS2021_2 LIKE '%BE34%')");
+					cells = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg", null, fil);
 				} catch (CQLException e) { e.printStackTrace(); }
-				ArrayList<Feature> cells = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg", null, fil);
+				if(cells==null || cells.size() == 0) continue;
 				logger.info(cells.size() + " cells");
 
-				if(cells.size() == 0) continue;
-
-
+				logger.info("Load buildings...");
 				Collection<Feature> bu = new ArrayList<Feature>();
 
 				logger.info("Load buildings FR...");
@@ -70,13 +69,13 @@ public class BuildingStatsComputation {
 				Collection<Feature> buBE = loadBE(basePath, xMin, yMin, xMax, yMax);
 				for(Feature f : buBE) f.setAttribute("CC", "BE");
 				logger.info(buBE.size() + " buildings");
-				//bu.addAll(buBE);
+				bu.addAll(buBE);
 
 				logger.info("Load buildings LU...");
 				Collection<Feature> buLU = loadLU(basePath, xMin, yMin, xMax, yMax);
 				for(Feature f : buLU) f.setAttribute("CC", "LU");
 				logger.info(buLU.size() + " buildings");
-				//bu.addAll(buLU);
+				bu.addAll(buLU);
 
 				//TODO filter duplicates among countries
 
