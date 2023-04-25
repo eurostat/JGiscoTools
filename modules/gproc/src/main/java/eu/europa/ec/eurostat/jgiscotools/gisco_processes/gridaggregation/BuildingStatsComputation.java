@@ -113,30 +113,34 @@ public class BuildingStatsComputation {
 
 
 	private static Collection<Feature> loadFR(String basePath, int xMin, int yMin, int xMax, int yMax) {
-
-		Filter fil = null;
 		try {
-			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
-			fil = CQL.toFilter(bg + "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
+			Collection<Feature> fs = null;
+
+			for(String c : new String[] { "057" }) {
+				logger.info("   "+c);
+				ArrayList<Feature> fs_ = GeoData.getFeatures(
+						basePath + "geodata/fr/bdtopo/" + c + "/BATIMENT.gpkg",
+						"ID",
+						CQL.toFilter(
+								"BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND " +
+										"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
+								));
+				if(fs == null) fs = fs_; else fs.addAll( fs_ );
+			}
+
+			logger.info("Remove duplicates");
+			fs = removeDuplicates(fs, "ID");
+
+			return fs;
 		} catch (CQLException e) { e.printStackTrace(); }
-		Collection<Feature> fs = null;
-		for(String c : new String[] { "057" }) {
-			logger.info("   "+c);
-			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + c + "/BATIMENT.gpkg", null, fil);
-			if(fs == null) fs = fs_; else fs.addAll( fs_ );
-		}
-
-		logger.info("Remove duplicates");
-		fs = removeDuplicates(fs, "ID");
-
-		return fs;
+		return null;
 	}
 
 	private static Collection<Feature> loadBE(String basePath, int xMin, int yMin, int xMax, int yMax) {
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(
 					basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg",
-					null,
+					"GEOREF_ID",
 					CQL.toFilter("BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+")")
 					);
 
@@ -152,7 +156,7 @@ public class BuildingStatsComputation {
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(
 					basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg",
-					null,
+					"ID",
 					CQL.toFilter("BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+")")
 					);
 			return fs;
