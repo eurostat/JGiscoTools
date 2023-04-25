@@ -111,46 +111,6 @@ public class BuildingStatsComputation {
 
 
 
-	private static Collection<Feature> loadLU(String basePath, int xMin, int yMin, int xMax, int yMax) {
-
-		Filter fil = null;
-		try {
-			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
-			fil = CQL.toFilter(bg + "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
-		} catch (CQLException e) { e.printStackTrace(); }
-		Collection<Feature> buFR = null;
-		for(String dep : new String[] { "057" }) {
-			logger.info("   "+dep);
-			//System.out.println(GeoData.getSchema(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg").getGeometryDescriptor());
-			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
-			if(buFR == null) buFR = fs_; else buFR.addAll( fs_ );
-			logger.info(buFR.size() + " buildings");
-		}
-
-		logger.info("Remove duplicates");
-		buFR = removeDuplicates(buFR, "ID");
-
-		return buFR;
-	}
-
-
-
-	private static Collection<Feature> loadBE(String basePath, int xMin, int yMin, int xMax, int yMax) {
-
-		Filter fil = null;
-		try {
-			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
-			fil = CQL.toFilter(bg /*+ "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"*/);
-		} catch (CQLException e) { e.printStackTrace(); }
-		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", null, fil);
-		logger.info(fs.size() + " buildings");
-
-		//logger.info("Remove duplicates");
-		//buFR = removeDuplicates(buFR, "ID");
-
-		return fs;
-	}
-
 
 
 	private static Collection<Feature> loadFR(String basePath, int xMin, int yMin, int xMax, int yMax) {
@@ -165,7 +125,6 @@ public class BuildingStatsComputation {
 			logger.info("   "+c);
 			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + c + "/BATIMENT.gpkg", null, fil);
 			if(fs == null) fs = fs_; else fs.addAll( fs_ );
-			logger.info(fs.size() + " buildings");
 		}
 
 		logger.info("Remove duplicates");
@@ -173,6 +132,38 @@ public class BuildingStatsComputation {
 
 		return fs;
 	}
+
+	private static Collection<Feature> loadBE(String basePath, int xMin, int yMin, int xMax, int yMax) {
+
+		Filter fil = null;
+		try {
+			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
+			fil = CQL.toFilter(bg /*+ "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"*/);
+		} catch (CQLException e) { e.printStackTrace(); }
+		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", null, fil);
+
+		//logger.info("Remove duplicates");
+		//buFR = removeDuplicates(buFR, "ID");
+
+		return fs;
+	}
+
+	private static Collection<Feature> loadLU(String basePath, int xMin, int yMin, int xMax, int yMax) {
+
+		Filter fil = null;
+		try {
+			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
+			fil = CQL.toFilter(bg /*+ "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"*/);
+		} catch (CQLException e) { e.printStackTrace(); }
+		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", null, fil);
+
+		//logger.info("Remove duplicates");
+		//buFR = removeDuplicates(buFR, "ID");
+
+		return fs;
+	}
+
+
 
 	private static MapOperation<double[]> mapOp = new MapOperation<>() {
 		@Override
