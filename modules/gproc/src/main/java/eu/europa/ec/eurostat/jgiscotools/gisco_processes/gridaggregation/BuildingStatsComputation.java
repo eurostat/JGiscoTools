@@ -60,22 +60,20 @@ public class BuildingStatsComputation {
 				Collection<Feature> bu = new ArrayList<Feature>();
 
 				logger.info("Load buildings FR...");
-				Collection<Feature> buFR = loadFR(basePath, xMin, yMin, xMax, yMax);
-				for(Feature f : buFR) f.setAttribute("CC", "FR");
-				logger.info(buFR.size() + " buildings");
-				bu.addAll(buFR);
+				Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/057/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "FR");
+				//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
+				logger.info(buFR.size() + " buildings FR");
+				bu.addAll(buFR); buFR.clear();
 
 				logger.info("Load buildings BE...");
-				Collection<Feature> buBE = loadBE(basePath, xMin, yMin, xMax, yMax);
-				for(Feature f : buBE) f.setAttribute("CC", "BE");
-				logger.info(buBE.size() + " buildings");
-				bu.addAll(buBE);
+				Collection<Feature> buBE = getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
+				logger.info(buBE.size() + " buildings BE");
+				bu.addAll(buBE); buBE.clear();
 
 				logger.info("Load buildings LU...");
-				Collection<Feature> buLU = loadLU(basePath, xMin, yMin, xMax, yMax);
-				for(Feature f : buLU) f.setAttribute("CC", "LU");
-				logger.info(buLU.size() + " buildings");
-				bu.addAll(buLU);
+				Collection<Feature> buLU = getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "LU");
+				logger.info(buLU.size() + " buildings LU");
+				bu.addAll(buLU); buLU.clear();
 
 				//TODO filter duplicates among countries
 
@@ -112,58 +110,19 @@ public class BuildingStatsComputation {
 
 
 
-	private static Collection<Feature> loadFR(String basePath, int xMin, int yMin, int xMax, int yMax) {
-		try {
-			Collection<Feature> fs = null;
-
-			for(String c : new String[] { "057" }) {
-				logger.info("   "+c);
-				ArrayList<Feature> fs_ = GeoData.getFeatures(
-						basePath + "geodata/fr/bdtopo/" + c + "/BATIMENT.gpkg",
-						"ID",
-						CQL.toFilter(
-								"BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND " +
-										"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
-								));
-				if(fs == null) fs = fs_; else fs.addAll( fs_ );
-			}
-
-			logger.info("Remove duplicates");
-			fs = removeDuplicates(fs, "ID");
-
-			return fs;
-		} catch (CQLException e) { e.printStackTrace(); }
-		return null;
-	}
-
-	private static Collection<Feature> loadBE(String basePath, int xMin, int yMin, int xMax, int yMax) {
+	private static Collection<Feature> getFeatures(String path, int xMin, int yMin, int xMax, int yMax, String idAtt, String ccTag) {
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(
-					basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg",
-					"GEOREF_ID",
+					path,
+					idAtt,
 					CQL.toFilter("BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+")")
 					);
-
-			//logger.info("Remove duplicates");
-			//buFR = removeDuplicates(buFR, "ID");
-
+			for(Feature f : fs) f.setAttribute("CC", ccTag);
 			return fs;
 		} catch (CQLException e) { e.printStackTrace(); }
 		return null;
-	}
 
-	private static Collection<Feature> loadLU(String basePath, int xMin, int yMin, int xMax, int yMax) {
-		try {
-			ArrayList<Feature> fs = GeoData.getFeatures(
-					basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg",
-					"ID",
-					CQL.toFilter("BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+")")
-					);
-			return fs;
-		} catch (CQLException e) { e.printStackTrace(); }
-		return null;
 	}
-
 
 
 	private static MapOperation<double[]> mapOp = new MapOperation<>() {
@@ -179,6 +138,7 @@ public class BuildingStatsComputation {
 		}
 	};
 
+
 	private static MapOperation<double[]> mapOpFR = new MapOperation<>() {
 		@Override
 		public double[] map(Feature f, Geometry inter) {
@@ -191,6 +151,8 @@ public class BuildingStatsComputation {
 			//area
 			double area = inter.getArea();
 			if(area == 0 ) return out;
+
+			if(!f.getAttribute("ETAT").equals("En service")) return out;
 
 			//nb floors
 			Integer nb = (Integer) f.getAttribute("NB_ETAGES");
@@ -217,6 +179,14 @@ public class BuildingStatsComputation {
 					nb*area*r3
 			};
 		}
+
+		private double getBDTopoTypeRatio(String type, String u1, String u2) {
+			if(type.equals(u1) && u2==null) return 1;
+			if(type.equals(u1) && u2!=null) return 0.7;
+			if(type.equals(u2)) return 0.3;
+			return 0;
+		}	
+
 	};
 
 
@@ -348,19 +318,6 @@ public class BuildingStatsComputation {
 			return -999;
 		}
 	};
-
-
-
-
-
-	private static double getBDTopoTypeRatio(String type, String u1, String u2) {
-		if(type.equals(u1) && u2==null) return 1;
-		if(type.equals(u1) && u2!=null) return 0.7;
-		if(type.equals(u2)) return 0.3;
-		return 0;
-	}	
-
-
 
 
 
