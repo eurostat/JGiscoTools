@@ -62,6 +62,7 @@ public class BuildingStatsComputation {
 
 				logger.info("Load buildings FR...");
 				Collection<Feature> buFR = loadFR(basePath, xMin, yMin, xMax, yMax);
+				for(Feature f : buFR) f.setAttribute("CC", "FR");
 				logger.info(buFR.size() + " buildings");
 				bu.addAll(buFR);
 
@@ -70,6 +71,7 @@ public class BuildingStatsComputation {
 				//logger.info("Load buildings LU...");
 				// geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg
 
+				//TODO filter duplicates among countries
 
 				if(bu.size() == 0) continue;
 
