@@ -125,8 +125,18 @@ public class BuildingStatsComputation {
 		return buFR;
 	}
 
-
 	private static MapOperation<double[]> mapOp = new MapOperation<>() {
+		@Override
+		public double[] map(Feature f, Geometry inter) {
+			String cc = f.getAttribute("CC").toString();
+			switch (cc) {
+			case "FR": return mapOpFR.map(f, inter);
+			default: return null;
+			}
+		}
+	};
+
+	private static MapOperation<double[]> mapOpFR = new MapOperation<>() {
 		@Override
 		public double[] map(Feature f, Geometry inter) {
 
