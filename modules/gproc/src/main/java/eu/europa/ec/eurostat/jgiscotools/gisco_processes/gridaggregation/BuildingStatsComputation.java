@@ -136,7 +136,7 @@ public class BuildingStatsComputation {
 
 		Filter fil = null;
 		try {
-			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
+			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+")";
 			fil = CQL.toFilter(bg /*+ "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"*/);
 		} catch (CQLException e) { e.printStackTrace(); }
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", null, fil);
@@ -151,7 +151,7 @@ public class BuildingStatsComputation {
 
 		Filter fil = null;
 		try {
-			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
+			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+")";
 			fil = CQL.toFilter(bg /*+ "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"*/);
 		} catch (CQLException e) { e.printStackTrace(); }
 		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", null, fil);
