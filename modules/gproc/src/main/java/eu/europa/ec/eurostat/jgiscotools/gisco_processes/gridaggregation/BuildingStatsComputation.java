@@ -79,6 +79,11 @@ public class BuildingStatsComputation {
 				logger.info(buFR.size() + " buildings");
 
 
+				//BE
+				// geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg
+				//LU
+				// geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg
+
 				
 				
 				//compute aggregation
