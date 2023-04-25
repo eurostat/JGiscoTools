@@ -46,6 +46,7 @@ public class BuildingStatsComputation {
 				logger.info("Partition " + xMin + " " + yMin);
 				Filter fil = null;
 
+
 				logger.info("Load cells...");
 				try {
 					String bg = "BBOX(geometry, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
@@ -57,43 +58,33 @@ public class BuildingStatsComputation {
 				if(cells.size() == 0) continue;
 
 
+				Collection<Feature> bu = new ArrayList<Feature>();
+
 				logger.info("Load buildings FR...");
-				fil = null;
-				try {
-					String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
-					fil = CQL.toFilter(bg + "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
-				} catch (CQLException e) { e.printStackTrace(); }
-				Collection<Feature> buFR = null;
-				for(String dep : new String[] { "057" }) {
-					logger.info("   "+dep);
-					//System.out.println(GeoData.getSchema(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg").getGeometryDescriptor());
-					ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
-					if(buFR == null) buFR = fs_; else buFR.addAll( fs_ );
-					logger.info(buFR.size() + " buildings");
-				}
-
-				if(buFR.size() == 0) continue;
-
-				logger.info("Remove duplicates");
-				buFR = removeDuplicates(buFR, "ID");
+				Collection<Feature> buFR = loadFR(basePath, xMin, yMin, xMax, yMax);
 				logger.info(buFR.size() + " buildings");
+				bu.addAll(buFR);
 
-
-				//BE
+				//logger.info("Load buildings BE...");
 				// geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg
-				//LU
+				//logger.info("Load buildings LU...");
 				// geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg
 
-				
-				
+
+				if(bu.size() == 0) continue;
+
 				//compute aggregation
-				GridAggregator<double[]> ga = new GridAggregator<>(cells, "GRD_ID", buFR, mapOp, reduceOp);
+				GridAggregator<double[]> ga = new GridAggregator<>(cells, "GRD_ID", bu, mapOp, reduceOp);
 				ga.compute(true);
 
 				if(ga.getStats().stats.size() == 0) continue;
 
 				if(shOut == null) shOut = ga.getStats();
 				else shOut.stats.addAll(ga.getStats().stats);
+
+				//help gc
+				bu.clear();
+				cells.clear();
 			}
 		}
 
@@ -107,6 +98,29 @@ public class BuildingStatsComputation {
 		CSV.saveMultiValues(shOut, basePath + "building_stats/building_area.csv", "bu_stat");
 
 		logger.info("End");
+	}
+
+
+	private static Collection<Feature> loadFR(String basePath, int xMin, int yMin, int xMax, int yMax) {
+
+		Filter fil = null;
+		try {
+			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
+			fil = CQL.toFilter(bg + "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
+		} catch (CQLException e) { e.printStackTrace(); }
+		Collection<Feature> buFR = null;
+		for(String dep : new String[] { "057" }) {
+			logger.info("   "+dep);
+			//System.out.println(GeoData.getSchema(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg").getGeometryDescriptor());
+			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + dep + "/BATIMENT.gpkg", null, fil);
+			if(buFR == null) buFR = fs_; else buFR.addAll( fs_ );
+			logger.info(buFR.size() + " buildings");
+		}
+
+		logger.info("Remove duplicates");
+		buFR = removeDuplicates(buFR, "ID");
+
+		return buFR;
 	}
 
 
