@@ -170,8 +170,8 @@ public class BuildingStatsComputation {
 			String cc = f.getAttribute("CC").toString();
 			switch (cc) {
 			case "FR": return mapOpFR.map(f, inter);
-			case "BE": return mapOpFR.map(f, inter);
-			case "LU": return mapOpFR.map(f, inter);
+			case "BE": return mapOpBE.map(f, inter);
+			case "LU": return mapOpLU.map(f, inter);
 			default: return null;
 			}
 		}
@@ -228,9 +228,21 @@ public class BuildingStatsComputation {
 
 			if(inter == null || inter.isEmpty()) return out;
 
-			//TODO
+			//area
+			double area = inter.getArea();
+			if(area == 0 ) return out;
 
-			return out;
+			//nb floors
+			Integer nb = 1;
+
+			//
+			return new double[] {
+					nb*area,
+					0,
+					0,
+					0
+			};
+
 		}
 	};
 
@@ -244,9 +256,21 @@ public class BuildingStatsComputation {
 
 			if(inter == null || inter.isEmpty()) return out;
 
-			//TODO
+			//area
+			double area = inter.getArea();
+			if(area == 0 ) return out;
 
-			return out;
+			//nb floors
+			Integer nb = 1;
+
+			//
+			return new double[] {
+					nb*area,
+					0,
+					0,
+					0
+			};
+
 		}
 	};
 
