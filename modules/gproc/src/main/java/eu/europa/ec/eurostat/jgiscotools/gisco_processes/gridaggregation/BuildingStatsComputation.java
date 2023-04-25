@@ -78,11 +78,6 @@ public class BuildingStatsComputation {
 				logger.info(buLU.size() + " buildings");
 				//bu.addAll(buLU);
 
-				//logger.info("Load buildings BE...");
-				// geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg
-				//logger.info("Load buildings LU...");
-				// geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg
-
 				//TODO filter duplicates among countries
 
 				if(bu.size() == 0) continue;
@@ -115,7 +110,8 @@ public class BuildingStatsComputation {
 	}
 
 
-	private static Collection<Feature> loadFR(String basePath, int xMin, int yMin, int xMax, int yMax) {
+
+	private static Collection<Feature> loadLU(String basePath, int xMin, int yMin, int xMax, int yMax) {
 
 		Filter fil = null;
 		try {
@@ -135,6 +131,47 @@ public class BuildingStatsComputation {
 		buFR = removeDuplicates(buFR, "ID");
 
 		return buFR;
+	}
+
+
+
+	private static Collection<Feature> loadBE(String basePath, int xMin, int yMin, int xMax, int yMax) {
+
+		Filter fil = null;
+		try {
+			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
+			fil = CQL.toFilter(bg /*+ "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"*/);
+		} catch (CQLException e) { e.printStackTrace(); }
+		ArrayList<Feature> fs = GeoData.getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", null, fil);
+		logger.info(fs.size() + " buildings");
+
+		//logger.info("Remove duplicates");
+		//buFR = removeDuplicates(buFR, "ID");
+
+		return fs;
+	}
+
+
+
+	private static Collection<Feature> loadFR(String basePath, int xMin, int yMin, int xMax, int yMax) {
+
+		Filter fil = null;
+		try {
+			String bg = "BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
+			fil = CQL.toFilter(bg + "(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))");
+		} catch (CQLException e) { e.printStackTrace(); }
+		Collection<Feature> fs = null;
+		for(String c : new String[] { "057" }) {
+			logger.info("   "+c);
+			ArrayList<Feature> fs_ = GeoData.getFeatures(basePath + "geodata/fr/bdtopo/" + c + "/BATIMENT.gpkg", null, fil);
+			if(fs == null) fs = fs_; else fs.addAll( fs_ );
+			logger.info(fs.size() + " buildings");
+		}
+
+		logger.info("Remove duplicates");
+		fs = removeDuplicates(fs, "ID");
+
+		return fs;
 	}
 
 	private static MapOperation<double[]> mapOp = new MapOperation<>() {
