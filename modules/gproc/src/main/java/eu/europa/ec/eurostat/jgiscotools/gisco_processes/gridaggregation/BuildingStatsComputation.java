@@ -232,6 +232,8 @@ public class BuildingStatsComputation {
 			else if( "41206".equals(nS) || "41207".equals(nS) || "41208".equals(nS) ) bs.res = contrib;
 			else if(nS.subSequence(0, 1).equals("4")) bs.commServ = contrib;
 			else if(nS.subSequence(0, 1).equals("5")) bs.commServ = contrib;
+			else if("60000".equals(nS)) {}
+			else if(nS.subSequence(0, 1).equals("7")) bs.commServ = contrib;
 			else if("80000".equals(nS)) bs.agri = contrib;
 			else if("90000".equals(nS)) {}
 			else if("100000".equals(nS)) {}
