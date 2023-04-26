@@ -202,7 +202,25 @@ public class BuildingStatsComputation {
 			//if(h==null) nb = 1;
 			//else nb = Math.max( (int)(h/3.5), 1);
 
-			return new BuildingStat(nb*area, 0, 0, 0);
+			double contrib = nb * area;
+
+			BuildingStat bs = new BuildingStat();
+
+			String n = f.getAttribute("NATURE_DESC").toString();
+			if("Habitation".equals(n)) bs.res = contrib;
+			if("Prison".equals(n)) bs.res = contrib;
+			else if("Agricole".equals(n)) bs.agri = contrib;
+			else if("Industriel".equals(n)) bs.indus = contrib;
+			else if("Station d'épuration".equals(n)) bs.indus = contrib;
+			else if("Château".equals(n)) ;
+			else if("Château d'eau".equals(n)) ;
+			else if("Annexe".equals(n)) ;
+			else {
+				System.err.println(n);
+				bs.res = contrib;
+			}
+
+			return bs;
 		}
 	};
 
