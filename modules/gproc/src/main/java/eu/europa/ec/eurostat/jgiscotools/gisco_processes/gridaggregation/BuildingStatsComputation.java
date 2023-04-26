@@ -225,14 +225,16 @@ public class BuildingStatsComputation {
 
 			//Object n = f.getAttribute("NATURE");
 			String nS = f.getAttribute("NATURE").toString();
-			if(nS=="0") bs.res = contrib;
-			if(nS.subSequence(0, 1) == "1") bs.indus = contrib;
-			else if(nS.subSequence(0, 1) == "2") bs.agri = contrib;
-			else if(nS.subSequence(0, 1) == "3") bs.commServ = contrib;
-			else if(nS == "41206" || nS == "41207" || nS == "41208") bs.res = contrib;
-			if(nS=="8000") bs.agri = contrib;
-			if(nS=="90000") {}
-			if(nS=="100000") {}
+			if("0".equals(nS)) bs.res = contrib;
+			else if(nS.subSequence(0, 1).equals("1")) bs.indus = contrib;
+			else if(nS.subSequence(0, 1).equals("2")) bs.agri = contrib;
+			else if(nS.subSequence(0, 1).equals("3")) bs.commServ = contrib;
+			else if( "41206".equals(nS) || "41207".equals(nS) || "41208".equals(nS) ) bs.res = contrib;
+			else if(nS.subSequence(0, 1).equals("4")) bs.commServ = contrib;
+			else if(nS.subSequence(0, 1).equals("5")) bs.commServ = contrib;
+			else if("80000".equals(nS)) bs.agri = contrib;
+			else if("90000".equals(nS)) {}
+			else if("100000".equals(nS)) {}
 			else {
 				System.err.println(nS);
 				bs.res = contrib;
