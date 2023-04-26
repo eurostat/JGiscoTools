@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaggregation;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
 public class BuildingStat {
 	double res = 0;

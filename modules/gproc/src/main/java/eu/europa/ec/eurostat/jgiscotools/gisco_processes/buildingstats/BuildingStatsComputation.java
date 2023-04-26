@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridaggregation;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
 import java.util.ArrayList;
 import java.util.Collection;
