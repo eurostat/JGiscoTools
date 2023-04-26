@@ -219,10 +219,26 @@ public class BuildingStatsComputation {
 			//double elevTop = f.getGeometry().getCoordinate().z;
 			//System.out.println(elevTop);
 
-			//type
-			String n = f.getAttribute("NATURE").toString();
+			double contrib = nb * area;
 
-			return new BuildingStat(nb*area, 0, 0, 0);
+			BuildingStat bs = new BuildingStat();
+
+			//Object n = f.getAttribute("NATURE");
+			String nS = f.getAttribute("NATURE").toString();
+			if(nS=="0") bs.res = contrib;
+			if(nS.subSequence(0, 1) == "1") bs.indus = contrib;
+			else if(nS.subSequence(0, 1) == "2") bs.agri = contrib;
+			else if(nS.subSequence(0, 1) == "3") bs.commServ = contrib;
+			else if(nS == "41206" || nS == "41207" || nS == "41208") bs.res = contrib;
+			if(nS=="8000") bs.agri = contrib;
+			if(nS=="90000") {}
+			if(nS=="100000") {}
+			else {
+				System.err.println(nS);
+				bs.res = contrib;
+			}
+
+			return bs;
 		}
 	};
 
