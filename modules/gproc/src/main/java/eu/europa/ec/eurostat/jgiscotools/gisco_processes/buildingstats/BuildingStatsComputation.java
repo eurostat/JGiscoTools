@@ -59,16 +59,16 @@ public class BuildingStatsComputation {
 				logger.info("Load buildings...");
 				Collection<Feature> bu = new ArrayList<Feature>();
 
-				//logger.info("Load buildings FR...");
-				//Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/057/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "FR");
+				logger.info("Load buildings FR...");
+				Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/057/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "FR");
 				//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
-				//logger.info("   " + buFR.size() + " buildings FR");
-				//bu.addAll(buFR); buFR.clear();
+				logger.info("   " + buFR.size() + " buildings FR");
+				bu.addAll(buFR); buFR.clear();
 
-				//logger.info("Load buildings BE...");
-				//Collection<Feature> buBE = getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
-				//logger.info("   " + buBE.size() + " buildings BE");
-				//bu.addAll(buBE); buBE.clear();
+				logger.info("Load buildings BE...");
+				Collection<Feature> buBE = getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
+				logger.info("   " + buBE.size() + " buildings BE");
+				bu.addAll(buBE); buBE.clear();
 
 				logger.info("Load buildings LU...");
 				Collection<Feature> buLU = getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "LU");
