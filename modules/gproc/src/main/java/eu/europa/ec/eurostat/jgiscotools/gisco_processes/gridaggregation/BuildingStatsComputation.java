@@ -80,7 +80,7 @@ public class BuildingStatsComputation {
 				if(bu.size() == 0) continue;
 
 				//compute aggregation
-				GridAggregator<double[]> ga = new GridAggregator<>(cells, "GRD_ID", bu, mapOp, reduceOp);
+				GridAggregator<BuildingStat> ga = new GridAggregator<>(cells, "GRD_ID", bu, mapOp, reduceOp);
 				ga.compute(true);
 
 				if(ga.getStats().stats.size() == 0) continue;
@@ -126,10 +126,10 @@ public class BuildingStatsComputation {
 
 
 
-	
-	private static MapOperation<double[]> mapOp = new MapOperation<>() {
+
+	private static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
 		@Override
-		public double[] map(Feature f, Geometry inter) {
+		public BuildingStat map(Feature f, Geometry inter) {
 			String cc = f.getAttribute("CC").toString();
 			switch (cc) {
 			case "FR": return mapOpFR.map(f, inter);
@@ -141,20 +141,14 @@ public class BuildingStatsComputation {
 	};
 
 
-	private static MapOperation<double[]> mapOpFR = new MapOperation<>() {
+	private static MapOperation<BuildingStat> mapOpFR = new MapOperation<>() {
 		@Override
-		public double[] map(Feature f, Geometry inter) {
-
-			double[] out = new double[4];
-			for(int i=0; i<4; i++) out[i]=0;
-
-			if(inter == null || inter.isEmpty()) return out;
-
-			//area
+		public BuildingStat map(Feature f, Geometry inter) {
+			if(inter == null || inter.isEmpty()) return new BuildingStat();
 			double area = inter.getArea();
-			if(area == 0 ) return out;
+			if(area == 0 ) return new BuildingStat();
 
-			if(!f.getAttribute("ETAT").equals("En service")) return out;
+			if(!f.getAttribute("ETAT").equals("En service")) return new BuildingStat();
 
 			//nb floors
 			Integer nb = (Integer) f.getAttribute("NB_ETAGES");
@@ -174,12 +168,12 @@ public class BuildingStatsComputation {
 			double r3 = getBDTopoTypeRatio("Commercial et services", u1, u2);
 
 			//
-			return new double[] {
+			return new BuildingStat(
 					nb*area*r0,
 					nb*area*r1,
 					nb*area*r2,
 					nb*area*r3
-			};
+					);
 		}
 
 		private double getBDTopoTypeRatio(String type, String u1, String u2) {
@@ -193,65 +187,42 @@ public class BuildingStatsComputation {
 
 
 
-	private static MapOperation<double[]> mapOpBE = new MapOperation<>() {
+	private static MapOperation<BuildingStat> mapOpBE = new MapOperation<>() {
 		@Override
-		public double[] map(Feature f, Geometry inter) {
-
-			double[] out = new double[4];
-			for(int i=0; i<4; i++) out[i]=0;
-
-			if(inter == null || inter.isEmpty()) return out;
-
-			//area
+		public BuildingStat map(Feature f, Geometry inter) {
+			if(inter == null || inter.isEmpty()) return new BuildingStat();
 			double area = inter.getArea();
-			if(area == 0 ) return out;
+			if(area == 0 ) return new BuildingStat();
 
 			//nb floors
 			Integer nb = 1;
 			//TODO: this is elevation of the roof top. Need for elevation of the bottom...
-			double elevTop = f.getGeometry().getCoordinate().z;
+			//double elevTop = f.getGeometry().getCoordinate().z;
 			//System.out.println(h);
 			//if(h==null) nb = 1;
 			//else nb = Math.max( (int)(h/3.5), 1);
 
-			//
-			return new double[] {
-					nb*area,
-					0,
-					0,
-					0
-			};
-
+			return new BuildingStat(nb*area, 0, 0, 0);
 		}
 	};
 
 
-	private static MapOperation<double[]> mapOpLU = new MapOperation<>() {
+	private static MapOperation<BuildingStat> mapOpLU = new MapOperation<>() {
 		@Override
-		public double[] map(Feature f, Geometry inter) {
-
-			double[] out = new double[4];
-			for(int i=0; i<4; i++) out[i]=0;
-
-			if(inter == null || inter.isEmpty()) return out;
-
-			//area
+		public BuildingStat map(Feature f, Geometry inter) {
+			if(inter == null || inter.isEmpty()) return new BuildingStat();
 			double area = inter.getArea();
-			if(area == 0 ) return out;
+			if(area == 0 ) return new BuildingStat();
 
 			//nb floors
 			Integer nb = 1;
-			double elevTop = f.getGeometry().getCoordinate().z;
-			System.out.println(elevTop);
+			//double elevTop = f.getGeometry().getCoordinate().z;
+			//System.out.println(elevTop);
 
-			//
-			return new double[] {
-					nb*area,
-					0,
-					0,
-					0
-			};
+			//type
+			String n = f.getAttribute("NATURE").toString();
 
+			return new BuildingStat(nb*area, 0, 0, 0);
 		}
 	};
 
@@ -261,16 +232,18 @@ public class BuildingStatsComputation {
 
 
 
-	private static ReduceOperation<double[]> reduceOp = new ReduceOperation<>() {
+	private static ReduceOperation<BuildingStat> reduceOp = new ReduceOperation<>() {
 		@Override
-		public Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<double[]> data) {
+		public Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<BuildingStat> data) {
 			Collection<Stat> out = new ArrayList<>();
 
 			//compute sums, for each building type
-			double[] v = new double[4];
-			for(int i=0; i<4; i++) {
-				v[i] = 0;
-				for(double[] map : data) v[i] += map[i];
+			BuildingStat v = new BuildingStat();
+			for(BuildingStat map : data) {
+				v.res += map.res;
+				v.agri += map.agri;
+				v.indus += map.indus;
+				v.commServ += map.commServ;
 			}
 
 			//add stats
@@ -353,6 +326,26 @@ public class BuildingStatsComputation {
 		}
 
 		return out;
+	}
+
+
+
+	public static class BuildingStat {
+		double res = 0;
+		double agri = 0;
+		double indus = 0;
+		double commServ = 0;
+
+		public BuildingStat() {
+			this(0,0,0,0);
+		}
+
+		public BuildingStat(double res, double agri, double indus, double commServ) {
+			this.res = res;
+			this.agri = agri;
+			this.indus = indus;
+			this.commServ = commServ;
+		}
 	}
 
 }
