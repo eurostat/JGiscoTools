@@ -59,20 +59,20 @@ public class BuildingStatsComputation {
 				logger.info("Load buildings...");
 				Collection<Feature> bu = new ArrayList<Feature>();
 
-				logger.info("Load buildings FR...");
-				Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/057/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "FR");
+				//logger.info("Load buildings FR...");
+				//Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/057/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "FR");
 				//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
-				logger.info(buFR.size() + " buildings FR");
-				bu.addAll(buFR); buFR.clear();
+				//logger.info("   " + buFR.size() + " buildings FR");
+				//bu.addAll(buFR); buFR.clear();
 
-				logger.info("Load buildings BE...");
-				Collection<Feature> buBE = getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
-				logger.info(buBE.size() + " buildings BE");
-				bu.addAll(buBE); buBE.clear();
+				//logger.info("Load buildings BE...");
+				//Collection<Feature> buBE = getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
+				//logger.info("   " + buBE.size() + " buildings BE");
+				//bu.addAll(buBE); buBE.clear();
 
 				logger.info("Load buildings LU...");
 				Collection<Feature> buLU = getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "LU");
-				logger.info(buLU.size() + " buildings LU");
+				logger.info("   " + buLU.size() + " buildings LU");
 				bu.addAll(buLU); buLU.clear();
 
 				//TODO filter duplicates among countries
@@ -206,6 +206,11 @@ public class BuildingStatsComputation {
 
 			//nb floors
 			Integer nb = 1;
+			//TODO: this is elevation of the roof top. Need for elevation of the bottom...
+			double elevTop = f.getGeometry().getCoordinate().z;
+			//System.out.println(h);
+			//if(h==null) nb = 1;
+			//else nb = Math.max( (int)(h/3.5), 1);
 
 			//
 			return new double[] {
@@ -234,6 +239,8 @@ public class BuildingStatsComputation {
 
 			//nb floors
 			Integer nb = 1;
+			double elevTop = f.getGeometry().getCoordinate().z;
+			System.out.println(elevTop);
 
 			//
 			return new double[] {
