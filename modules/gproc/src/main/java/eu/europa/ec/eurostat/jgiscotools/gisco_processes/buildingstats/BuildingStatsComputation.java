@@ -206,18 +206,23 @@ public class BuildingStatsComputation {
 
 			BuildingStat bs = new BuildingStat();
 
-			String n = f.getAttribute("NATURE_DESC").toString();
-			if("Habitation".equals(n)) bs.res = contrib;
-			if("Prison".equals(n)) bs.res = contrib;
-			else if("Agricole".equals(n)) bs.agri = contrib;
-			else if("Industriel".equals(n)) bs.indus = contrib;
-			else if("Station d'épuration".equals(n)) bs.indus = contrib;
-			else if("Château".equals(n)) ;
-			else if("Château d'eau".equals(n)) ;
-			else if("Annexe".equals(n)) ;
-			else {
-				System.err.println(n);
+			Object n = f.getAttribute("NATURE_DESC");
+			if(n==null) {
 				bs.res = contrib;
+			} else {
+				String nS = n.toString();
+				if("Habitation".equals(nS)) bs.res = contrib;
+				if("Prison".equals(nS)) bs.res = contrib;
+				else if("Agricole".equals(nS)) bs.agri = contrib;
+				else if("Industriel".equals(nS)) bs.indus = contrib;
+				else if("Station d'épuration".equals(nS)) bs.indus = contrib;
+				else if("Château".equals(nS)) ;
+				else if("Château d'eau".equals(nS)) ;
+				else if("Annexe".equals(nS)) ;
+				else {
+					System.err.println(nS);
+					bs.res = contrib;
+				}
 			}
 
 			return bs;
