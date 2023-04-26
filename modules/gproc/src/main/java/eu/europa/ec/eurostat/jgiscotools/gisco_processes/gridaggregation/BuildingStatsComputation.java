@@ -247,28 +247,28 @@ public class BuildingStatsComputation {
 			}
 
 			//add stats
-			out.add( new Stat(v[0], cellIdAtt, cellId, "bu_stat", "res") );
-			out.add( new Stat(v[1], cellIdAtt, cellId, "bu_stat", "agri") );
-			out.add( new Stat(v[2], cellIdAtt, cellId, "bu_stat", "indus") );
-			out.add( new Stat(v[3], cellIdAtt, cellId, "bu_stat", "comm_serv") );
+			out.add( new Stat(v.res, cellIdAtt, cellId, "bu_stat", "res") );
+			out.add( new Stat(v.agri, cellIdAtt, cellId, "bu_stat", "agri") );
+			out.add( new Stat(v.indus, cellIdAtt, cellId, "bu_stat", "indus") );
+			out.add( new Stat(v.commServ, cellIdAtt, cellId, "bu_stat", "comm_serv") );
 
 			//add total
-			double total = v[0]+v[1]+v[2]+v[3];
+			double total = v.res+v.agri+v.indus+v.commServ;
 			out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
-			double totalActivity = v[1]+v[2]+v[3];
+			double totalActivity = v.agri+v.indus+v.commServ;
 			out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
 
 			//add percentages
-			out.add( new Stat(total==0? 0 : 100*v[0]/total, cellIdAtt, cellId, "bu_stat", "p_res") );
-			out.add( new Stat(total==0? 0 : 100*v[1]/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
-			out.add( new Stat(total==0? 0 : 100*v[2]/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
-			out.add( new Stat(total==0? 0 : 100*v[3]/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
+			out.add( new Stat(total==0? 0 : 100*v.res/total, cellIdAtt, cellId, "bu_stat", "p_res") );
+			out.add( new Stat(total==0? 0 : 100*v.agri/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
+			out.add( new Stat(total==0? 0 : 100*v.indus/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
+			out.add( new Stat(total==0? 0 : 100*v.commServ/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
 			out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
 
 			//typologies
-			int typResAct = total==0.0? 0 : getBuildingTypologyResAct(v[0]/total, totalActivity/total);
+			int typResAct = total==0.0? 0 : getBuildingTypologyResAct(v.res/total, totalActivity/total);
 			out.add( new Stat(typResAct, cellIdAtt, cellId, "bu_stat", "typology_res_act") );
-			int typAct = totalActivity==0.0? 0 : getBuildingTypologyAct(v[1]/totalActivity, v[2]/totalActivity, v[3]/totalActivity );
+			int typAct = totalActivity==0.0? 0 : getBuildingTypologyAct(v.agri/totalActivity, v.indus/totalActivity, v.commServ/totalActivity );
 			out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );
 
 			return out;
@@ -326,26 +326,6 @@ public class BuildingStatsComputation {
 		}
 
 		return out;
-	}
-
-
-
-	public static class BuildingStat {
-		double res = 0;
-		double agri = 0;
-		double indus = 0;
-		double commServ = 0;
-
-		public BuildingStat() {
-			this(0,0,0,0);
-		}
-
-		public BuildingStat(double res, double agri, double indus, double commServ) {
-			this.res = res;
-			this.agri = agri;
-			this.indus = indus;
-			this.commServ = commServ;
-		}
 	}
 
 }
