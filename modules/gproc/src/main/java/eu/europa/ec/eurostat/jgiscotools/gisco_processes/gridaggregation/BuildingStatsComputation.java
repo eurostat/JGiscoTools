@@ -125,6 +125,8 @@ public class BuildingStatsComputation {
 	}
 
 
+
+	
 	private static MapOperation<double[]> mapOp = new MapOperation<>() {
 		@Override
 		public double[] map(Feature f, Geometry inter) {
