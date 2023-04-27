@@ -51,7 +51,7 @@ public class BuildingStatsComputation {
 				ArrayList<Feature> cells = null;
 				try {
 					String bg = "BBOX(geometry, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
-					Filter fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_3 LIKE '%FRF33%' OR NUTS2021_2 LIKE '%BE%')");
+					Filter fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_1 LIKE '%FRF%' OR NUTS2021_1 LIKE '%BE3%')");
 					cells = GeoData.getFeatures(basePath + "geodata/grids/grid_1km_surf.gpkg", null, fil);
 				} catch (CQLException e) { e.printStackTrace(); }
 				if(cells==null || cells.size() == 0) continue;
@@ -60,14 +60,12 @@ public class BuildingStatsComputation {
 				logger.info("Load buildings...");
 				Collection<Feature> bu = new ArrayList<Feature>();
 
-				//TODO add spatial index to gpkg
-				/*logger.info("Load buildings FR...");
-				Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/057/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "FR");
+				logger.info("Load buildings FR...");
+				Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/BDTOPO_3-3_TOUSTHEMES_GPKG_LAMB93_R44_2023-03-15/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "FR");
 				//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
 				logger.info("   " + buFR.size() + " buildings FR");
-				bu.addAll(buFR); buFR.clear();*/
+				bu.addAll(buFR); buFR.clear();
 
-				//TODO add spatial index to gpkg
 				//TODO remove duplicates ?
 				logger.info("Load buildings BE...");
 				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
@@ -154,20 +152,21 @@ public class BuildingStatsComputation {
 			double area = inter.getArea();
 			if(area == 0 ) return new BuildingStat();
 
-			if(!f.getAttribute("ETAT").equals("En service")) return new BuildingStat();
+			System.out.println(f.getAttributes().keySet());
+			if(!f.getAttribute("Etat_de_l_objet").equals("En service")) return new BuildingStat();
 
 			//nb floors
-			Integer nb = (Integer) f.getAttribute("NB_ETAGES");
+			Integer nb = (Integer) f.getAttribute("nombre_d_etages");
 			if(nb == null) {
 				//compute floors nb from height
-				Double h = (Double) f.getAttribute("HAUTEUR");
+				Double h = (Double) f.getAttribute("hauteur");
 				if(h==null) nb = 1;
 				else nb = Math.max( (int)(h/3.5), 1);
 			}
 
 			//type contributions
-			String u1 = (String) f.getAttribute("USAGE1");
-			String u2 = (String) f.getAttribute("USAGE2");
+			String u1 = (String) f.getAttribute("usage_1");
+			String u2 = (String) f.getAttribute("usage_2");
 			double r0 = getBDTopoTypeRatio("Résidentiel", u1, u2);
 			double r1 = getBDTopoTypeRatio("Agricole", u1, u2);
 			double r2 = getBDTopoTypeRatio("Industriel", u1, u2);
