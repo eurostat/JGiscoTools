@@ -52,7 +52,7 @@ public class BuildingStatsComputation {
 				try {
 					String bg = "BBOX(geometry, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
 					Filter fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_3 LIKE '%FRF33%' OR NUTS2021_2 LIKE '%BE34%')");
-					cells = GeoData.getFeatures(basePath + "grids/grid_1km_surf.gpkg", null, fil);
+					cells = GeoData.getFeatures(basePath + "geodata/grids/grid_1km_surf.gpkg", null, fil);
 				} catch (CQLException e) { e.printStackTrace(); }
 				if(cells==null || cells.size() == 0) continue;
 				logger.info(cells.size() + " cells");
@@ -66,10 +66,12 @@ public class BuildingStatsComputation {
 				logger.info("   " + buFR.size() + " buildings FR");
 				bu.addAll(buFR); buFR.clear();*/
 
-				/*logger.info("Load buildings BE...");
-				Collection<Feature> buBE = getFeatures(basePath + "geodata/be/PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
-				logger.info("   " + buBE.size() + " buildings BE");
-				bu.addAll(buBE); buBE.clear();*/
+				logger.info("Load buildings BE...");
+				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
+					Collection<Feature> buBE = getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
+					logger.info("   " + buBE.size() + " buildings BE " + ds);
+					bu.addAll(buBE); buBE.clear();
+				}
 
 				logger.info("Load buildings LU...");
 				Collection<Feature> buLU = getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "LU");
