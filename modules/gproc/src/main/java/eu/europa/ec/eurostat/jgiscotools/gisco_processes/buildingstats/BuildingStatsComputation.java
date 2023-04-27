@@ -33,7 +33,7 @@ public class BuildingStatsComputation {
 		String basePath = "H:/";
 		//String basePath = "/home/juju/Bureau/gisco/";
 
-		int xMin_ = 3800000, xMax_ = 4300000;
+		int xMin_ = 3700000, xMax_ = 4300000;
 		int yMin_ = 2700000, yMax_ = 3300000;
 		int step = 200000;
 
@@ -68,7 +68,7 @@ public class BuildingStatsComputation {
 
 				//TODO remove duplicates ?
 				logger.info("Load buildings BE...");
-				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
+				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", /*"PICC_vDIFF_SHAPE_31370_PROV_LIEGE",*/ "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
 					Collection<Feature> buBE = getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
 					logger.info("   " + buBE.size() + " buildings BE " + ds);
 					bu.addAll(buBE); buBE.clear();
