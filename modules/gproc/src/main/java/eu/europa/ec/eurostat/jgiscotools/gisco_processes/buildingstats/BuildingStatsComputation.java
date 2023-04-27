@@ -29,8 +29,7 @@ public class BuildingStatsComputation {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		//TODO use data folder
-		String basePath = "H:/";
+		String basePath = "H:/ws/";
 		//String basePath = "/home/juju/Bureau/gisco/";
 
 		int xMin_ = 3700000, xMax_ = 4300000;
