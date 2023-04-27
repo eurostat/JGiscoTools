@@ -66,6 +66,7 @@ public class BuildingStatsComputation {
 				logger.info("   " + buFR.size() + " buildings FR");
 				bu.addAll(buFR); buFR.clear();*/
 
+				//TODO remove duplicates ?
 				logger.info("Load buildings BE...");
 				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
 					Collection<Feature> buBE = getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
