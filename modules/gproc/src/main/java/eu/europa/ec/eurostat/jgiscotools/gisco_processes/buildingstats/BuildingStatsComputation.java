@@ -35,7 +35,7 @@ public class BuildingStatsComputation {
 
 		int xMin_ = 3700000, xMax_ = 4300000;
 		int yMin_ = 2700000, yMax_ = 3300000;
-		int step = 200000;
+		int step = 50000;
 
 		//the output statistics
 		StatsHypercube shOut = null;
@@ -51,7 +51,7 @@ public class BuildingStatsComputation {
 				ArrayList<Feature> cells = null;
 				try {
 					String bg = "BBOX(geometry, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
-					Filter fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_3 LIKE '%FRF33%' OR NUTS2021_2 LIKE '%BE34%')");
+					Filter fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_3 LIKE '%FRF33%' OR NUTS2021_2 LIKE '%BE%')");
 					cells = GeoData.getFeatures(basePath + "geodata/grids/grid_1km_surf.gpkg", null, fil);
 				} catch (CQLException e) { e.printStackTrace(); }
 				if(cells==null || cells.size() == 0) continue;
@@ -60,15 +60,17 @@ public class BuildingStatsComputation {
 				logger.info("Load buildings...");
 				Collection<Feature> bu = new ArrayList<Feature>();
 
+				//TODO add spatial index to gpkg
 				/*logger.info("Load buildings FR...");
 				Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/057/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "FR");
 				//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
 				logger.info("   " + buFR.size() + " buildings FR");
 				bu.addAll(buFR); buFR.clear();*/
 
+				//TODO add spatial index to gpkg
 				//TODO remove duplicates ?
 				logger.info("Load buildings BE...");
-				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", /*"PICC_vDIFF_SHAPE_31370_PROV_LIEGE",*/ "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
+				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
 					Collection<Feature> buBE = getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
 					logger.info("   " + buBE.size() + " buildings BE " + ds);
 					bu.addAll(buBE); buBE.clear();
