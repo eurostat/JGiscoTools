@@ -152,8 +152,7 @@ public class BuildingStatsComputation {
 			double area = inter.getArea();
 			if(area == 0 ) return new BuildingStat();
 
-			System.out.println(f.getAttributes().keySet());
-			if(!f.getAttribute("Etat_de_l_objet").equals("En service")) return new BuildingStat();
+			if(!"En service".equals(f.getAttribute("Etat_de_l_objet"))) return new BuildingStat();
 
 			//nb floors
 			Integer nb = (Integer) f.getAttribute("nombre_d_etages");
