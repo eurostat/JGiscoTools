@@ -64,7 +64,6 @@ public class BuildingStatsComputation {
 				//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
 				logger.info("   " + buFR.size() + " buildings FR");
 				bu.addAll(buFR); buFR.clear();
-				/*
 				//TODO remove duplicates ?
 				logger.info("Load buildings BE...");
 				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
@@ -77,7 +76,7 @@ public class BuildingStatsComputation {
 				Collection<Feature> buLU = getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "LU");
 				logger.info("   " + buLU.size() + " buildings LU");
 				bu.addAll(buLU); buLU.clear();
-				 */
+
 				//TODO filter duplicates among countries
 
 				if(bu.size() == 0) continue;
@@ -166,9 +165,10 @@ public class BuildingStatsComputation {
 
 			//type contributions
 			String u1 = (String) f.getAttribute("usage_1");
-			if("Indifferencié".equals(u1)) {
-				if("Industriel, agricole ou commercial".equals(f.getAttribute("nature"))) return new BuildingStat(0,contrib/3,contrib/3,contrib/3);
-				else if("Silo".equals(f.getAttribute("nature"))) return new BuildingStat(0,contrib,0,0);
+			if(u1 == null || "Indifferencié".equals(u1)) {
+				Object n = f.getAttribute("nature");
+				if("Industriel, agricole ou commercial".equals(n)) return new BuildingStat(0,contrib/3,contrib/3,contrib/3);
+				else if("Silo".equals(n)) return new BuildingStat(0,contrib,0,0);
 				else return new BuildingStat(contrib,0,0,0);
 			} else {
 				String u2 = (String) f.getAttribute("usage_2");
