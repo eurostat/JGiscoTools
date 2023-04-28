@@ -34,7 +34,7 @@ public class BuildingStatsComputation {
 
 		int xMin_ = 3700000, xMax_ = 4300000;
 		int yMin_ = 2700000, yMax_ = 3300000;
-		int step = 50000;
+		int step = 100000;
 
 		//the output statistics
 		StatsHypercube shOut = null;
