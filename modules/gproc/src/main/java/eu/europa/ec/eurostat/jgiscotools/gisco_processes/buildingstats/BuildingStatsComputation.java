@@ -165,7 +165,7 @@ public class BuildingStatsComputation {
 
 			//type contributions
 			String u1 = (String) f.getAttribute("usage_1");
-			if(u1 == null || "Indifferencié".equals(u1)) {
+			if(u1 == null || "Indifférencié".equals(u1)) {
 				Object n = f.getAttribute("nature");
 				if("Industriel, agricole ou commercial".equals(n)) return new BuildingStat(0,contrib/3,contrib/3,contrib/3);
 				else if("Silo".equals(n)) return new BuildingStat(0,contrib,0,0);
