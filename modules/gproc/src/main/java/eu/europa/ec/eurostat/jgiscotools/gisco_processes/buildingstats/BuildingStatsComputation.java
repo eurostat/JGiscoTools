@@ -2,7 +2,6 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,6 +70,7 @@ public class BuildingStatsComputation {
 					logger.info("   " + buFR.size() + " buildings FR");
 					bu.addAll(buFR); buFR.clear();
 					//TODO remove duplicates ?
+					//FeatureUtil.removeDuplicates(buFR, "ID")
 				}
 
 				logger.info("Load buildings BE...");
@@ -79,6 +79,8 @@ public class BuildingStatsComputation {
 					for(Feature f : buBE) f.setAttribute("CC", "BE");
 					logger.info("   " + buBE.size() + " buildings BE " + ds);
 					bu.addAll(buBE); buBE.clear();
+					//TODO remove duplicates ?
+					//FeatureUtil.removeDuplicates(buBE, "GEOREF_ID")
 				}
 
 				logger.info("Load buildings LU...");
@@ -207,7 +209,8 @@ public class BuildingStatsComputation {
 
 
 
-	//move to geodata ?
+	//TODO move to geodata ?
+	//TODO add possibility for other filter ?
 	private static Collection<Feature> getFeatures(String path, int xMin, int yMin, int xMax, int yMax, double d, String idAtt) {
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(
@@ -219,29 +222,6 @@ public class BuildingStatsComputation {
 		} catch (CQLException e) { e.printStackTrace(); }
 		return null;
 
-	}
-
-	/**
-	 * Remove the duplicates, that is the features that have same attributes.
-	 * TODO use the one from featureutil instead
-	 * 
-	 * @param fs
-	 * @param idAtt
-	 * @return 
-	 */
-	public static ArrayList<Feature> removeDuplicates(Collection<Feature> fs, String idAtt) {
-
-		ArrayList<Feature> out = new ArrayList<Feature>();
-		HashSet<String> ids = new HashSet<String>();
-
-		for(Feature f : fs) {
-			String id = idAtt==null? f.getID() : f.getAttribute(idAtt).toString();
-			if(ids.contains(id)) continue;
-			ids.add(id);
-			out.add(f);
-		}
-
-		return out;
 	}
 
 }
