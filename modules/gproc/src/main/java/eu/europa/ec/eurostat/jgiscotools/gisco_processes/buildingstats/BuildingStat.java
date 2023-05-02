@@ -1,5 +1,9 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
+/**
+ * @author gaffuju
+ *
+ */
 public class BuildingStat {
 	double res = 0;
 	double agri = 0;

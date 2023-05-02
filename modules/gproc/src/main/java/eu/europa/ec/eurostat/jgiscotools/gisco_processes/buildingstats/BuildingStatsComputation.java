@@ -20,6 +20,10 @@ import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.ReduceOperation;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
+/**
+ * @author gaffuju
+ *
+ */
 public class BuildingStatsComputation {
 	private static Logger logger = LogManager.getLogger(BuildingStatsComputation.class.getName());
 
@@ -96,7 +100,6 @@ public class BuildingStatsComputation {
 			}
 		}
 
-
 		logger.info("Round values...");
 		for(Stat s : shOut.stats)
 			s.value = (int) Math.round(s.value);
@@ -107,8 +110,6 @@ public class BuildingStatsComputation {
 
 		logger.info("End");
 	}
-
-
 
 
 
@@ -134,159 +135,13 @@ public class BuildingStatsComputation {
 		public BuildingStat map(Feature f, Geometry inter) {
 			String cc = f.getAttribute("CC").toString();
 			switch (cc) {
-			case "FR": return mapOpFR.map(f, inter);
-			case "BE": return mapOpBE.map(f, inter);
-			case "LU": return mapOpLU.map(f, inter);
+			case "FR": return FR.mapOp.map(f, inter);
+			case "BE": return BE.mapOp.map(f, inter);
+			case "LU": return LU.mapOp.map(f, inter);
 			default: return null;
 			}
 		}
 	};
-
-
-	private static MapOperation<BuildingStat> mapOpFR = new MapOperation<>() {
-		@Override
-		public BuildingStat map(Feature f, Geometry inter) {
-			if(inter == null || inter.isEmpty()) return new BuildingStat();
-			double area = inter.getArea();
-			if(area == 0 ) return new BuildingStat();
-
-			if(!"En service".equals(f.getAttribute("etat_de_l_objet"))) return new BuildingStat();
-
-			//nb floors
-			Integer nb = (Integer) f.getAttribute("nombre_d_etages");
-			if(nb == null) {
-				//compute floors nb from height
-				Double h = (Double) f.getAttribute("hauteur");
-				if(h==null) nb = 1;
-				else nb = Math.max( (int)(h/3.5), 1);
-			}
-
-			double contrib = nb*area;
-
-			//type contributions
-			String u1 = (String) f.getAttribute("usage_1");
-			if(u1 == null || "Indifférencié".equals(u1)) {
-				Object n = f.getAttribute("nature");
-				if("Industriel, agricole ou commercial".equals(n)) return new BuildingStat(0,contrib/3,contrib/3,contrib/3);
-				else if("Silo".equals(n)) return new BuildingStat(0,contrib,0,0);
-				else return new BuildingStat(contrib,0,0,0);
-			} else {
-				String u2 = (String) f.getAttribute("usage_2");
-				double r0 = getBDTopoTypeRatio("Résidentiel", u1, u2);
-				double r1 = getBDTopoTypeRatio("Agricole", u1, u2);
-				double r2 = getBDTopoTypeRatio("Industriel", u1, u2);
-				double r3 = getBDTopoTypeRatio("Commercial et services", u1, u2);
-				return new BuildingStat(
-						contrib*r0,
-						contrib*r1,
-						contrib*r2,
-						contrib*r3
-						);
-			}
-
-		}
-
-		private double getBDTopoTypeRatio(String type, String u1, String u2) {
-			if(type.equals(u1) && u2==null) return 1;
-			if(type.equals(u1) && u2!=null) return 0.7;
-			if(type.equals(u2)) return 0.3;
-			return 0;
-		}	
-
-	};
-
-
-
-	private static MapOperation<BuildingStat> mapOpBE = new MapOperation<>() {
-		@Override
-		public BuildingStat map(Feature f, Geometry inter) {
-			if(inter == null || inter.isEmpty()) return new BuildingStat();
-			double area = inter.getArea();
-			if(area == 0 ) return new BuildingStat();
-
-			//nb floors
-			Integer nb = 1;
-			//TODO: this is elevation of the roof top. Need for elevation of the bottom...
-			//double elevTop = f.getGeometry().getCoordinate().z;
-			//System.out.println(h);
-			//if(h==null) nb = 1;
-			//else nb = Math.max( (int)(h/3.5), 1);
-
-			double contrib = nb * area;
-
-			BuildingStat bs = new BuildingStat();
-
-			Object n = f.getAttribute("NATURE_DESC");
-			if(n==null) {
-				bs.res = contrib;
-			} else {
-				String nS = n.toString();
-				if("Habitation".equals(nS)) bs.res = contrib;
-				if("Prison".equals(nS)) bs.res = contrib;
-				else if("Agricole".equals(nS)) bs.agri = contrib;
-				else if("Industriel".equals(nS)) bs.indus = contrib;
-				else if("Station d'épuration".equals(nS)) bs.indus = contrib;
-				else if("Château".equals(nS)) ;
-				else if("Château d'eau".equals(nS)) ;
-				else if("Annexe".equals(nS)) ;
-				else {
-					System.err.println(nS);
-					bs.res = contrib;
-				}
-			}
-
-			return bs;
-		}
-	};
-
-
-	private static MapOperation<BuildingStat> mapOpLU = new MapOperation<>() {
-		@Override
-		public BuildingStat map(Feature f, Geometry inter) {
-			if(inter == null || inter.isEmpty()) return new BuildingStat();
-			double area = inter.getArea();
-			if(area == 0 ) return new BuildingStat();
-
-			//nb floors
-			Integer nb = 1;
-			//double elevTop = f.getGeometry().getCoordinate().z;
-			//System.out.println(elevTop);
-
-			double contrib = nb * area;
-
-			BuildingStat bs = new BuildingStat();
-
-			Object n = f.getAttribute("NATURE");
-			if(n==null) {
-				bs.res = contrib;
-			} else {
-				String nS = f.getAttribute("NATURE").toString();
-				if("0".equals(nS)) bs.res = contrib;
-				else if(nS.subSequence(0, 1).equals("1")) bs.indus = contrib;
-				else if(nS.subSequence(0, 1).equals("2")) bs.agri = contrib;
-				else if(nS.subSequence(0, 1).equals("3")) bs.commServ = contrib;
-				else if( "41206".equals(nS) || "41207".equals(nS) || "41208".equals(nS) ) bs.res = contrib;
-				else if(nS.subSequence(0, 1).equals("4")) bs.commServ = contrib;
-				else if(nS.subSequence(0, 1).equals("5")) bs.commServ = contrib;
-				else if("60000".equals(nS)) {}
-				else if(nS.subSequence(0, 1).equals("7")) bs.commServ = contrib;
-				else if("80000".equals(nS)) bs.agri = contrib;
-				else if("90000".equals(nS)) {}
-				else if("100000".equals(nS)) {}
-				else {
-					System.err.println(nS);
-					bs.res = contrib;
-				}
-			}
-
-			return bs;
-		}
-	};
-
-
-
-
-
 
 
 	private static ReduceOperation<BuildingStat> reduceOp = new ReduceOperation<>() {
