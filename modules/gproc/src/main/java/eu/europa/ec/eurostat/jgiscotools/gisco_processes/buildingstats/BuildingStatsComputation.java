@@ -64,22 +64,30 @@ public class BuildingStatsComputation {
 				Collection<Feature> bu = new ArrayList<Feature>();
 
 				logger.info("Load buildings FR...");
-				Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/BDTOPO_3-3_TOUSTHEMES_GPKG_LAMB93_R44_2023-03-15/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "FR");
-				//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
-				logger.info("   " + buFR.size() + " buildings FR");
-				bu.addAll(buFR); buFR.clear();
-				//TODO remove duplicates ?
+				{
+					Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/BDTOPO_3-3_TOUSTHEMES_GPKG_LAMB93_R44_2023-03-15/BATIMENT.gpkg", xMin, yMin, xMax, yMax, 1, "ID");
+					//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
+					for(Feature f : buFR) f.setAttribute("CC", "FR");
+					logger.info("   " + buFR.size() + " buildings FR");
+					bu.addAll(buFR); buFR.clear();
+					//TODO remove duplicates ?
+				}
+
 				logger.info("Load buildings BE...");
 				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
-					Collection<Feature> buBE = getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, "GEOREF_ID", "BE");
+					Collection<Feature> buBE = getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, 1, "GEOREF_ID");
+					for(Feature f : buBE) f.setAttribute("CC", "BE");
 					logger.info("   " + buBE.size() + " buildings BE " + ds);
 					bu.addAll(buBE); buBE.clear();
 				}
 
 				logger.info("Load buildings LU...");
-				Collection<Feature> buLU = getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, "ID", "LU");
-				logger.info("   " + buLU.size() + " buildings LU");
-				bu.addAll(buLU); buLU.clear();
+				{
+					Collection<Feature> buLU = getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, 1, "ID");
+					for(Feature f : buLU) f.setAttribute("CC", "LU");
+					logger.info("   " + buLU.size() + " buildings LU");
+					bu.addAll(buLU); buLU.clear();
+				}
 
 				//TODO filter duplicates among countries
 
@@ -111,25 +119,6 @@ public class BuildingStatsComputation {
 		logger.info("End");
 	}
 
-
-
-	private static Collection<Feature> getFeatures(String path, int xMin, int yMin, int xMax, int yMax, String idAtt, String ccTag) {
-		try {
-			ArrayList<Feature> fs = GeoData.getFeatures(
-					path,
-					idAtt,
-					CQL.toFilter("BBOX(geom, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+")")
-					);
-			for(Feature f : fs) f.setAttribute("CC", ccTag);
-			return fs;
-		} catch (CQLException e) { e.printStackTrace(); }
-		return null;
-
-	}
-
-
-
-
 	private static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
 		@Override
 		public BuildingStat map(Feature f, Geometry inter) {
@@ -142,7 +131,6 @@ public class BuildingStatsComputation {
 			}
 		}
 	};
-
 
 	private static ReduceOperation<BuildingStat> reduceOp = new ReduceOperation<>() {
 		@Override
@@ -216,6 +204,22 @@ public class BuildingStatsComputation {
 
 
 
+
+
+
+	//move to geodata ?
+	private static Collection<Feature> getFeatures(String path, int xMin, int yMin, int xMax, int yMax, double d, String idAtt) {
+		try {
+			ArrayList<Feature> fs = GeoData.getFeatures(
+					path,
+					idAtt,
+					CQL.toFilter("BBOX(geom, "+(xMin+d)+", "+(yMin+d)+", "+(xMax-d)+", "+(yMax-d)+")")
+					);
+			return fs;
+		} catch (CQLException e) { e.printStackTrace(); }
+		return null;
+
+	}
 
 	/**
 	 * Remove the duplicates, that is the features that have same attributes.
