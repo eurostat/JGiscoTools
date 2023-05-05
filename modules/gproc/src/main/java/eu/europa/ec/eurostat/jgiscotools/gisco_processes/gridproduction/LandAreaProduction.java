@@ -5,15 +5,15 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction;
 
 import java.util.Collection;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
 
+import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
+import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
@@ -34,10 +34,6 @@ public class LandAreaProduction {
 	//use: -Xms8g -Xmx24g
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
-
-		//set loggers
-		logger.atLevel(Level.ALL);
-		Grid.logger.atLevel(Level.ALL);
 
 		//set parameters
 		String outpath = basePath + "output/";
@@ -63,8 +59,13 @@ public class LandAreaProduction {
 		for(int resKM : resKMs) {
 			logger.info(resKM + "km grid...");
 
+			logger.info("Load grid cells...");
+			Collection<Feature> cells = null;
+
+			//clean cell attributes ?
+
 			logger.info("Compute land proportion...");
-			//GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2, parallel);
+			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2, parallel);
 			//TODO make LAND_PC a nice decimal number (in gpkg)
 
 		}
