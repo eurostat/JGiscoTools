@@ -10,10 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Decomposer;
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Partition.GeomType;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
@@ -46,6 +48,16 @@ public class DecomposeLandWaterAreas {
 		Collection<Feature> landFeatures = Decomposer.decomposeFeature(fs, false, 1000, 500, GeomType.ONLY_AREAS, 0);
 		//logger.info(landGeometries.size());
 		logger.info(landFeatures.size());
+
+		logger.info("To multigeom...");
+		for(Feature f : fs) {
+			Geometry g = f.getGeometry();
+			g = JTSGeomUtil.toMulti(g);
+			f.setGeometry(g);
+			if(g.isEmpty()) System.err.println("Empty geom");
+			else if(g.getArea()==0) System.err.println(g);
+		};
+
 
 		logger.info("Save...");
 		//GeoPackageUtil.saveGeoms(landGeometries, path + "land_areas.gpkg", CRS.decode("EPSG:3035"));
