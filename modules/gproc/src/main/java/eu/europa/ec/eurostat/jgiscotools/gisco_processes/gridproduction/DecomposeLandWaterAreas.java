@@ -8,6 +8,7 @@ import java.util.Collection;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.filter.text.cql2.CQL;
 import org.geotools.referencing.CRS;
 
 import eu.europa.ec.eurostat.jgiscotools.algo.base.Decomposer;
@@ -30,7 +31,7 @@ public class DecomposeLandWaterAreas {
 
 		logger.info("Load data...");
 		//Collection<Feature> fs = GeoPackageUtil.getFeatures(path+"CNTR_RG_100K_union_LAEA.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
-		Collection<Feature> fs = GeoData.getFeatures(path+"LAKE_EURO_PL_100K_2019.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
+		Collection<Feature> fs = GeoData.getFeatures(path+"Corine_water.gpkg", "ID", CQL.toFilter("Code_18 != 523"));
 		logger.info(fs.size());
 
 		logger.info("Buffer 0...");
