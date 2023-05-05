@@ -3,7 +3,10 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +17,7 @@ import org.locationtech.jts.index.strtree.STRtree;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridUtil;
+import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
@@ -69,7 +73,19 @@ public class LandAreaProduction {
 			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2, parallel);
 
-			//TODO store LAND_PC
+			logger.info("Make tabular...");
+			Collection<Map<String, String>> data = new ArrayList<>();
+			for(Feature c : cells) {
+				Map<String, String> a = new HashMap<>();
+				a.put("GRD_ID", c.getAttribute("GRD_ID").toString());
+				a.put("LAND_PC", c.getAttribute("LAND_PC").toString());
+				data.add(a);
+			}
+			cells.clear();
+
+			logger.info("Save as CSV " + data.size());
+			CSVUtil.save(data, outpath + "land_pc_"+resKM+"km.csv");
+			data.clear();
 		}
 
 		logger.info("End");
