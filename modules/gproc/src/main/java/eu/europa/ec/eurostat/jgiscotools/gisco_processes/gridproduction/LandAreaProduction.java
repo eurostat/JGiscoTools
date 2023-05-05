@@ -26,6 +26,7 @@ public class LandAreaProduction {
 	static Logger logger = LogManager.getLogger(LandAreaProduction.class.getName());
 
 	public static String basePath = "/home/juju/Bureau/gisco/grid_land_area/";
+	public static String gridsPath = "/home/juju/Bureau/gisco/geodata/grids/";
 
 	//the different resolutions, in KM
 	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
@@ -60,7 +61,8 @@ public class LandAreaProduction {
 			logger.info(resKM + "km grid...");
 
 			logger.info("Load grid cells...");
-			Collection<Feature> cells = null;
+			Collection<Feature> cells = GeoData.getFeatures(gridsPath + "grid_" + resKMs + "km_surf.gpkg");
+			logger.info(" " + cells.size());
 
 			//clean cell attributes ?
 
