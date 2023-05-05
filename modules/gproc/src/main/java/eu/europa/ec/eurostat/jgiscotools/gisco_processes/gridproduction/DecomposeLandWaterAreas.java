@@ -27,11 +27,11 @@ public class DecomposeLandWaterAreas {
 		logger.info("Start");
 		Decomposer.logger.atLevel(Level.ALL);
 
-		String path = "E:/workspace/gridstat/data/CNTR_100k/";
+		String path = "/home/juju/Bureau/gisco/grid_land_area/input/";
 
 		logger.info("Load data...");
 		//Collection<Feature> fs = GeoPackageUtil.getFeatures(path+"CNTR_RG_100K_union_LAEA.gpkg"/*, CQL.toFilter("CNTR_ID='FR'")*/);
-		Collection<Feature> fs = GeoData.getFeatures(path+"Corine_water.gpkg", "ID", CQL.toFilter("Code_18 != 523"));
+		Collection<Feature> fs = GeoData.getFeatures(path+"Corine_water.gpkg", "ID", CQL.toFilter("Code_18<>'523'"));
 		logger.info(fs.size());
 
 		logger.info("Clear attributes");

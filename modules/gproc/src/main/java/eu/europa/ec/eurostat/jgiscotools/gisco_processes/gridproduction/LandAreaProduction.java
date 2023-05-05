@@ -3,30 +3,17 @@
  */
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.gridproduction;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.stream.Stream;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.geotools.filter.text.cql2.CQL;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.index.SpatialIndex;
 import org.locationtech.jts.index.strtree.STRtree;
 
-import eu.europa.ec.eurostat.java4eurostat.base.Stat;
-import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
-import eu.europa.ec.eurostat.java4eurostat.base.StatsIndex;
-import eu.europa.ec.eurostat.java4eurostat.io.CSV;
-import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.grid.Grid;
-import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
