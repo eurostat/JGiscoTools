@@ -50,10 +50,11 @@ public class DecomposeLandWaterAreas {
 		logger.info(landFeatures.size());
 
 		logger.info("To multigeom...");
-		for(Feature f : fs) {
+		for(Feature f : landFeatures) {
 			Geometry g = f.getGeometry();
 			g = JTSGeomUtil.toMulti(g);
 			f.setGeometry(g);
+			if(!"MultiPolygon".equals(g.getGeometryType())) System.err.println(g);
 			if(g.isEmpty()) System.err.println("Empty geom");
 			else if(g.getArea()==0) System.err.println(g);
 		};

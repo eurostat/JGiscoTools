@@ -212,12 +212,12 @@ public class SimpleFeatureUtil {
 		//geometry type
 		Class<?> gClass = null;
 		for(Feature f : fs) {
-			Geometry o = f.getGeometry();
-			if(o==null || o.isEmpty()) continue;
-			Class<? extends Object> kl = o.getClass();
+			Geometry g = f.getGeometry();
+			if(g==null || g.isEmpty()) continue;
+			Class<? extends Object> kl = g.getClass();
 			if(gClass==null) { gClass=kl; continue; }
 			if(kl != gClass) {
-				LOGGER.warn("Inconsistant geometry type. Store it as Point type.");
+				LOGGER.warn("Inconsistant geometry type. " + kl + " != " + gClass + " Store it as Point type.");
 				gClass = Point.class;
 				break;
 			}
