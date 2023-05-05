@@ -61,7 +61,7 @@ public class LandAreaProduction {
 			logger.info(resKM + "km grid...");
 
 			logger.info("Load grid cells...");
-			Collection<Feature> cells = GeoData.getFeatures(gridsPath + "grid_" + resKMs + "km_surf.gpkg");
+			Collection<Feature> cells = GeoData.getFeatures(gridsPath + "grid_" + resKM + "km_surf.gpkg");
 			logger.info(" " + cells.size());
 
 			//clean cell attributes ?
