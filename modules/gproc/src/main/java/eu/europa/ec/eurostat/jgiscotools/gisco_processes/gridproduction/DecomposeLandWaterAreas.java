@@ -34,6 +34,9 @@ public class DecomposeLandWaterAreas {
 		Collection<Feature> fs = GeoData.getFeatures(path+"Corine_water.gpkg", "ID", CQL.toFilter("Code_18 != 523"));
 		logger.info(fs.size());
 
+		logger.info("Clear attributes");
+		for(Feature f : fs) f.getAttributes().clear();
+
 		logger.info("Buffer 0...");
 		for(Feature f : fs) f.setGeometry( f.getGeometry().buffer(0) );
 
