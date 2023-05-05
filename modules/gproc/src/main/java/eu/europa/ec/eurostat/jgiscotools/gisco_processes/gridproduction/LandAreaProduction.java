@@ -77,7 +77,7 @@ public class LandAreaProduction {
 			logger.info(resKM + "km grid...");
 
 			logger.info("Compute land proportion...");
-			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2, parallel);
+			//GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2, parallel);
 			//TODO make LAND_PC a nice decimal number (in gpkg)
 
 		}
