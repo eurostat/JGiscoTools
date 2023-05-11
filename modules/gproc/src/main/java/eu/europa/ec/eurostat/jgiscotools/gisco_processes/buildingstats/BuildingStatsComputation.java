@@ -40,7 +40,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 		int xMin_ = 3700000, xMax_ = 4300000;
 		int yMin_ = 2700000, yMax_ = 3300000;
-		int step = 4000;
+		int step = 50000;
 
 		//the output statistics
 		StatsHypercube shOut = null;
@@ -195,22 +195,17 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 	//TODO move to geodata ?
 	//TODO add possibility for other filter ?
-	static Collection<Feature> getFeatures(String path, String idAtt, int xMin, int yMin, int xMax, int yMax, double d) {
-
-		//ogrinfo -SQL "CreateSpatialIndex('countries', 'geom')" countries.gpkg
-		//SELECT id FROM rtree_countries_geom r WHERE r.maxx >= bbox_minx AND r.minx <= bbox_maxx AND r.maxy >= bbox_miny AND r.miny <= bbox_maxy;
-
+	static Collection<Feature> getFeatures(String path, String idAtt, String geomAtt, int xMin, int yMin, int xMax, int yMax, double d) {
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(
 					path,
 					idAtt,
-					CQL.toFilter("geom.maxx >= "+xMin+" AND geom.minx <= "+xMax+" AND geom.maxy >= "+yMin+" AND geom.miny <= "+yMax)
-					//CQL.toFilter("BBOX(geom, "+(xMin+d)+", "+(yMin+d)+", "+(xMax-d)+", "+(yMax-d)+")")
+					//CQL.toFilter("geom.maxx >= "+xMin+" AND geom.minx <= "+xMax+" AND geom.maxy >= "+yMin+" AND geom.miny <= "+yMax)
+					CQL.toFilter("BBOX("+geomAtt+", "+(xMin+d)+", "+(yMin+d)+", "+(xMax-d)+", "+(yMax-d)+")")
 					);
 			return fs;
 		} catch (CQLException e) { e.printStackTrace(); }
 		return null;
-
 	}
 
 }
