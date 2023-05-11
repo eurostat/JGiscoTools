@@ -1,12 +1,22 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
+import java.util.Collection;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 
 public class BE {
+	private static Logger logger = LogManager.getLogger(BE.class.getName());
 
+	public static void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
+		
+	}
+
+	
 	static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
 		@Override
 		public BuildingStat map(Feature f, Geometry inter) {

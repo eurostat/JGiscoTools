@@ -85,7 +85,7 @@ public class BuildingStatsComputation {
 				}
 
 				logger.info("Load buildings LU...");
-				LU.loadBuildings(basePath, xMin, yMin, xMax, yMax, bu);
+				LU.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
 				//TODO filter duplicates among countries
 
