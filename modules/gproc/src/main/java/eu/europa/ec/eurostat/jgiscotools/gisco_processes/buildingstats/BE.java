@@ -18,7 +18,7 @@ public class BE implements CountryHandler {
 	public void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
 		Collection<Feature> buBE = new ArrayList<Feature>();
 		for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
-			Collection<Feature> buBE_ = BuildingStatsComputation.getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, 1, "GEOREF_ID");
+			Collection<Feature> buBE_ = BuildingStatsComputation.getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", "GEOREF_ID", xMin, yMin, xMax, yMax, 1);
 			logger.info(ds + " " + buBE_.size() + " buildings");
 			buBE.addAll(buBE_); buBE_.clear();
 		}

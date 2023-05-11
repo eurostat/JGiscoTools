@@ -14,7 +14,7 @@ public class LU implements CountryHandler {
 
 
 	public void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
-		Collection<Feature> buLU = BuildingStatsComputation.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, 1, "ID");
+		Collection<Feature> buLU = BuildingStatsComputation.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", "ID", xMin, yMin, xMax, yMax, 1);
 		for(Feature f : buLU) f.setAttribute("CC", "LU");
 		logger.info("   " + buLU.size() + " buildings LU");
 		bu.addAll(buLU);

@@ -32,6 +32,8 @@ public class BuildingStatsComputation {
 	public static void main(String[] args) {
 		logger.info("Start");
 
+
+
 		String basePath = "H:/ws/";
 		//String basePath = "/home/juju/Bureau/gisco/";
 
@@ -69,12 +71,25 @@ public class BuildingStatsComputation {
 				logger.info("Load buildings LU...");
 				new LU().loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
-				//TODO filter duplicates among countries
+				//TODO filter duplicates - overlapping buildings
 
 				if(bu.size() == 0) continue;
 
 				//compute aggregation
-				GridAggregator<BuildingStat> ga = new GridAggregator<>(cells, "GRD_ID", bu, mapOp, reduceOp);
+				GridAggregator<BuildingStat> ga = new GridAggregator<>(cells, "GRD_ID", bu, 
+						new MapOperation<>() {
+					@Override
+					public BuildingStat map(Feature f, Geometry inter) {
+						String cc = f.getAttribute("CC").toString();
+						switch (cc) {
+						case "FR": return new FR().mapOp.map(f, inter);
+						case "BE": return new BE().mapOp.map(f, inter);
+						case "LU": return new LU().mapOp.map(f, inter);
+						default: return null;
+						}
+					}
+				},
+						reduceOp);
 				ga.compute(true);
 
 				if(ga.getStats().stats.size() == 0) continue;
@@ -100,18 +115,8 @@ public class BuildingStatsComputation {
 		logger.info("End");
 	}
 
-	private static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
-		@Override
-		public BuildingStat map(Feature f, Geometry inter) {
-			String cc = f.getAttribute("CC").toString();
-			switch (cc) {
-			case "FR": return new FR().mapOp.map(f, inter);
-			case "BE": return new BE().mapOp.map(f, inter);
-			case "LU": return new LU().mapOp.map(f, inter);
-			default: return null;
-			}
-		}
-	};
+
+
 
 	private static ReduceOperation<BuildingStat> reduceOp = new ReduceOperation<>() {
 		@Override
@@ -190,7 +195,7 @@ public class BuildingStatsComputation {
 
 	//TODO move to geodata ?
 	//TODO add possibility for other filter ?
-	static Collection<Feature> getFeatures(String path, int xMin, int yMin, int xMax, int yMax, double d, String idAtt) {
+	static Collection<Feature> getFeatures(String path, String idAtt, int xMin, int yMin, int xMax, int yMax, double d) {
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(
 					path,
