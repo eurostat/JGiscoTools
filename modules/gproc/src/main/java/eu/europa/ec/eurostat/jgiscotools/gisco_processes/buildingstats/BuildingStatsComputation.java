@@ -82,9 +82,9 @@ public class BuildingStatsComputation {
 					public BuildingStat map(Feature f, Geometry inter) {
 						String cc = f.getAttribute("CC").toString();
 						switch (cc) {
-						case "FR": return new FR().mapOp.map(f, inter);
-						case "BE": return new BE().mapOp.map(f, inter);
-						case "LU": return new LU().mapOp.map(f, inter);
+						case "FR": return new FR().map(f, inter);
+						case "BE": return new BE().map(f, inter);
+						case "LU": return new LU().map(f, inter);
 						default: return null;
 						}
 					}
