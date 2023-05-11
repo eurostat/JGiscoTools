@@ -13,7 +13,14 @@ public class BE {
 	private static Logger logger = LogManager.getLogger(BE.class.getName());
 
 	public static void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
-		
+		for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
+			Collection<Feature> buBE = BuildingStatsComputation.getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, 1, "GEOREF_ID");
+			for(Feature f : buBE) f.setAttribute("CC", "BE");
+			logger.info("   " + buBE.size() + " buildings BE " + ds);
+			bu.addAll(buBE); buBE.clear();
+			//TODO remove duplicates ?
+			//FeatureUtil.removeDuplicates(buBE, "GEOREF_ID")
+		}
 	}
 
 	

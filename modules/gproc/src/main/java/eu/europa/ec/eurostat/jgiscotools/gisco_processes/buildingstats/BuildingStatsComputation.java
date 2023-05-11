@@ -61,29 +61,10 @@ public class BuildingStatsComputation {
 
 				logger.info("Load buildings...");
 				Collection<Feature> bu = new ArrayList<Feature>();
-
 				logger.info("Load buildings FR...");
-				//FR.loadBuildings(bu);
-				{
-					Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/BDTOPO_3-3_TOUSTHEMES_GPKG_LAMB93_R44_2023-03-15/BATIMENT.gpkg", xMin, yMin, xMax, yMax, 1, "ID");
-					//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
-					for(Feature f : buFR) f.setAttribute("CC", "FR");
-					logger.info("   " + buFR.size() + " buildings FR");
-					bu.addAll(buFR); buFR.clear();
-					//TODO remove duplicates ?
-					//FeatureUtil.removeDuplicates(buFR, "ID")
-				}
-
+				FR.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings BE...");
-				for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
-					Collection<Feature> buBE = getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, 1, "GEOREF_ID");
-					for(Feature f : buBE) f.setAttribute("CC", "BE");
-					logger.info("   " + buBE.size() + " buildings BE " + ds);
-					bu.addAll(buBE); buBE.clear();
-					//TODO remove duplicates ?
-					//FeatureUtil.removeDuplicates(buBE, "GEOREF_ID")
-				}
-
+				BE.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings LU...");
 				LU.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
