@@ -23,7 +23,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
  * @author gaffuju
  *
  */
-public class BuildingStatsComputation {
+public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, MapOperation<BuildingStat> {
 	private static Logger logger = LogManager.getLogger(BuildingStatsComputation.class.getName());
 
 	//use: -Xms2G -Xmx12G
@@ -32,6 +32,7 @@ public class BuildingStatsComputation {
 	public static void main(String[] args) {
 		logger.info("Start");
 
+		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
 
 		String basePath = "H:/ws/";
@@ -76,20 +77,7 @@ public class BuildingStatsComputation {
 				if(bu.size() == 0) continue;
 
 				//compute aggregation
-				GridAggregator<BuildingStat> ga = new GridAggregator<>(cells, "GRD_ID", bu, 
-						new MapOperation<>() {
-					@Override
-					public BuildingStat map(Feature f, Geometry inter) {
-						String cc = f.getAttribute("CC").toString();
-						switch (cc) {
-						case "FR": return new FR().map(f, inter);
-						case "BE": return new BE().map(f, inter);
-						case "LU": return new LU().map(f, inter);
-						default: return null;
-						}
-					}
-				},
-						reduceOp);
+				GridAggregator<BuildingStat> ga = new GridAggregator<>(cells, "GRD_ID", bu, bsc, bsc);
 				ga.compute(true);
 
 				if(ga.getStats().stats.size() == 0) continue;
@@ -117,75 +105,84 @@ public class BuildingStatsComputation {
 
 
 
+	@Override
+	public BuildingStat map(Feature f, Geometry inter) {
+		String cc = f.getAttribute("CC").toString();
+		switch (cc) {
+		case "FR": return new FR().map(f, inter);
+		case "BE": return new BE().map(f, inter);
+		case "LU": return new LU().map(f, inter);
+		default: return null;
+		}
+	}
 
-	private static ReduceOperation<BuildingStat> reduceOp = new ReduceOperation<>() {
-		@Override
-		public Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<BuildingStat> data) {
-			Collection<Stat> out = new ArrayList<>();
 
-			//compute sums, for each building type
-			BuildingStat v = new BuildingStat();
-			for(BuildingStat map : data) {
-				v.res += map.res;
-				v.agri += map.agri;
-				v.indus += map.indus;
-				v.commServ += map.commServ;
-			}
+	@Override
+	public Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<BuildingStat> data) {
+		Collection<Stat> out = new ArrayList<>();
 
-			//add stats
-			out.add( new Stat(v.res, cellIdAtt, cellId, "bu_stat", "res") );
-			out.add( new Stat(v.agri, cellIdAtt, cellId, "bu_stat", "agri") );
-			out.add( new Stat(v.indus, cellIdAtt, cellId, "bu_stat", "indus") );
-			out.add( new Stat(v.commServ, cellIdAtt, cellId, "bu_stat", "comm_serv") );
-
-			//add total
-			double total = v.res+v.agri+v.indus+v.commServ;
-			out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
-			double totalActivity = v.agri+v.indus+v.commServ;
-			out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
-
-			//add percentages
-			out.add( new Stat(total==0? 0 : 100*v.res/total, cellIdAtt, cellId, "bu_stat", "p_res") );
-			out.add( new Stat(total==0? 0 : 100*v.agri/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
-			out.add( new Stat(total==0? 0 : 100*v.indus/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
-			out.add( new Stat(total==0? 0 : 100*v.commServ/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
-			out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
-
-			//typologies
-			int typResAct = total==0.0? 0 : getBuildingTypologyResAct(v.res/total, totalActivity/total);
-			out.add( new Stat(typResAct, cellIdAtt, cellId, "bu_stat", "typology_res_act") );
-			int typAct = totalActivity==0.0? 0 : getBuildingTypologyAct(v.agri/totalActivity, v.indus/totalActivity, v.commServ/totalActivity );
-			out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );
-
-			return out;
+		//compute sums, for each building type
+		BuildingStat v = new BuildingStat();
+		for(BuildingStat map : data) {
+			v.res += map.res;
+			v.agri += map.agri;
+			v.indus += map.indus;
+			v.commServ += map.commServ;
 		}
 
-		//typology res/activity
-		private int getBuildingTypologyResAct(double pRes, double pAct) {
-			if(pRes==0.0 && pAct==0.0) return 0;
-			if(pRes>0.7) return 9;
-			if(pAct>0.7) return 8;
-			return 98;
-		}
+		//add stats
+		out.add( new Stat(v.res, cellIdAtt, cellId, "bu_stat", "res") );
+		out.add( new Stat(v.agri, cellIdAtt, cellId, "bu_stat", "agri") );
+		out.add( new Stat(v.indus, cellIdAtt, cellId, "bu_stat", "indus") );
+		out.add( new Stat(v.commServ, cellIdAtt, cellId, "bu_stat", "comm_serv") );
 
-		//typology res/activity
-		private int getBuildingTypologyAct(double pAgri, double pIndus, double pComServ) {
-			if(pAgri==0.0 && pIndus==0.0 && pComServ==0.0) return 0;
+		//add total
+		double total = v.res+v.agri+v.indus+v.commServ;
+		out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
+		double totalActivity = v.agri+v.indus+v.commServ;
+		out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
 
-			if(pAgri>0.7) return 1;
-			if(pIndus>0.7) return 2;
-			if(pComServ>0.7) return 3;
+		//add percentages
+		out.add( new Stat(total==0? 0 : 100*v.res/total, cellIdAtt, cellId, "bu_stat", "p_res") );
+		out.add( new Stat(total==0? 0 : 100*v.agri/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
+		out.add( new Stat(total==0? 0 : 100*v.indus/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
+		out.add( new Stat(total==0? 0 : 100*v.commServ/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
+		out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
 
-			if(pAgri>0.25 && pIndus>0.25 && pComServ>0.25) return 123;
+		//typologies
+		int typResAct = total==0.0? 0 : getBuildingTypologyResAct(v.res/total, totalActivity/total);
+		out.add( new Stat(typResAct, cellIdAtt, cellId, "bu_stat", "typology_res_act") );
+		int typAct = totalActivity==0.0? 0 : getBuildingTypologyAct(v.agri/totalActivity, v.indus/totalActivity, v.commServ/totalActivity );
+		out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );
 
-			double min = Math.min(pAgri, Math.min(pIndus, pComServ));
-			if(min == pAgri) return 23;
-			if(min == pIndus) return 13;
-			if(min == pComServ) return 12;
+		return out;
+	}
 
-			return -999;
-		}
-	};
+	//typology res/activity
+	private int getBuildingTypologyResAct(double pRes, double pAct) {
+		if(pRes==0.0 && pAct==0.0) return 0;
+		if(pRes>0.7) return 9;
+		if(pAct>0.7) return 8;
+		return 98;
+	}
+
+	//typology res/activity
+	private int getBuildingTypologyAct(double pAgri, double pIndus, double pComServ) {
+		if(pAgri==0.0 && pIndus==0.0 && pComServ==0.0) return 0;
+
+		if(pAgri>0.7) return 1;
+		if(pIndus>0.7) return 2;
+		if(pComServ>0.7) return 3;
+
+		if(pAgri>0.25 && pIndus>0.25 && pComServ>0.25) return 123;
+
+		double min = Math.min(pAgri, Math.min(pIndus, pComServ));
+		if(min == pAgri) return 23;
+		if(min == pIndus) return 13;
+		if(min == pComServ) return 12;
+
+		return -999;
+	}
 
 
 
