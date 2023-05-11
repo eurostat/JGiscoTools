@@ -1,11 +1,25 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
+import java.util.Collection;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 
 public class LU {
+	private static Logger logger = LogManager.getLogger(LU.class.getName());
+
+
+	public static void loadBuildings(String basePath, int xMin, int yMin, int xMax, int yMax, Collection<Feature> bu) {
+		Collection<Feature> buLU = BuildingStatsComputation.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, 1, "ID");
+		for(Feature f : buLU) f.setAttribute("CC", "LU");
+		logger.info("   " + buLU.size() + " buildings LU");
+		bu.addAll(buLU); buLU.clear();
+	}
+
 
 	static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
 		@Override
@@ -49,9 +63,5 @@ public class LU {
 			return bs;
 		}
 	};
-
-
-
-
 
 }

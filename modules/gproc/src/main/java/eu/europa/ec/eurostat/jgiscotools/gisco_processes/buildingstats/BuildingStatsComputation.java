@@ -63,6 +63,7 @@ public class BuildingStatsComputation {
 				Collection<Feature> bu = new ArrayList<Feature>();
 
 				logger.info("Load buildings FR...");
+				//FR.loadBuildings(bu);
 				{
 					Collection<Feature> buFR = getFeatures(basePath + "geodata/fr/bdtopo/BDTOPO_3-3_TOUSTHEMES_GPKG_LAMB93_R44_2023-03-15/BATIMENT.gpkg", xMin, yMin, xMax, yMax, 1, "ID");
 					//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
@@ -84,12 +85,7 @@ public class BuildingStatsComputation {
 				}
 
 				logger.info("Load buildings LU...");
-				{
-					Collection<Feature> buLU = getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, 1, "ID");
-					for(Feature f : buLU) f.setAttribute("CC", "LU");
-					logger.info("   " + buLU.size() + " buildings LU");
-					bu.addAll(buLU); buLU.clear();
-				}
+				LU.loadBuildings(basePath, xMin, yMin, xMax, yMax, bu);
 
 				//TODO filter duplicates among countries
 
@@ -211,7 +207,7 @@ public class BuildingStatsComputation {
 
 	//TODO move to geodata ?
 	//TODO add possibility for other filter ?
-	private static Collection<Feature> getFeatures(String path, int xMin, int yMin, int xMax, int yMax, double d, String idAtt) {
+	static Collection<Feature> getFeatures(String path, int xMin, int yMin, int xMax, int yMax, double d, String idAtt) {
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(
 					path,
