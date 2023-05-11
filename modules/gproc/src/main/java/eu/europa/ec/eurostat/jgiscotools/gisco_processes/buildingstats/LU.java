@@ -13,7 +13,7 @@ public class LU implements CountryHandler {
 	private static Logger logger = LogManager.getLogger(LU.class.getName());
 
 
-	public static void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
+	public void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
 		Collection<Feature> buLU = BuildingStatsComputation.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", xMin, yMin, xMax, yMax, 1, "ID");
 		for(Feature f : buLU) f.setAttribute("CC", "LU");
 		logger.info("   " + buLU.size() + " buildings LU");
@@ -22,7 +22,7 @@ public class LU implements CountryHandler {
 	}
 
 
-	static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
+	MapOperation<BuildingStat> mapOp = new MapOperation<>() {
 		@Override
 		public BuildingStat map(Feature f, Geometry inter) {
 			if(inter == null || inter.isEmpty()) return new BuildingStat();

@@ -34,7 +34,7 @@ public class FR implements CountryHandler {
 
 
 
-	public MapOperation<BuildingStat> mapOp = new MapOperation<>() {
+	MapOperation<BuildingStat> mapOp = new MapOperation<>() {
 		@Override
 		public BuildingStat map(Feature f, Geometry inter) {
 			if(inter == null || inter.isEmpty()) return new BuildingStat();
