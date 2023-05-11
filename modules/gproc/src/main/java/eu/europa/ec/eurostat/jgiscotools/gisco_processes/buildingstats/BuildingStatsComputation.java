@@ -63,11 +63,11 @@ public class BuildingStatsComputation {
 				Collection<Feature> bu = new ArrayList<Feature>();
 
 				logger.info("Load buildings FR...");
-				FR.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				new FR().loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings BE...");
-				BE.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				new BE().loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings LU...");
-				LU.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				new LU().loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
 				//TODO filter duplicates among countries
 
@@ -105,9 +105,9 @@ public class BuildingStatsComputation {
 		public BuildingStat map(Feature f, Geometry inter) {
 			String cc = f.getAttribute("CC").toString();
 			switch (cc) {
-			case "FR": return FR.mapOp.map(f, inter);
-			case "BE": return BE.mapOp.map(f, inter);
-			case "LU": return LU.mapOp.map(f, inter);
+			case "FR": return new FR().mapOp.map(f, inter);
+			case "BE": return new BE().mapOp.map(f, inter);
+			case "LU": return new LU().mapOp.map(f, inter);
 			default: return null;
 			}
 		}

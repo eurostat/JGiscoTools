@@ -16,7 +16,7 @@ public class FR implements CountryHandler {
 
 
 
-	public static void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
+	public void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
 		Collection<Feature> buFR = new ArrayList<Feature>();
 		for(String ds : new String[] {"R11", "R24", "R27", "R28", "R32", "R44", "R52", "R53", "R75", "R76", "R84", "R93", "R94"}) {
 			Collection<Feature> buFR_ = BuildingStatsComputation.getFeatures(basePath + "geodata/fr/bdtopo/BATIMENT"+ds+".gpkg", xMin, yMin, xMax, yMax, 1, "ID");
@@ -34,7 +34,7 @@ public class FR implements CountryHandler {
 
 
 
-	static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
+	public MapOperation<BuildingStat> mapOp = new MapOperation<>() {
 		@Override
 		public BuildingStat map(Feature f, Geometry inter) {
 			if(inter == null || inter.isEmpty()) return new BuildingStat();
