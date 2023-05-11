@@ -108,6 +108,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 	private BE be = new BE();
 	private LU lu = new LU();
 
+
 	@Override
 	public BuildingStat map(Feature f, Geometry inter) {
 		String cc = f.getAttribute("CC").toString();
@@ -118,7 +119,6 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		default: return null;
 		}
 	}
-
 
 	@Override
 	public Collection<Stat> reduce(String cellIdAtt, String cellId, Collection<BuildingStat> data) {
