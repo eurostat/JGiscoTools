@@ -1,5 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.logging.log4j.LogManager;
@@ -7,22 +8,30 @@ import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 
 public class FR {
 	private static Logger logger = LogManager.getLogger(FR.class.getName());
 
+
+
 	public static void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
+		Collection<Feature> buFR = new ArrayList<Feature>();
 		for(String ds : new String[] {"R11", "R24", "R27", "R28", "R32", "R44", "R52", "R53", "R75", "R76", "R84", "R93", "R94"}) {
-			Collection<Feature> buFR = BuildingStatsComputation.getFeatures(basePath + "geodata/fr/bdtopo/BATIMENT"+ds+".gpkg", xMin, yMin, xMax, yMax, 1, "ID");
+			Collection<Feature> buFR_ = BuildingStatsComputation.getFeatures(basePath + "geodata/fr/bdtopo/BATIMENT"+ds+".gpkg", xMin, yMin, xMax, yMax, 1, "ID");
 			//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
-			for(Feature f : buFR) f.setAttribute("CC", "FR");
-			logger.info("   " + buFR.size() + " buildings FR");
-			bu.addAll(buFR); buFR.clear();
-			//TODO remove duplicates ?
-			//FeatureUtil.removeDuplicates(buFR, "ID")
+			buFR.addAll(buFR_); buFR_.clear();
+			logger.info(ds + " " + buFR_.size() + " buildings FR");
 		}
+		//remove duplicates
+		buFR = FeatureUtil.removeDuplicates(buFR, "ID");
+		//set country code
+		for(Feature f : buFR) f.setAttribute("CC", "FR");
+		//
+		bu.addAll(buFR); buFR.clear();
 	}
+
 
 
 	static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
