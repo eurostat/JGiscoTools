@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
+import org.geotools.geopkg.GeoPkgDialect;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.Filter;
 
