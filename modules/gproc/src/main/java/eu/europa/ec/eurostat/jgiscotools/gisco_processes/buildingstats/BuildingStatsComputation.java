@@ -53,6 +53,18 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 				logger.info("Partition " + xMin + " " + yMin);
 
+
+				logger.info("Load buildings...");
+				Collection<Feature> bu = new ArrayList<Feature>();
+
+				//logger.info("Load buildings FR...");
+				bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				logger.info("Load buildings LU...");
+				bsc.lu.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				logger.info("Load buildings BE...");
+				bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+
+
 				logger.info("Load cells...");
 				ArrayList<Feature> cells = null;
 				try {
@@ -62,16 +74,6 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				} catch (CQLException e) { e.printStackTrace(); }
 				if(cells==null || cells.size() == 0) continue;
 				logger.info(cells.size() + " cells");
-
-				logger.info("Load buildings...");
-				Collection<Feature> bu = new ArrayList<Feature>();
-
-				logger.info("Load buildings FR...");
-				bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
-				logger.info("Load buildings LU...");
-				bsc.lu.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
-				logger.info("Load buildings BE...");
-				bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
 				//TODO filter duplicates - overlapping buildings
 
@@ -197,6 +199,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 	//TODO move to geodata ?
 	//TODO add possibility for other filter ?
 	static Collection<Feature> getFeatures(String path, String idAtt, String geomAtt, int xMin, int yMin, int xMax, int yMax, double d) {
+		System.out.println(GeoData.getSchema(path));
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(
 					path,
