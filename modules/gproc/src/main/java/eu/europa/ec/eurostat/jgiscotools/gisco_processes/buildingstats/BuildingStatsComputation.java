@@ -82,6 +82,7 @@ public class BuildingStatsComputation {
 				else shOut.stats.addAll(ga.getStats().stats);
 
 				//help gc
+				for(Feature f : bu) f.destroy();
 				bu.clear();
 				cells.clear();
 			}

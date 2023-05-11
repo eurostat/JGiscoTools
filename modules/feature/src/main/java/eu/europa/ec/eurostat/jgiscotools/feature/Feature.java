@@ -92,4 +92,15 @@ public class Feature {
 		return getAttributes().put(attributeName, value);
 	}
 
+	/**
+	 * Destroy the feature, to help the garbage collector.
+	 */
+	public void destroy() {
+		geometry = null;
+		if(atts!=null) {
+			atts.clear();
+			atts=null;
+		}
+	}
+
 }
