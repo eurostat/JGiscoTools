@@ -53,7 +53,7 @@ public class BuildingStatsComputation {
 				ArrayList<Feature> cells = null;
 				try {
 					String bg = "BBOX(geometry, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
-					Filter fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_1 LIKE '%FRF%' OR NUTS2021_1 LIKE '%BE3%')");
+					Filter fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_1 LIKE '%FR%' OR NUTS2021_1 LIKE '%BE3%')");
 					cells = GeoData.getFeatures(basePath + "geodata/grids/grid_1km_surf.gpkg", null, fil);
 				} catch (CQLException e) { e.printStackTrace(); }
 				if(cells==null || cells.size() == 0) continue;
