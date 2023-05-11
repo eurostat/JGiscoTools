@@ -21,8 +21,8 @@ public class FR {
 		for(String ds : new String[] {"R11", "R24", "R27", "R28", "R32", "R44", "R52", "R53", "R75", "R76", "R84", "R93", "R94"}) {
 			Collection<Feature> buFR_ = BuildingStatsComputation.getFeatures(basePath + "geodata/fr/bdtopo/BATIMENT"+ds+".gpkg", xMin, yMin, xMax, yMax, 1, "ID");
 			//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
+			logger.info(ds + " " + buFR_.size() + " buildings");
 			buFR.addAll(buFR_); buFR_.clear();
-			logger.info(ds + " " + buFR_.size() + " buildings FR");
 		}
 		//remove duplicates
 		buFR = FeatureUtil.removeDuplicates(buFR, "ID");

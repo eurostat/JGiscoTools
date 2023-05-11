@@ -1,5 +1,6 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.logging.log4j.LogManager;
@@ -7,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
+import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 
 public class BE {
@@ -14,14 +16,18 @@ public class BE {
 
 
 	public static void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
+		Collection<Feature> buBE = new ArrayList<Feature>();
 		for(String ds : new String[] {"PICC_vDIFF_SHAPE_31370_PROV_BRABANT_WALLON", "PICC_vDIFF_SHAPE_31370_PROV_HAINAUT", "PICC_vDIFF_SHAPE_31370_PROV_LIEGE", "PICC_vDIFF_SHAPE_31370_PROV_LUXEMBOURG", "PICC_vDIFF_SHAPE_31370_PROV_NAMUR"}) {
-			Collection<Feature> buBE = BuildingStatsComputation.getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, 1, "GEOREF_ID");
-			for(Feature f : buBE) f.setAttribute("CC", "BE");
-			logger.info("   " + buBE.size() + " buildings BE " + ds);
-			bu.addAll(buBE); buBE.clear();
-			//TODO remove duplicates ?
-			//FeatureUtil.removeDuplicates(buBE, "GEOREF_ID")
+			Collection<Feature> buBE_ = BuildingStatsComputation.getFeatures(basePath + "geodata/be/"+ds+"/CONSTR_BATIEMPRISE.gpkg", xMin, yMin, xMax, yMax, 1, "GEOREF_ID");
+			logger.info(ds + " " + buBE_.size() + " buildings");
+			buBE.addAll(buBE_); buBE_.clear();
 		}
+		//remove duplicates
+		buBE = FeatureUtil.removeDuplicates(buBE, "ID");
+		//set country code
+		for(Feature f : buBE) f.setAttribute("CC", "BE");
+		//
+		bu.addAll(buBE); buBE.clear();
 	}
 
 
