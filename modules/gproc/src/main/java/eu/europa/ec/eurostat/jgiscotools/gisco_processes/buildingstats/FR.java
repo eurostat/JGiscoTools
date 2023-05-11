@@ -13,7 +13,7 @@ public class FR {
 	private static Logger logger = LogManager.getLogger(FR.class.getName());
 
 	public static void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
-		for(String ds : new String[] {""}) {
+		for(String ds : new String[] {"R11", "R24", "R27", "R28", "R32", "R44", "R52", "R53", "R75", "R76", "R84", "R93", "R94"}) {
 			Collection<Feature> buFR = BuildingStatsComputation.getFeatures(basePath + "geodata/fr/bdtopo/BATIMENT"+ds+".gpkg", xMin, yMin, xMax, yMax, 1, "ID");
 			//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
 			for(Feature f : buFR) f.setAttribute("CC", "FR");
