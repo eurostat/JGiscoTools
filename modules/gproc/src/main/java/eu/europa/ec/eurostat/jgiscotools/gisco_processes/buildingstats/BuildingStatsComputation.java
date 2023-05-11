@@ -66,11 +66,11 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				Collection<Feature> bu = new ArrayList<Feature>();
 
 				logger.info("Load buildings FR...");
-				new FR().loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings BE...");
-				new BE().loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings LU...");
-				new LU().loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				bsc.lu.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
 				//TODO filter duplicates - overlapping buildings
 
@@ -104,14 +104,17 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 	}
 
 
+	private FR fr = new FR();
+	private BE be = new BE();
+	private LU lu = new LU();
 
 	@Override
 	public BuildingStat map(Feature f, Geometry inter) {
 		String cc = f.getAttribute("CC").toString();
 		switch (cc) {
-		case "FR": return new FR().map(f, inter);
-		case "BE": return new BE().map(f, inter);
-		case "LU": return new LU().map(f, inter);
+		case "FR": return fr.map(f, inter);
+		case "BE": return be.map(f, inter);
+		case "LU": return lu.map(f, inter);
 		default: return null;
 		}
 	}
