@@ -12,18 +12,19 @@ import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 public class FR {
 	private static Logger logger = LogManager.getLogger(FR.class.getName());
 
-
 	public static void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
-		Collection<Feature> buFR = BuildingStatsComputation.getFeatures(basePath + "geodata/fr/bdtopo/BDTOPO_3-3_TOUSTHEMES_GPKG_LAMB93_R44_2023-03-15/BATIMENT.gpkg", xMin, yMin, xMax, yMax, 1, "ID");
-		//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
-		for(Feature f : buFR) f.setAttribute("CC", "FR");
-		logger.info("   " + buFR.size() + " buildings FR");
-		bu.addAll(buFR); buFR.clear();
-		//TODO remove duplicates ?
-		//FeatureUtil.removeDuplicates(buFR, "ID")
+		for(String ds : new String[] {""}) {
+			Collection<Feature> buFR = BuildingStatsComputation.getFeatures(basePath + "geodata/fr/bdtopo/BATIMENT"+ds+".gpkg", xMin, yMin, xMax, yMax, 1, "ID");
+			//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
+			for(Feature f : buFR) f.setAttribute("CC", "FR");
+			logger.info("   " + buFR.size() + " buildings FR");
+			bu.addAll(buFR); buFR.clear();
+			//TODO remove duplicates ?
+			//FeatureUtil.removeDuplicates(buFR, "ID")
+		}
 	}
 
-	
+
 	static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
 		@Override
 		public BuildingStat map(Feature f, Geometry inter) {

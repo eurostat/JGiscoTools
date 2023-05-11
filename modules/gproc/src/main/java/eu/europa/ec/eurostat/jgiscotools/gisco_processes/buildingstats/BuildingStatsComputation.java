@@ -61,6 +61,7 @@ public class BuildingStatsComputation {
 
 				logger.info("Load buildings...");
 				Collection<Feature> bu = new ArrayList<Feature>();
+
 				logger.info("Load buildings FR...");
 				FR.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings BE...");
