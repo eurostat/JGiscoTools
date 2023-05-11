@@ -19,8 +19,8 @@ import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.ReduceOperation;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
-public class BuildingStatsComputationOld {
-	private static Logger logger = LogManager.getLogger(BuildingStatsComputationOld.class.getName());
+public class ZZZBuildingStatsComputationOld {
+	private static Logger logger = LogManager.getLogger(ZZZBuildingStatsComputationOld.class.getName());
 
 	//use: -Xms2G -Xmx12G
 	/** @param args 
