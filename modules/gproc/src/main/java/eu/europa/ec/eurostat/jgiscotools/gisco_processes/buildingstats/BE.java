@@ -24,7 +24,8 @@ public class BE {
 		}
 	}
 
-	
+
+
 	static MapOperation<BuildingStat> mapOp = new MapOperation<>() {
 		@Override
 		public BuildingStat map(Feature f, Geometry inter) {
@@ -66,7 +67,6 @@ public class BE {
 			return bs;
 		}
 	};
-
 
 
 }
