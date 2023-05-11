@@ -203,9 +203,4 @@ public class BuildingStatsComputation {
 
 	}
 
-
-	public interface CountryHandler {
-		
-	}
-
 }

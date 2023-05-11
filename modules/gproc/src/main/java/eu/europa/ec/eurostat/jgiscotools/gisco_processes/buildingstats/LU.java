@@ -8,7 +8,6 @@ import org.locationtech.jts.geom.Geometry;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
-import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.BuildingStatsComputation.CountryHandler;
 
 public class LU implements CountryHandler {
 	private static Logger logger = LogManager.getLogger(LU.class.getName());
