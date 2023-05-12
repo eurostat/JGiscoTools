@@ -37,8 +37,8 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		String basePath = "H:/ws/";
 		//String basePath = "/home/juju/Bureau/gisco/";
 
-		int xMin_ = 3700000, xMax_ = 4200000;
-		int yMin_ = 2500000, yMax_ = 3200000;
+		int xMin_ = 3100000, xMax_ = 4200000;
+		int yMin_ = 1900000, yMax_ = 3200000;
 		int step = 100000;
 
 		//the output statistics
@@ -61,6 +61,10 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				logger.info("Load buildings BE...");
 				bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
+				//TODO filter duplicates - overlapping buildings
+
+				if(bu.size() == 0) continue;
+
 
 				logger.info("Load cells...");
 				ArrayList<Feature> cells = null;
@@ -72,9 +76,8 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				if(cells==null || cells.size() == 0) continue;
 				logger.info(cells.size() + " cells");
 
-				//TODO filter duplicates - overlapping buildings
+				if(cells.size() == 0) continue;
 
-				if(bu.size() == 0) continue;
 
 				//compute aggregation
 				GridAggregator<BuildingStat> ga = new GridAggregator<>(cells, "GRD_ID", bu, bsc, bsc);
