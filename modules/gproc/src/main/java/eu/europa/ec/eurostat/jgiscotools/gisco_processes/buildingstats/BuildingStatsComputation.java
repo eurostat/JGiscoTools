@@ -52,7 +52,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				logger.info("Partition " + xMin + " " + yMin);
 
 				logger.info("Load buildings...");
-				Collection<Feature> bu = new ArrayList<Feature>();
+				ArrayList<Feature> bu = new ArrayList<>();
 
 				logger.info("Load buildings FR...");
 				bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
@@ -62,20 +62,19 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
 				//TODO filter duplicates - overlapping buildings
-
+				logger.info(bu.size() + " buildings");
 				if(bu.size() == 0) continue;
 
 
 				logger.info("Load cells...");
-				ArrayList<Feature> cells = null;
+				ArrayList<Feature> cells = new ArrayList<>();
 				try {
 					String bg = "BBOX(geometry, "+(xMin+1)+", "+(yMin+1)+", "+(xMax-1)+", "+(yMax-1)+") AND ";
 					Filter fil = CQL.toFilter(bg + "(NUTS2021_0 LIKE '%LU%' OR NUTS2021_1 LIKE '%FR%' OR NUTS2021_1 LIKE '%BE3%')");
 					cells = GeoData.getFeatures(basePath + "geodata/grids/grid_1km_surf.gpkg", null, fil);
 				} catch (CQLException e) { e.printStackTrace(); }
-				if(cells==null || cells.size() == 0) continue;
-				logger.info(cells.size() + " cells");
 
+				logger.info(cells.size() + " cells");
 				if(cells.size() == 0) continue;
 
 
