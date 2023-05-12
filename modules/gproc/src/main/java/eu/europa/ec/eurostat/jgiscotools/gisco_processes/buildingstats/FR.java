@@ -21,7 +21,7 @@ public class FR implements BuildingDataLoader, MapOperation<BuildingStat> {
 		for(String ds : new String[] {"R11", "R24", "R27", "R28", "R32", "R44", "R52", "R53", "R75", "R76", "R84", "R93", "R94"}) {
 			Collection<Feature> buFR_ = BuildingStatsComputation.getFeatures(basePath + "geodata/fr/bdtopo/BATIMENT"+ds+".gpkg", "ID", "geom", xMin, yMin, xMax, yMax, 1);
 			//"(ETAT='En service' AND (USAGE1='Résidentiel' OR USAGE2='Résidentiel'))"
-			logger.info(ds + " " + buFR_.size() + " buildings");
+			logger.info(buFR_.size() + " buildings in " + ds);
 			buFR.addAll(buFR_); buFR_.clear();
 		}
 		//remove duplicates

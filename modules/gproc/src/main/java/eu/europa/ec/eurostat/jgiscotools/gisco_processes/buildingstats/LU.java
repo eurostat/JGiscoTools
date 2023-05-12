@@ -16,7 +16,7 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 	public void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
 		Collection<Feature> buLU = BuildingStatsComputation.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", "ID", "geom", xMin, yMin, xMax, yMax, 1);
 		for(Feature f : buLU) f.setAttribute("CC", "LU");
-		logger.info("   " + buLU.size() + " buildings LU");
+		logger.info(buLU.size() + " buildings");
 		bu.addAll(buLU);
 		buLU.clear();
 	}
