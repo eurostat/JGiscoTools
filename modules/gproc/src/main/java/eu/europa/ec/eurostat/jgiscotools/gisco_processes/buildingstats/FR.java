@@ -25,7 +25,7 @@ public class FR implements BuildingDataLoader, MapOperation<BuildingStat> {
 			buFR.addAll(buFR_); buFR_.clear();
 		}
 		//remove duplicates
-		buFR = FeatureUtil.removeDuplicates(buFR, "ID");
+		buFR = FeatureUtil.removeDuplicates(buFR, null);
 		//set country code
 		for(Feature f : buFR) f.setAttribute("CC", "FR");
 		//
