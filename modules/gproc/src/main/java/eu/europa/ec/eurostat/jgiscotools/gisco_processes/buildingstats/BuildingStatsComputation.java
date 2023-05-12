@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
-import org.geotools.geopkg.GeoPkgDialect;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.Filter;
 
@@ -35,7 +34,6 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
-
 		String basePath = "H:/ws/";
 		//String basePath = "/home/juju/Bureau/gisco/";
 
@@ -53,11 +51,10 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 				logger.info("Partition " + xMin + " " + yMin);
 
-
 				logger.info("Load buildings...");
 				Collection<Feature> bu = new ArrayList<Feature>();
 
-				//logger.info("Load buildings FR...");
+				logger.info("Load buildings FR...");
 				bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings LU...");
 				bsc.lu.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
@@ -199,7 +196,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 	//TODO move to geodata ?
 	//TODO add possibility for other filter ?
 	static Collection<Feature> getFeatures(String path, String idAtt, String geomAtt, int xMin, int yMin, int xMax, int yMax, double d) {
-		System.out.println(GeoData.getSchema(path));
+		//System.out.println(GeoData.getSchema(path));
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(
 					path,

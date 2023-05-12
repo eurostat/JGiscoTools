@@ -29,6 +29,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.geopkg.GeoPkgDataStoreFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -146,6 +147,7 @@ public class GeoData {
 	private abstract interface GeoDataFormatHandler {
 		SimpleFeatureType getSchema(File file);
 		ArrayList<Feature> getFeatures(File file, String typeName, Filter filter, String idAtt);
+		ReferencedEnvelope getEnvelope(File file, String typeName);
 		void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex);
 		String getGeomColName();
 	}
@@ -203,6 +205,33 @@ public class GeoData {
 			} catch (IOException e) { e.printStackTrace(); }
 			return null;
 		}
+
+		@Override
+		public ReferencedEnvelope getEnvelope(File file, String typeName) {
+			try {
+				//build datastore
+				HashMap<String, Object> params = new HashMap<>();
+				params.put(GeoPkgDataStoreFactory.DBTYPE.key, "geopkg");
+				params.put(GeoPkgDataStoreFactory.DATABASE.key, file);
+				DataStore store = DataStoreFinder.getDataStore(params);
+
+				//get typename
+				if(typeName ==null) {
+					String[] names = store.getTypeNames();
+					typeName = names[0];
+					if(names.length > 1)
+						LOGGER.warn("Several types found in GPKG " + file.getAbsolutePath() + ". Only " + typeName + " will be considered.");
+				}
+				if(LOGGER.isDebugEnabled()) LOGGER.debug(typeName);
+
+				SimpleFeatureSource fso = store.getFeatureSource(typeName);
+				ReferencedEnvelope env = fso.getBounds();
+				store.dispose();
+				return env;
+			} catch (Exception e) { e.printStackTrace(); }
+			return null;
+		}
+
 
 		@Override
 		public void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
@@ -275,6 +304,13 @@ public class GeoData {
 		}		
 
 		@Override
+		public ReferencedEnvelope getEnvelope(File file, String typeName) {
+			LOGGER.error("getEnvelope method not implemented for GeoJSON format");
+			return null;
+		}
+
+
+		@Override
 		public void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
 			try {
 				OutputStream output = new FileOutputStream(file);
@@ -306,6 +342,17 @@ public class GeoData {
 			} catch (Exception e) { e.printStackTrace(); }
 			return null;
 		}		
+
+		@Override
+		public ReferencedEnvelope getEnvelope(File file, String typeName) {
+			try {
+				FileDataStore store = FileDataStoreFinder.getDataStore(file);
+				ReferencedEnvelope env = store.getFeatureSource().getBounds();
+				store.dispose();
+				return env;
+			} catch (Exception e) { e.printStackTrace(); }
+			return null;
+		}
 
 		@Override
 		public void save(SimpleFeatureCollection sfc, File file, CoordinateReferenceSystem crs, boolean createSpatialIndex) {
