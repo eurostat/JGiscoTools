@@ -43,7 +43,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		 
 		
 		//lux
-		int xMin_ = 2900000, xMax_ = 3050000;
+		int xMin_ = 2900000, xMax_ = 3000000;
 		int yMin_ = 3950000, yMax_ = 4100000;
 
 		int step = 50000;
