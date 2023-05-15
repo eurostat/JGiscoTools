@@ -111,7 +111,7 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 
 
 
-
+	/*
 	public static void main(String[] args) {
 
 		double x = 4047105;
@@ -119,6 +119,6 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 
 		System.out.println(getElevation(x, y));
 
-	}
+	}*/
 
 }
