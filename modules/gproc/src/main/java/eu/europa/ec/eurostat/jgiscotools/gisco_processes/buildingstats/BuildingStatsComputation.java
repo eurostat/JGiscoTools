@@ -11,7 +11,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.Filter;
 
 import eu.europa.ec.eurostat.java4eurostat.base.Stat;
-import eu.europa.ec.eurostat.java4eurostat.base.StatsHypercube;
 import eu.europa.ec.eurostat.java4eurostat.io.CSV;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
@@ -26,6 +25,9 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, MapOperation<BuildingStat> {
 	private static Logger logger = LogManager.getLogger(BuildingStatsComputation.class.getName());
 
+	private static String basePath = "H:/ws/";
+	//private static String basePath = "/home/juju/Bureau/gisco/";
+
 	//use: -Xms2G -Xmx12G
 	/** @param args 
 	 * @throws Exception **/
@@ -34,15 +36,9 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
-		String basePath = "H:/ws/";
-		//String basePath = "/home/juju/Bureau/gisco/";
-
 		int xMin_ = 3100000, xMax_ = 4300000;
 		int yMin_ = 1900000, yMax_ = 3200000;
 		int step = 50000;
-
-		//the output statistics
-		StatsHypercube shOut = null;
 
 		for(int xMin = xMin_; xMin<xMax_; xMin += step) {
 			int xMax = xMin + step;
@@ -82,28 +78,39 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				GridAggregator<BuildingStat> ga = new GridAggregator<>(cells, "GRD_ID", bu, bsc, bsc);
 				ga.compute(true);
 
-				if(ga.getStats().stats.size() == 0) continue;
-
-				if(shOut == null) shOut = ga.getStats();
-				else shOut.stats.addAll(ga.getStats().stats);
-
 				//help gc
 				for(Feature f : bu) f.destroy();
 				bu.clear();
 				cells.clear();
+
+				if(ga.getStats().stats.size() == 0) continue;
+
+				//if(shOut == null) shOut = ga.getStats();
+				//else shOut.stats.addAll(ga.getStats().stats);
+
+				logger.info("Round values...");
+				for(Stat s : ga.getStats().stats)
+					s.value = (int) Math.round(s.value);
+
+				logger.info("Save...");
+				//TODO order columns ?
+				CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/tiled/building_area"+xMin+"_"+yMin+".csv", "bu_stat");
+
 			}
 		}
 
-		logger.info("Round values...");
+		/*logger.info("Round values...");
 		for(Stat s : shOut.stats)
 			s.value = (int) Math.round(s.value);
 
 		logger.info("Save...");
 		//TODO order columns
-		CSV.saveMultiValues(shOut, basePath + "building_stats/building_area.csv", "bu_stat");
+		CSV.saveMultiValues(shOut, basePath + "building_stats/building_area.csv", "bu_stat");*/
 
 		logger.info("End");
 	}
+
+
 
 
 	private FR fr = new FR();
