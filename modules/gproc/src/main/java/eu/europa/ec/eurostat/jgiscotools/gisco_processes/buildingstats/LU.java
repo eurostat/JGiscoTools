@@ -40,8 +40,8 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		//double elevTop = f.getGeometry().getCoordinate().z;
 		//System.out.println(elevTop);
 		Point c = f.getGeometry().getCentroid();
-		double elevGround = getElevation(c.getX(), c.getY());
-		System.out.println(elevGround);
+		//double elevGround = getElevation(c.getX(), c.getY());
+		//System.out.println(elevGround);
 
 		double contrib = nb * area;
 

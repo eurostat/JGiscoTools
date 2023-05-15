@@ -40,9 +40,11 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		//int xMin_ = 3200000, xMax_ = 4300000;
 		//int yMin_ = 1900000, yMax_ = 3200000;
 
+		 
+		
 		//lux
-		int xMin_ = 2950000, xMax_ = 3100000;
-		int yMin_ = 4000000, yMax_ = 4150000;
+		int xMin_ = 2900000, xMax_ = 3050000;
+		int yMin_ = 3950000, yMax_ = 4100000;
 
 		int step = 50000;
 
@@ -56,12 +58,12 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				logger.info("Load buildings...");
 				ArrayList<Feature> bu = new ArrayList<>();
 
-				logger.info("Load buildings FR...");
-				bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				//logger.info("Load buildings FR...");
+				//bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings LU...");
 				bsc.lu.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
-				logger.info("Load buildings BE...");
-				bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				//logger.info("Load buildings BE...");
+				//bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
 				//TODO filter duplicates - overlapping buildings
 				logger.info(bu.size() + " buildings");
