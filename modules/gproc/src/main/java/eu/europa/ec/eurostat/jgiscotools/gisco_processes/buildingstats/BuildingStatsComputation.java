@@ -56,12 +56,12 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				logger.info("Load buildings...");
 				ArrayList<Feature> bu = new ArrayList<>();
 
-				//logger.info("Load buildings FR...");
-				//bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				logger.info("Load buildings FR...");
+				bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings LU...");
 				bsc.lu.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
-				//logger.info("Load buildings BE...");
-				//bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				logger.info("Load buildings BE...");
+				bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
 				//TODO filter duplicates - overlapping buildings
 				logger.info(bu.size() + " buildings");

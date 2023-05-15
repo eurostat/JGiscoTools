@@ -40,19 +40,23 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		double elevTop = f.getGeometry().getCoordinate().z;
 		Point c = f.getGeometry().getCentroid();
 		double elevGround = getElevation(c.getX(), c.getY());
-		System.out.println(elevGround);
 		double h = elevTop - elevGround ;
-		if(h<0) {
-			logger.warn("Negative building height - id: " + f.getID() + " - h=" + h);
+		if(h<1) {
+			//if(h<0) {
+			//logger.warn("Negative building height - id: " + f.getID() + " - h=" + h);
+			//logger.warn("  elevTop:" + elevTop + " - elevGround:" + elevGround);
+			//logger.warn("  " + (int)c.getCoordinate().y + " " + (int)c.getCoordinate().x);
 			return new BuildingStat();
 		}
-		System.out.println(elevTop + " " + elevGround);
 		int nb = (int) (h/floorHeight);
 		if(nb<1) {
-			logger.warn("Building with no floor - id: " + f.getID() + " - h=" + h);
-			return new BuildingStat();
+			nb = 1;
+			//logger.warn("Building with no floor - id: " + f.getID() + " - h=" + h);
+			//logger.warn("  elevTop:" + elevTop + " - elevGround:" + elevGround);
+			//logger.warn("  " + (int)c.getCoordinate().y + " " + (int)c.getCoordinate().x);
+			//return new BuildingStat();
 		}
-		System.out.println(nb);
+		//System.out.println(nb);
 
 		double contrib = nb * area;
 
@@ -86,8 +90,9 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 
 
 	private static GridCoverage2D dtm = null;
-	private static GridCoverage2D getDTM() {
+	private static synchronized GridCoverage2D getDTM() {
 		if(dtm==null) {
+			logger.info("Load LU DTM...");
 			String f = "H:/ws/geodata/lu/MNT_LIDAR_2019/MNT_lux2017.tif";
 			dtm = GeoTiffUtil.getGeoTIFFCoverage(f);
 		}
@@ -101,21 +106,24 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 	private static double getElevation(double xG, double yG) {
 
 		//transform coordinates
-		Coordinate c2169_ = CRSUtil.project(new Coordinate(yG,xG), crs3035, crs2169);
+		Coordinate c = CRSUtil.project(new Coordinate(yG, xG), crs3035, crs2169);
 
 		//return value from DTM
 		double[] v2 = new double[1];
-		getDTM().evaluate(new Point2D.Double(c2169_.x, c2169_.y), v2);
+		getDTM().evaluate(new Point2D.Double(c.y, c.x), v2);
 		return v2[0];
 	}
 
 	/*
 	public static void main(String[] args) {
+		//elevGround:301.0 - bad
+		//expected: 268
 
-		double x = 4047105;
-		double y = 2962350;
+		//2169
+		//System.out.println(getElevation(78303, 66616));
 
-		System.out.println(getElevation(x, y));
+		//3035
+		System.out.println(getElevation(4042022, 2943035));
 
 	}*/
 
