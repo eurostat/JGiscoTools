@@ -37,9 +37,9 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		String basePath = "H:/ws/";
 		//String basePath = "/home/juju/Bureau/gisco/";
 
-		int xMin_ = 3100000, xMax_ = 4200000;
+		int xMin_ = 3100000, xMax_ = 4300000;
 		int yMin_ = 1900000, yMax_ = 3200000;
-		int step = 100000;
+		int step = 50000;
 
 		//the output statistics
 		StatsHypercube shOut = null;
