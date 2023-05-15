@@ -36,8 +36,14 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
-		int xMin_ = 3200000, xMax_ = 4300000;
-		int yMin_ = 1900000, yMax_ = 3200000;
+		//whole
+		//int xMin_ = 3200000, xMax_ = 4300000;
+		//int yMin_ = 1900000, yMax_ = 3200000;
+
+		//lux
+		int xMin_ = 2950000, xMax_ = 3100000;
+		int yMin_ = 4000000, yMax_ = 4150000;
+
 		int step = 50000;
 
 		for(int xMin = xMin_; xMin<xMax_; xMin += step) {
