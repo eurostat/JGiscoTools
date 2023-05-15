@@ -109,8 +109,6 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		return v2[0];
 	}
 
-
-
 	/*
 	public static void main(String[] args) {
 
