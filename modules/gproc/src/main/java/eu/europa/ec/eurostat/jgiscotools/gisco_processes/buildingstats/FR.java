@@ -33,6 +33,7 @@ public class FR implements BuildingDataLoader, MapOperation<BuildingStat> {
 	}
 
 
+	double floorHeight = 3.5;
 
 	@Override
 	public BuildingStat map(Feature f, Geometry inter) {
@@ -48,7 +49,7 @@ public class FR implements BuildingDataLoader, MapOperation<BuildingStat> {
 			//compute floors nb from height
 			Double h = (Double) f.getAttribute("hauteur");
 			if(h==null) nb = 1;
-			else nb = Math.max( (int)(h/3.5), 1);
+			else nb = Math.max( (int)(h/floorHeight), 1);
 		}
 
 		double contrib = nb*area;

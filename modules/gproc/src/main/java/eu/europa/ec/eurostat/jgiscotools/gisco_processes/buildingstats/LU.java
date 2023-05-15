@@ -29,6 +29,8 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		buLU.clear();
 	}
 
+	double floorHeight = 3.5;
+
 	@Override
 	public BuildingStat map(Feature f, Geometry inter) {
 		if(inter == null || inter.isEmpty()) return new BuildingStat();
@@ -36,12 +38,22 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		if(area == 0 ) return new BuildingStat();
 
 		//nb floors
-		Integer nb = 1;
-		//double elevTop = f.getGeometry().getCoordinate().z;
-		//System.out.println(elevTop);
+		double elevTop = f.getGeometry().getCoordinate().z;
+		System.out.println(elevTop);
 		Point c = f.getGeometry().getCentroid();
-		//double elevGround = getElevation(c.getX(), c.getY());
-		//System.out.println(elevGround);
+		double elevGround = getElevation(c.getX(), c.getY());
+		double h = elevTop - elevGround;
+		if(h<0) {
+			logger.warn("Negative building height - id: " + f.getID() + " - h=" + h);
+			return new BuildingStat();
+		}
+		System.out.println(elevTop + " " + elevGround);
+		int nb = (int) (h/floorHeight);
+		if(nb<1) {
+			logger.warn("Building with no floor - id: " + f.getID() + " - h=" + h);
+			return new BuildingStat();
+		}
+		System.out.println(nb);
 
 		double contrib = nb * area;
 
