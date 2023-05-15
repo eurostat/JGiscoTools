@@ -4,10 +4,18 @@ import java.util.Collection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.coverage.grid.GridCoordinates2D;
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
+import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 
 public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 	private static Logger logger = LogManager.getLogger(LU.class.getName());
@@ -31,6 +39,9 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		Integer nb = 1;
 		//double elevTop = f.getGeometry().getCoordinate().z;
 		//System.out.println(elevTop);
+		Point c = f.getGeometry().getCentroid();
+		double elevGround = getElevation(c.getX(), c.getY());
+		System.out.println(elevGround);
 
 		double contrib = nb * area;
 
@@ -60,6 +71,42 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		}
 
 		return bs;
+	}
+
+
+	private static GridCoverage2D dtm = null;
+	private static double res = 1; //1m
+	private GridCoverage2D getDTM() {
+		if(dtm==null) {
+			String f = "H:/ws/geodata/lu/MNT_LIDAR_2019/MNT_lux2017.tif";
+			dtm = GeoTiffUtil.getGeoTIFFCoverage(f);
+		}
+		return dtm;
+	}
+
+
+
+	private double getElevation(double xG, double yG) {
+		//open geotiff
+		GridCoverage2D dtm = getDTM();
+		Envelope envG = dtm.getEnvelope();
+		double minGX = envG.getMinimum(0);
+		double maxGY = envG.getMaximum(1);
+
+		//TODO convert coordinates from 3035 to 
+		CoordinateReferenceSystem crs3035 = CRSUtil.getETRS89_LAEA_CRS();
+		CoordinateReferenceSystem crs2169 = CRSUtil.getCRS(2169);
+		Coordinate c2169 = CRSUtil.project(new Coordinate(xG,yG), crs3035, crs2169);
+
+		//compute raster position
+		int i = (int)((c2169.x-minGX)/res);
+		int j = (int)(-(c2169.y-maxGY)/res) -1;
+
+		//get value
+		int[] v = new int[1];
+		getDTM().evaluate(new GridCoordinates2D(i,j), v);
+
+		return v[0];
 	}
 
 }

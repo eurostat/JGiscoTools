@@ -36,7 +36,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
-		int xMin_ = 3100000, xMax_ = 4300000;
+		int xMin_ = 3200000, xMax_ = 4300000;
 		int yMin_ = 1900000, yMax_ = 3200000;
 		int step = 50000;
 
@@ -94,7 +94,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 				logger.info("Save...");
 				//TODO order columns ?
-				CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/tiled/building_area"+xMin+"_"+yMin+".csv", "bu_stat");
+				CSV.saveMultiValues(ga.getStats(), basePath + "building_stats/tiled/building_area_"+xMin+"_"+yMin+".csv", "bu_stat");
 
 			}
 		}
