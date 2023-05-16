@@ -68,7 +68,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 					if(!firstFile)
 						continue;
 				}
-				w.write(line);
+				w.write(line + "\n");
 			}
 			r.close();
 			firstFile = false;
