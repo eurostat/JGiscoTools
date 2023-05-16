@@ -1,9 +1,11 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,18 +36,45 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 	//use: -Xms2G -Xmx12G
 	/** @param args 
 	 * @throws Exception **/
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		logger.info("Start");
-		
+
 		//computeTiled();
 		mergeTiles();
 
 		logger.info("End");
 	}
 
-	static void mergeTiles() {
+	static void mergeTiles() throws Exception {
 		Set<String> tiles = getFiles(basePath + "building_stats/tiled/");
-		System.out.println(tiles);
+		logger.info(tiles.size() + " to merge");
+
+		//prepare output file
+		File fOut = new File(basePath+"building_stats/building_area.csv");
+		if(fOut.exists()) fOut.delete();
+		fOut.createNewFile();
+		FileWriter w = new FileWriter(fOut);
+
+		//read tiles
+		boolean firstFile = true;
+		for(String tile : tiles) {
+			Scanner r = new Scanner(new File(tile));
+			boolean firstLine = true;
+			while (r.hasNextLine()) {
+				String line = r.nextLine();
+				//skip first line, except for the first file
+				if(firstLine) {
+					firstLine = false;
+					if(!firstFile)
+						continue;
+				}
+				w.write(line);
+			}
+			r.close();
+			firstFile = false;
+		}
+
+		w.close();
 	}
 
 	static void computeTiled() {
@@ -119,9 +148,9 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 			}
 		}
-		
+
 	}
-	
+
 
 
 	private FR fr = new FR();
@@ -229,7 +258,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		return null;
 	}
 
-	
+
 	public static Set<String> getFiles(String dir) {
 		Set<String> out = new HashSet<>();
 		File[] fs = new File(dir).listFiles();
@@ -243,7 +272,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				.filter(file -> !file.isDirectory())
 				.map(File::getAbsolutePath)
 				.collect(Collectors.toSet());
-				*/				
+		 */				
 	}
 
 }
