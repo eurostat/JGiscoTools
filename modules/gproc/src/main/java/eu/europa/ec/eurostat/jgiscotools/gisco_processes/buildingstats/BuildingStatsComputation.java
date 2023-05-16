@@ -1,7 +1,10 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,12 +36,19 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 	 * @throws Exception **/
 	public static void main(String[] args) {
 		logger.info("Start");
+		
+		//computeTiled();
+		mergeTiles();
 
 		logger.info("End");
 	}
 
+	static void mergeTiles() {
+		Set<String> tiles = getFiles(basePath + "building_stats/tiled/");
+		System.out.println(tiles);
+	}
 
-	void computeTiled() {
+	static void computeTiled() {
 		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
 		//whole
@@ -217,6 +227,23 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 			return fs;
 		} catch (CQLException e) { e.printStackTrace(); }
 		return null;
+	}
+
+	
+	public static Set<String> getFiles(String dir) {
+		Set<String> out = new HashSet<>();
+		File[] fs = new File(dir).listFiles();
+		for(File f : fs) {
+			if(f.isDirectory()) continue;
+			out.add(f.getAbsolutePath());
+		}
+		return out;
+		/*
+		return Stream.of(new File(dir).listFiles())
+				.filter(file -> !file.isDirectory())
+				.map(File::getAbsolutePath)
+				.collect(Collectors.toSet());
+				*/				
 	}
 
 }
