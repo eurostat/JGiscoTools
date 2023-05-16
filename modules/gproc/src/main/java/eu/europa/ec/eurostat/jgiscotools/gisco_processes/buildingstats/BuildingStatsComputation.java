@@ -34,6 +34,11 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 	public static void main(String[] args) {
 		logger.info("Start");
 
+		logger.info("End");
+	}
+
+
+	void computeTiled() {
 		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
 		//whole
@@ -104,19 +109,9 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 			}
 		}
-
-		/*logger.info("Round values...");
-		for(Stat s : shOut.stats)
-			s.value = (int) Math.round(s.value);
-
-		logger.info("Save...");
-		//TODO order columns
-		CSV.saveMultiValues(shOut, basePath + "building_stats/building_area.csv", "bu_stat");*/
-
-		logger.info("End");
+		
 	}
-
-
+	
 
 
 	private FR fr = new FR();
