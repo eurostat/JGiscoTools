@@ -39,54 +39,22 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
-		//computeTiled();
+		computeTiled();
 		mergeTiles();
 
 		logger.info("End");
-	}
-
-	static void mergeTiles() throws Exception {
-		Set<String> tiles = getFiles(basePath + "building_stats/tiled/");
-		logger.info(tiles.size() + " to merge");
-
-		//prepare output file
-		File fOut = new File(basePath+"building_stats/building_area.csv");
-		if(fOut.exists()) fOut.delete();
-		fOut.createNewFile();
-		FileWriter w = new FileWriter(fOut);
-
-		//read tiles
-		boolean firstFile = true;
-		for(String tile : tiles) {
-			Scanner r = new Scanner(new File(tile));
-			boolean firstLine = true;
-			while (r.hasNextLine()) {
-				String line = r.nextLine();
-				//skip first line, except for the first file
-				if(firstLine) {
-					firstLine = false;
-					if(!firstFile)
-						continue;
-				}
-				w.write(line + "\n");
-			}
-			r.close();
-			firstFile = false;
-		}
-
-		w.close();
 	}
 
 	static void computeTiled() {
 		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
 		//whole
-		//int xMin_ = 3200000, xMax_ = 4300000;
-		//int yMin_ = 1900000, yMax_ = 3200000;
+		int xMin_ = 3200000, xMax_ = 4300000;
+		int yMin_ = 1900000, yMax_ = 3200000;
 
 		//lux
-		int xMin_ = 4000000, xMax_ = 4100000;
-		int yMin_ = 2900000, yMax_ = 3050000;
+		//int xMin_ = 4000000, xMax_ = 4100000;
+		//int yMin_ = 2900000, yMax_ = 3050000;
 
 		int step = 50000;
 
@@ -273,6 +241,39 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				.map(File::getAbsolutePath)
 				.collect(Collectors.toSet());
 		 */				
+	}
+
+
+	static void mergeTiles() throws Exception {
+		Set<String> tiles = getFiles(basePath + "building_stats/tiled/");
+		logger.info(tiles.size() + " to merge");
+
+		//prepare output file
+		File fOut = new File(basePath+"building_stats/building_area.csv");
+		if(fOut.exists()) fOut.delete();
+		fOut.createNewFile();
+		FileWriter w = new FileWriter(fOut);
+
+		//read tiles
+		boolean firstFile = true;
+		for(String tile : tiles) {
+			Scanner r = new Scanner(new File(tile));
+			boolean firstLine = true;
+			while (r.hasNextLine()) {
+				String line = r.nextLine();
+				//skip first line, except for the first file
+				if(firstLine) {
+					firstLine = false;
+					if(!firstFile)
+						continue;
+				}
+				w.write(line + "\n");
+			}
+			r.close();
+			firstFile = false;
+		}
+
+		w.close();
 	}
 
 }
