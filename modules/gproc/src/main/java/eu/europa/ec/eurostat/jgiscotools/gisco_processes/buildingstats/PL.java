@@ -4,7 +4,7 @@ public class PL {
 
 	//dataset: bdot10k
 	//https://opendata.geoportal.gov.pl/bdot10k/SHP/Polska_SHP.zip
-	
+
 	//class BUBD_A
 	//The object class "building" (oT_BUBd_A) represents building objects permanently attached to the ground, separated from space by means of building partitions, having foundations and a roof.
 
@@ -28,16 +28,16 @@ public class PL {
 	//liczba kondygnacji
 	//number of storeys - the number of above-ground storeys of the 
 	//for religious and production buildings and warehouses of the "number of storeys" attribute is not harvested
-	
-	
-	
+
+
+
 	//FUNOGBUD
 	//funkcja ogólna budynku przeważająca funkcja ogólna budynku
 	//general function of the building prevailing general function of the building
-	
+
 	//FUNSZCZ
 	//funkcja szczegółowa budynku funkcje szczegółowe budynku
 	//detailed function of the building detailed functions of the building
-	
+
 
 }
