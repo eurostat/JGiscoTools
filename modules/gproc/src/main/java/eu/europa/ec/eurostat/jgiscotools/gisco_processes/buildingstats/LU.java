@@ -19,6 +19,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 	private static Logger logger = LogManager.getLogger(LU.class.getName());
 
+	//TODO check negative values
 
 	public void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
 		Collection<Feature> buLU = BuildingStatsComputation.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", "ID", "geom", xMin, yMin, xMax, yMax, 1);

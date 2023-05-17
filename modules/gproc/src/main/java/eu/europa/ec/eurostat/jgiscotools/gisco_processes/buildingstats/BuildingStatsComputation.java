@@ -53,6 +53,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		int yMin_ = 1900000, yMax_ = 3200000;
 
 		//lux
+		//TODO checknegative values
 		//int xMin_ = 4000000, xMax_ = 4100000;
 		//int yMin_ = 2900000, yMax_ = 3050000;
 
@@ -103,12 +104,11 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 				if(ga.getStats().stats.size() == 0) continue;
 
-				//if(shOut == null) shOut = ga.getStats();
-				//else shOut.stats.addAll(ga.getStats().stats);
-
 				logger.info("Round values...");
-				for(Stat s : ga.getStats().stats)
+				for(Stat s : ga.getStats().stats) {
+					if(s.value < 0) logger.warn("Negative value for " + s.dims.get("GRD_ID"));
 					s.value = (int) Math.round(s.value);
+				}
 
 				logger.info("Save...");
 				//TODO order columns ?
