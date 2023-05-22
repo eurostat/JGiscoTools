@@ -5,8 +5,9 @@ public class IT {
 	//DBSN
 	//https://www.igmi.org/it/dbsn-database-di-sintesi-nazionale
 	//Specs: https://www.igmi.org/dbsn_supporto/dbsn/dbsn_specs_all.html
-	//0201: Edificato
-	
+	//not on entire Italy ?
+
+	//class	0201 - Edificato
 	//attributes
 	//Tipo geometrico: GU_CPSurfaceB3D
 	//08	edifc_at	altezza
