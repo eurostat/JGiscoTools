@@ -78,6 +78,7 @@ public class FR implements BuildingDataLoader, MapOperation<BuildingStat> {
 
 	}
 
+
 	private double getBDTopoTypeRatio(String type, String u1, String u2) {
 		if(type.equals(u1) && u2==null) return 1;
 		if(type.equals(u1) && u2!=null) return 0.7;

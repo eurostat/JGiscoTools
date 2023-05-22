@@ -104,7 +104,12 @@ public class GridMultiResolutionProduction {
 				double sum = 0;
 				for(String s : values) {
 					if(valuesToIgnore != null && valuesToIgnore.contains(s)) continue;
-					double v = Double.parseDouble(s);
+					double v = 0;
+					try {
+						v = Double.parseDouble(s);
+					} catch (NumberFormatException e) {
+						System.err.println("Cannot convert string into number: " + s);
+					}
 					sum += factor * v;
 				}
 				sum /= factor;

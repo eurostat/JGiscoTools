@@ -33,6 +33,7 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 
 	@Override
 	public BuildingStat map(Feature f, Geometry inter) {
+
 		if(inter == null || inter.isEmpty()) return new BuildingStat();
 		double area = inter.getArea();
 		if(area == 0 ) return new BuildingStat();
