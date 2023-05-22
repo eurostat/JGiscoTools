@@ -1,6 +1,7 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,10 +45,11 @@ public class GridVizPrep {
 		//define aggregations
 		//res,indus,p_res,total_activity,p_agri,agri,total,p_act,comm_serv,p_comm_serv,typology_res_act,typology_act,p_indus
 		Map<String, Aggregator> aggMap = new HashMap<String, Aggregator>();
-		aggMap.put("res", GridMultiResolutionProduction.getSumAggregator(10000, null));
-		aggMap.put("agri", GridMultiResolutionProduction.getSumAggregator(10000, null));
-		aggMap.put("indus", GridMultiResolutionProduction.getSumAggregator(10000, null));
-		aggMap.put("comm_serv", GridMultiResolutionProduction.getSumAggregator(10000, null));
+		Collection<String> valuesToIgnore = new ArrayList<>(); valuesToIgnore.add("");
+		aggMap.put("res", GridMultiResolutionProduction.getSumAggregator(10000, valuesToIgnore));
+		aggMap.put("agri", GridMultiResolutionProduction.getSumAggregator(10000, valuesToIgnore));
+		aggMap.put("indus", GridMultiResolutionProduction.getSumAggregator(10000, valuesToIgnore));
+		aggMap.put("comm_serv", GridMultiResolutionProduction.getSumAggregator(10000, valuesToIgnore));
 
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
