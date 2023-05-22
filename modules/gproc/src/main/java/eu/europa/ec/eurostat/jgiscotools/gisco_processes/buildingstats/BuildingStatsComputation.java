@@ -157,23 +157,23 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		out.add( new Stat(v.commServ, cellIdAtt, cellId, "bu_stat", "comm_serv") );
 
 		//add total
-		double total = v.res+v.agri+v.indus+v.commServ;
-		out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
-		double totalActivity = v.agri+v.indus+v.commServ;
-		out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
+		//double total = v.res+v.agri+v.indus+v.commServ;
+		//out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
+		//double totalActivity = v.agri+v.indus+v.commServ;
+		//out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
 
 		//add percentages
-		out.add( new Stat(total==0? 0 : 100*v.res/total, cellIdAtt, cellId, "bu_stat", "p_res") );
-		out.add( new Stat(total==0? 0 : 100*v.agri/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
-		out.add( new Stat(total==0? 0 : 100*v.indus/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
-		out.add( new Stat(total==0? 0 : 100*v.commServ/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
-		out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
+		//out.add( new Stat(total==0? 0 : 100*v.res/total, cellIdAtt, cellId, "bu_stat", "p_res") );
+		//out.add( new Stat(total==0? 0 : 100*v.agri/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
+		//out.add( new Stat(total==0? 0 : 100*v.indus/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
+		//out.add( new Stat(total==0? 0 : 100*v.commServ/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
+		//out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
 
-		//typologies
+		/*//typologies
 		int typResAct = total==0.0? 0 : getBuildingTypologyResAct(v.res/total, totalActivity/total);
 		out.add( new Stat(typResAct, cellIdAtt, cellId, "bu_stat", "typology_res_act") );
 		int typAct = totalActivity==0.0? 0 : getBuildingTypologyAct(v.agri/totalActivity, v.indus/totalActivity, v.commServ/totalActivity );
-		out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );
+		out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );*/
 
 		return out;
 	}
