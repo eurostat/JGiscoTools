@@ -26,8 +26,8 @@ public class GridVizPrep {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		aggregate();
-		//tiling(Format.CSV, null, 128);
+		//aggregate();
+		tiling(Format.CSV, null, 128);
 
 		logger.info("End");
 	}
@@ -45,11 +45,11 @@ public class GridVizPrep {
 		//define aggregations
 		//res,indus,p_res,total_activity,p_agri,agri,total,p_act,comm_serv,p_comm_serv,typology_res_act,typology_act,p_indus
 		Map<String, Aggregator> aggMap = new HashMap<String, Aggregator>();
-		Collection<String> valuesToIgnore = new ArrayList<>(); valuesToIgnore.add("");
-		aggMap.put("res", GridMultiResolutionProduction.getSumAggregator(10000, valuesToIgnore));
-		aggMap.put("agri", GridMultiResolutionProduction.getSumAggregator(10000, valuesToIgnore));
-		aggMap.put("indus", GridMultiResolutionProduction.getSumAggregator(10000, valuesToIgnore));
-		aggMap.put("comm_serv", GridMultiResolutionProduction.getSumAggregator(10000, valuesToIgnore));
+		Collection<String> ignore = new ArrayList<>(); ignore.add("");
+		aggMap.put("res", GridMultiResolutionProduction.getSumAggregator(10000, ignore));
+		aggMap.put("agri", GridMultiResolutionProduction.getSumAggregator(10000, ignore));
+		aggMap.put("indus", GridMultiResolutionProduction.getSumAggregator(10000, ignore));
+		aggMap.put("comm_serv", GridMultiResolutionProduction.getSumAggregator(10000, ignore));
 
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
