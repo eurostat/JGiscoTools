@@ -3,6 +3,7 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,10 +27,46 @@ public class GridVizPrep {
 	public static void main(String[] args) {
 		logger.info("Start");
 
+		prepare2021Pop();
+		//prepareJoin();
 		//aggregate();
-		tiling(Format.CSV, null, 128);
+		//tiling(Format.CSV, null, 128);
 
 		logger.info("End");
+	}
+
+	private static void prepare2021Pop() {
+		logger.info("*** Prepare 2021 pop");
+
+		logger.info("Load pop stats");
+		ArrayList<Map<String, String>> dataPop = CSVUtil.load("E:/dissemination/shared-data/grid/grid_1km.csv");
+		logger.info(dataPop.get(0).keySet());
+		CSVUtil.removeColumn(dataPop, "DIST_BORD", "TOT_P_2018", "TOT_P_2006", "TOT_P_2011", "Y_LLC", "CNTR_ID", "NUTS2016_3", "NUTS2016_2", "NUTS2016_1", "NUTS2016_0", "LAND_PC", "X_LLC", "NUTS2021_3", "NUTS2021_2", "DIST_COAST", "NUTS2021_1", "NUTS2021_0");
+		logger.info(dataPop.get(0).keySet());
+		logger.info(dataPop.size());
+
+		logger.info("save pop 2021 data CSV");
+		CSVUtil.save(dataPop, basePath_ + "pop2021.csv");
+	}
+
+
+	private static void prepareJoin() {
+		logger.info("*** Prepare and join");
+
+		logger.info("Load pop stats");
+		ArrayList<Map<String, String>> dataPop = CSVUtil.load(basePath_ + "pop2021.csv");
+		logger.info(dataPop.size());
+
+		logger.info("Load bu stats");
+		ArrayList<Map<String, String>> dataBu = CSVUtil.load(basePath + "building_area.csv");
+		logger.info(dataBu.size());
+
+		logger.info("join");
+		List<Map<String, String>> data_ = CSVUtil.joinBothSides("GRD_ID", dataBu, dataPop, "0", false);
+		logger.info(data_.size());
+
+		logger.info("save joined data CSV");
+		CSVUtil.save(data_, basePath_ + "joined.csv");
 	}
 
 
@@ -39,7 +76,7 @@ public class GridVizPrep {
 		logger.info("*** Aggregate");
 
 		logger.info("Load CSV");
-		ArrayList<Map<String, String>> data = CSVUtil.load(basePath + "building_area.csv");
+		ArrayList<Map<String, String>> data = CSVUtil.load(basePath_ + "joined.csv");
 		logger.info(data.size());
 
 		//define aggregations
