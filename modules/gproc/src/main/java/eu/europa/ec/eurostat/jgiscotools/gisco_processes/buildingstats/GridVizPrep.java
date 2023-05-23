@@ -27,8 +27,8 @@ public class GridVizPrep {
 	public static void main(String[] args) {
 		logger.info("Start");
 
-		prepare2021Pop();
-		//prepareJoin();
+		//prepare2021Pop();
+		prepareJoin();
 		//aggregate();
 		//tiling(Format.CSV, null, 128);
 
@@ -40,10 +40,12 @@ public class GridVizPrep {
 
 		logger.info("Load pop stats");
 		ArrayList<Map<String, String>> dataPop = CSVUtil.load("E:/dissemination/shared-data/grid/grid_1km.csv");
-		logger.info(dataPop.get(0).keySet());
+		logger.info(dataPop.size());
+
+		logger.info("Clean");
+		//logger.info(dataPop.get(0).keySet());
 		CSVUtil.removeColumn(dataPop, "DIST_BORD", "TOT_P_2018", "TOT_P_2006", "TOT_P_2011", "Y_LLC", "CNTR_ID", "NUTS2016_3", "NUTS2016_2", "NUTS2016_1", "NUTS2016_0", "LAND_PC", "X_LLC", "NUTS2021_3", "NUTS2021_2", "DIST_COAST", "NUTS2021_1", "NUTS2021_0");
 		logger.info(dataPop.get(0).keySet());
-		logger.info(dataPop.size());
 
 		logger.info("save pop 2021 data CSV");
 		CSVUtil.save(dataPop, basePath_ + "pop2021.csv");
@@ -87,6 +89,7 @@ public class GridVizPrep {
 		aggMap.put("agri", GridMultiResolutionProduction.getSumAggregator(10000, ignore));
 		aggMap.put("indus", GridMultiResolutionProduction.getSumAggregator(10000, ignore));
 		aggMap.put("comm_serv", GridMultiResolutionProduction.getSumAggregator(10000, ignore));
+		aggMap.put("TOT_P_2021", GridMultiResolutionProduction.getSumAggregator(10000, null));
 
 		for (int res : resolutions) {
 			logger.info("Aggregate " + res + "m");
