@@ -28,9 +28,9 @@ public class GridVizPrep {
 		logger.info("Start");
 
 		//prepare2021Pop();
-		prepareJoin();
+		//prepareJoin();
 		//aggregate();
-		//tiling(Format.CSV, null, 128);
+		tiling(Format.CSV, null, 128);
 
 		logger.info("End");
 	}
