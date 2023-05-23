@@ -20,4 +20,13 @@ public class BuildingStat {
 		this.indus = indus;
 		this.commServ = commServ;
 	}
+
+	public boolean isValid() {
+		return this.res>=0 && this.agri>=0 && this.indus>=0 && this.commServ>=0;
+	}
+
+	@Override
+	public String toString() {
+		return "(" + this.res + ", " + this.agri + ", " + this.indus + ", " + this.commServ + ")";
+	}
 }

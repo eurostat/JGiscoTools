@@ -49,13 +49,13 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
 		//whole
-		int xMin_ = 3200000, xMax_ = 4300000;
-		int yMin_ = 1900000, yMax_ = 3200000;
+		//int xMin_ = 3200000, xMax_ = 4300000;
+		//int yMin_ = 1900000, yMax_ = 3200000;
 
 		//lux
-		//TODO checknegative values
-		//int xMin_ = 4000000, xMax_ = 4100000;
-		//int yMin_ = 2900000, yMax_ = 3050000;
+		//TODO check negative values
+		int xMin_ = 4000000, xMax_ = 4100000;
+		int yMin_ = 2900000, yMax_ = 3050000;
 
 		int step = 50000;
 
@@ -69,14 +69,15 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				logger.info("Load buildings...");
 				ArrayList<Feature> bu = new ArrayList<>();
 
-				logger.info("Load buildings FR...");
-				bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				//logger.info("Load buildings FR...");
+				//bsc.fr.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 				logger.info("Load buildings LU...");
 				bsc.lu.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
-				logger.info("Load buildings BE...");
-				bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
+				//logger.info("Load buildings BE...");
+				//bsc.be.loadBuildings(bu, basePath, xMin, yMin, xMax, yMax);
 
 				//TODO filter duplicates - overlapping buildings
+
 				logger.info(bu.size() + " buildings");
 				if(bu.size() == 0) continue;
 
@@ -142,51 +143,54 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		Collection<Stat> out = new ArrayList<>();
 
 		//compute sums, for each building type
-		BuildingStat v = new BuildingStat();
+		BuildingStat buStat = new BuildingStat();
 		for(BuildingStat map : data) {
-			v.res += map.res;
-			v.agri += map.agri;
-			v.indus += map.indus;
-			v.commServ += map.commServ;
+			buStat.res += map.res;
+			buStat.agri += map.agri;
+			buStat.indus += map.indus;
+			buStat.commServ += map.commServ;
 		}
 
-		//add stats
-		out.add( new Stat(v.res, cellIdAtt, cellId, "bu_stat", "res") );
-		out.add( new Stat(v.agri, cellIdAtt, cellId, "bu_stat", "agri") );
-		out.add( new Stat(v.indus, cellIdAtt, cellId, "bu_stat", "indus") );
-		out.add( new Stat(v.commServ, cellIdAtt, cellId, "bu_stat", "comm_serv") );
+		if(!buStat.isValid())
+			logger.warn("Non valid bustat - " + cellId + " - " + buStat.toString());;
 
-		//add total
-		//double total = v.res+v.agri+v.indus+v.commServ;
-		//out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
-		//double totalActivity = v.agri+v.indus+v.commServ;
-		//out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
+			//add stats
+			out.add( new Stat(buStat.res, cellIdAtt, cellId, "bu_stat", "res") );
+			out.add( new Stat(buStat.agri, cellIdAtt, cellId, "bu_stat", "agri") );
+			out.add( new Stat(buStat.indus, cellIdAtt, cellId, "bu_stat", "indus") );
+			out.add( new Stat(buStat.commServ, cellIdAtt, cellId, "bu_stat", "comm_serv") );
 
-		//add percentages
-		//out.add( new Stat(total==0? 0 : 100*v.res/total, cellIdAtt, cellId, "bu_stat", "p_res") );
-		//out.add( new Stat(total==0? 0 : 100*v.agri/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
-		//out.add( new Stat(total==0? 0 : 100*v.indus/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
-		//out.add( new Stat(total==0? 0 : 100*v.commServ/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
-		//out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
+			//add total
+			//double total = v.res+v.agri+v.indus+v.commServ;
+			//out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
+			//double totalActivity = v.agri+v.indus+v.commServ;
+			//out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
 
-		/*//typologies
+			//add percentages
+			//out.add( new Stat(total==0? 0 : 100*v.res/total, cellIdAtt, cellId, "bu_stat", "p_res") );
+			//out.add( new Stat(total==0? 0 : 100*v.agri/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
+			//out.add( new Stat(total==0? 0 : 100*v.indus/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
+			//out.add( new Stat(total==0? 0 : 100*v.commServ/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
+			//out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
+
+			/*//typologies
 		int typResAct = total==0.0? 0 : getBuildingTypologyResAct(v.res/total, totalActivity/total);
 		out.add( new Stat(typResAct, cellIdAtt, cellId, "bu_stat", "typology_res_act") );
 		int typAct = totalActivity==0.0? 0 : getBuildingTypologyAct(v.agri/totalActivity, v.indus/totalActivity, v.commServ/totalActivity );
 		out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );*/
 
-		return out;
+			return out;
 	}
 
-	//typology res/activity
+	/*/typology res/activity
 	private int getBuildingTypologyResAct(double pRes, double pAct) {
 		if(pRes==0.0 && pAct==0.0) return 0;
 		if(pRes>0.7) return 9;
 		if(pAct>0.7) return 8;
 		return 98;
-	}
+	}*/
 
-	//typology res/activity
+	/*/typology res/activity
 	private int getBuildingTypologyAct(double pAgri, double pIndus, double pComServ) {
 		if(pAgri==0.0 && pIndus==0.0 && pComServ==0.0) return 0;
 
@@ -202,7 +206,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		if(min == pComServ) return 12;
 
 		return -999;
-	}
+	}*/
 
 
 

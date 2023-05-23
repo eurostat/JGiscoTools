@@ -61,6 +61,7 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		//System.out.println(nb);
 
 		double contrib = nb * area;
+		if(contrib <0) logger.warn("  Negative bu contribution " + contrib + " " + (int)c.getCoordinate().y + " " + (int)c.getCoordinate().x);
 
 		BuildingStat bs = new BuildingStat();
 
