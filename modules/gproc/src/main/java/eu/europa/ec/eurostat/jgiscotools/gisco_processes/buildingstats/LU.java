@@ -68,6 +68,18 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 
 		BuildingStat bs = new BuildingStat();
 
+		if(contrib > 10000000) {
+			System.err.println("-------");
+			System.err.println(contrib);
+			System.err.println(f.getID());
+			System.err.println(f.getGeometry().getCentroid().getCoordinate());
+			System.err.println(nb);
+			System.err.println(h);
+			System.err.println(area);
+			System.err.println(elevGround);
+			System.err.println(elevTop);
+		}
+
 		Object n = f.getAttribute("NATURE");
 		if(n==null) {
 			bs.res = contrib;
