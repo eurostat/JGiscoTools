@@ -21,6 +21,9 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.ReduceOperation;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.cnt.BE;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.cnt.FR;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.cnt.LU;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
@@ -222,7 +225,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 
 	//TODO move to geodata ?
 	//TODO add possibility for other filter ?
-	static Collection<Feature> getFeatures(String path, String idAtt, String geomAtt, int xMin, int yMin, int xMax, int yMax, double d) {
+	public static Collection<Feature> getFeatures(String path, String idAtt, String geomAtt, int xMin, int yMin, int xMax, int yMax, double d) {
 		//System.out.println(GeoData.getSchema(path));
 		try {
 			ArrayList<Feature> fs = GeoData.getFeatures(

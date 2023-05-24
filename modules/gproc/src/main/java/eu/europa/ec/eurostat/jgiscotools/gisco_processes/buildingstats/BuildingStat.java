@@ -5,10 +5,10 @@ package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
  *
  */
 public class BuildingStat {
-	double res = 0;
-	double agri = 0;
-	double indus = 0;
-	double commServ = 0;
+	public double res = 0;
+	public double agri = 0;
+	public double indus = 0;
+	public double commServ = 0;
 
 	public BuildingStat() {
 		this(0,0,0,0);

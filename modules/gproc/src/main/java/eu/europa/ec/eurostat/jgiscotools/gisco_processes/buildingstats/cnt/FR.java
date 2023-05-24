@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.cnt;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +10,9 @@ import org.locationtech.jts.geom.Geometry;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.BuildingDataLoader;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.BuildingStat;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.BuildingStatsComputation;
 
 public class FR implements BuildingDataLoader, MapOperation<BuildingStat> {
 	private static Logger logger = LogManager.getLogger(FR.class.getName());

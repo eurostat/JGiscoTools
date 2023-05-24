@@ -1,4 +1,4 @@
-package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats;
+package eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.cnt;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;
@@ -14,6 +14,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import eu.europa.ec.eurostat.jgiscotools.GeoTiffUtil;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.geostat.GridAggregator.MapOperation;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.BuildingDataLoader;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.BuildingStat;
+import eu.europa.ec.eurostat.jgiscotools.gisco_processes.buildingstats.BuildingStatsComputation;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.CRSUtil;
 
 public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
@@ -41,10 +44,22 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		double area = inter.getArea();
 		if(area == 0 ) return new BuildingStat();
 
-		//nb floors
+		//roof elevation
 		double elevTop = f.getGeometry().getCoordinate().z;
+		if(elevTop > 3000) {
+			logger.warn("Building with too high roof top: " + elevTop + " - id=" + f.getID());
+			return new BuildingStat();
+		}
+
+		//ground elevation
 		Point c = f.getGeometry().getCentroid();
 		double elevGround = getElevation(c.getX(), c.getY());
+		if(elevGround < -200) {
+			logger.warn("Building with too low ground elevation: " + elevGround + " - pos=" + c.getCoordinate());
+			return new BuildingStat();
+		}
+
+		//height
 		double h = elevTop - elevGround ;
 		if(h<1) {
 			//if(h<0) {
@@ -53,6 +68,12 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 			//logger.warn("  " + (int)c.getCoordinate().y + " " + (int)c.getCoordinate().x);
 			return new BuildingStat();
 		}
+		if(h > 100) {
+			logger.warn("Building with too high height: " + h + " - pos=" + c.getCoordinate());
+			return new BuildingStat();
+		}
+
+		//number of floors
 		int nb = (int) (h/floorHeight);
 		if(nb<1) {
 			nb = 1;
@@ -64,7 +85,6 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		//System.out.println(nb);
 
 		double contrib = nb * area;
-		if(contrib <0) logger.warn("  Negative bu contribution " + contrib + " " + (int)c.getCoordinate().y + " " + (int)c.getCoordinate().x);
 
 		BuildingStat bs = new BuildingStat();
 
