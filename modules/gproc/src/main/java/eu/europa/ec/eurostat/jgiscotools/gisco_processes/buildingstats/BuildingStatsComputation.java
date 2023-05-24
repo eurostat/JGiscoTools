@@ -52,13 +52,12 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		BuildingStatsComputation bsc = new BuildingStatsComputation();
 
 		//whole
-		//int xMin_ = 3200000, xMax_ = 4300000;
-		//int yMin_ = 1900000, yMax_ = 3200000;
+		int xMin_ = 3200000, xMax_ = 4300000;
+		int yMin_ = 1900000, yMax_ = 3200000;
 
 		//lux
-		//TODO check negative values
-		int xMin_ = 4000000, xMax_ = 4100000;
-		int yMin_ = 2900000, yMax_ = 3050000;
+		//int xMin_ = 4000000, xMax_ = 4100000;
+		//int yMin_ = 2900000, yMax_ = 3050000;
 
 		int step = 50000;
 
