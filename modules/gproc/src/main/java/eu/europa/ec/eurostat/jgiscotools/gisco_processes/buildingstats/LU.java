@@ -21,10 +21,12 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 
 	//TODO check negative values
 	//CRS3035RES1000mN2950000E4040000,127,-938563041,56796,88296
+	//(1.0770982282552435E12, 126.5510473301154, 56795.566374753056, 88296.19223350796)
 
 	public void loadBuildings(Collection<Feature> bu, String basePath, int xMin, int yMin, int xMax, int yMax) {
 		Collection<Feature> buLU = BuildingStatsComputation.getFeatures(basePath + "geodata/lu/BD_ACT/BDLTC_SHP/BATIMENT.gpkg", "ID", "geom", xMin, yMin, xMax, yMax, 1);
 		for(Feature f : buLU) f.setAttribute("CC", "LU");
+		for(Feature f : buLU) f.setGeometry(f.getGeometry().buffer(0));
 		logger.info(buLU.size() + " buildings");
 		bu.addAll(buLU);
 		buLU.clear();
@@ -71,15 +73,16 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 			bs.res = contrib;
 		} else {
 			String nS = f.getAttribute("NATURE").toString();
+			String nS1 = nS.subSequence(0, 1) + "";
 			if("0".equals(nS)) bs.res = contrib;
-			else if(nS.subSequence(0, 1).equals("1")) bs.indus = contrib;
-			else if(nS.subSequence(0, 1).equals("2")) bs.agri = contrib;
-			else if(nS.subSequence(0, 1).equals("3")) bs.commServ = contrib;
+			else if(nS1.equals("1")) bs.indus = contrib;
+			else if(nS1.equals("2")) bs.agri = contrib;
+			else if(nS1.equals("3")) bs.commServ = contrib;
 			else if( "41206".equals(nS) || "41207".equals(nS) || "41208".equals(nS) ) bs.res = contrib;
-			else if(nS.subSequence(0, 1).equals("4")) bs.commServ = contrib;
-			else if(nS.subSequence(0, 1).equals("5")) bs.commServ = contrib;
+			else if(nS1.equals("4")) bs.commServ = contrib;
+			else if(nS1.equals("5")) bs.commServ = contrib;
 			else if("60000".equals(nS)) {}
-			else if(nS.subSequence(0, 1).equals("7")) bs.commServ = contrib;
+			else if(nS1.equals("7")) bs.commServ = contrib;
 			else if("80000".equals(nS)) bs.agri = contrib;
 			else if("90000".equals(nS)) {}
 			else if("100000".equals(nS)) {}

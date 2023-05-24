@@ -109,6 +109,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				for(Stat s : ga.getStats().stats) {
 					if(s.value < 0) logger.warn("Negative value for " + s.dims.get("GRD_ID"));
 					s.value = (int) Math.round(s.value);
+					if(s.value < 0) logger.warn("Negative value for " + s.dims.get("GRD_ID") + " after rounding");
 				}
 
 				logger.info("Save...");
@@ -152,34 +153,39 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		}
 
 		if(!buStat.isValid())
-			logger.warn("Non valid bustat - " + cellId + " - " + buStat.toString());;
+			logger.warn("Non valid bustat - " + cellId + " - " + buStat.toString());
 
-			//add stats
-			out.add( new Stat(buStat.res, cellIdAtt, cellId, "bu_stat", "res") );
-			out.add( new Stat(buStat.agri, cellIdAtt, cellId, "bu_stat", "agri") );
-			out.add( new Stat(buStat.indus, cellIdAtt, cellId, "bu_stat", "indus") );
-			out.add( new Stat(buStat.commServ, cellIdAtt, cellId, "bu_stat", "comm_serv") );
+		//add stats
+		out.add( new Stat(buStat.res, cellIdAtt, cellId, "bu_stat", "res") );
+		out.add( new Stat(buStat.agri, cellIdAtt, cellId, "bu_stat", "agri") );
+		out.add( new Stat(buStat.indus, cellIdAtt, cellId, "bu_stat", "indus") );
+		out.add( new Stat(buStat.commServ, cellIdAtt, cellId, "bu_stat", "comm_serv") );
 
-			//add total
-			//double total = v.res+v.agri+v.indus+v.commServ;
-			//out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
-			//double totalActivity = v.agri+v.indus+v.commServ;
-			//out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
+		//add total
+		//double total = v.res+v.agri+v.indus+v.commServ;
+		//out.add( new Stat(total, cellIdAtt, cellId, "bu_stat", "total") );
+		//double totalActivity = v.agri+v.indus+v.commServ;
+		//out.add( new Stat(totalActivity, cellIdAtt, cellId, "bu_stat", "total_activity") );
 
-			//add percentages
-			//out.add( new Stat(total==0? 0 : 100*v.res/total, cellIdAtt, cellId, "bu_stat", "p_res") );
-			//out.add( new Stat(total==0? 0 : 100*v.agri/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
-			//out.add( new Stat(total==0? 0 : 100*v.indus/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
-			//out.add( new Stat(total==0? 0 : 100*v.commServ/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
-			//out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
+		//add percentages
+		//out.add( new Stat(total==0? 0 : 100*v.res/total, cellIdAtt, cellId, "bu_stat", "p_res") );
+		//out.add( new Stat(total==0? 0 : 100*v.agri/total, cellIdAtt, cellId, "bu_stat", "p_agri") );
+		//out.add( new Stat(total==0? 0 : 100*v.indus/total, cellIdAtt, cellId, "bu_stat", "p_indus") );
+		//out.add( new Stat(total==0? 0 : 100*v.commServ/total, cellIdAtt, cellId, "bu_stat", "p_comm_serv") );
+		//out.add( new Stat(total==0? 0 : 100*totalActivity/total, cellIdAtt, cellId, "bu_stat", "p_act") );
 
-			/*//typologies
+		/*//typologies
 		int typResAct = total==0.0? 0 : getBuildingTypologyResAct(v.res/total, totalActivity/total);
 		out.add( new Stat(typResAct, cellIdAtt, cellId, "bu_stat", "typology_res_act") );
 		int typAct = totalActivity==0.0? 0 : getBuildingTypologyAct(v.agri/totalActivity, v.indus/totalActivity, v.commServ/totalActivity );
 		out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );*/
 
-			return out;
+		//TODO
+		if("CRS3035RES1000mN2950000E4040000".equals(cellId))
+			System.err.println(buStat);
+
+
+		return out;
 	}
 
 	/*/typology res/activity
