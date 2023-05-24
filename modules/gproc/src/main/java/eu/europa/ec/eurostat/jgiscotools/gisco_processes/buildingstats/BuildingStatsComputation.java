@@ -184,8 +184,8 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 		out.add( new Stat(typAct, cellIdAtt, cellId, "bu_stat", "typology_act") );*/
 
 		//TODO
-		if("CRS3035RES1000mN2950000E4040000".equals(cellId))
-			System.err.println(buStat);
+		//if("CRS3035RES1000mN2950000E4040000".equals(cellId))
+		//	System.err.println(buStat);
 
 
 		return out;

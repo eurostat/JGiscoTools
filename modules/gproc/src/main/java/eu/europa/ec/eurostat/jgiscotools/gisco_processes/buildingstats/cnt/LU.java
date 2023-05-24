@@ -46,6 +46,7 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 
 		//roof elevation
 		double elevTop = f.getGeometry().getCoordinate().z;
+		if(elevTop > 1E6) return new BuildingStat();
 		if(elevTop > 3000) {
 			logger.warn("Building with too high roof top: " + elevTop + " - id=" + f.getID());
 			return new BuildingStat();
@@ -54,6 +55,8 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 		//ground elevation
 		Point c = f.getGeometry().getCentroid();
 		double elevGround = getElevation(c.getX(), c.getY());
+
+		if(elevGround == -32767.0) return new BuildingStat();
 		if(elevGround < -200) {
 			logger.warn("Building with too low ground elevation: " + elevGround + " - pos=" + c.getCoordinate());
 			return new BuildingStat();
@@ -82,23 +85,10 @@ public class LU implements BuildingDataLoader, MapOperation<BuildingStat> {
 			//logger.warn("  " + (int)c.getCoordinate().y + " " + (int)c.getCoordinate().x);
 			//return new BuildingStat();
 		}
-		//System.out.println(nb);
 
 		double contrib = nb * area;
 
 		BuildingStat bs = new BuildingStat();
-
-		if(contrib > 10000000) {
-			System.err.println("-------");
-			System.err.println(contrib);
-			System.err.println(f.getID());
-			System.err.println(f.getGeometry().getCentroid().getCoordinate());
-			System.err.println(nb);
-			System.err.println(h);
-			System.err.println(area);
-			System.err.println(elevGround);
-			System.err.println(elevTop);
-		}
 
 		Object n = f.getAttribute("NATURE");
 		if(n==null) {
