@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,13 +41,17 @@ public class GridVizPrep {
 		logger.info("*** Prepare 2021 pop");
 
 		logger.info("Load pop stats");
-		ArrayList<Map<String, String>> dataPop = CSVUtil.load("E:/dissemination/shared-data/grid/grid_1km.csv");
+		List<Map<String, String>> dataPop = CSVUtil.load("E:/dissemination/shared-data/grid/grid_1km.csv");
 		logger.info(dataPop.size());
 
 		logger.info("Clean");
 		//logger.info(dataPop.get(0).keySet());
 		CSVUtil.removeColumn(dataPop, "DIST_BORD", "TOT_P_2018", "TOT_P_2006", "TOT_P_2011", "Y_LLC", "CNTR_ID", "NUTS2016_3", "NUTS2016_2", "NUTS2016_1", "NUTS2016_0", "LAND_PC", "X_LLC", "NUTS2021_3", "NUTS2021_2", "DIST_COAST", "NUTS2021_1", "NUTS2021_0");
-		logger.info(dataPop.get(0).keySet());
+		//logger.info(dataPop.get(0).keySet());
+
+		logger.info("Filter zero population");
+		dataPop = dataPop.stream().filter(c -> Integer.parseInt(c.get("TOT_P_2021"))>0).collect(Collectors.toList());
+		logger.info(dataPop.size());
 
 		logger.info("save pop 2021 data CSV");
 		CSVUtil.save(dataPop, basePath_ + "pop2021.csv");
