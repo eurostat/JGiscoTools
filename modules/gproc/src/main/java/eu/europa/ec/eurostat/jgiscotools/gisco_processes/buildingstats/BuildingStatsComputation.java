@@ -42,7 +42,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
-		computeTiled();
+		//computeTiled();
 		mergeTiles();
 
 		logger.info("End");
@@ -275,6 +275,7 @@ public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, 
 				String line = r.nextLine();
 				//skip first line, except for the first file
 				if(firstLine) {
+					//System.err.println(line);
 					firstLine = false;
 					if(!firstFile)
 						continue;
