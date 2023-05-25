@@ -28,6 +28,7 @@ public class GridVizPrep {
 		logger.info("Start");
 
 		//prepare2021Pop();
+
 		join();
 		aggregate();
 		tiling(Format.CSV, null, 128);
