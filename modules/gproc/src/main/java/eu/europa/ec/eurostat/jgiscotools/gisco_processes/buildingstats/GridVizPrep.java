@@ -28,8 +28,8 @@ public class GridVizPrep {
 		logger.info("Start");
 
 		//prepare2021Pop();
-		//prepareJoin();
-		//aggregate();
+		join();
+		aggregate();
 		tiling(Format.CSV, null, 128);
 
 		logger.info("End");
@@ -52,7 +52,7 @@ public class GridVizPrep {
 	}
 
 
-	private static void prepareJoin() {
+	private static void join() {
 		logger.info("*** Prepare and join");
 
 		logger.info("Load pop stats");
