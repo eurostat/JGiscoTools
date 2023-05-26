@@ -33,6 +33,8 @@ import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 public class BuildingStatsComputation implements ReduceOperation<BuildingStat>, MapOperation<BuildingStat> {
 	private static Logger logger = LogManager.getLogger(BuildingStatsComputation.class.getName());
 
+	//TODO grid aggregator: simplify. No need to load cells dataset.
+
 	private static String basePath = "H:/ws/";
 	//private static String basePath = "/home/juju/Bureau/gisco/";
 
