@@ -33,7 +33,7 @@ public class LandAreaProduction {
 	public static String gridsPath = "/home/juju/Bureau/gisco/geodata/grids/";
 
 	//the different resolutions, in KM
-	public static int[] resKMs = new int[] {100,50,20,10,5,2,1};
+	public static int[] resKMs = new int[] {/*100,50,20,10,5,*/2,1};
 
 
 	//use: -Xms8g -Xmx24g
@@ -68,10 +68,18 @@ public class LandAreaProduction {
 			Collection<Feature> cells = GeoData.getFeatures(gridsPath + "grid_" + resKM + "km_surf.gpkg");
 			logger.info(" " + cells.size());
 
-			//clean cell attributes ?
+			logger.info("Clean cell attributes...");
+			for(Feature c : cells) {
+				String id = c.getAttribute("GRD_ID").toString();
+				c.getAttributes().clear();
+				c.setAttribute("GRD_ID", id);
+			}
 
 			logger.info("Compute land proportion...");
 			GridUtil.assignLandProportion(cells, "LAND_PC", landGeometriesIndex, inlandWaterGeometriesIndex, 2, parallel);
+
+			logger.info("Clean cell geoms...");
+			for(Feature c : cells) c.setGeometry(null);
 
 			logger.info("Make tabular...");
 			Collection<Map<String, String>> data = new ArrayList<>();
