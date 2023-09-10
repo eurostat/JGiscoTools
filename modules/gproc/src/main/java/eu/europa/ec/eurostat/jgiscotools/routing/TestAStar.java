@@ -34,6 +34,8 @@ public class TestAStar {
 	public static void main(String[] args) throws Exception {
 		logger.info("Start");
 
+		String basePath = "/home/juju/Bureau/gisco/";
+
 		logger.info("Loading");
 		Collection<Feature> networkSections = GeoData.getFeatures("E:/workspace/basic_services_accessibility/input_data/test_tomtom_LU/luxlux_nw.gpkg", null);
 		for(Feature f : networkSections) f.setAttribute("cost", f.getGeometry().getLength());
@@ -136,7 +138,7 @@ public class TestAStar {
 
 		logger.info("save shortest paths");
 		//GeoData.save(paths, "E:\\workspace\\basic_services_accessibility\\routing_paths\\test\\LU_test_dij.gpkg", CRS.decode("EPSG:3035"), true);
-		GeoData.save(paths, "/home/juju/Bureau/gisco/star_network_topology_validation/paths.gpkg", CRS.decode("EPSG:3035"), true);
+		GeoData.save(paths, basePath + "star_network_topology_validation/paths.gpkg", CRS.decode("EPSG:3035"), true);
 
 		logger.info("End");
 	}
