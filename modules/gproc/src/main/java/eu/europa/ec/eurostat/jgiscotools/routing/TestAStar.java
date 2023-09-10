@@ -55,7 +55,7 @@ public class TestAStar {
 		//origin point
 		Coordinate oC = new Coordinate(4041407, 2967034);
 		Node oN = rt.getNode(oC);
-		int aNb = 64; int rNb = 50; double rMax = 200000;
+		int aNb = 512; int rNb = 1; double rMax = 60000;
 
 		/*
 		//TODO test http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
