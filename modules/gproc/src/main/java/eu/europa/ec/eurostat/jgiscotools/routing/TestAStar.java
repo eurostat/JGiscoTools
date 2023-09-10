@@ -48,6 +48,7 @@ public class TestAStar {
 
 		logger.info("Prepare");
 		ArrayList<Feature> paths = new ArrayList<>();
+		//origin point
 		Coordinate oC = new Coordinate(4041407, 2967034);
 		Node oN = rt.getNode(oC);
 		int nb = 64; int rNb = 10; double rMax = 20000;
@@ -133,8 +134,9 @@ public class TestAStar {
 				paths.add(f);
 			}
 
-		logger.info("save");
-		GeoData.save(paths, "E:\\workspace\\basic_services_accessibility\\routing_paths\\test\\LU_test_dij.gpkg", CRS.decode("EPSG:3035"), true);
+		logger.info("save shortest paths");
+		//GeoData.save(paths, "E:\\workspace\\basic_services_accessibility\\routing_paths\\test\\LU_test_dij.gpkg", CRS.decode("EPSG:3035"), true);
+		GeoData.save(paths, "/home/juju/Bureau/gisco/star_network_topology_validation/paths.gpkg", CRS.decode("EPSG:3035"), true);
 
 		logger.info("End");
 	}
