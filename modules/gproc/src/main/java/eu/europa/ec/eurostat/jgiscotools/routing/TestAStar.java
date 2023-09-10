@@ -37,7 +37,8 @@ public class TestAStar {
 		String basePath = "/home/juju/Bureau/gisco/";
 
 		logger.info("Loading");
-		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg", "RoadL", "id");
+		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "star_network_topology_validation/ERM_LU.gpkg");
+		//Collection<Feature> networkSections = GeoData.getFeatures(basePath + "geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg", "RoadL", "id");
 		//Collection<Feature> networkSections = GeoData.getFeatures("E:/workspace/basic_services_accessibility/input_data/test_tomtom_LU/luxlux_nw.gpkg", null);
 		for(Feature f : networkSections) f.setAttribute("cost", f.getGeometry().getLength());
 		logger.info("Loaded: " + networkSections.size());
@@ -54,7 +55,7 @@ public class TestAStar {
 		//origin point
 		Coordinate oC = new Coordinate(4041407, 2967034);
 		Node oN = rt.getNode(oC);
-		int nb = 64; int rNb = 10; double rMax = 20000;
+		int aNb = 64; int rNb = 50; double rMax = 200000;
 
 		/*
 		//TODO test http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
@@ -116,7 +117,7 @@ public class TestAStar {
 		pf.calculate();
 
 		for(double r = rMax/rNb; r<=rMax; r += rMax/rNb)
-			for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/nb) {
+			for(double angle = 0; angle<2*Math.PI; angle += 2*Math.PI/aNb) {
 
 				Coordinate dC = new Coordinate(oC.x+r*Math.cos(angle), oC.y+r*Math.sin(angle));
 				Node dN = rt.getNode(dC);
