@@ -39,8 +39,8 @@ public class TestAStar {
 		for(Feature f : networkSections) f.setAttribute("cost", f.getGeometry().getLength());
 		logger.info("Loaded: " + networkSections.size());
 
-		logger.info("Feature type");
-		SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections, "the_geom", null);
+		//logger.info("Feature type");
+		//SimpleFeatureType ft = SimpleFeatureUtil.getFeatureType(networkSections, "the_geom", null);
 
 		logger.info("Build network");
 		Routing rt = new Routing(networkSections);
