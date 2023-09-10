@@ -35,9 +35,10 @@ public class TestAStar {
 		logger.info("Start");
 
 		String basePath = "/home/juju/Bureau/gisco/";
+		String cnt = "CZ";
 
 		logger.info("Loading");
-		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "star_network_topology_validation/ERM_LU.gpkg");
+		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "star_network_topology_validation/ERM_"+cnt+".gpkg");
 		//Collection<Feature> networkSections = GeoData.getFeatures(basePath + "geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg", "RoadL", "id");
 		//Collection<Feature> networkSections = GeoData.getFeatures("E:/workspace/basic_services_accessibility/input_data/test_tomtom_LU/luxlux_nw.gpkg", null);
 		for(Feature f : networkSections) f.setAttribute("cost", f.getGeometry().getLength());
@@ -53,9 +54,13 @@ public class TestAStar {
 		logger.info("Prepare");
 		ArrayList<Feature> paths = new ArrayList<>();
 		//origin point
-		Coordinate oC = new Coordinate(4041407, 2967034);
+		Coordinate oC = null;
+		if(cnt == "LU") oC = new Coordinate(4041407, 2967034);
+		if(cnt == "CZ") oC = new Coordinate(4702204, 2971784);
 		Node oN = rt.getNode(oC);
-		int aNb = 512; int rNb = 1; double rMax = 60000;
+
+		//LU
+		int aNb = 2048; int rNb = 1; double rMax = 60000;
 
 		/*
 		//TODO test http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
@@ -140,7 +145,7 @@ public class TestAStar {
 
 		logger.info("save shortest paths");
 		//GeoData.save(paths, "E:\\workspace\\basic_services_accessibility\\routing_paths\\test\\LU_test_dij.gpkg", CRS.decode("EPSG:3035"), true);
-		GeoData.save(paths, basePath + "star_network_topology_validation/paths.gpkg", CRS.decode("EPSG:3035"), true);
+		GeoData.save(paths, basePath + "star_network_topology_validation/paths_"+cnt+".gpkg", CRS.decode("EPSG:3035"), true);
 
 		logger.info("End");
 	}
