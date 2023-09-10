@@ -35,7 +35,12 @@ public class TestAStar {
 		logger.info("Start");
 
 		String basePath = "/home/juju/Bureau/gisco/";
+
 		String cnt = "CZ";
+		//LU
+		//int aNb = 2048; int rNb = 1; double rMax = 60000;
+		//CZ
+		int aNb = 2048; int rNb = 1; double rMax = 300000;
 
 		logger.info("Loading " + cnt);
 		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "star_network_topology_validation/ERM_"+cnt+".gpkg");
@@ -58,9 +63,6 @@ public class TestAStar {
 		if(cnt == "LU") oC = new Coordinate(4041407, 2967034);
 		if(cnt == "CZ") oC = new Coordinate(4702204, 2971784);
 		Node oN = rt.getNode(oC);
-
-		//LU
-		int aNb = 2048; int rNb = 1; double rMax = 60000;
 
 		/*
 		//TODO test http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
