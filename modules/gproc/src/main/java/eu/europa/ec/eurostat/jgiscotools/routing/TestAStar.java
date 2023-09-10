@@ -37,7 +37,7 @@ public class TestAStar {
 		String basePath = "/home/juju/Bureau/gisco/";
 		String cnt = "CZ";
 
-		logger.info("Loading");
+		logger.info("Loading " + cnt);
 		Collection<Feature> networkSections = GeoData.getFeatures(basePath + "star_network_topology_validation/ERM_"+cnt+".gpkg");
 		//Collection<Feature> networkSections = GeoData.getFeatures(basePath + "geodata/euro-regional-map-gpkg/data/OpenEuroRegionalMap.gpkg", "RoadL", "id");
 		//Collection<Feature> networkSections = GeoData.getFeatures("E:/workspace/basic_services_accessibility/input_data/test_tomtom_LU/luxlux_nw.gpkg", null);
