@@ -46,11 +46,11 @@
 	</developers>
 
 	<properties>
-		<maven.compiler.target>1.9</maven.compiler.target>
-		<maven.compiler.source>1.9</maven.compiler.source>
+		<maven.compiler.target>1.11</maven.compiler.target>
+		<maven.compiler.source>1.11</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<geotools.version>28.1</geotools.version>
+		<geotools.version>29.0</geotools.version>
 	</properties>
 
 	<build>
@@ -61,8 +61,8 @@
 				<version>3.8.1</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<source>1.9</source>
-					<target>1.9</target>
+					<source>1.11</source>
+					<target>1.11</target>
 				</configuration>
 			</plugin>
 			<plugin>
