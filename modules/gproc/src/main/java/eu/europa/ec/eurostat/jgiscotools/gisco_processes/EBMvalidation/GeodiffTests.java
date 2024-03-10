@@ -17,10 +17,10 @@ public class GeodiffTests {
 		String inFolder = "/home/juju/Bureau/gisco/geodata/EBM/";
 		String outFolder = "/home/juju/Bureau/gisco/EBM_validation/geodiff/";
 
-		for(String t : new String[] { /*"EBM_A", "NUTS_3",*/ "LAU", "NUTS_2", "NUTS_1", "EBM_P" }) {
+		for(String t : new String[] { /*"EBM_A", "NUTS_3",*/ "LAU", "NUTS_2", "NUTS_1" }) {
 			System.out.println("GeoDiff of " + t);
 
-			SimpleFeatureType sc1 = GeoData.getSchema(inFolder + "2022_"+t+".gpkg");
+			SimpleFeatureType sc1 = GeoData.getSchema(inFolder + "2023_"+t+".gpkg");
 			//System.out.println(sc1);
 			//System.out.println( sc1.getGeometryDescriptor() );
 
@@ -28,11 +28,11 @@ public class GeodiffTests {
 			//System.out.println(sc2);
 			//System.out.println( sc2.getGeometryDescriptor() );
 
-			ArrayList<Feature> fs1 = GeoData.getFeatures(inFolder + "2022_"+t+".gpkg", "inspireId");
-			System.out.println("2022: " + fs1.size());
+			ArrayList<Feature> fs1 = GeoData.getFeatures(inFolder + "2023_"+t+".gpkg", "inspireId");
+			System.out.println("2023: " + fs1.size());
 
-			ArrayList<Feature> fs2 = GeoData.getFeatures(inFolder + "2023_"+t+".gpkg", "inspireId");
-			System.out.println("2023: " + fs2.size());
+			ArrayList<Feature> fs2 = GeoData.getFeatures(inFolder + "2024_"+t+".gpkg", "inspireId");
+			System.out.println("2024: " + fs2.size());
 
 
 			GeoDiff gd = new GeoDiff(fs1, fs2, 20);
