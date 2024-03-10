@@ -17,7 +17,7 @@ public class GeodiffTests {
 		String inFolder = "/home/juju/Bureau/gisco/geodata/EBM/";
 		String outFolder = "/home/juju/Bureau/gisco/EBM_validation/geodiff/";
 
-		for(String t : new String[] { /*"EBM_A", "NUTS_3",*/ "LAU", "NUTS_2", "NUTS_1" }) {
+		for(String t : new String[] { "EBM_A", "LAU", "NUTS_3",  "NUTS_2", "NUTS_1" }) {
 			System.out.println("GeoDiff of " + t);
 
 			SimpleFeatureType sc1 = GeoData.getSchema(inFolder + "2023_"+t+".gpkg");
@@ -38,7 +38,7 @@ public class GeodiffTests {
 			GeoDiff gd = new GeoDiff(fs1, fs2, 20);
 			//SimpleFeatureTypeImpl BasicGeometry/EBM_P identified extends Feature(geom:geom,OBJECTID:OBJECTID,inspireId:inspireId,beginLifespanVersion:beginLifespanVersion,ICC:ICC,SHN:SHN)
 			//SimpleFeatureTypeImpl BasicGeometry/EBM_P identified extends Feature(geom:geom,OBJECTID:OBJECTID,inspireId:inspireId,beginLifespanVersion:beginLifespanVersion,ICC:ICC,SHN:SHN)
-			gd.setAttributesToIgnore("OBJECTID", "Shape_Length", "Shape_Area");
+			gd.setAttributesToIgnore("OBJECTID", "fid", "Shape_Length", "Shape_Area");
 
 
 			//compute and save geodiff
