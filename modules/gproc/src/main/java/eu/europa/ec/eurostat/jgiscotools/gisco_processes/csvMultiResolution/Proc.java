@@ -27,7 +27,7 @@ public class Proc {
         cells = cells.stream().filter(c -> Integer.parseInt(c.get("T")) > 0 && c.get("GRD_ID") != null && !c.get("GRD_ID").contains("unallocated")).collect(Collectors.toList());
         System.out.println("Cells: " + cells.size());
 
-        int[] resolutions = {2, 5, 10, 20, 50, 100};
+        int[] resolutions = {1, 2, 5, 10, 20, 50, 100};
         for(int resolution : resolutions) {
             System.out.println("Aggregate "+resolution+"km");
             cells = GridMultiResolutionProduction.gridAggregation(cells, "GRD_ID", resolution*1000, 10000);
