@@ -27,11 +27,15 @@ public class Proc {
         cells = cells.stream().filter(c -> Integer.parseInt(c.get("T")) > 0 && c.get("GRD_ID") != null && !c.get("GRD_ID").contains("unallocated")).collect(Collectors.toList());
         System.out.println("Cells: " + cells.size());
 
-        System.out.println("Aggregate");
-        cells = GridMultiResolutionProduction.gridAggregation(cells, "GRD_ID", 5000, 10000);
-        System.out.println("Cells: " + cells.size());
+        int[] resolutions = {2, 5, 10, 20, 50, 100};
+        for(int resolution : resolutions) {
+            System.out.println("Aggregate "+resolution+"km");
+            cells = GridMultiResolutionProduction.gridAggregation(cells, "GRD_ID", resolution*1000, 10000);
+            System.out.println("Cells: " + cells.size());
 
-        System.out.println("Save");
-        CSVUtil.save(cells, "/home/juju/gisco/census_2021_v3_production/multi_res/ESTAT_Census_2021_V3_5km.csv");
+            System.out.println("Save");
+            CSVUtil.save(cells, "/home/juju/gisco/census_2021_v3_production/multi_res/ESTAT_Census_2021_V3_" + resolution + "km.csv");
+        }
+
     }
 }
