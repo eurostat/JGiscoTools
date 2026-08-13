@@ -23,12 +23,15 @@ public class Proc {
         }
         System.out.println("Cells: " + cells.size());
 
+        System.out.println("Filter");
         cells = cells.stream().filter(c -> Integer.parseInt(c.get("T")) > 0 && c.get("GRD_ID") != null && !c.get("GRD_ID").isEmpty()).collect(Collectors.toList());
         System.out.println("Cells: " + cells.size());
 
+        System.out.println("Aggregate");
         cells = GridMultiResolutionProduction.gridAggregation(cells, "GRD_ID", 5000, 10000);
         System.out.println("Cells: " + cells.size());
-        
+
+        System.out.println("Save");
         CSVUtil.save(cells, "/home/juju/gisco/census_2021_v3_production/multi_res/ESTAT_Census_2021_V3_5km.csv");
     }
 }
