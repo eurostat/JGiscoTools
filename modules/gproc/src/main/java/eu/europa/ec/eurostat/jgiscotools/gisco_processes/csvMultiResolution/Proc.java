@@ -1,7 +1,10 @@
 package eu.europa.ec.eurostat.jgiscotools.gisco_processes.csvMultiResolution;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import eu.europa.ec.eurostat.jgiscotools.grid.processing.GridMultiResolutionProduction;
 import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
@@ -9,7 +12,7 @@ import eu.europa.ec.eurostat.jgiscotools.io.CSVUtil;
 public class Proc {
     public static void main(String[] args) {
         System.out.println("Loading");
-        ArrayList<Map<String, String>> cells = CSVUtil.load("/home/juju/gisco/census_2021_v3_production/ESTAT_Census_2021_V3.csv");
+        List<Map<String, String>> cells = CSVUtil.load("/home/juju/gisco/census_2021_v3_production/ESTAT_Census_2021_V3.csv");
         //GRD_ID,T,M,F,Y_LT15,Y_1564,Y_GE65,EMP,NAT,EU_OTH,OTH,SAME,CHG_IN,CHG_OUT,LAND_SURFACE,POPULATED,CNTR_ID
 
         //remove unecessary columns
@@ -19,6 +22,8 @@ public class Proc {
             cell.remove("LAND_SURFACE");
         }
         System.out.println("Cells: " + cells.size());
+
+        cells = cells.stream().filter(c -> Integer.parseInt(c.get("T")) > 0 && c.get("GRD_ID") != null && !c.get("GRD_ID").isEmpty()).collect(Collectors.toList());
 
         cells = GridMultiResolutionProduction.gridAggregation(cells, "GRD_ID", 5000, 10000);
         System.out.println("Cells: " + cells.size());

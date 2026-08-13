@@ -32,7 +32,7 @@ public class GridMultiResolutionProduction {
 	 * @param factor A factor to avoid floating precision errors, such as "245.0000000034". Set to 10000
 	 * @return
 	 */
-	public static ArrayList<Map<String, String>> gridAggregation(ArrayList<Map<String, String>> cells, String gridIdCol, int res, int factor) {	
+	public static ArrayList<Map<String, String>> gridAggregation(List<Map<String, String>> cells, String gridIdCol, int res, int factor) {	
 
 		//index input data by upper grid cell
 		HashMap<String, List<Map<String, String>>> index = new HashMap<>();
