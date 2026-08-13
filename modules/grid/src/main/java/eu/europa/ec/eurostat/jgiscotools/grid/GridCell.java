@@ -88,7 +88,7 @@ public class GridCell {
 	 * CRS3035RES100000mN5400000E1200000
 	 */
 	private void parseGridCellId() {
-		System.out.println("Parsing grid cell id: " + id);
+		//System.out.println("Parsing grid cell id: " + id);
 		String id_ = id.replaceAll("CRS", "");
 		String[] sp = id_.split("RES");
 		epsgCode = sp[0];

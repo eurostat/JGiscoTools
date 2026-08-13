@@ -24,7 +24,7 @@ public class Proc {
         System.out.println("Cells: " + cells.size());
 
         System.out.println("Filter");
-        cells = cells.stream().filter(c -> Integer.parseInt(c.get("T")) > 0 && c.get("GRD_ID") != null && !c.get("GRD_ID").isEmpty()).collect(Collectors.toList());
+        cells = cells.stream().filter(c -> Integer.parseInt(c.get("T")) > 0 && c.get("GRD_ID") != null && !c.get("GRD_ID").contains("unallocated")).collect(Collectors.toList());
         System.out.println("Cells: " + cells.size());
 
         System.out.println("Aggregate");
