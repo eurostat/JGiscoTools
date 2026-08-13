@@ -32,7 +32,7 @@ public class GridMultiResolutionProduction {
 	 * @param factor A factor to avoid floating precision errors, such as "245.0000000034". Set to 10000
 	 * @return
 	 */
-	public static ArrayList<Map<String, String>> gridAggregation(List<Map<String, String>> cells, String gridIdCol, int res, int factor) {	
+	public static ArrayList<Map<String, String>> gridAggregation(List<Map<String, String>> cells, String gridIdCol, int res, int factor, double[] noDataValues) {	
 
 		//index input data by upper grid cell
 		HashMap<String, List<Map<String, String>>> index = new HashMap<>();
@@ -66,6 +66,14 @@ public class GridMultiResolutionProduction {
 				for(Map<String, String> cell : e.getValue()) {
 					String s = cell.get(key);
 					double v = Double.parseDouble(s);
+					if(noDataValues != null) {
+						for(double noDataValue : noDataValues) {
+							if(v == noDataValue) {
+								v = 0;
+								break;
+							}
+						}
+					}
 					sum += factor * v;
 				}
 				sum /= factor;

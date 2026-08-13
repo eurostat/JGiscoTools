@@ -30,7 +30,7 @@ public class Proc {
         int[] resolutions = {1, 2, 5, 10, 20, 50, 100};
         for(int resolution : resolutions) {
             System.out.println("Aggregate "+resolution+"km");
-            cells = GridMultiResolutionProduction.gridAggregation(cells, "GRD_ID", resolution*1000, 10000);
+            cells = GridMultiResolutionProduction.gridAggregation(cells, "GRD_ID", resolution*1000, 10000, new double[] {-9999, -9999.0});
             System.out.println("Cells: " + cells.size());
 
             System.out.println("Save");
