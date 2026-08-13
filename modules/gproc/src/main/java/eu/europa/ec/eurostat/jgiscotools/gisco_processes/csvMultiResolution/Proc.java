@@ -24,6 +24,7 @@ public class Proc {
         System.out.println("Cells: " + cells.size());
 
         cells = cells.stream().filter(c -> Integer.parseInt(c.get("T")) > 0 && c.get("GRD_ID") != null && !c.get("GRD_ID").isEmpty()).collect(Collectors.toList());
+        System.out.println("Cells: " + cells.size());
 
         cells = GridMultiResolutionProduction.gridAggregation(cells, "GRD_ID", 5000, 10000);
         System.out.println("Cells: " + cells.size());
